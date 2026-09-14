@@ -1,0 +1,2082 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه آمار دوخت لباس</title>
+    
+    <!-- تنظیمات PWA و مانیفست -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="آمار دوخت">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Vazirmatn Font -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .tactile-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tactile-btn:active {
+            transform: scale(0.97);
+        }
+        body.font-normal-size { font-size: 1rem; }
+        body.font-large-size { font-size: 1.15rem; }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #overviewModal, #overviewModal * {
+                visibility: visible !important;
+            }
+            #overviewModal {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                background: white !important;
+                box-shadow: none !important;
+                overflow: visible !important;
+            }
+            #printableOverviewContent {
+                max-height: none !important;
+                overflow: visible !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+
+            #recordsTableCard, #recordsTableCard * {
+                visibility: visible !important;
+            }
+            #recordsTableCard {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                background: white !important;
+                box-shadow: none !important;
+                overflow: visible !important;
+                border: none !important;
+            }
+            #recordsTableCard .overflow-x-auto {
+                max-height: none !important;
+                overflow: visible !important;
+            }
+        }
+
+        .print-only {
+            display: none;
+        }
+        @media print {
+            .print-only {
+                display: block !important;
+            }
+        }
+
+        /* تقویم شمسی تعبیه‌شده برای فیلدهای تاریخ */
+        #jalaliDatePickerPopup {
+            direction: rtl;
+        }
+        .jdp-day-btn {
+            transition: all 0.15s ease;
+        }
+        .jdp-day-btn:hover {
+            background-color: rgb(238 242 255);
+        }
+        .dark .jdp-day-btn:hover {
+            background-color: rgba(99, 102, 241, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen pb-12 font-normal-size" id="appBody">
+
+    <div class="max-w-5xl mx-auto px-4 pt-6">
+
+        <!-- هدر اصلی برنامه -->
+        <header class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm mb-6 border border-slate-100 dark:border-slate-800 text-center relative transition-all">
+            
+            <!-- منوی ابزار و عملیات در گوشه بالا سمت چپ -->
+            <div class="absolute top-6 left-6 z-25">
+                <div class="relative inline-block text-right">
+                    <button onclick="toggleToolsDropdown(event)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all shadow-sm hover:shadow">
+                        <i class="fa-solid fa-bars-staggered"></i>
+                        <span class="hidden sm:inline">منوی ابزار</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] mr-1"></i>
+                    </button>
+
+                    <!-- محتوای منوی کشویی -->
+                    <div id="toolsDropdownMenu" class="hidden absolute left-0 mt-2 w-64 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 z-50 py-2 text-right">
+                        <div class="px-4 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">مدیریت و سیستم</div>
+                        
+                        <button onclick="openSettingsModal(); closeToolsDropdown();" class="w-full text-right px-4 py-2.5 text-xs text-purple-700 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 flex items-center gap-2.5 transition-colors">
+                            <i class="fa-solid fa-gear text-purple-600 dark:text-purple-400 w-4"></i> تنظیمات و ظاهر برنامه
+                        </button>
+
+                        <button onclick="toggleLogBox(); closeToolsDropdown();" class="w-full text-right px-4 py-2.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2.5 transition-colors">
+                            <i class="fa-solid fa-terminal text-slate-500 w-4"></i> نمایش رویدادها
+                        </button>
+                        
+                        <div class="border-t border-slate-100 dark:border-slate-800 my-1"></div>
+                        <div class="px-4 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">پشتیبان‌گیری و داده‌ها</div>
+
+                        <button onclick="exportSmartBackup(); closeToolsDropdown();" class="w-full text-right px-4 py-2.5 text-xs text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 flex items-center gap-2.5 transition-colors">
+                            <i class="fa-solid fa-download text-emerald-600 dark:text-emerald-400 w-4"></i> پشتیبان‌گیری (فایل JSON)
+                        </button>
+
+                        <button onclick="document.getElementById('importFile').click(); closeToolsDropdown();" class="w-full text-right px-4 py-2.5 text-xs text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 flex items-center gap-2.5 transition-colors">
+                            <i class="fa-solid fa-upload text-blue-600 dark:text-blue-400 w-4"></i> بارگذاری از فایل پشتیبان
+                        </button>
+
+                        <button onclick="handleFolderMenuButtonClick()" class="w-full text-right px-4 py-2.5 text-xs text-teal-700 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900/30 flex items-center gap-2.5 transition-colors">
+                            <i id="folderMenuBtnIcon" class="fa-solid fa-folder-plus text-teal-600 dark:text-teal-400 w-4"></i>
+                            <span id="folderMenuBtnLabel">اتصال پوشه ذخیره‌سازی دستگاه</span>
+                        </button>
+
+                        <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden w-full text-right px-4 py-2.5 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2.5 transition-colors">
+                            <i class="fa-solid fa-link-slash text-slate-500 w-4"></i> قطع اتصال پوشه دستگاه
+                        </button>
+
+                        <div class="border-t border-slate-100 dark:border-slate-800 my-1"></div>
+                        <div class="px-4 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">گزارش‌گیری</div>
+
+                        <button onclick="openOverviewModal(); closeToolsDropdown();" class="w-full text-right px-4 py-2.5 text-xs text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 flex items-center gap-2.5 transition-colors">
+                            <i class="fa-solid fa-chart-pie text-indigo-600 dark:text-indigo-400 w-4"></i> نمای کلی گزارش‌ها
+                        </button>
+
+                        <button onclick="exportToHtmlReport(); closeToolsDropdown();" class="w-full text-right px-4 py-2.5 text-xs text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 flex items-center gap-2.5 transition-colors">
+                            <i class="fa-solid fa-file-arrow-down text-amber-600 dark:text-amber-400 w-4"></i> خروجی HTML
+                        </button>
+
+                        <div class="border-t border-slate-100 dark:border-slate-800 my-1"></div>
+                        <div class="px-4 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">عملیات حساس</div>
+
+                        <button onclick="openTwoStepDeleteModal(); closeToolsDropdown();" class="w-full text-right px-4 py-2.5 text-xs text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 flex items-center gap-2.5 transition-colors">
+                            <i class="fa-solid fa-triangle-exclamation text-rose-600 dark:text-rose-400 w-4"></i> پاک کردن داده‌ها
+                        </button>
+
+                        <div class="border-t border-slate-100 dark:border-slate-800 my-1"></div>
+
+                        <button onclick="requestExitApp(); closeToolsDropdown();" class="w-full text-right px-4 py-2.5 text-xs text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2.5 transition-colors font-medium">
+                            <i class="fa-solid fa-right-from-bracket text-slate-600 dark:text-slate-300 w-4"></i> خروج از برنامه
+                        </button>
+                    </div>
+                </div>
+
+                <input type="file" id="importFile" accept=".json" class="hidden" onchange="importSmartBackup(event)">
+            </div>
+
+            <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-3 shadow-inner">
+                <i class="fa-solid fa-scissors text-xl"></i>
+            </div>
+            <h1 id="mainAppTitle" class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+                سامانه آمار دوخت لباس
+            </h1>
+            <p id="mainAppSubtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-normal">سیستم هوشمند آمار و مدیریت دوخت</p>
+            
+            <div id="syncStatus" class="text-xs text-emerald-600 dark:text-emerald-400 mt-4 font-medium inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-900">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                ذخیره‌سازی امن در حافظه مرورگر فعال است
+            </div>
+            <div id="folderStatusLine" class="hidden mt-2"></div>
+        </header>
+
+        <!-- کادر نمایش لاگ‌ها -->
+        <div id="logDropdownPanel" class="hidden bg-slate-900 text-slate-200 rounded-2xl p-4 mb-6 shadow-xl text-xs font-mono transition-all duration-300 border border-slate-800">
+            <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
+                <span class="flex items-center gap-2 text-emerald-400 font-bold">
+                    <i class="fa-solid fa-terminal"></i> تاریخچه رویدادهای سیستم
+                </span>
+                <span id="systemClock" class="text-slate-400">--:--:--</span>
+            </div>
+            <div id="logContainer" class="max-h-28 overflow-y-auto space-y-1 text-[11px] leading-relaxed"></div>
+        </div>
+
+        <!-- کادر پیام‌ها و اطلاعیه‌ها -->
+        <div id="actionFeedbackBanner" class="hidden mb-6 p-4 rounded-2xl border text-sm transition-all flex items-center justify-between shadow-sm">
+            <div id="actionFeedbackText" class="font-medium"></div>
+            <button onclick="hideFeedbackBanner()" class="text-xs opacity-70 hover:opacity-100 p-1"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- فیلتر ماه -->
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm mb-6 border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 transition-all">
+            <div class="flex items-center gap-2.5 text-sm text-slate-700 dark:text-slate-300 font-medium">
+                <i class="regular fa-calendar-check text-indigo-600 dark:text-indigo-400 text-base"></i>
+                <span>دوره گزارش فعال:</span>
+            </div>
+            <div class="w-full sm:w-auto flex items-center gap-2">
+                <select id="monthFilterSelect" onchange="onMonthFilterChange(event)" class="w-full sm:w-52 p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                </select>
+            </div>
+        </div>
+
+        <!-- کارت آمار کلیدی (ارزش کل کارکرد) -->
+        <div class="grid grid-cols-1 mb-6">
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between transition-all hover:shadow-md">
+                <div>
+                    <p id="kpiPriceLabel" class="text-xs text-slate-400 dark:text-slate-400 font-medium">ارزش کل کارکرد (تومان)</p>
+                    <h3 id="kpiTotalPrice" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1 tracking-tight">۰</h3>
+                </div>
+                <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center">
+                    <i class="fa-solid fa-wallet text-lg"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- فرم ثبت و ویرایش -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6 border border-slate-100 dark:border-slate-800 mb-6 transition-all">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <h2 id="formTitle" class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2.5 tracking-tight">
+                    <i class="fa-solid fa-circle-plus text-indigo-600 dark:text-indigo-400 text-lg"></i>
+                    ثبت کارکرد جدید
+                </h2>
+                <button type="button" id="cancelEditBtn" onclick="resetFormState()" class="hidden text-xs text-rose-600 dark:text-rose-400 hover:text-rose-800 font-medium items-center gap-1 bg-rose-50 dark:bg-rose-950/40 px-3 py-1.5 rounded-xl transition-colors">
+                    <i class="fa-solid fa-xmark"></i> انصراف از ویرایش
+                </button>
+            </div>
+
+            <form id="stitchingForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                <input type="hidden" id="editingRecordId" value="">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">کد لباس / قطعه</label>
+                        <input type="text" id="itemCode" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">عنوان لباس / قطعه</label>
+                        <input type="text" id="itemTitle" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">رنگ</label>
+                        <input type="text" id="itemColor" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">تعداد (عدد)</label>
+                        <input type="text" inputmode="numeric" id="quantity" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label id="unitPriceLabel" class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">قیمت واحد (تومان)</label>
+                        <input type="text" inputmode="numeric" id="unitPrice" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">وضعیت تحویل / ثبت</label>
+                        <select id="itemStatus" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none bg-white dark:bg-slate-800 dark:text-slate-100 transition-all">
+                            <option value="به موقع">به موقع</option>
+                            <option value="تاخیر">تاخیر</option>
+                            <option value="زودتر از موعد">زودتر از موعد</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">تاریخ ثبت</label>
+                        <div class="relative">
+                            <input type="text" id="recordDate" required readonly onclick="openDatePicker('recordDate', event)" placeholder="انتخاب تاریخ" class="w-full p-3 pr-10 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all cursor-pointer">
+                            <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">ساعت ثبت</label>
+                        <input type="time" id="recordTime" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="tactile-btn w-full bg-indigo-600 text-white py-3.5 rounded-xl font-medium text-sm hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow">
+                    <i class="fa-solid fa-check"></i>
+                    <span>ثبت در آمار ماه جاری</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- بخش یادداشت‌های خاص روزانه -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6 border border-slate-100 dark:border-slate-800 mb-6 transition-all">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <h2 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2.5 tracking-tight">
+                    <i class="fa-solid fa-note-sticky text-amber-500 text-lg"></i>
+                    یادداشت‌های خاص روزانه
+                </h2>
+                <span class="text-xs text-slate-400">یادداشت برای تاریخ انتخابی</span>
+            </div>
+
+            <div class="space-y-3">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="w-full sm:w-48">
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">تاریخ یادداشت</label>
+                        <div class="relative">
+                            <input type="text" id="noteDateInput" readonly onclick="openDatePicker('noteDateInput', event)" placeholder="انتخاب تاریخ" class="w-full p-3 pr-10 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all cursor-pointer">
+                            <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">متن یادداشت / نکته</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="noteTextInput" placeholder="مثلاً: تعطیلی کارگاه یا تحویل سفارش خاص..." class="flex-1 p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
+                            <button type="button" onclick="saveDailyNote()" class="bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-3 rounded-xl font-medium text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
+                                <i class="fa-solid fa-plus"></i> ثبت یادداشت
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- لیست یادداشت‌های ثبت شده در ماه جاری -->
+                <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">یادداشت‌های ثبت‌شده این دوره:</h3>
+                    <div id="notesContainer" class="space-y-2 max-h-40 overflow-y-auto">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- جدول رکوردها -->
+        <div id="recordsTableCard" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden transition-all">
+            <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-3 bg-slate-50/50 dark:bg-slate-900/50">
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <h3 class="font-bold text-slate-700 dark:text-slate-200 text-sm flex items-center gap-2 whitespace-nowrap">
+                        <i class="fa-solid fa-table text-indigo-600 dark:text-indigo-400"></i>
+                        لیست کارکردها
+                    </h3>
+                    <span id="activeReportBadge" class="text-xs bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full font-medium whitespace-nowrap border border-indigo-100 dark:border-indigo-900/40">
+                        بارگذاری...
+                    </span>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <div class="relative w-full sm:w-64">
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </span>
+                        <input type="text" id="searchInput" oninput="renderDashboard()" placeholder="جستجو در لیست..." class="w-full pr-10 pl-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                    <button onclick="printRecordsTable()" class="no-print p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5 whitespace-nowrap bg-white dark:bg-slate-800" title="چاپ لیست کارکردها">
+                        <i class="fa-solid fa-print"></i>
+                        <span class="hidden md:inline">چاپ لیست</span>
+                    </button>
+                    <button onclick="toggleRecordsTableFullScreen()" class="no-print p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5 whitespace-nowrap bg-white dark:bg-slate-800" title="تمام صفحه کردن لیست">
+                        <i id="tableFullScreenIcon" class="fa-solid fa-expand"></i>
+                        <span class="hidden md:inline">تمام صفحه</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- سربرگ ویژه چاپ؛ فقط هنگام چاپ نمایش داده می‌شود -->
+            <div class="print-only p-4 text-center border-b border-slate-200">
+                <h2 id="printRecordsTitle" class="text-lg font-bold text-slate-900"></h2>
+                <p id="printRecordsSubtitle" class="text-xs text-slate-500 mt-1"></p>
+            </div>
+
+            <div class="overflow-x-auto max-h-[60vh]">
+                <table class="w-full text-right text-sm">
+                    <thead class="bg-slate-100/70 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 text-xs sticky top-0 z-10">
+                        <tr>
+                            <th class="p-3.5">#</th>
+                            <th class="p-3.5">کد</th>
+                            <th class="p-3.5">عنوان لباس</th>
+                            <th class="p-3.5">رنگ</th>
+                            <th class="p-3.5">تعداد</th>
+                            <th id="thUnitPrice" class="p-3.5">قیمت واحد (تومان)</th>
+                            <th id="thTotalPrice" class="p-3.5">مبلغ کل (تومان)</th>
+                            <th class="p-3.5">وضعیت</th>
+                            <th class="p-3.5">تاریخ و ساعت</th>
+                            <th class="p-3.5 text-center no-print">عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="emptyState" class="hidden p-12 text-center text-slate-400">
+                <i class="fa-solid fa-folder-open text-4xl mb-2 opacity-50"></i>
+                <p class="text-sm">هیچ رکوردی یافت نشد.</p>
+            </div>
+        </div>
+
+        <!-- فوتر -->
+        <footer class="mt-8 mb-4 text-center text-xs text-slate-400 dark:text-slate-500 border-t border-slate-200/60 dark:border-slate-800/60 pt-4 transition-all">
+            <p>Designed & Developed by <span class="font-bold text-slate-600 dark:text-slate-300">Phoenix.Yaser</span></p>
+        </footer>
+
+    </div>
+
+    <!-- پاپ‌آپ تقویم شمسی برای انتخاب تاریخ -->
+    <div id="jalaliDatePickerPopup" class="hidden fixed z-[9999] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl p-3 w-72" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between mb-2">
+            <button type="button" onclick="datePickerChangeMonth(-1)" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300" title="ماه قبل">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <div class="text-sm font-bold text-slate-700 dark:text-slate-200" id="datePickerHeaderLabel"></div>
+            <button type="button" onclick="datePickerChangeMonth(1)" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300" title="ماه بعد">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+        </div>
+        <div class="grid grid-cols-7 gap-1 text-center text-[11px] text-slate-400 dark:text-slate-500 mb-1">
+            <span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span>
+        </div>
+        <div id="datePickerDaysGrid" class="grid grid-cols-7 gap-1 text-center text-xs"></div>
+        <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <button type="button" onclick="datePickerSelectToday()" class="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline">امروز</button>
+            <button type="button" onclick="closeDatePicker()" class="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">بستن</button>
+        </div>
+    </div>
+
+    <!-- صفحه خروج از برنامه؛ فقط از طریق دکمه «خروج از برنامه» فعال می‌شود -->
+    <div id="exitAppScreen" class="hidden fixed inset-0 bg-slate-950 z-[100000] flex items-center justify-center p-4 no-print">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 dark:border-slate-800 space-y-4 text-center">
+            <div class="inline-flex items-center justify-center w-14 h-14 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-2xl mb-1 shadow-inner">
+                <i class="fa-solid fa-circle-check text-xl"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800 dark:text-white">از برنامه خارج شدید</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">نسخه پشتیبان اطلاعات به‌صورت خودکار در فایل پشتیبان اصلی ذخیره و دانلود شد. اکنون می‌توانید این صفحه را ببندید.</p>
+            <button type="button" onclick="reEnterApp()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-medium text-sm hover:bg-indigo-700 transition-all shadow-sm">بازگشت به برنامه</button>
+        </div>
+    </div>
+
+    <!-- مدال سفارشی تایید -->
+    <div id="customConfirmModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 dark:border-slate-800 space-y-4 text-center transition-all">
+            <div id="customConfirmIcon" class="inline-flex items-center justify-center w-12 h-12 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-2xl mb-1 shadow-inner">
+                <i class="fa-solid fa-circle-question text-xl"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800 dark:text-white">تایید عملیات</h3>
+            <p id="customConfirmMessage" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+            <div class="flex gap-3 pt-2">
+                <button id="customConfirmCancelBtn" class="flex-1 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium transition-colors">انصراف</button>
+                <button id="customConfirmOkBtn" class="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-sm hover:bg-indigo-700 font-medium transition-colors shadow-sm">تایید</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مدال تنظیمات و ظاهر برنامه -->
+    <div id="settingsModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 dark:border-slate-800 space-y-5 my-8 transition-all">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-purple-600 dark:text-purple-400"></i>
+                    تنظیمات و ظاهر برنامه
+                </h2>
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4 max-h-[65vh] overflow-y-auto pl-1">
+                <div class="space-y-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">مشخصات پایه</h3>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">عنوان کارگاه / سامانه</label>
+                        <input type="text" id="settingShopName" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">واحد پول</label>
+                            <select id="settingCurrency" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                                <option value="تومان">تومان</option>
+                                <option value="ریال">ریال</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">وضعیت پیش‌فرض ثبت</label>
+                            <select id="settingDefaultStatus" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                                <option value="به موقع">به موقع</option>
+                                <option value="زودتر از موعد">زودتر از موعد</option>
+                                <option value="تاخیر">تاخیر</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">تنظیمات ظاهری و محیطی</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">تم رنگی برنامه</label>
+                            <select id="settingTheme" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                                <option value="light">روشن (Light)</option>
+                                <option value="dark">تاریک (Dark)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">اندازه فونت</label>
+                            <select id="settingFontSize" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                                <option value="normal">معمولی</option>
+                                <option value="large">بزرگ‌تر (مناسب تبلت)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">فرمت اعداد</label>
+                            <select id="settingNumFormat" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                                <option value="persian">فارسی (۰-۹)</option>
+                                <option value="english">انگلیسی (0-9)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">وضعیت حافظه سامانه</h3>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 text-xs space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-slate-500 dark:text-slate-400">تعداد کل رکوردهای ثبت‌شده:</span>
+                            <span id="storageTotalRecordsCount" class="font-bold text-slate-800 dark:text-slate-200">۰</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500 dark:text-slate-400">فضای مصرفی حافظه مرورگر:</span>
+                            <span id="storageUsageSize" class="font-bold text-emerald-600 dark:text-emerald-400">۰ کیلوبایت</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button onclick="closeSettingsModal()" class="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">انصراف</button>
+                <button onclick="saveAppSettings(event)" class="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm hover:bg-purple-700 transition-colors shadow-sm">ذخیره تنظیمات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مدال نمای کلی -->
+    <div id="overviewModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div id="printableOverviewContent" class="bg-white dark:bg-slate-900 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-8 border border-slate-100 dark:border-slate-800 max-h-[90vh] overflow-y-auto transition-all flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-file-contract text-indigo-600 dark:text-indigo-400"></i>
+                            نمای کلی گزارش ماهانه
+                        </h2>
+                        <p id="modalPeriodSub" class="text-xs text-slate-500 dark:text-slate-400 mt-1">گزارش تفکیکی</p>
+                    </div>
+                    <div class="flex items-center gap-2 no-print">
+                        <button onclick="toggleOverviewFullScreen()" class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-xs p-2 rounded-xl transition-colors bg-slate-100 dark:bg-slate-800 flex items-center gap-1.5" title="تمام صفحه">
+                            <i id="overviewFullScreenIcon" class="fa-solid fa-expand"></i>
+                            <span class="hidden sm:inline">تمام‌صفحه</span>
+                        </button>
+                        <button onclick="closeOverviewModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg p-2 rounded-xl transition-colors hover:bg-rose-50 hover:text-rose-600" title="بستن">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+                    <div class="p-4 rounded-2xl bg-blue-50/50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50">
+                        <p class="text-xs text-blue-700 dark:text-blue-300 font-medium">به موقع</p>
+                        <div class="flex justify-between items-baseline mt-2">
+                            <span id="overviewOnTimeCount" class="text-2xl font-bold text-blue-900 dark:text-blue-100">۰</span>
+                            <span id="overviewOnTimePercent" class="text-xs font-semibold text-blue-600 dark:text-blue-400">۰٪</span>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50">
+                        <p class="text-xs text-emerald-700 dark:text-emerald-300 font-medium">زودتر از موعد</p>
+                        <div class="flex justify-between items-baseline mt-2">
+                            <span id="overviewEarlyCount" class="text-2xl font-bold text-emerald-900 dark:text-emerald-100">۰</span>
+                            <span id="overviewEarlyPercent" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">۰٪</span>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-rose-50/50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50">
+                        <p class="text-xs text-rose-700 dark:text-rose-300 font-medium">دارای تاخیر</p>
+                        <div class="flex justify-between items-baseline mt-2">
+                            <span id="overviewDelayedCount" class="text-2xl font-bold text-rose-900 dark:text-rose-100">۰</span>
+                            <span id="overviewDelayedPercent" class="text-xs font-semibold text-rose-600 dark:text-rose-400">۰٪</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-4 mb-6 border border-slate-100 dark:border-slate-700 grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">مجموع تعداد قطعات:</span>
+                        <p id="overviewTotalItemsCount" class="text-base font-bold text-slate-800 dark:text-slate-200 mt-1">۰ عدد</p>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">ارزش کل:</span>
+                        <p id="overviewTotalAmount" class="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-1">۰</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-2xl mb-6">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                            <tr>
+                                <th class="p-3">#</th>
+                                <th class="p-3">کد</th>
+                                <th class="p-3">عنوان</th>
+                                <th class="p-3">رنگ</th>
+                                <th class="p-3">تعداد</th>
+                                <th class="p-3">قیمت واحد</th>
+                                <th class="p-3">مبلغ کل</th>
+                                <th class="p-3">وضعیت</th>
+                                <th class="p-3">تاریخ ثبت</th>
+                            </tr>
+                        </thead>
+                        <tbody id="overviewModalTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- بخش دکمه‌ها و دکمه چاپ که به پایین صفحه منتقل شد -->
+            <div class="flex flex-wrap justify-between items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-4 no-print">
+                <button onclick="printOverviewReport()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all shadow-sm">
+                    <i class="fa-solid fa-print"></i>
+                    <span>چاپ گزارش</span>
+                </button>
+                <button onclick="closeOverviewModal()" class="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">بستن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- اسکریپت‌ها -->
+    <script>
+        let newWorkerWaiting = null;
+
+        if (location.protocol === 'file:') {
+            window.addEventListener('load', () => {
+                showFeedbackBanner('حالت آفلاین فعال نیست: فایل‌ها مستقیماً باز شده‌اند (آدرس با file:// شروع می‌شود). برای فعال شدن سرویس‌ورکر، باید فایل‌ها را از طریق یک سرور محلی یا یک هاست واقعی (https) اجرا کنید.', 'warn');
+            });
+        } else if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    console.log('Service Worker ثبت شد. Scope:', reg.scope);
+                    if (reg.waiting && navigator.serviceWorker.controller) {
+                        newWorkerWaiting = reg.waiting;
+                        showAppUpdateBanner();
+                    }
+                    reg.addEventListener('updatefound', () => {
+                        const newWorker = reg.installing;
+                        if (!newWorker) return;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                newWorkerWaiting = newWorker;
+                                showAppUpdateBanner();
+                            }
+                        });
+                    });
+                }).catch(err => {
+                    console.error('SW registration failed:', err);
+                    showFeedbackBanner('ثبت سرویس‌ورکر (حالت آفلاین) ناموفق بود: ' + (err && err.message ? err.message : err), 'warn');
+                });
+
+                let refreshingPage = false;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (refreshingPage) return;
+                    refreshingPage = true;
+                    window.location.reload();
+                });
+            });
+        } else {
+            window.addEventListener('load', () => {
+                showFeedbackBanner('این مرورگر از سرویس‌ورکر (حالت آفلاین) پشتیبانی نمی‌کند.', 'warn');
+            });
+        }
+
+        function showAppUpdateBanner() {
+            const banner = document.getElementById('actionFeedbackBanner');
+            const textEl = document.getElementById('actionFeedbackText');
+            if (!banner || !textEl) return;
+            textEl.innerHTML = 'نسخه جدیدی از برنامه آماده است و آفلاین ذخیره شد. <button onclick="applyAppUpdate()" class="underline font-bold">برای به‌روزرسانی کلیک کنید</button>';
+            banner.className = "mb-6 p-4 rounded-2xl border text-sm transition-all flex items-center justify-between bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800";
+            banner.classList.remove('hidden');
+        }
+
+        function applyAppUpdate() {
+            if (newWorkerWaiting) {
+                newWorkerWaiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+        }
+
+        window.addEventListener('offline', () => {
+            showFeedbackBanner('اتصال اینترنت قطع شد؛ برنامه در حالت آفلاین ادامه می‌دهد و همه داده‌ها به‌صورت محلی ذخیره می‌شوند.', 'warn');
+        });
+        window.addEventListener('online', () => {
+            showFeedbackBanner('اتصال اینترنت دوباره برقرار شد.', 'success');
+        });
+
+        const PERSIAN_MONTHS = [
+            "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+            "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+        ];
+        const PERSIAN_WEEKDAYS_SHORT = ["ش", "ی", "د", "س", "چ", "پ", "ج"];
+
+        /* ===================== توابع تبدیل تقویم شمسی/میلادی ===================== */
+        function jdiv(a, b) { return ~~(a / b); }
+        function jmod(a, b) { return a - ~~(a / b) * b; }
+
+        function jalCal(jy) {
+            const breaks = [-61, 9, 38, 199, 426, 686, 756, 818, 1111, 1181, 1210, 1635, 2060, 2097, 2192, 2262, 2324, 2394, 2456, 3178];
+            const bl = breaks.length;
+            const gy = jy + 621;
+            let leapJ = -14;
+            let jp = breaks[0];
+            if (jy < jp || jy >= breaks[bl - 1]) throw new Error('سال شمسی نامعتبر: ' + jy);
+            let jump = 0;
+            let jm;
+            for (let i = 1; i < bl; i += 1) {
+                jm = breaks[i];
+                jump = jm - jp;
+                if (jy < jm) break;
+                leapJ = leapJ + jdiv(jump, 33) * 8 + jdiv(jmod(jump, 33), 4);
+                jp = jm;
+            }
+            let n = jy - jp;
+            leapJ = leapJ + jdiv(n, 33) * 8 + jdiv(jmod(n, 33) + 3, 4);
+            if (jmod(jump, 33) === 4 && jump - n === 4) leapJ += 1;
+            const leapG = jdiv(gy, 4) - jdiv((jdiv(gy, 100) + 1) * 3, 4) - 150;
+            const march = 20 + leapJ - leapG;
+            if (jump - n < 6) n = n - jump + jdiv(jump + 4, 33) * 33;
+            let leap = jmod(jmod(n + 1, 33) - 1, 4);
+            if (leap === -1) leap = 4;
+            return { leap: leap, gy: gy, march: march };
+        }
+
+        function g2d(gy, gm, gd) {
+            let d = jdiv((gy + jdiv(gm - 8, 6) + 100100) * 1461, 4)
+                + jdiv(153 * jmod(gm + 9, 12) + 2, 5)
+                + gd - 34840408;
+            d = d - jdiv(jdiv(gy + 100100 + jdiv(gm - 8, 6), 100) * 3, 4) + 752;
+            return d;
+        }
+
+        function d2g(jdn) {
+            let j = 4 * jdn + 139361631;
+            j = j + jdiv(jdiv(4 * jdn + 183187720, 146097) * 3, 4) * 4 - 3908;
+            const i = jdiv(jmod(j, 1461), 4) * 5 + 308;
+            const gd = jdiv(jmod(i, 153), 5) + 1;
+            const gm = jmod(jdiv(i, 153), 12) + 1;
+            const gy = jdiv(j, 1461) - 100100 + jdiv(8 - gm, 6);
+            return { gy: gy, gm: gm, gd: gd };
+        }
+
+        function j2d(jy, jm, jd) {
+            const r = jalCal(jy);
+            return g2d(r.gy, 3, r.march) + (jm - 1) * 31 - jdiv(jm, 7) * (jm - 7) + jd - 1;
+        }
+
+        function d2j(jdn) {
+            const gy = d2g(jdn).gy;
+            let jy = gy - 621;
+            const r = jalCal(jy);
+            const jdn1f = g2d(gy, 3, r.march);
+            let jd, jm, k;
+            k = jdn - jdn1f;
+            if (k >= 0) {
+                if (k <= 185) {
+                    jm = 1 + jdiv(k, 31);
+                    jd = jmod(k, 31) + 1;
+                    return { jy: jy, jm: jm, jd: jd };
+                } else {
+                    k -= 186;
+                }
+            } else {
+                jy -= 1;
+                k += 179;
+                if (r.leap === 1) k += 1;
+            }
+            jm = 7 + jdiv(k, 30);
+            jd = jmod(k, 30) + 1;
+            return { jy: jy, jm: jm, jd: jd };
+        }
+
+        function jalaaliToGregorian(jy, jm, jd) {
+            return d2g(j2d(jy, jm, jd));
+        }
+        function gregorianToJalaali(gy, gm, gd) {
+            return d2j(g2d(gy, gm, gd));
+        }
+        function isLeapJalaaliYear(jy) {
+            return jalCal(jy).leap === 0;
+        }
+        function jalaaliMonthLength(jy, jm) {
+            if (jm <= 6) return 31;
+            if (jm <= 11) return 30;
+            return isLeapJalaaliYear(jy) ? 30 : 29;
+        }
+        function toPersianDigits(str) {
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return String(str).replace(/\d/g, d => persianDigits[d]);
+        }
+        function toEnglishDigits(str) {
+            return String(str).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+        }
+        function formatJalaliDate(jy, jm, jd) {
+            return `${toPersianDigits(jy)}/${toPersianDigits(jm)}/${toPersianDigits(jd)}`;
+        }
+        /* ==================== پایان توابع تبدیل تقویم ==================== */
+
+        let allRecords = JSON.parse(localStorage.getItem('sewing_statistics_records_v13')) || [];
+        let dailyNotes = JSON.parse(localStorage.getItem('sewing_daily_notes_v13')) || [];
+        let appSettings = JSON.parse(localStorage.getItem('sewing_app_settings_v13')) || { 
+            shopName: 'سامانه آمار دوخت لباس',
+            currency: 'تومان',
+            defaultStatus: 'به موقع',
+            theme: 'light',
+            fontSize: 'normal',
+            numFormat: 'persian'
+        };
+        let saveTimeout = null;
+
+        /* ============ مدیریت ذخیره‌سازی خودکار در پوشه‌ی دستگاه (فایل جدا برای هر ماه) ============ */
+        let appDirHandle = null;
+        let dirHandlePermissionState = 'unknown'; // 'granted' | 'prompt' | 'denied' | 'unknown'
+        const supportsFileSystemAccess = 'showDirectoryPicker' in window;
+        const SETTINGS_FILE_NAME = 'تنظیمات_و_یادداشت‌ها.json';
+
+        function openHandleDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open('sewing_app_fs_db', 1);
+                req.onupgradeneeded = () => { req.result.createObjectStore('handles'); };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+        async function saveDirHandleToDB(handle) {
+            const db = await openHandleDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('handles', 'readwrite');
+                tx.objectStore('handles').put(handle, 'dataDir');
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+        }
+        async function getDirHandleFromDB() {
+            const db = await openHandleDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('handles', 'readonly');
+                const req = tx.objectStore('handles').get('dataDir');
+                req.onsuccess = () => resolve(req.result || null);
+                req.onerror = () => reject(req.error);
+            });
+        }
+        async function clearDirHandleFromDB() {
+            const db = await openHandleDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('handles', 'readwrite');
+                tx.objectStore('handles').delete('dataDir');
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+        }
+
+        function getMonthFileName(monthKey) {
+            const [year, monthNumStr] = String(monthKey).split('-');
+            const monthNum = parseInt(monthNumStr, 10);
+            const monthName = PERSIAN_MONTHS[monthNum - 1] || 'نامشخص';
+            return `آمار_${monthName}_${year}.json`;
+        }
+
+        async function saveAllMonthFilesToDirectory() {
+            if (!appDirHandle) return;
+            try {
+                const perm = await appDirHandle.queryPermission({ mode: 'readwrite' });
+                if (perm !== 'granted') {
+                    dirHandlePermissionState = perm;
+                    updateStorageFolderStatusUI();
+                    return;
+                }
+
+                const monthKeys = new Set(allRecords.map(r => r.monthKey));
+                monthKeys.add(currentJalali.monthKey); // با شروع هر ماه، فایل آن ماه (حتی خالی) ساخته می‌شود
+
+                for (const monthKey of monthKeys) {
+                    const [year, monthNumStr] = String(monthKey).split('-');
+                    const monthNum = parseInt(monthNumStr, 10);
+                    const monthName = PERSIAN_MONTHS[monthNum - 1] || 'نامشخص';
+                    const fileHandle = await appDirHandle.getFileHandle(getMonthFileName(monthKey), { create: true });
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(JSON.stringify({
+                        app: 'sewing_statistics',
+                        monthKey, monthName, year,
+                        updatedAt: new Date().toISOString(),
+                        records: allRecords.filter(r => r.monthKey === monthKey)
+                    }, null, 2));
+                    await writable.close();
+                }
+
+                const settingsHandle = await appDirHandle.getFileHandle(SETTINGS_FILE_NAME, { create: true });
+                const settingsWritable = await settingsHandle.createWritable();
+                await settingsWritable.write(JSON.stringify({
+                    app: 'sewing_statistics',
+                    updatedAt: new Date().toISOString(),
+                    notes: dailyNotes,
+                    settings: appSettings
+                }, null, 2));
+                await settingsWritable.close();
+
+                dirHandlePermissionState = 'granted';
+                updateStorageFolderStatusUI();
+            } catch (err) {
+                console.error('خطا در ذخیره فایل‌های پوشه:', err);
+                addLog('خطا در ذخیره‌سازی خودکار در پوشه دستگاه.', 'warn');
+            }
+        }
+
+        async function loadAllMonthFilesFromDirectory() {
+            const collectedRecords = [];
+            let collectedNotes = null;
+            let collectedSettings = null;
+            let hasAnyFile = false;
+
+            for await (const [name, handle] of appDirHandle.entries()) {
+                if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json')) continue;
+                try {
+                    const file = await handle.getFile();
+                    const parsed = JSON.parse(await file.text());
+                    if (!parsed || parsed.app !== 'sewing_statistics') continue;
+                    hasAnyFile = true;
+                    if (Array.isArray(parsed.records)) {
+                        collectedRecords.push(...parsed.records);
+                    }
+                    if (parsed.notes || parsed.settings) {
+                        collectedNotes = parsed.notes || collectedNotes;
+                        collectedSettings = parsed.settings || collectedSettings;
+                    }
+                } catch (e) {
+                    console.warn('فایل نامعتبر در پوشه نادیده گرفته شد:', name, e);
+                }
+            }
+
+            const uniqueMap = new Map();
+            collectedRecords.forEach(r => uniqueMap.set(r.id, r));
+            return { records: [...uniqueMap.values()], notes: collectedNotes, settings: collectedSettings, hasAnyFile };
+        }
+
+        async function connectToDirHandle(handle, isFreshSelection) {
+            appDirHandle = handle;
+            const perm = await handle.queryPermission({ mode: 'readwrite' });
+            dirHandlePermissionState = perm;
+            if (perm !== 'granted') {
+                updateStorageFolderStatusUI();
+                return;
+            }
+
+            const loaded = await loadAllMonthFilesFromDirectory();
+            if (loaded.hasAnyFile) {
+                const uniqueMap = new Map();
+                allRecords.forEach(r => uniqueMap.set(r.id, r));
+                loaded.records.forEach(r => uniqueMap.set(r.id, r));
+                allRecords = [...uniqueMap.values()];
+                if (loaded.notes) dailyNotes = loaded.notes;
+                if (loaded.settings) {
+                    appSettings = loaded.settings;
+                    localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+                    applyAppSettingsToUI();
+                }
+            }
+
+            await saveAllMonthFilesToDirectory();
+            saveRecords();
+            renderDashboard();
+            updateStorageFolderStatusUI();
+
+            if (isFreshSelection) {
+                addLog(`پوشه ذخیره‌سازی «${handle.name}» با موفقیت متصل شد.`, 'success');
+                showFeedbackBanner(`از این پس داده‌ها به‌طور خودکار در پوشه «${handle.name}» نیز ذخیره می‌شوند (یک فایل جدا برای هر ماه).`, 'success');
+            }
+        }
+
+        async function chooseStorageFolder() {
+            if (!supportsFileSystemAccess) {
+                showFeedbackBanner('مرورگر شما از ذخیره‌سازی مستقیم در پوشه دستگاه پشتیبانی نمی‌کند (این قابلیت فقط در Chrome/Edge روی رایانه یا اندروید در دسترس است). می‌توانید از گزینه «پشتیبان‌گیری» برای ذخیره دستی فایل استفاده کنید.', 'warn');
+                return;
+            }
+            try {
+                const handle = await window.showDirectoryPicker({ id: 'sewing-app-data', mode: 'readwrite' });
+                await saveDirHandleToDB(handle);
+                await connectToDirHandle(handle, true);
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.error(err);
+                    showFeedbackBanner('اتصال به پوشه انتخابی با خطا مواجه شد.', 'warn');
+                }
+            }
+        }
+
+        async function reconnectStorageFolder() {
+            const handle = await getDirHandleFromDB();
+            if (!handle) {
+                showFeedbackBanner('پوشه‌ای برای اتصال مجدد یافت نشد. لطفاً یک پوشه جدید انتخاب کنید.', 'warn');
+                return;
+            }
+            try {
+                const perm = await handle.requestPermission({ mode: 'readwrite' });
+                if (perm === 'granted') {
+                    await connectToDirHandle(handle, false);
+                    addLog('اتصال به پوشه ذخیره‌سازی مجدداً برقرار شد.', 'success');
+                    showFeedbackBanner('اتصال به پوشه ذخیره‌سازی دستگاه با موفقیت برقرار شد.', 'success');
+                } else {
+                    dirHandlePermissionState = perm;
+                    updateStorageFolderStatusUI();
+                    showFeedbackBanner('اجازه دسترسی به پوشه داده نشد.', 'warn');
+                }
+            } catch (err) {
+                console.error(err);
+                showFeedbackBanner('خطا در اتصال مجدد به پوشه.', 'warn');
+            }
+        }
+
+        function disconnectStorageFolder() {
+            showCustomConfirm('آیا مطمئن هستید؟ پس از قطع اتصال، ذخیره‌سازی خودکار فقط در حافظه مرورگر انجام می‌شود (داده‌های موجود در پوشه دستگاه دست‌نخورده باقی می‌مانند).', async (confirmed) => {
+                if (!confirmed) return;
+                appDirHandle = null;
+                dirHandlePermissionState = 'unknown';
+                await clearDirHandleFromDB();
+                updateStorageFolderStatusUI();
+                addLog('اتصال به پوشه ذخیره‌سازی دستگاه قطع شد.', 'warn');
+                showFeedbackBanner('اتصال به پوشه قطع شد. ذخیره‌سازی اکنون فقط در حافظه مرورگر انجام می‌شود.', 'info');
+            });
+        }
+
+        function handleFolderMenuButtonClick() {
+            closeToolsDropdown();
+            if (appDirHandle && dirHandlePermissionState === 'granted') {
+                showCustomConfirm('در حال حاضر به یک پوشه متصل هستید. آیا می‌خواهید پوشه ذخیره‌سازی دیگری انتخاب کنید؟', (confirmed) => {
+                    if (confirmed) chooseStorageFolder();
+                });
+            } else if (appDirHandle) {
+                reconnectStorageFolder();
+            } else {
+                chooseStorageFolder();
+            }
+        }
+
+        function updateStorageFolderStatusUI() {
+            const line = document.getElementById('folderStatusLine');
+            const menuLabel = document.getElementById('folderMenuBtnLabel');
+            const menuIcon = document.getElementById('folderMenuBtnIcon');
+            const disconnectBtn = document.getElementById('folderDisconnectBtn');
+            if (!line) return;
+
+            if (!supportsFileSystemAccess) {
+                line.classList.add('hidden');
+                if (menuLabel) menuLabel.innerText = 'اتصال پوشه دستگاه (در این مرورگر پشتیبانی نمی‌شود)';
+                if (menuIcon) menuIcon.className = 'fa-solid fa-folder-open text-slate-400 w-4';
+                if (disconnectBtn) disconnectBtn.classList.add('hidden');
+                return;
+            }
+
+            if (appDirHandle && dirHandlePermissionState === 'granted') {
+                line.className = "inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-900";
+                line.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ذخیره خودکار در پوشه «${escapeHTML(appDirHandle.name)}» فعال است`;
+                line.onclick = null;
+                if (menuLabel) menuLabel.innerText = 'تغییر پوشه ذخیره‌سازی دستگاه';
+                if (menuIcon) menuIcon.className = 'fa-solid fa-folder-open text-teal-600 dark:text-teal-400 w-4';
+                if (disconnectBtn) disconnectBtn.classList.remove('hidden');
+            } else if (appDirHandle) {
+                line.className = "inline-flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 font-medium bg-amber-50 dark:bg-amber-950/50 px-3 py-1 rounded-full border border-amber-100 dark:border-amber-900 cursor-pointer";
+                line.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> برای فعال‌سازی ذخیره خودکار در پوشه، اینجا بزنید و دوباره متصل شوید`;
+                line.onclick = reconnectStorageFolder;
+                if (menuLabel) menuLabel.innerText = 'اتصال مجدد به پوشه دستگاه';
+                if (menuIcon) menuIcon.className = 'fa-solid fa-triangle-exclamation text-amber-600 dark:text-amber-400 w-4';
+                if (disconnectBtn) disconnectBtn.classList.remove('hidden');
+            } else {
+                line.classList.add('hidden');
+                line.onclick = null;
+                if (menuLabel) menuLabel.innerText = 'اتصال پوشه ذخیره‌سازی دستگاه';
+                if (menuIcon) menuIcon.className = 'fa-solid fa-folder-plus text-teal-600 dark:text-teal-400 w-4';
+                if (disconnectBtn) disconnectBtn.classList.add('hidden');
+                return;
+            }
+            line.classList.remove('hidden');
+        }
+
+        async function initStorageFolderConnection() {
+            updateStorageFolderStatusUI();
+            if (!supportsFileSystemAccess) return;
+            try {
+                const handle = await getDirHandleFromDB();
+                if (!handle) return;
+                appDirHandle = handle;
+                const perm = await handle.queryPermission({ mode: 'readwrite' });
+                dirHandlePermissionState = perm;
+                if (perm === 'granted') {
+                    await connectToDirHandle(handle, false);
+                } else {
+                    updateStorageFolderStatusUI();
+                }
+            } catch (err) {
+                console.error('خطا در بازیابی پوشه ذخیره‌سازی:', err);
+                updateStorageFolderStatusUI();
+            }
+        }
+        /* ============ پایان مدیریت ذخیره‌سازی در پوشه‌ی دستگاه ============ */
+
+        function showCustomConfirm(message, callback) {
+            const modal = document.getElementById('customConfirmModal');
+            const msgEl = document.getElementById('customConfirmMessage');
+            const okBtn = document.getElementById('customConfirmOkBtn');
+            const cancelBtn = document.getElementById('customConfirmCancelBtn');
+
+            msgEl.innerText = message;
+            modal.classList.remove('hidden');
+
+            const newOkBtn = okBtn.cloneNode(true);
+            const newCancelBtn = cancelBtn.cloneNode(true);
+            okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+            newOkBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+                callback(true);
+            });
+
+            newCancelBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+                callback(false);
+            });
+        }
+
+        /* ===================== منطق خروج از برنامه ===================== */
+        let appHasExited = false;
+
+        function requestExitApp() {
+            closeToolsDropdown();
+            showCustomConfirm('آیا مطمئن هستید که می‌خواهید از برنامه خارج شوید؟ پیش از خروج، یک نسخه پشتیبان از اطلاعات به‌صورت خودکار در فایل پشتیبان اصلی (JSON) ذخیره خواهد شد.', function(confirmed) {
+                if (!confirmed) return;
+                performExitApp();
+            });
+        }
+
+        function performExitApp() {
+            exportSmartBackup();
+            appHasExited = true;
+            addLog('کاربر از برنامه خارج شد و نسخه پشتیبان به‌صورت خودکار ذخیره شد.', 'warn');
+            setTimeout(function() {
+                document.getElementById('exitAppScreen').classList.remove('hidden');
+            }, 500);
+        }
+
+        function reEnterApp() {
+            document.getElementById('exitAppScreen').classList.add('hidden');
+            appHasExited = false;
+        }
+
+        window.addEventListener('beforeunload', function(e) {
+            if (!appHasExited) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+        /* ==================== پایان منطق خروج از برنامه ==================== */
+
+        function showFeedbackBanner(message, type = 'success') {
+            const banner = document.getElementById('actionFeedbackBanner');
+            const textEl = document.getElementById('actionFeedbackText');
+            if (!banner || !textEl) return;
+
+            textEl.innerText = message;
+            if (type === 'success') {
+                banner.className = "mb-6 p-4 rounded-2xl border text-sm transition-all flex items-center justify-between bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
+            } else if (type === 'warn') {
+                banner.className = "mb-6 p-4 rounded-2xl border text-sm transition-all flex items-center justify-between bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800";
+            } else {
+                banner.className = "mb-6 p-4 rounded-2xl border text-sm transition-all flex items-center justify-between bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800";
+            }
+            banner.classList.remove('hidden');
+        }
+
+        function hideFeedbackBanner() {
+            const banner = document.getElementById('actionFeedbackBanner');
+            if (banner) banner.classList.add('hidden');
+        }
+
+        function escapeHTML(str) {
+            if (str === undefined || str === null) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function parsePersianInt(str) {
+            if (!str) return 0;
+            const persianDigits = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+            let cleanStr = String(str).replace(/,/g, '');
+            for (let i = 0; i < 10; i++) {
+                cleanStr = cleanStr.replace(persianDigits[i], i);
+            }
+            const val = parseInt(cleanStr, 10);
+            return isNaN(val) ? 0 : val;
+        }
+
+        function formatNumber(num) {
+            if (num === undefined || num === null) return '';
+            const numStr = Number(num).toLocaleString('en-US');
+            if (appSettings.numFormat === 'english') {
+                return numStr;
+            }
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return numStr.replace(/\d/g, d => persianDigits[d]);
+        }
+
+        function toggleToolsDropdown(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('toolsDropdownMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function closeToolsDropdown() {
+            const menu = document.getElementById('toolsDropdownMenu');
+            if (menu) menu.classList.add('hidden');
+        }
+
+        window.addEventListener('click', function() {
+            closeToolsDropdown();
+        });
+
+        let isOverviewFullScreen = false;
+        function toggleOverviewFullScreen() {
+            const content = document.getElementById('printableOverviewContent');
+            const icon = document.getElementById('overviewFullScreenIcon');
+            isOverviewFullScreen = !isOverviewFullScreen;
+            if (isOverviewFullScreen) {
+                content.classList.remove('max-w-4xl', 'rounded-2xl', 'my-8');
+                content.classList.add('w-full', 'h-full', 'max-w-none', 'max-h-none', 'rounded-none');
+                icon.className = "fa-solid fa-compress";
+            } else {
+                content.classList.add('max-w-4xl', 'rounded-2xl', 'my-8');
+                content.classList.remove('w-full', 'h-full', 'max-w-none', 'max-h-none', 'rounded-none');
+                icon.className = "fa-solid fa-expand";
+            }
+        }
+
+        function printOverviewReport() {
+            window.print();
+        }
+
+        function printRecordsTable() {
+            const records = getFilteredRecords();
+            if (records.length === 0) {
+                showFeedbackBanner('رکوردی برای چاپ در این لیست وجود ندارد.', 'warn');
+                return;
+            }
+            const [year, monthNum] = selectedMonthFilter.split('-');
+            const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
+            const shopName = (appSettings.shopName || 'سامانه آمار دوخت لباس');
+            const currency = appSettings.currency || 'تومان';
+            const totalAmountSum = records.reduce((sum, r) => sum + r.totalPrice, 0);
+
+            document.getElementById('printRecordsTitle').innerText = `${shopName} - لیست کارکردها`;
+            document.getElementById('printRecordsSubtitle').innerText =
+                `دوره: ${monthName} ${year}  |  تعداد رکورد: ${formatNumber(records.length)}  |  مجموع مبلغ: ${formatNumber(totalAmountSum)} ${currency}  |  تاریخ چاپ: ${currentJalali.fullDateStr}`;
+
+            window.print();
+        }
+
+        /* ===================== منطق تقویم شمسی تعبیه‌شده ===================== */
+        let datePickerState = { targetInputId: null, jy: null, jm: null };
+
+        function openDatePicker(inputId, event) {
+            if (event) event.stopPropagation();
+            const input = document.getElementById(inputId);
+            const popup = document.getElementById('jalaliDatePickerPopup');
+
+            let jy = currentJalali.yearEn ? parseInt(currentJalali.yearEn, 10) : parseInt(toEnglishDigits(currentJalali.year), 10);
+            let jm = currentJalali.monthNum;
+
+            const existingVal = (input.value || '').trim();
+            if (existingVal) {
+                const parts = toEnglishDigits(existingVal).split('/');
+                if (parts.length === 3) {
+                    const py = parseInt(parts[0], 10);
+                    const pm = parseInt(parts[1], 10);
+                    if (!isNaN(py) && !isNaN(pm)) {
+                        jy = py;
+                        jm = pm;
+                    }
+                }
+            }
+
+            datePickerState.targetInputId = inputId;
+            datePickerState.jy = jy;
+            datePickerState.jm = jm;
+
+            renderDatePickerGrid();
+
+            const rect = input.getBoundingClientRect();
+            const popupWidth = 288;
+            let top = rect.bottom + 6;
+            let left = rect.left;
+            if (left + popupWidth > window.innerWidth - 10) {
+                left = Math.max(10, window.innerWidth - popupWidth - 10);
+            }
+            if (top + 320 > window.innerHeight) {
+                top = Math.max(10, rect.top - 320 - 6);
+            }
+            popup.style.top = `${top}px`;
+            popup.style.left = `${left}px`;
+            popup.classList.remove('hidden');
+        }
+
+        function closeDatePicker() {
+            document.getElementById('jalaliDatePickerPopup').classList.add('hidden');
+            datePickerState.targetInputId = null;
+        }
+
+        window.addEventListener('click', function() {
+            closeDatePicker();
+        });
+
+        function datePickerChangeMonth(delta) {
+            let { jy, jm } = datePickerState;
+            jm += delta;
+            if (jm > 12) { jm = 1; jy += 1; }
+            if (jm < 1) { jm = 12; jy -= 1; }
+            datePickerState.jy = jy;
+            datePickerState.jm = jm;
+            renderDatePickerGrid();
+        }
+
+        function renderDatePickerGrid() {
+            const { jy, jm } = datePickerState;
+            const headerLabel = document.getElementById('datePickerHeaderLabel');
+            headerLabel.innerText = `${PERSIAN_MONTHS[jm - 1]} ${toPersianDigits(jy)}`;
+
+            const g = jalaaliToGregorian(jy, jm, 1);
+            const firstWeekdayJs = new Date(g.gy, g.gm - 1, g.gd).getDay();
+            const startOffset = (firstWeekdayJs + 1) % 7; // شنبه = ۰
+
+            const daysInMonth = jalaaliMonthLength(jy, jm);
+            const grid = document.getElementById('datePickerDaysGrid');
+
+            const isCurrentInputToday = (jy === parseInt(toEnglishDigits(currentJalali.year), 10) && jm === currentJalali.monthNum);
+            let currentDayNum = null;
+            if (isCurrentInputToday) {
+                currentDayNum = parseInt(toEnglishDigits(currentJalali.fullDateStr.split('/')[2]), 10);
+            }
+
+            let html = '';
+            for (let i = 0; i < startOffset; i++) {
+                html += '<span></span>';
+            }
+            for (let d = 1; d <= daysInMonth; d++) {
+                const isToday = currentDayNum === d;
+                html += `<button type="button" onclick="datePickerSelectDay(${d})" class="jdp-day-btn p-1.5 rounded-lg ${isToday ? 'bg-indigo-600 text-white font-bold hover:bg-indigo-700' : 'text-slate-700 dark:text-slate-200'}">${toPersianDigits(d)}</button>`;
+            }
+            grid.innerHTML = html;
+        }
+
+        function datePickerSelectDay(day) {
+            const { jy, jm } = datePickerState;
+            const input = document.getElementById(datePickerState.targetInputId);
+            if (input) {
+                input.value = formatJalaliDate(jy, jm, day);
+            }
+            closeDatePicker();
+        }
+
+        function datePickerSelectToday() {
+            const input = document.getElementById(datePickerState.targetInputId);
+            if (input) {
+                input.value = currentJalali.fullDateStr;
+            }
+            closeDatePicker();
+        }
+        /* ==================== پایان منطق تقویم شمسی ==================== */
+
+        let isTableFullScreen = false;
+        function toggleRecordsTableFullScreen() {
+            const card = document.getElementById('recordsTableCard');
+            const icon = document.getElementById('tableFullScreenIcon');
+            isTableFullScreen = !isTableFullScreen;
+            if (isTableFullScreen) {
+                card.classList.add('fixed', 'inset-0', 'z-50', 'rounded-none', 'overflow-y-auto', 'm-0', 'p-4');
+                icon.className = "fa-solid fa-compress";
+                document.body.style.overflow = 'hidden';
+            } else {
+                card.classList.remove('fixed', 'inset-0', 'z-50', 'rounded-none', 'overflow-y-auto', 'm-0', 'p-4');
+                icon.className = "fa-solid fa-expand";
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function openSettingsModal() {
+            document.getElementById('settingShopName').value = appSettings.shopName || 'سامانه آمار دوخت لباس';
+            document.getElementById('settingCurrency').value = appSettings.currency || 'تومان';
+            document.getElementById('settingDefaultStatus').value = appSettings.defaultStatus || 'به موقع';
+            document.getElementById('settingTheme').value = appSettings.theme || 'light';
+            document.getElementById('settingFontSize').value = appSettings.fontSize || 'normal';
+            document.getElementById('settingNumFormat').value = appSettings.numFormat || 'persian';
+            
+            const totalRecords = allRecords.length;
+            document.getElementById('storageTotalRecordsCount').innerText = formatNumber(totalRecords);
+            
+            const dataString = JSON.stringify(allRecords) + JSON.stringify(dailyNotes) + JSON.stringify(appSettings);
+            const sizeInBytes = new Blob([dataString]).size;
+            const sizeInKB = (sizeInBytes / 1024).toFixed(2);
+            document.getElementById('storageUsageSize').innerText = `${formatNumber(sizeInKB)} کیلوبایت`;
+
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function saveAppSettings(event) {
+            event.preventDefault();
+            const shopNameVal = document.getElementById('settingShopName').value.trim();
+            const currencyVal = document.getElementById('settingCurrency').value;
+            const defaultStatusVal = document.getElementById('settingDefaultStatus').value;
+            const themeVal = document.getElementById('settingTheme').value;
+            const fontSizeVal = document.getElementById('settingFontSize').value;
+            const numFormatVal = document.getElementById('settingNumFormat').value;
+
+            if (shopNameVal) {
+                appSettings.shopName = shopNameVal;
+                appSettings.currency = currencyVal;
+                appSettings.defaultStatus = defaultStatusVal;
+                appSettings.theme = themeVal;
+                appSettings.fontSize = fontSizeVal;
+                appSettings.numFormat = numFormatVal;
+
+                localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+                applyAppSettingsToUI();
+                renderDashboard();
+                addLog('تنظیمات برنامه به‌روزرسانی شد.', 'success');
+                closeSettingsModal();
+                showFeedbackBanner('تنظیمات جدید با موفقیت ذخیره و اعمال شد.', 'success');
+            }
+        }
+
+        function applyAppSettingsToUI() {
+            const currency = appSettings.currency || 'تومان';
+            document.getElementById('kpiPriceLabel').innerText = `ارزش کل کارکرد (${currency})`;
+            document.getElementById('unitPriceLabel').innerText = `قیمت واحد (${currency})`;
+            document.getElementById('thUnitPrice').innerText = `قیمت واحد (${currency})`;
+            document.getElementById('thTotalPrice').innerText = `مبلغ کل (${currency})`;
+            document.getElementById('itemStatus').value = appSettings.defaultStatus || 'به موقع';
+            
+            const htmlRoot = document.getElementById('htmlRoot');
+            const appBody = document.getElementById('appBody');
+            if (appSettings.theme === 'dark') {
+                htmlRoot.classList.add('dark');
+            } else {
+                htmlRoot.classList.remove('dark');
+            }
+
+            if (appSettings.fontSize === 'large') {
+                appBody.classList.remove('font-normal-size');
+                appBody.classList.add('font-large-size');
+            } else {
+                appBody.classList.remove('font-large-size');
+                appBody.classList.add('font-normal-size');
+            }
+
+            updateAppHeader();
+        }
+
+        function addLog(message, type = 'info') {
+            const container = document.getElementById('logContainer');
+            if (!container) return;
+            const timeStr = new Date().toLocaleTimeString('fa-IR');
+            const colorClass = type === 'success' ? 'text-emerald-400' : (type === 'warn' ? 'text-amber-400' : 'text-blue-300');
+            const logItem = document.createElement('div');
+            logItem.className = `${colorClass} flex items-center gap-2`;
+            logItem.innerHTML = `<span class="text-slate-500">[${timeStr}]</span> <span>${escapeHTML(message)}</span>`;
+            container.insertBefore(logItem, container.firstChild);
+            if (container.children.length > 20) container.removeChild(container.lastChild);
+        }
+
+        function toggleLogBox() {
+            const logPanel = document.getElementById('logDropdownPanel');
+            logPanel.classList.toggle('hidden');
+        }
+
+        function updateSystemClock() {
+            const clockEl = document.getElementById('systemClock');
+            if (clockEl) clockEl.innerText = new Date().toLocaleTimeString('fa-IR');
+        }
+        setInterval(updateSystemClock, 1000);
+
+        function getCurrentJalaliInfo() {
+            const now = new Date();
+            const formatter = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { year: 'numeric', month: 'numeric', day: 'numeric' });
+            const parts = formatter.formatToParts(now);
+            let year = '', month = '', day = '';
+            parts.forEach(part => {
+                if (part.type === 'year') year = part.value;
+                if (part.type === 'month') month = part.value;
+                if (part.type === 'day') day = part.value;
+            });
+            const toEnglishDigits = str => str.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+            const yearEn = toEnglishDigits(year);
+            const monthNum = parseInt(toEnglishDigits(month), 10);
+            return {
+                year: year,
+                yearEn: yearEn,
+                monthNum: monthNum,
+                monthName: PERSIAN_MONTHS[monthNum - 1] || 'نامشخص',
+                monthKey: `${yearEn}-${monthNum}`,
+                fullDateStr: `${year}/${month}/${day}`
+            };
+        }
+
+        let currentJalali = getCurrentJalaliInfo();
+        let selectedMonthFilter = currentJalali.monthKey;
+
+        function checkDailyAutoBackup() {
+            if (allRecords.length === 0 && dailyNotes.length === 0) return;
+            const lastBackupDate = localStorage.getItem('sewing_last_auto_backup_date');
+            const todayStr = currentJalali.fullDateStr;
+
+            if (lastBackupDate !== todayStr) {
+                showCustomConfirm('آیا مایلید یک نسخه پشتیبان خودکار از اطلاعات امروز دانلود شود؟', (confirmed) => {
+                    localStorage.setItem('sewing_last_auto_backup_date', todayStr);
+                    if (!confirmed) return;
+
+                    const backupData = {
+                        version: "13.0",
+                        app: "sewing_statistics",
+                        timestamp: new Date().toISOString(),
+                        settings: appSettings,
+                        records: allRecords,
+                        notes: dailyNotes
+                    };
+                    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    const timeTag = todayStr.replace(/\//g, '');
+                    link.download = `آمار_دوخت_پشتیبان_خودکار_${timeTag}.json`;
+                    link.click();
+
+                    addLog('پشتیبان‌گیری خودکار روزانه انجام شد.', 'success');
+                    showFeedbackBanner('پشتیبان‌گیری خودکار روزانه انجام شد و فایل آن در پوشه دانلودها قرار گرفت.', 'success');
+                });
+            }
+        }
+
+        function saveRecords() {
+            const statusEl = document.getElementById('syncStatus');
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> در حال ذخیره‌سازی...`;
+                statusEl.className = "text-xs text-amber-600 dark:text-amber-400 mt-4 font-medium inline-flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/50 px-3 py-1 rounded-full border border-amber-100 dark:border-amber-900 transition-all";
+            }
+
+            clearTimeout(saveTimeout);
+
+            saveTimeout = setTimeout(() => {
+                try {
+                    localStorage.setItem('sewing_statistics_records_v13', JSON.stringify(allRecords));
+                    localStorage.setItem('sewing_daily_notes_v13', JSON.stringify(dailyNotes));
+                    addLog('تغییرات در حافظه محلی ذخیره شد.', 'success');
+
+                    if (appDirHandle) {
+                        saveAllMonthFilesToDirectory();
+                    }
+
+                    if (statusEl) {
+                        statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ذخیره‌سازی امن در حافظه مرورگر فعال است`;
+                        statusEl.className = "text-xs text-emerald-600 dark:text-emerald-400 mt-4 font-medium inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-900 transition-all";
+                    }
+                } catch (error) {
+                    console.error("Storage Error:", error);
+                    addLog('خطا در ذخیره‌سازی اطلاعات!', 'warn');
+                    if (statusEl) {
+                        statusEl.innerText = "خطا: حافظه مرورگر پر شده است!";
+                        statusEl.className = "text-xs text-rose-600 dark:text-rose-400 mt-4 font-medium inline-flex items-center gap-1.5 bg-rose-50 dark:bg-rose-950/50 px-3 py-1 rounded-full border border-rose-100 dark:border-rose-900 transition-all";
+                    }
+                }
+            }, 400);
+        }
+
+        function exportSmartBackup() {
+            if (allRecords.length === 0 && dailyNotes.length === 0) {
+                showFeedbackBanner('داده‌ای برای گرفتن پشتیبان وجود ندارد.', 'warn');
+                return;
+            }
+            const backupData = {
+                version: "13.0",
+                app: "sewing_statistics",
+                timestamp: new Date().toISOString(),
+                settings: appSettings,
+                records: allRecords,
+                notes: dailyNotes
+            };
+            const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            
+            const timeTag = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+            link.download = `آمار_دوخت_پشتیبان_${timeTag}.json`;
+            link.click();
+            
+            addLog('فایل پشتیبان استخراج شد.', 'success');
+            showFeedbackBanner('فایل پشتیبان (JSON) با موفقیت در پوشه دانلودها ذخیره شد.', 'success');
+        }
+
+        function importSmartBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (!parsed.app || parsed.app !== "sewing_statistics" || !Array.isArray(parsed.records)) {
+                        throw new Error('ساختار فایل پشتیبان نامعتبر است.');
+                    }
+
+                    showCustomConfirm('آیا از جایگزینی داده‌ها با فایل پشتیبان اطمینان دارید؟', (confirmed) => {
+                        if (confirmed) {
+                            allRecords = parsed.records;
+                            if (parsed.notes) dailyNotes = parsed.notes;
+                            if (parsed.settings) {
+                                appSettings = parsed.settings;
+                                localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+                                applyAppSettingsToUI();
+                            }
+                            saveRecords();
+                            renderDashboard();
+                            addLog('بازیابی اطلاعات از فایل محلی با موفقیت انجام شد.', 'success');
+                            showFeedbackBanner('اطلاعات با موفقیت از فایل پشتیبان بازیابی شد.', 'success');
+                        }
+                    });
+                } catch (err) {
+                    console.error(err);
+                    showFeedbackBanner('خطا: فایل انتخابی معتبر نیست.', 'warn');
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function openTwoStepDeleteModal() {
+            if (allRecords.length === 0 && dailyNotes.length === 0) {
+                showFeedbackBanner('داده‌ای برای حذف وجود ندارد.', 'warn');
+                return;
+            }
+
+            showCustomConfirm('⚠️ هشدار: آیا از حذف کلی تمام اطلاعات سامانه اطمینان دارید؟', (confirmed) => {
+                if (!confirmed) return;
+
+                const confirmationInput = prompt('برای تایید، کلمه "حذف" را تایپ کنید:');
+                if (confirmationInput === 'حذف') {
+                    allRecords = [];
+                    dailyNotes = [];
+                    saveRecords();
+                    renderDashboard();
+                    addLog('تمام اطلاعات سامانه پاک شدند.', 'warn');
+                    showFeedbackBanner('تمام اطلاعات با موفقیت حذف شدند.', 'warn');
+                }
+            });
+        }
+
+        function updateAppHeader() {
+            const titleElement = document.getElementById('mainAppTitle');
+            if (titleElement) {
+                const customShopName = appSettings.shopName || 'سامانه آمار دوخت لباس';
+                titleElement.innerText = `${customShopName} - گزارش ماه ${currentJalali.monthName} ${currentJalali.year}`;
+            }
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const info = getCurrentJalaliInfo();
+            const editingIdRaw = document.getElementById('editingRecordId').value;
+            const editingId = editingIdRaw ? Number(editingIdRaw) : '';
+            const code = document.getElementById('itemCode').value.trim();
+            const title = document.getElementById('itemTitle').value.trim();
+            const color = document.getElementById('itemColor').value.trim();
+            const qty = parsePersianInt(document.getElementById('quantity').value);
+            const price = parsePersianInt(document.getElementById('unitPrice').value);
+            const status = document.getElementById('itemStatus').value;
+            const date = document.getElementById('recordDate').value || info.fullDateStr;
+            const time = document.getElementById('recordTime').value || new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+
+            if (qty <= 0 || price <= 0) {
+                showFeedbackBanner('لطفاً مقادیر معتبر (بزرگ‌تر از صفر) برای تعداد و قیمت واحد وارد کنید.', 'warn');
+                return;
+            }
+
+            if (editingId) {
+                const targetIndex = allRecords.findIndex(r => r.id === editingId);
+                if (targetIndex !== -1) {
+                    allRecords[targetIndex] = {
+                        ...allRecords[targetIndex],
+                        itemCode: code, itemTitle: title, itemColor: color,
+                        quantity: qty, unitPrice: price, totalPrice: qty * price,
+                        status: status, date: date, time: time
+                    };
+                    addLog(`رکورد ${code} ویرایش شد.`, 'warn');
+                    showFeedbackBanner(`رکورد با کد ${code} با موفقیت ویرایش شد.`, 'success');
+                }
+            } else {
+                const newRecord = {
+                    id: Date.now(), itemCode: code, itemTitle: title, itemColor: color,
+                    quantity: qty, unitPrice: price, totalPrice: qty * price,
+                    status: status, date: date, time: time,
+                    monthKey: info.monthKey, monthName: info.monthName, year: info.year
+                };
+                allRecords.unshift(newRecord);
+                addLog(`رکورد جدید ${code} ثبت شد.`, 'success');
+                showFeedbackBanner(`رکورد جدید با کد ${code} با موفقیت ثبت شد.`, 'success');
+            }
+
+            saveRecords();
+            resetFormState();
+            selectedMonthFilter = info.monthKey;
+            renderDashboard();
+        }
+
+        function editRecord(id) {
+            const record = allRecords.find(r => r.id === id);
+            if (!record) return;
+
+            document.getElementById('editingRecordId').value = record.id;
+            document.getElementById('itemCode').value = record.itemCode || '';
+            document.getElementById('itemTitle').value = record.itemTitle || '';
+            document.getElementById('itemColor').value = record.itemColor || '';
+            document.getElementById('quantity').value = record.quantity;
+            document.getElementById('unitPrice').value = record.unitPrice;
+            document.getElementById('itemStatus').value = record.status || appSettings.defaultStatus || 'به موقع';
+            document.getElementById('recordDate').value = record.date;
+            document.getElementById('recordTime').value = record.time;
+
+            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-600"></i> ویرایش رکورد کد ${record.itemCode || '-'}`;
+            document.getElementById('submitBtn').className = "tactile-btn w-full bg-amber-600 text-white py-3.5 rounded-xl font-medium text-sm hover:bg-amber-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow";
+            document.getElementById('submitBtn').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>ذخیره تغییرات</span>`;
+            document.getElementById('cancelEditBtn').classList.remove('flex');
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+            document.getElementById('cancelEditBtn').classList.add('flex');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetFormState() {
+            const info = getCurrentJalaliInfo();
+            document.getElementById('stitchingForm').reset();
+            document.getElementById('editingRecordId').value = '';
+            document.getElementById('recordDate').value = info.fullDateStr;
+            document.getElementById('itemStatus').value = appSettings.defaultStatus || 'به موقع';
+            setCurrentTimeInInput();
+
+            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-circle-plus text-indigo-600 dark:text-indigo-400"></i> ثبت کارکرد جدید`;
+            document.getElementById('submitBtn').className = "tactile-btn w-full bg-indigo-600 text-white py-3.5 rounded-xl font-medium text-sm hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow";
+            document.getElementById('submitBtn').innerHTML = `<i class="fa-solid fa-check"></i> <span>ثبت در آمار ماه جاری</span>`;
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            document.getElementById('cancelEditBtn').classList.remove('flex');
+        }
+
+        function deleteRecord(id) {
+            showCustomConfirm('آیا از حذف این رکورد اطمینان دارید؟', (confirmed) => {
+                if (confirmed) {
+                    allRecords = allRecords.filter(r => r.id !== id);
+                    saveRecords();
+                    renderDashboard();
+                    addLog(`یک رکورد حذف شد.`, 'warn');
+                    showFeedbackBanner('رکورد مورد نظر با موفقیت حذف شد.', 'warn');
+                }
+            });
+        }
+
+        function saveDailyNote() {
+            const dateInput = document.getElementById('noteDateInput').value.trim();
+            const textInput = document.getElementById('noteTextInput').value.trim();
+
+            if (!dateInput || !textInput) {
+                showFeedbackBanner('لطفاً تاریخ و متن یادداشت را وارد کنید.', 'warn');
+                return;
+            }
+
+            const existingNoteIndex = dailyNotes.findIndex(n => n.date === dateInput);
+            if (existingNoteIndex !== -1) {
+                dailyNotes[existingNoteIndex].text = textInput;
+            } else {
+                dailyNotes.unshift({ id: Date.now(), date: dateInput, text: textInput });
+            }
+
+            saveRecords();
+            renderDailyNotes();
+            document.getElementById('noteTextInput').value = '';
+            showFeedbackBanner('یادداشت روزانه با موفقیت ثبت شد.', 'success');
+            addLog(`یادداشت برای تاریخ ${dateInput} ثبت شد.`, 'success');
+        }
+
+        function deleteDailyNote(id) {
+            showCustomConfirm('آیا از حذف این یادداشت اطمینان دارید؟', (confirmed) => {
+                if (confirmed) {
+                    dailyNotes = dailyNotes.filter(n => n.id !== id);
+                    saveRecords();
+                    renderDailyNotes();
+                    showFeedbackBanner('یادداشت مورد نظر حذف شد.', 'warn');
+                }
+            });
+        }
+
+        function renderDailyNotes() {
+            const container = document.getElementById('notesContainer');
+            if (!container) return;
+
+            if (dailyNotes.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">هیچ یادداشتی ثبت نشده است.</p>`;
+                return;
+            }
+
+            container.innerHTML = dailyNotes.map(n => `
+                <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-100 dark:border-slate-700 text-xs">
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-200/50">${escapeHTML(n.date)}</span>
+                        <span class="text-slate-700 dark:text-slate-200">${escapeHTML(n.text)}</span>
+                    </div>
+                    <button onclick="deleteDailyNote(${n.id})" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors" title="حذف یادداشت"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function getFilteredRecords() {
+            const searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+            return allRecords.filter(r => {
+                if (r.monthKey !== selectedMonthFilter) return false;
+                if (!searchQuery) return true;
+                return (r.itemCode || '').toLowerCase().includes(searchQuery) ||
+                       (r.itemTitle || '').toLowerCase().includes(searchQuery) ||
+                       (r.itemColor || '').toLowerCase().includes(searchQuery);
+            });
+        }
+
+        function getStatusBadgeClass(status) {
+            switch(status) {
+                case 'زودتر از موعد': return 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60';
+                case 'تاخیر': return 'bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60';
+                default: return 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60';
+            }
+        }
+
+        function renderMonthSelector() {
+            const selector = document.getElementById('monthFilterSelect');
+            if (!selector) return;
+            const existingKeys = [...new Set(allRecords.map(r => r.monthKey))];
+            if (!existingKeys.includes(currentJalali.monthKey)) existingKeys.unshift(currentJalali.monthKey);
+            existingKeys.sort().reverse();
+
+            selector.innerHTML = existingKeys.map(key => {
+                const [year, monthNum] = key.split('-');
+                const name = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
+                const isCurrent = key === currentJalali.monthKey;
+                return `<option value="${key}" ${key === selectedMonthFilter ? 'selected' : ''}>${name} ${year} ${isCurrent ? '(ماه جاری)' : ''}</option>`;
+            }).join('');
+        }
+
+        function onMonthFilterChange(event) {
+            selectedMonthFilter = event.target.value;
+            renderDashboard();
+            
+            const [year, monthNum] = selectedMonthFilter.split('-');
+            const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
+            showFeedbackBanner(`مسیر گزارش با موفقیت به «${monthName} ${year}» تغییر یافت.`, 'info');
+        }
+
+        function renderDashboard() {
+            applyAppSettingsToUI();
+            renderMonthSelector();
+            renderDailyNotes();
+            const records = getFilteredRecords();
+            const tableBody = document.getElementById('recordsTableBody');
+            const emptyState = document.getElementById('emptyState');
+            const badge = document.getElementById('activeReportBadge');
+            const currency = appSettings.currency || 'تومان';
+
+            const totalPrice = records.reduce((sum, r) => sum + r.totalPrice, 0);
+            document.getElementById('kpiTotalPrice').innerText = `${formatNumber(totalPrice)} ${currency}`;
+
+            const isCurrentMonth = selectedMonthFilter === currentJalali.monthKey;
+            badge.innerText = isCurrentMonth ? 'گزارش ماه جاری (فعال)' : 'گزارش آرشیو شده';
+
+            if (records.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            tableBody.innerHTML = records.map((r, index) => `
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                    <td class="p-3.5 text-slate-400 text-xs">${formatNumber(index + 1)}</td>
+                    <td class="p-3.5 font-mono text-xs text-slate-600 dark:text-slate-300 font-semibold">${escapeHTML(r.itemCode) || '-'}</td>
+                    <td class="p-3.5 font-medium text-slate-800 dark:text-slate-100">${escapeHTML(r.itemTitle)}</td>
+                    <td class="p-3.5 text-xs text-slate-600 dark:text-slate-300"><span class="bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">${escapeHTML(r.itemColor) || '-'}</span></td>
+                    <td class="p-3.5">${formatNumber(r.quantity)}</td>
+                    <td class="p-3.5">${formatNumber(r.unitPrice)}</td>
+                    <td class="p-3.5 font-bold text-emerald-600 dark:text-emerald-400">${formatNumber(r.totalPrice)}</td>
+                    <td class="p-3.5">
+                        <span class="text-xs px-3 py-1 rounded-lg border font-medium whitespace-nowrap inline-block ${getStatusBadgeClass(r.status)}">
+                            ${escapeHTML(r.status) || 'به موقع'}
+                        </span>
+                    </td>
+                    <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400">${escapeHTML(r.date)} - ${escapeHTML(r.time)}</td>
+                    <td class="p-3.5 text-center flex items-center justify-center gap-2 no-print">
+                        <button onclick="editRecord(${r.id})" class="text-amber-600 hover:text-amber-800 p-1.5 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors" title="ویرایش"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteRecord(${r.id})" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors" title="حذف"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openOverviewModal() {
+            const records = getFilteredRecords();
+            const modal = document.getElementById('overviewModal');
+            const modalTableBody = document.getElementById('overviewModalTableBody');
+            const currency = appSettings.currency || 'تومان';
+            const [year, monthNum] = selectedMonthFilter.split('-');
+            const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
+            document.getElementById('modalPeriodSub').innerText = `خلاصه گزارش ماه ${monthName} ${year}`;
+
+            const totalCount = records.length;
+            const onTimeCount = records.filter(r => (r.status || 'به موقع') === 'به موقع').length;
+            const earlyCount = records.filter(r => r.status === 'زودتر از موعد').length;
+            const delayedCount = records.filter(r => r.status === 'تاخیر').length;
+            const totalQtySum = records.reduce((sum, r) => sum + r.quantity, 0);
+            const totalAmountSum = records.reduce((sum, r) => sum + r.totalPrice, 0);
+            const calcPercent = (count) => totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
+
+            document.getElementById('overviewOnTimeCount').innerText = formatNumber(onTimeCount);
+            document.getElementById('overviewOnTimePercent').innerText = `${formatNumber(calcPercent(onTimeCount))}٪`;
+            document.getElementById('overviewEarlyCount').innerText = formatNumber(earlyCount);
+            document.getElementById('overviewEarlyPercent').innerText = `${formatNumber(calcPercent(earlyCount))}٪`;
+            document.getElementById('overviewDelayedCount').innerText = formatNumber(delayedCount);
+            document.getElementById('overviewDelayedPercent').innerText = `${formatNumber(calcPercent(delayedCount))}٪`;
+
+            document.getElementById('overviewTotalItemsCount').innerText = `${formatNumber(totalQtySum)} عدد`;
+            document.getElementById('overviewTotalAmount').innerText = `${formatNumber(totalAmountSum)} ${currency}`;
+
+            modalTableBody.innerHTML = records.length === 0 
+                ? `<tr><td colspan="9" class="text-center p-4 text-slate-400">اطلاعاتی موجود نیست.</td></tr>`
+                : records.map((r, i) => `
+                    <tr>
+                        <td class="p-3 text-slate-400">${formatNumber(i + 1)}</td>
+                        <td class="p-3 font-mono text-slate-600 dark:text-slate-300">${escapeHTML(r.itemCode) || '-'}</td>
+                        <td class="p-3 font-medium text-slate-800 dark:text-slate-100">${escapeHTML(r.itemTitle)}</td>
+                        <td class="p-3 text-slate-600 dark:text-slate-300">${escapeHTML(r.itemColor) || '-'}</td>
+                        <td class="p-3">${formatNumber(r.quantity)}</td>
+                        <td class="p-3">${formatNumber(r.unitPrice)}</td>
+                        <td class="p-3 font-bold text-emerald-600 dark:text-emerald-400">${formatNumber(r.totalPrice)}</td>
+                        <td class="p-3"><span class="text-[11px] px-2.5 py-1 rounded-lg border inline-block ${getStatusBadgeClass(r.status)}">${escapeHTML(r.status) || 'به موقع'}</span></td>
+                        <td class="p-3 text-slate-500 dark:text-slate-400">${escapeHTML(r.date)}</td>
+                    </tr>
+                `).join('');
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeOverviewModal() {
+            document.getElementById('overviewModal').classList.add('hidden');
+        }
+
+        function exportToHtmlReport() {
+            const records = getFilteredRecords();
+            if (records.length === 0) {
+                showFeedbackBanner('رکوردی برای خروجی گرفتن وجود ندارد.', 'warn');
+                return;
+            }
+            const [year, monthNum] = selectedMonthFilter.split('-');
+            const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
+            const currency = appSettings.currency || 'تومان';
+            
+            const totalQtySum = records.reduce((sum, r) => sum + r.quantity, 0);
+            const totalAmountSum = records.reduce((sum, r) => sum + r.totalPrice, 0);
+            
+            const htmlContent = `<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <title>گزارش ${monthName} ${year}</title>
+    <style>
+        body { font-family: 'Vazirmatn', Tahoma, sans-serif; padding: 25px; color: #1e293b; direction: rtl; }
+        h1 { font-size: 20px; margin-bottom: 5px; color: #0f172a; }
+        p { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+        th, td { border: 1px solid #e2e8f0; padding: 10px; text-align: center; }
+        th { background-color: #f1f5f9; color: #334155; font-weight: bold; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        .summary-box { margin-top: 20px; padding: 15px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h1>گزارش عملکرد کارگاه - ماه ${monthName} ${year}</h1>
+    <p>تاریخ تهیه گزارش: ${currentJalali.fullDateStr}</p>
+    <table>
+        <tr>
+            <th>ردیف</th>
+            <th>کد لباس</th>
+            <th>عنوان لباس</th>
+            <th>رنگ</th>
+            <th>تعداد</th>
+            <th>قیمت واحد (${currency})</th>
+            <th>مبلغ کل (${currency})</th>
+            <th>وضعیت</th>
+            <th>تاریخ ثبت</th>
+        </tr>` +
+        records.map((r, i) => `
+        <tr>
+            <td>${i + 1}</td>
+            <td>${escapeHTML(r.itemCode) || '-'}</td>
+            <td>${escapeHTML(r.itemTitle)}</td>
+            <td>${escapeHTML(r.itemColor) || '-'}</td>
+            <td>${r.quantity}</td>
+            <td>${r.unitPrice.toLocaleString('en-US')}</td>
+            <td><b>${r.totalPrice.toLocaleString('en-US')}</b></td>
+            <td>${escapeHTML(r.status) || 'به موقع'}</td>
+            <td>${escapeHTML(r.date)}</td>
+        </tr>`).join('') +
+        `</table>
+        <div class="summary-box">
+            <strong>مجموع کل تعداد:</strong> ${totalQtySum.toLocaleString('en-US')} عدد &nbsp;&nbsp;|&nbsp;&nbsp; 
+            <strong>مجموع کل کارکرد:</strong> ${totalAmountSum.toLocaleString('en-US')} ${currency}
+        </div>
+</body>
+</html>`;
+
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `گزارش_آمار_دوخت_${monthName}_${year}.html`;
+            link.click();
+            
+            addLog('گزارش HTML استخراج شد.', 'success');
+            showFeedbackBanner(`فایل گزارش HTML ماه ${monthName} استخراج و ذخیره شد.`, 'success');
+        }
+
+        function setCurrentTimeInInput() {
+            const now = new Date();
+            document.getElementById('recordTime').value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        }
+
+        document.getElementById('recordDate').value = currentJalali.fullDateStr;
+        document.getElementById('noteDateInput').value = currentJalali.fullDateStr;
+        setCurrentTimeInInput();
+        applyAppSettingsToUI();
+
+        checkDailyAutoBackup();
+
+        addLog(`سامانه بارگذاری شد. تاریخ: ${currentJalali.fullDateStr}`, 'info');
+        renderDashboard();
+        initStorageFolderConnection();
+    </script>
+</body>
+</html>

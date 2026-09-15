@@ -112,6 +112,22 @@
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen pb-12 font-normal-size" id="appBody">
 
+    <!-- صفحه قفل ورود به برنامه -->
+    <div id="pinLockScreen" class="hidden fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 w-full max-w-sm text-center border border-slate-100 dark:border-slate-800">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-4">
+                <i class="fa-solid fa-lock text-2xl"></i>
+            </div>
+            <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-1">ورود به سامانه آمار دوخت</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-5">برای مشاهده اطلاعات، رمز عبور را وارد کنید.</p>
+            <form onsubmit="attemptUnlock(event)" class="space-y-3">
+                <input type="password" id="pinLockInput" inputmode="numeric" required autocomplete="off" class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-center text-lg tracking-[0.3em] bg-slate-50 dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" placeholder="رمز عبور">
+                <p id="pinLockError" class="hidden text-xs text-rose-600 dark:text-rose-400 font-medium">رمز عبور اشتباه است، دوباره تلاش کنید.</p>
+                <button type="submit" class="tactile-btn w-full bg-indigo-600 text-white py-3 rounded-xl font-medium text-sm hover:bg-indigo-700 transition-all">ورود</button>
+            </form>
+        </div>
+    </div>
+
     <div class="max-w-5xl mx-auto px-4 pt-6">
 
         <!-- هدر اصلی برنامه -->
@@ -136,6 +152,10 @@
 
                         <button onclick="toggleLogBox(); closeToolsDropdown();" class="w-full text-right px-4 py-2.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2.5 transition-colors">
                             <i class="fa-solid fa-terminal text-slate-500 w-4"></i> نمایش رویدادها
+                        </button>
+
+                        <button onclick="lockAppNow()" class="w-full text-right px-4 py-2.5 text-xs text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 flex items-center gap-2.5 transition-colors">
+                            <i class="fa-solid fa-lock text-indigo-600 dark:text-indigo-400 w-4"></i> قفل کردن برنامه
                         </button>
                         
                         <div class="border-t border-slate-100 dark:border-slate-800 my-1"></div>
@@ -285,7 +305,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">وضعیت تحویل / ثبت</label>
-                        <select id="itemStatus" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none bg-white dark:bg-slate-800 dark:text-slate-100 transition-all">
+                        <select id="itemStatus" required onchange="toggleDeliveryDurationField()" class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none bg-white dark:bg-slate-800 dark:text-slate-100 transition-all">
                             <option value="به موقع">به موقع</option>
                             <option value="تاخیر">تاخیر</option>
                             <option value="زودتر از موعد">زودتر از موعد</option>
@@ -303,6 +323,36 @@
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">ساعت ثبت</label>
                         <input type="time" id="recordTime" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div id="deliveryDurationWrapper" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 rounded-xl p-4 transition-all">
+                    <div>
+                        <label id="deliveryDurationLabel" class="block text-xs font-medium text-amber-700 dark:text-amber-400 mb-1.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-hourglass-half"></i> مدت زمان تاخیر
+                        </label>
+                        <input type="time" id="deliveryDuration" class="w-full p-3 border border-amber-200 dark:border-amber-800 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
+                    </div>
+                    <div class="flex items-end">
+                        <p class="text-[11px] leading-relaxed text-amber-700/80 dark:text-amber-400/80 pb-3">
+                            <i class="fa-solid fa-circle-info ml-1"></i>
+                            این مقدار به‌صورت پنجره‌ی زمانی (ساعت:دقیقه) نسبت به موعد مقرر تحویل ثبت می‌شود.
+                        </p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">عکس لباس / نمونه کار (اختیاری)</label>
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <label for="itemPhotoInput" class="tactile-btn cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700">
+                            <i class="fa-solid fa-camera"></i> <span>انتخاب / گرفتن عکس</span>
+                        </label>
+                        <input type="file" id="itemPhotoInput" accept="image/*" capture="environment" onchange="handlePhotoSelect(event)" class="hidden">
+                        <div id="photoPreviewWrap" class="hidden relative">
+                            <img id="photoPreviewImg" class="w-14 h-14 object-cover rounded-xl border border-slate-200 dark:border-slate-700" src="" alt="پیش‌نمایش عکس">
+                            <button type="button" onclick="removeSelectedPhoto()" class="absolute -top-2 -left-2 w-5 h-5 bg-rose-600 text-white rounded-full text-[10px] flex items-center justify-center shadow" title="حذف عکس"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        <span id="photoStatusText" class="text-[11px] text-slate-400"></span>
                     </div>
                 </div>
 
@@ -373,6 +423,10 @@
                         </span>
                         <input type="text" id="searchInput" oninput="renderDashboard()" placeholder="جستجو در لیست..." class="w-full pr-10 pl-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
+                    <button onclick="openAdvancedSearchModal()" class="no-print p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5 whitespace-nowrap bg-white dark:bg-slate-800" title="جستجوی پیشرفته در کل داده‌ها">
+                        <i class="fa-solid fa-filter"></i>
+                        <span class="hidden md:inline">جستجوی پیشرفته</span>
+                    </button>
                     <button onclick="printRecordsTable()" class="no-print p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5 whitespace-nowrap bg-white dark:bg-slate-800" title="چاپ لیست کارکردها">
                         <i class="fa-solid fa-print"></i>
                         <span class="hidden md:inline">چاپ لیست</span>
@@ -382,6 +436,15 @@
                         <span class="hidden md:inline">تمام صفحه</span>
                     </button>
                 </div>
+            </div>
+
+            <!-- نوار وضعیت جستجوی پیشرفته -->
+            <div id="advancedSearchBanner" class="no-print hidden px-4 py-3 bg-amber-50 dark:bg-amber-950/30 border-b border-amber-100 dark:border-amber-900/50 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span class="text-amber-700 dark:text-amber-400 font-medium flex items-center gap-1.5">
+                    <i class="fa-solid fa-filter"></i>
+                    نمایش نتایج جستجوی پیشرفته در کل داده‌ها (همه‌ی ماه‌ها)
+                </span>
+                <button onclick="clearAdvancedSearch()" class="text-amber-700 dark:text-amber-400 underline hover:text-amber-900 dark:hover:text-amber-300 font-medium">بازگشت به نمای ماهانه</button>
             </div>
 
             <!-- سربرگ ویژه چاپ؛ فقط هنگام چاپ نمایش داده می‌شود -->
@@ -395,6 +458,7 @@
                     <thead class="bg-slate-100/70 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 text-xs sticky top-0 z-10">
                         <tr>
                             <th class="p-3.5">#</th>
+                            <th class="p-3.5 no-print">عکس</th>
                             <th class="p-3.5">کد</th>
                             <th class="p-3.5">عنوان لباس</th>
                             <th class="p-3.5">رنگ</th>
@@ -472,6 +536,127 @@
         </div>
     </div>
 
+    <!-- مدال تایید نهایی حذف با کد ۴ رقمی -->
+    <div id="deleteCodeModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-rose-100 dark:border-rose-900/50 space-y-4 text-center transition-all">
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-2xl mb-1 shadow-inner">
+                <i class="fa-solid fa-shield-halved text-xl"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800 dark:text-white">تایید نهایی حذف اطلاعات</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">این عملیات غیرقابل بازگشت است. برای تایید، کد امنیتی ۴ رقمی خودتان را وارد کنید:</p>
+            <input type="password" id="deleteCodeInput" inputmode="numeric" maxlength="4" placeholder="کد امنیتی ۴ رقمی" onkeydown="if(event.key==='Enter'){confirmDeleteCode();}" class="w-full p-3 text-center text-xl tracking-[0.4em] border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 outline-none transition-all">
+            <p id="deleteCodeError" class="hidden text-xs text-rose-600 dark:text-rose-400 font-medium">کد وارد شده صحیح نیست، دوباره تلاش کنید.</p>
+            <button type="button" onclick="resetDeleteCode()" class="text-xs text-slate-500 dark:text-slate-400 underline hover:text-rose-600 dark:hover:text-rose-400 transition-colors">کد امنیتی را فراموش کرده‌اید؟</button>
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="closeDeleteCodeModal()" class="flex-1 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium transition-colors">انصراف</button>
+                <button type="button" onclick="confirmDeleteCode()" class="flex-1 py-2.5 bg-rose-600 text-white rounded-xl text-sm hover:bg-rose-700 font-medium transition-colors shadow-sm">حذف قطعی</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مدال جستجوی پیشرفته در کل داده‌ها -->
+    <div id="advancedSearchModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 dark:border-slate-800 space-y-5 my-8 transition-all">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-indigo-600 dark:text-indigo-400"></i>
+                    جستجوی پیشرفته در کل داده‌ها
+                </h2>
+                <button onclick="closeAdvancedSearchModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed -mt-3">
+                برخلاف جستجوی سریع بالای جدول که فقط در ماه انتخاب‌شده جستجو می‌کند، این جستجو در تمام رکوردهای ثبت‌شده در همه‌ی ماه‌ها انجام می‌شود.
+            </p>
+
+            <div class="space-y-4 max-h-[60vh] overflow-y-auto pl-1">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">جستجو در کد / عنوان / رنگ</label>
+                    <input type="text" id="advSearchText" placeholder="بخشی از متن مورد نظر..." class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">وضعیت تحویل</label>
+                    <select id="advSearchStatus" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        <option value="all">همه وضعیت‌ها</option>
+                        <option value="به موقع">به موقع</option>
+                        <option value="تاخیر">تاخیر</option>
+                        <option value="زودتر از موعد">زودتر از موعد</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">از تاریخ</label>
+                        <div class="relative">
+                            <input type="text" id="advSearchDateFrom" readonly onclick="openDatePicker('advSearchDateFrom', event)" placeholder="انتخاب تاریخ" class="w-full p-2.5 pr-9 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all cursor-pointer">
+                            <span class="absolute inset-y-0 right-2.5 flex items-center pointer-events-none text-slate-400 text-xs"><i class="fa-solid fa-calendar-days"></i></span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">تا تاریخ</label>
+                        <div class="relative">
+                            <input type="text" id="advSearchDateTo" readonly onclick="openDatePicker('advSearchDateTo', event)" placeholder="انتخاب تاریخ" class="w-full p-2.5 pr-9 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all cursor-pointer">
+                            <span class="absolute inset-y-0 right-2.5 flex items-center pointer-events-none text-slate-400 text-xs"><i class="fa-solid fa-calendar-days"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">حداقل تعداد</label>
+                        <input type="text" inputmode="numeric" id="advSearchQtyMin" placeholder="مثلاً ۱۰" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">حداکثر تعداد</label>
+                        <input type="text" inputmode="numeric" id="advSearchQtyMax" placeholder="مثلاً ۱۰۰" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">حداقل مبلغ کل</label>
+                        <input type="text" inputmode="numeric" id="advSearchPriceMin" placeholder="مثلاً ۱۰۰۰۰۰" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">حداکثر مبلغ کل</label>
+                        <input type="text" inputmode="numeric" id="advSearchPriceMax" placeholder="مثلاً ۵۰۰۰۰۰" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-between items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button onclick="clearAdvancedSearch(); closeAdvancedSearchModal();" class="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">پاک کردن فیلترها</button>
+                <div class="flex gap-2">
+                    <button onclick="closeAdvancedSearchModal()" class="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">انصراف</button>
+                    <button onclick="applyAdvancedSearch()" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm hover:bg-indigo-700 transition-colors shadow-sm">اعمال جستجو</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مدال تایید دو مرحله‌ای بازنشانی کد امنیتی -->
+    <div id="resetCodeConfirmModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-amber-100 dark:border-amber-900/50 space-y-4 text-center transition-all">
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-2xl mb-1 shadow-inner">
+                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800 dark:text-white">تایید نهایی بازنشانی کد امنیتی</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                برای جلوگیری از بازنشانی تصادفی یا غیرمجاز، عبارت زیر را دقیقاً در کادر پایین تایپ کنید:
+            </p>
+            <div class="text-sm font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 rounded-xl py-2.5 border border-amber-100 dark:border-amber-900">بازنشانی کد</div>
+            <input type="text" id="resetCodePhraseInput" placeholder="عبارت را اینجا تایپ کنید" onkeydown="if(event.key==='Enter'){confirmResetDeleteCode();}" class="w-full p-3 text-center text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition-all">
+            <p id="resetCodePhraseError" class="hidden text-xs text-rose-600 dark:text-rose-400 font-medium">عبارت وارد شده مطابقت ندارد، دوباره تلاش کنید.</p>
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="closeResetCodeConfirmModal()" class="flex-1 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium transition-colors">انصراف</button>
+                <button type="button" onclick="confirmResetDeleteCode()" class="flex-1 py-2.5 bg-amber-600 text-white rounded-xl text-sm hover:bg-amber-700 font-medium transition-colors shadow-sm">بازنشانی کد</button>
+            </div>
+        </div>
+    </div>
+
     <!-- مدال تنظیمات و ظاهر برنامه -->
     <div id="settingsModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 dark:border-slate-800 space-y-5 my-8 transition-all">
@@ -538,6 +723,56 @@
                     </div>
                 </div>
 
+                <div class="space-y-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                    <h3 class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-lock"></i> قفل ورود به برنامه
+                    </h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        در صورت فعال بودن، هر بار باز کردن برنامه یک رمز عبور درخواست می‌شود (مناسب برای گوشی‌های مشترک). این رمز هم به‌صورت رمزنگاری‌شده ذخیره می‌شود.
+                    </p>
+                    <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                        <input type="checkbox" id="settingPinEnabled" onchange="togglePinFieldsVisibility()" class="w-4 h-4 rounded accent-indigo-600">
+                        فعال‌سازی قفل با رمز عبور
+                    </label>
+                    <p id="pinLockStatusText" class="text-xs font-semibold"></p>
+                    <div id="pinFieldsWrapper" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">رمز عبور جدید (حداقل ۴ رقم)</label>
+                            <input type="password" id="settingNewPin" inputmode="numeric" maxlength="8" placeholder="مثلاً ۱۲۳۴" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-center tracking-[0.3em] bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">تکرار رمز عبور</label>
+                            <input type="password" id="settingConfirmPin" inputmode="numeric" maxlength="8" placeholder="تکرار رمز" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-center tracking-[0.3em] bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        </div>
+                    </div>
+                    <button type="button" onclick="savePinLock()" class="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-sm hover:bg-indigo-700 font-medium transition-colors shadow-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-key"></i> ذخیره تنظیمات قفل
+                    </button>
+                </div>
+
+                <div class="space-y-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                    <h3 class="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved"></i> کد امنیتی پاک کردن داده‌ها
+                    </h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        این کد فقط توسط خودتان تعیین می‌شود و به‌صورت رمزنگاری‌شده (هش) در حافظه مرورگر ذخیره می‌شود؛ خود کد در هیچ‌کجا به‌صورت متن ساده ذخیره یا نمایش داده نمی‌شود.
+                    </p>
+                    <p id="deleteCodeStatusText" class="text-xs font-semibold"></p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">کد امنیتی جدید (۴ رقم)</label>
+                            <input type="password" id="settingNewDeleteCode" inputmode="numeric" maxlength="4" placeholder="مثلاً ۱۳۷۹" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-center tracking-[0.3em] bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">تکرار کد امنیتی</label>
+                            <input type="password" id="settingConfirmDeleteCode" inputmode="numeric" maxlength="4" placeholder="تکرار کد" class="w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-center tracking-[0.3em] bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all">
+                        </div>
+                    </div>
+                    <button type="button" onclick="saveDeleteCode()" class="w-full py-2.5 bg-rose-600 text-white rounded-xl text-sm hover:bg-rose-700 font-medium transition-colors shadow-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-key"></i> ذخیره کد امنیتی
+                    </button>
+                </div>
+
                 <div class="space-y-3">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">وضعیت حافظه سامانه</h3>
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 text-xs space-y-2">
@@ -558,6 +793,14 @@
                 <button onclick="saveAppSettings(event)" class="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm hover:bg-purple-700 transition-colors shadow-sm">ذخیره تنظیمات</button>
             </div>
         </div>
+    </div>
+
+    <!-- مدال مشاهده عکس رکورد -->
+    <div id="photoViewerModal" class="hidden fixed inset-0 bg-black/80 z-[90] flex items-center justify-center p-4 no-print" onclick="closePhotoViewer()">
+        <button onclick="closePhotoViewer()" class="absolute top-5 left-5 text-white text-lg w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-colors" title="بستن">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <img id="photoViewerImg" class="max-w-full max-h-full rounded-2xl shadow-2xl" src="" alt="عکس رکورد" onclick="event.stopPropagation()">
     </div>
 
     <!-- مدال نمای کلی -->
@@ -654,14 +897,9 @@
     <script>
         let newWorkerWaiting = null;
 
-        if (location.protocol === 'file:') {
-            window.addEventListener('load', () => {
-                showFeedbackBanner('حالت آفلاین فعال نیست: فایل‌ها مستقیماً باز شده‌اند (آدرس با file:// شروع می‌شود). برای فعال شدن سرویس‌ورکر، باید فایل‌ها را از طریق یک سرور محلی یا یک هاست واقعی (https) اجرا کنید.', 'warn');
-            });
-        } else if ('serviceWorker' in navigator) {
+        if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then(reg => {
-                    console.log('Service Worker ثبت شد. Scope:', reg.scope);
                     if (reg.waiting && navigator.serviceWorker.controller) {
                         newWorkerWaiting = reg.waiting;
                         showAppUpdateBanner();
@@ -676,10 +914,7 @@
                             }
                         });
                     });
-                }).catch(err => {
-                    console.error('SW registration failed:', err);
-                    showFeedbackBanner('ثبت سرویس‌ورکر (حالت آفلاین) ناموفق بود: ' + (err && err.message ? err.message : err), 'warn');
-                });
+                }).catch(err => console.log('SW registration failed:', err));
 
                 let refreshingPage = false;
                 navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -687,10 +922,6 @@
                     refreshingPage = true;
                     window.location.reload();
                 });
-            });
-        } else {
-            window.addEventListener('load', () => {
-                showFeedbackBanner('این مرورگر از سرویس‌ورکر (حالت آفلاین) پشتیبانی نمی‌کند.', 'warn');
             });
         }
 
@@ -835,9 +1066,150 @@
             defaultStatus: 'به موقع',
             theme: 'light',
             fontSize: 'normal',
-            numFormat: 'persian'
+            numFormat: 'persian',
+            pinEnabled: false,
+            pinHash: null
         };
         let saveTimeout = null;
+
+        /* ============ مدیریت قفل ورود به برنامه (رمز عبور) ============ */
+        checkPinLockOnLoad();
+
+        async function hashAppPin(pin) {
+            const input = 'sewing-app-pin-salt-v1:' + pin;
+            if (window.crypto && window.crypto.subtle) {
+                try {
+                    const enc = new TextEncoder();
+                    const data = enc.encode(input);
+                    const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+                    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+                } catch (err) {
+                    console.error('خطا در رمزنگاری رمز عبور:', err);
+                }
+            }
+            let hash = 0;
+            for (let i = 0; i < input.length; i++) {
+                hash = ((hash << 5) - hash + input.charCodeAt(i)) | 0;
+            }
+            return 'fb_' + Math.abs(hash).toString(16);
+        }
+
+        function checkPinLockOnLoad() {
+            const screen = document.getElementById('pinLockScreen');
+            if (!screen) return;
+            if (appSettings.pinEnabled && appSettings.pinHash) {
+                screen.classList.remove('hidden');
+                setTimeout(() => {
+                    const input = document.getElementById('pinLockInput');
+                    if (input) input.focus();
+                }, 100);
+            }
+        }
+
+        async function attemptUnlock(event) {
+            event.preventDefault();
+            const input = document.getElementById('pinLockInput');
+            const errorEl = document.getElementById('pinLockError');
+            const entered = normalizeDigits(input.value.trim());
+            const enteredHash = await hashAppPin(entered);
+            if (enteredHash === appSettings.pinHash) {
+                document.getElementById('pinLockScreen').classList.add('hidden');
+                input.value = '';
+                errorEl.classList.add('hidden');
+            } else {
+                errorEl.classList.remove('hidden');
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        function lockAppNow() {
+            closeToolsDropdown();
+            if (!appSettings.pinEnabled || !appSettings.pinHash) {
+                showFeedbackBanner('برای قفل کردن برنامه، ابتدا از بخش تنظیمات یک رمز عبور فعال کنید.', 'warn');
+                return;
+            }
+            const screen = document.getElementById('pinLockScreen');
+            document.getElementById('pinLockError').classList.add('hidden');
+            const input = document.getElementById('pinLockInput');
+            input.value = '';
+            screen.classList.remove('hidden');
+            setTimeout(() => input.focus(), 50);
+        }
+
+        function togglePinFieldsVisibility() {
+            const enabled = document.getElementById('settingPinEnabled').checked;
+            const wrapper = document.getElementById('pinFieldsWrapper');
+            if (wrapper) wrapper.classList.toggle('opacity-50', !enabled);
+        }
+
+        function updatePinLockStatusUI() {
+            const statusEl = document.getElementById('pinLockStatusText');
+            const checkbox = document.getElementById('settingPinEnabled');
+            if (!statusEl || !checkbox) return;
+            checkbox.checked = !!appSettings.pinEnabled;
+            togglePinFieldsVisibility();
+            if (appSettings.pinEnabled && appSettings.pinHash) {
+                statusEl.innerText = 'وضعیت: قفل ورود فعال است.';
+                statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
+            } else if (appSettings.pinHash) {
+                statusEl.innerText = 'وضعیت: رمز عبور تنظیم شده اما قفل غیرفعال است.';
+                statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
+            } else {
+                statusEl.innerText = 'وضعیت: هنوز رمز عبوری تعیین نشده است.';
+                statusEl.className = 'text-xs font-semibold text-rose-600 dark:text-rose-400';
+            }
+        }
+
+        async function savePinLock() {
+            const enabled = document.getElementById('settingPinEnabled').checked;
+            const newPin = normalizeDigits(document.getElementById('settingNewPin').value.trim());
+            const confirmPin = normalizeDigits(document.getElementById('settingConfirmPin').value.trim());
+
+            if (!enabled) {
+                appSettings.pinEnabled = false;
+                localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+                if (appDirHandle) saveAllMonthFilesToDirectory();
+                updatePinLockStatusUI();
+                addLog('قفل ورود به برنامه غیرفعال شد.', 'warn');
+                showFeedbackBanner('قفل ورود به برنامه غیرفعال شد.', 'info');
+                return;
+            }
+
+            if (!newPin && !confirmPin) {
+                if (!appSettings.pinHash) {
+                    showFeedbackBanner('برای فعال‌سازی قفل، ابتدا یک رمز عبور تعیین کنید.', 'warn');
+                    return;
+                }
+                appSettings.pinEnabled = true;
+                localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+                if (appDirHandle) saveAllMonthFilesToDirectory();
+                updatePinLockStatusUI();
+                addLog('قفل ورود به برنامه فعال شد.', 'success');
+                showFeedbackBanner('قفل ورود به برنامه فعال شد.', 'success');
+                return;
+            }
+
+            if (newPin.length < 4) {
+                showFeedbackBanner('رمز عبور باید حداقل ۴ رقم باشد.', 'warn');
+                return;
+            }
+            if (newPin !== confirmPin) {
+                showFeedbackBanner('رمز عبور و تکرار آن یکسان نیستند.', 'warn');
+                return;
+            }
+
+            appSettings.pinHash = await hashAppPin(newPin);
+            appSettings.pinEnabled = true;
+            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+            if (appDirHandle) saveAllMonthFilesToDirectory();
+            document.getElementById('settingNewPin').value = '';
+            document.getElementById('settingConfirmPin').value = '';
+            updatePinLockStatusUI();
+            addLog('رمز عبور ورود به برنامه تنظیم/به‌روزرسانی شد.', 'success');
+            showFeedbackBanner('رمز عبور با موفقیت ذخیره شد.', 'success');
+        }
+        /* ============ پایان مدیریت قفل ورود به برنامه ============ */
 
         /* ============ مدیریت ذخیره‌سازی خودکار در پوشه‌ی دستگاه (فایل جدا برای هر ماه) ============ */
         let appDirHandle = null;
@@ -1422,6 +1794,12 @@
             document.getElementById('settingTheme').value = appSettings.theme || 'light';
             document.getElementById('settingFontSize').value = appSettings.fontSize || 'normal';
             document.getElementById('settingNumFormat').value = appSettings.numFormat || 'persian';
+            document.getElementById('settingNewDeleteCode').value = '';
+            document.getElementById('settingConfirmDeleteCode').value = '';
+            updateDeleteCodeStatusUI();
+            document.getElementById('settingNewPin').value = '';
+            document.getElementById('settingConfirmPin').value = '';
+            updatePinLockStatusUI();
             
             const totalRecords = allRecords.length;
             document.getElementById('storageTotalRecordsCount').innerText = formatNumber(totalRecords);
@@ -1432,6 +1810,64 @@
             document.getElementById('storageUsageSize').innerText = `${formatNumber(sizeInKB)} کیلوبایت`;
 
             document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function updateDeleteCodeStatusUI() {
+            const statusEl = document.getElementById('deleteCodeStatusText');
+            if (!statusEl) return;
+            if (appSettings.deleteCodeHash) {
+                statusEl.innerText = 'وضعیت: کد امنیتی تنظیم شده است. (برای تغییر، کد جدید را وارد کنید)';
+                statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
+            } else {
+                statusEl.innerText = 'وضعیت: هنوز کد امنیتی تعیین نشده است.';
+                statusEl.className = 'text-xs font-semibold text-rose-600 dark:text-rose-400';
+            }
+        }
+
+        async function hashDeleteCode(code) {
+            const input = 'sewing-app-delete-salt-v1:' + code;
+            if (window.crypto && window.crypto.subtle) {
+                try {
+                    const enc = new TextEncoder();
+                    const data = enc.encode(input);
+                    const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+                    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+                } catch (err) {
+                    console.error('خطا در رمزنگاری کد امنیتی:', err);
+                }
+            }
+            // روش جایگزین در صورت عدم پشتیبانی مرورگر از Web Crypto API
+            let hash = 0;
+            for (let i = 0; i < input.length; i++) {
+                hash = ((hash << 5) - hash + input.charCodeAt(i)) | 0;
+            }
+            return 'fb_' + Math.abs(hash).toString(16);
+        }
+
+        async function saveDeleteCode() {
+            const codeVal = normalizeDigits(document.getElementById('settingNewDeleteCode').value);
+            const confirmVal = normalizeDigits(document.getElementById('settingConfirmDeleteCode').value);
+
+            if (!codeVal && !confirmVal) {
+                showFeedbackBanner('برای ذخیره، ابتدا کد امنیتی ۴ رقمی را وارد کنید.', 'warn');
+                return;
+            }
+            if (codeVal.length !== 4) {
+                showFeedbackBanner('کد امنیتی باید دقیقاً ۴ رقم باشد.', 'warn');
+                return;
+            }
+            if (codeVal !== confirmVal) {
+                showFeedbackBanner('کد امنیتی و تکرار آن یکسان نیستند.', 'warn');
+                return;
+            }
+
+            appSettings.deleteCodeHash = await hashDeleteCode(codeVal);
+            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+            document.getElementById('settingNewDeleteCode').value = '';
+            document.getElementById('settingConfirmDeleteCode').value = '';
+            updateDeleteCodeStatusUI();
+            addLog('کد امنیتی پاک کردن داده‌ها به‌روزرسانی شد.', 'success');
+            showFeedbackBanner('کد امنیتی با موفقیت به‌صورت رمزنگاری‌شده ذخیره شد.', 'success');
         }
 
         function closeSettingsModal() {
@@ -1539,6 +1975,7 @@
 
         let currentJalali = getCurrentJalaliInfo();
         let selectedMonthFilter = currentJalali.monthKey;
+        let advancedSearchFilters = null;
 
         function checkDailyAutoBackup() {
             if (allRecords.length === 0 && dailyNotes.length === 0) return;
@@ -1666,25 +2103,106 @@
             reader.readAsText(file);
         }
 
+        function normalizeDigits(str) {
+            if (!str) return '';
+            const persianDigits = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+            let cleanStr = String(str).trim();
+            for (let i = 0; i < 10; i++) {
+                cleanStr = cleanStr.replace(persianDigits[i], i);
+            }
+            return cleanStr.replace(/[^0-9]/g, '');
+        }
+
         function openTwoStepDeleteModal() {
             if (allRecords.length === 0 && dailyNotes.length === 0) {
                 showFeedbackBanner('داده‌ای برای حذف وجود ندارد.', 'warn');
                 return;
             }
 
+            if (!appSettings.deleteCodeHash) {
+                showFeedbackBanner('پیش از پاک کردن داده‌ها، ابتدا یک کد امنیتی ۴ رقمی در «تنظیمات و ظاهر برنامه» تعیین کنید.', 'warn');
+                openSettingsModal();
+                return;
+            }
+
             showCustomConfirm('⚠️ هشدار: آیا از حذف کلی تمام اطلاعات سامانه اطمینان دارید؟', (confirmed) => {
                 if (!confirmed) return;
 
-                const confirmationInput = prompt('برای تایید، کلمه "حذف" را تایپ کنید:');
-                if (confirmationInput === 'حذف') {
-                    allRecords = [];
-                    dailyNotes = [];
-                    saveRecords();
-                    renderDashboard();
-                    addLog('تمام اطلاعات سامانه پاک شدند.', 'warn');
-                    showFeedbackBanner('تمام اطلاعات با موفقیت حذف شدند.', 'warn');
-                }
+                const input = document.getElementById('deleteCodeInput');
+                input.value = '';
+                document.getElementById('deleteCodeError').classList.add('hidden');
+                document.getElementById('deleteCodeModal').classList.remove('hidden');
+                setTimeout(() => input.focus(), 150);
             });
+        }
+
+        function closeDeleteCodeModal() {
+            document.getElementById('deleteCodeModal').classList.add('hidden');
+            document.getElementById('deleteCodeInput').value = '';
+        }
+
+        function resetDeleteCode() {
+            closeDeleteCodeModal();
+            showCustomConfirm('کد امنیتی به‌صورت رمزنگاری‌شده ذخیره شده و قابل بازیابی نیست. آیا می‌خواهید کد فعلی حذف شود تا بتوانید کد جدیدی تعیین کنید؟ (این کار فقط کد امنیتی را بازنشانی می‌کند و هیچ آسیبی به داده‌های شما نمی‌رساند)', (confirmed) => {
+                if (!confirmed) return;
+                openResetCodeConfirmModal();
+            });
+        }
+
+        function openResetCodeConfirmModal() {
+            const input = document.getElementById('resetCodePhraseInput');
+            input.value = '';
+            document.getElementById('resetCodePhraseError').classList.add('hidden');
+            document.getElementById('resetCodeConfirmModal').classList.remove('hidden');
+            setTimeout(() => input.focus(), 150);
+        }
+
+        function closeResetCodeConfirmModal() {
+            document.getElementById('resetCodeConfirmModal').classList.add('hidden');
+            document.getElementById('resetCodePhraseInput').value = '';
+        }
+
+        function confirmResetDeleteCode() {
+            const input = document.getElementById('resetCodePhraseInput');
+            if (input.value.trim() !== 'بازنشانی کد') {
+                document.getElementById('resetCodePhraseError').classList.remove('hidden');
+                input.focus();
+                return;
+            }
+
+            delete appSettings.deleteCodeHash;
+            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+            addLog('کد امنیتی پاک کردن داده‌ها بازنشانی شد.', 'warn');
+            showFeedbackBanner('کد امنیتی بازنشانی شد. لطفاً از بخش تنظیمات یک کد جدید تعیین کنید.', 'success');
+            closeResetCodeConfirmModal();
+            openSettingsModal();
+        }
+
+        async function confirmDeleteCode() {
+            const input = document.getElementById('deleteCodeInput');
+            const entered = normalizeDigits(input.value);
+
+            if (entered.length !== 4) {
+                document.getElementById('deleteCodeError').classList.remove('hidden');
+                input.focus();
+                return;
+            }
+
+            const enteredHash = await hashDeleteCode(entered);
+            if (enteredHash !== appSettings.deleteCodeHash) {
+                document.getElementById('deleteCodeError').classList.remove('hidden');
+                input.value = '';
+                input.focus();
+                return;
+            }
+
+            allRecords = [];
+            dailyNotes = [];
+            saveRecords();
+            renderDashboard();
+            addLog('تمام اطلاعات سامانه پاک شدند.', 'warn');
+            showFeedbackBanner('تمام اطلاعات با موفقیت حذف شدند.', 'warn');
+            closeDeleteCodeModal();
         }
 
         function updateAppHeader() {
@@ -1694,6 +2212,84 @@
                 titleElement.innerText = `${customShopName} - گزارش ماه ${currentJalali.monthName} ${currentJalali.year}`;
             }
         }
+
+        /* ============ مدیریت عکس هر رکورد (فشرده‌سازی و پیش‌نمایش) ============ */
+        let currentPhotoData = null; // دیتای عکس در حال انتخاب/ویرایش (base64) یا null
+
+        function compressImageFile(file, maxDim = 700, quality = 0.6) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = () => reject(reader.error);
+                reader.onload = () => {
+                    const img = new Image();
+                    img.onerror = () => reject(new Error('تصویر نامعتبر است.'));
+                    img.onload = () => {
+                        let { width, height } = img;
+                        if (width > maxDim || height > maxDim) {
+                            if (width > height) {
+                                height = Math.round(height * (maxDim / width));
+                                width = maxDim;
+                            } else {
+                                width = Math.round(width * (maxDim / height));
+                                height = maxDim;
+                            }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handlePhotoSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                showFeedbackBanner('لطفاً یک فایل تصویری معتبر انتخاب کنید.', 'warn');
+                event.target.value = '';
+                return;
+            }
+            const statusEl = document.getElementById('photoStatusText');
+            try {
+                if (statusEl) statusEl.innerText = 'در حال پردازش عکس...';
+                const dataUrl = await compressImageFile(file);
+                currentPhotoData = dataUrl;
+                document.getElementById('photoPreviewImg').src = dataUrl;
+                document.getElementById('photoPreviewWrap').classList.remove('hidden');
+                if (statusEl) statusEl.innerText = '';
+            } catch (err) {
+                console.error(err);
+                showFeedbackBanner('خطا در پردازش عکس انتخابی.', 'warn');
+                if (statusEl) statusEl.innerText = '';
+            } finally {
+                event.target.value = '';
+            }
+        }
+
+        function removeSelectedPhoto() {
+            currentPhotoData = null;
+            document.getElementById('photoPreviewWrap').classList.add('hidden');
+            document.getElementById('photoPreviewImg').src = '';
+        }
+
+        function viewRecordPhoto(id) {
+            const record = allRecords.find(r => r.id === id);
+            if (!record || !record.photo) return;
+            document.getElementById('photoViewerImg').src = record.photo;
+            document.getElementById('photoViewerModal').classList.remove('hidden');
+        }
+
+        function closePhotoViewer() {
+            document.getElementById('photoViewerModal').classList.add('hidden');
+            document.getElementById('photoViewerImg').src = '';
+        }
+        /* ============ پایان مدیریت عکس هر رکورد ============ */
 
         function handleFormSubmit(event) {
             event.preventDefault();
@@ -1708,9 +2304,16 @@
             const status = document.getElementById('itemStatus').value;
             const date = document.getElementById('recordDate').value || info.fullDateStr;
             const time = document.getElementById('recordTime').value || new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+            const needsDuration = (status === 'تاخیر' || status === 'زودتر از موعد');
+            const durationTime = needsDuration ? document.getElementById('deliveryDuration').value : '';
 
             if (qty <= 0 || price <= 0) {
                 showFeedbackBanner('لطفاً مقادیر معتبر (بزرگ‌تر از صفر) برای تعداد و قیمت واحد وارد کنید.', 'warn');
+                return;
+            }
+
+            if (needsDuration && !durationTime) {
+                showFeedbackBanner('لطفاً مدت زمان تاخیر یا زودتر از موعد را با استفاده از پنجره‌ی زمانی مشخص کنید.', 'warn');
                 return;
             }
 
@@ -1721,7 +2324,8 @@
                         ...allRecords[targetIndex],
                         itemCode: code, itemTitle: title, itemColor: color,
                         quantity: qty, unitPrice: price, totalPrice: qty * price,
-                        status: status, date: date, time: time
+                        status: status, date: date, time: time, durationTime: durationTime,
+                        photo: currentPhotoData
                     };
                     addLog(`رکورد ${code} ویرایش شد.`, 'warn');
                     showFeedbackBanner(`رکورد با کد ${code} با موفقیت ویرایش شد.`, 'success');
@@ -1730,7 +2334,8 @@
                 const newRecord = {
                     id: Date.now(), itemCode: code, itemTitle: title, itemColor: color,
                     quantity: qty, unitPrice: price, totalPrice: qty * price,
-                    status: status, date: date, time: time,
+                    status: status, date: date, time: time, durationTime: durationTime,
+                    photo: currentPhotoData,
                     monthKey: info.monthKey, monthName: info.monthName, year: info.year
                 };
                 allRecords.unshift(newRecord);
@@ -1757,6 +2362,16 @@
             document.getElementById('itemStatus').value = record.status || appSettings.defaultStatus || 'به موقع';
             document.getElementById('recordDate').value = record.date;
             document.getElementById('recordTime').value = record.time;
+            toggleDeliveryDurationField();
+            document.getElementById('deliveryDuration').value = record.durationTime || '';
+
+            if (record.photo) {
+                currentPhotoData = record.photo;
+                document.getElementById('photoPreviewImg').src = record.photo;
+                document.getElementById('photoPreviewWrap').classList.remove('hidden');
+            } else {
+                removeSelectedPhoto();
+            }
 
             document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-600"></i> ویرایش رکورد کد ${record.itemCode || '-'}`;
             document.getElementById('submitBtn').className = "tactile-btn w-full bg-amber-600 text-white py-3.5 rounded-xl font-medium text-sm hover:bg-amber-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow";
@@ -1773,7 +2388,9 @@
             document.getElementById('editingRecordId').value = '';
             document.getElementById('recordDate').value = info.fullDateStr;
             document.getElementById('itemStatus').value = appSettings.defaultStatus || 'به موقع';
+            toggleDeliveryDurationField();
             setCurrentTimeInInput();
+            removeSelectedPhoto();
 
             document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-circle-plus text-indigo-600 dark:text-indigo-400"></i> ثبت کارکرد جدید`;
             document.getElementById('submitBtn').className = "tactile-btn w-full bg-indigo-600 text-white py-3.5 rounded-xl font-medium text-sm hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow";
@@ -1848,8 +2465,109 @@
             `).join('');
         }
 
+        function jalaliDateToComparable(dateStr) {
+            if (!dateStr) return null;
+            const parts = toEnglishDigits(dateStr).trim().split('/');
+            if (parts.length !== 3) return null;
+            const y = parseInt(parts[0], 10), m = parseInt(parts[1], 10), d = parseInt(parts[2], 10);
+            if (isNaN(y) || isNaN(m) || isNaN(d)) return null;
+            return y * 10000 + m * 100 + d;
+        }
+
+        function matchesAdvancedSearch(r, f) {
+            if (f.text) {
+                const hit = (r.itemCode || '').toLowerCase().includes(f.text) ||
+                            (r.itemTitle || '').toLowerCase().includes(f.text) ||
+                            (r.itemColor || '').toLowerCase().includes(f.text);
+                if (!hit) return false;
+            }
+            if (f.status && f.status !== 'all' && (r.status || 'به موقع') !== f.status) return false;
+
+            if (f.dateFromVal !== null) {
+                const rv = jalaliDateToComparable(r.date);
+                if (rv === null || rv < f.dateFromVal) return false;
+            }
+            if (f.dateToVal !== null) {
+                const rv = jalaliDateToComparable(r.date);
+                if (rv === null || rv > f.dateToVal) return false;
+            }
+            if (f.qtyMin !== null && r.quantity < f.qtyMin) return false;
+            if (f.qtyMax !== null && r.quantity > f.qtyMax) return false;
+            if (f.priceMin !== null && r.totalPrice < f.priceMin) return false;
+            if (f.priceMax !== null && r.totalPrice > f.priceMax) return false;
+
+            return true;
+        }
+
+        function openAdvancedSearchModal() {
+            document.getElementById('advSearchText').value = advancedSearchFilters ? (advancedSearchFilters.rawText || '') : '';
+            document.getElementById('advSearchStatus').value = advancedSearchFilters ? advancedSearchFilters.status : 'all';
+            document.getElementById('advSearchDateFrom').value = advancedSearchFilters ? (advancedSearchFilters.dateFrom || '') : '';
+            document.getElementById('advSearchDateTo').value = advancedSearchFilters ? (advancedSearchFilters.dateTo || '') : '';
+            document.getElementById('advSearchQtyMin').value = advancedSearchFilters ? (advancedSearchFilters.qtyMinRaw || '') : '';
+            document.getElementById('advSearchQtyMax').value = advancedSearchFilters ? (advancedSearchFilters.qtyMaxRaw || '') : '';
+            document.getElementById('advSearchPriceMin').value = advancedSearchFilters ? (advancedSearchFilters.priceMinRaw || '') : '';
+            document.getElementById('advSearchPriceMax').value = advancedSearchFilters ? (advancedSearchFilters.priceMaxRaw || '') : '';
+            document.getElementById('advancedSearchModal').classList.remove('hidden');
+        }
+
+        function closeAdvancedSearchModal() {
+            document.getElementById('advancedSearchModal').classList.add('hidden');
+        }
+
+        function applyAdvancedSearch() {
+            const rawText = document.getElementById('advSearchText').value.trim();
+            const statusVal = document.getElementById('advSearchStatus').value;
+            const dateFromRaw = document.getElementById('advSearchDateFrom').value.trim();
+            const dateToRaw = document.getElementById('advSearchDateTo').value.trim();
+            const qtyMinRaw = document.getElementById('advSearchQtyMin').value.trim();
+            const qtyMaxRaw = document.getElementById('advSearchQtyMax').value.trim();
+            const priceMinRaw = document.getElementById('advSearchPriceMin').value.trim();
+            const priceMaxRaw = document.getElementById('advSearchPriceMax').value.trim();
+
+            const qtyMin = qtyMinRaw ? parsePersianInt(qtyMinRaw) : null;
+            const qtyMax = qtyMaxRaw ? parsePersianInt(qtyMaxRaw) : null;
+            const priceMin = priceMinRaw ? parsePersianInt(priceMinRaw) : null;
+            const priceMax = priceMaxRaw ? parsePersianInt(priceMaxRaw) : null;
+            const dateFromVal = dateFromRaw ? jalaliDateToComparable(dateFromRaw) : null;
+            const dateToVal = dateToRaw ? jalaliDateToComparable(dateToRaw) : null;
+
+            const noFilters = !rawText && statusVal === 'all' && !dateFromRaw && !dateToRaw &&
+                               qtyMin === null && qtyMax === null && priceMin === null && priceMax === null;
+
+            if (noFilters) {
+                showFeedbackBanner('برای جستجوی پیشرفته، حداقل یک فیلتر را مشخص کنید.', 'warn');
+                return;
+            }
+
+            advancedSearchFilters = {
+                text: rawText.toLowerCase(), rawText,
+                status: statusVal,
+                dateFrom: dateFromRaw, dateTo: dateToRaw, dateFromVal, dateToVal,
+                qtyMin, qtyMax, qtyMinRaw, qtyMaxRaw,
+                priceMin, priceMax, priceMinRaw, priceMaxRaw
+            };
+
+            closeAdvancedSearchModal();
+            renderDashboard();
+            addLog('جستجوی پیشرفته در کل داده‌ها اعمال شد.', 'info');
+            showFeedbackBanner('نتایج جستجوی پیشرفته در کل داده‌ها نمایش داده شد.', 'success');
+        }
+
+        function clearAdvancedSearch() {
+            if (!advancedSearchFilters) return;
+            advancedSearchFilters = null;
+            renderDashboard();
+            showFeedbackBanner('جستجوی پیشرفته لغو شد و نمای ماهانه بازگردانده شد.', 'info');
+        }
+
         function getFilteredRecords() {
             const searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+
+            if (advancedSearchFilters) {
+                return allRecords.filter(r => matchesAdvancedSearch(r, advancedSearchFilters));
+            }
+
             return allRecords.filter(r => {
                 if (r.monthKey !== selectedMonthFilter) return false;
                 if (!searchQuery) return true;
@@ -1857,6 +2575,31 @@
                        (r.itemTitle || '').toLowerCase().includes(searchQuery) ||
                        (r.itemColor || '').toLowerCase().includes(searchQuery);
             });
+        }
+
+        function toggleDeliveryDurationField() {
+            const status = document.getElementById('itemStatus').value;
+            const wrapper = document.getElementById('deliveryDurationWrapper');
+            const durationInput = document.getElementById('deliveryDuration');
+            const label = document.getElementById('deliveryDurationLabel');
+
+            if (status === 'تاخیر' || status === 'زودتر از موعد') {
+                wrapper.classList.remove('hidden');
+                durationInput.setAttribute('required', 'required');
+                label.innerHTML = status === 'تاخیر'
+                    ? `<i class="fa-solid fa-hourglass-half"></i> مدت زمان تاخیر`
+                    : `<i class="fa-solid fa-hourglass-half"></i> مدت زمان زودتر از موعد`;
+            } else {
+                wrapper.classList.add('hidden');
+                durationInput.removeAttribute('required');
+                durationInput.value = '';
+            }
+        }
+
+        function formatStatusWithDuration(status, durationTime) {
+            const safeStatus = escapeHTML(status) || 'به موقع';
+            if (!durationTime || status === 'به موقع' || !status) return safeStatus;
+            return `${safeStatus} <span class="opacity-75">(${escapeHTML(durationTime)})</span>`;
         }
 
         function getStatusBadgeClass(status) {
@@ -1899,13 +2642,28 @@
             const tableBody = document.getElementById('recordsTableBody');
             const emptyState = document.getElementById('emptyState');
             const badge = document.getElementById('activeReportBadge');
+            const banner = document.getElementById('advancedSearchBanner');
+            const monthSelect = document.getElementById('monthFilterSelect');
+            const quickSearchInput = document.getElementById('searchInput');
             const currency = appSettings.currency || 'تومان';
 
             const totalPrice = records.reduce((sum, r) => sum + r.totalPrice, 0);
             document.getElementById('kpiTotalPrice').innerText = `${formatNumber(totalPrice)} ${currency}`;
 
-            const isCurrentMonth = selectedMonthFilter === currentJalali.monthKey;
-            badge.innerText = isCurrentMonth ? 'گزارش ماه جاری (فعال)' : 'گزارش آرشیو شده';
+            if (advancedSearchFilters) {
+                banner.classList.remove('hidden');
+                monthSelect.setAttribute('disabled', 'disabled');
+                quickSearchInput.setAttribute('disabled', 'disabled');
+                quickSearchInput.placeholder = 'جستجوی پیشرفته فعال است...';
+                badge.innerText = `نتیجه جستجوی پیشرفته (${formatNumber(records.length)} رکورد)`;
+            } else {
+                banner.classList.add('hidden');
+                monthSelect.removeAttribute('disabled');
+                quickSearchInput.removeAttribute('disabled');
+                quickSearchInput.placeholder = 'جستجو در لیست...';
+                const isCurrentMonth = selectedMonthFilter === currentJalali.monthKey;
+                badge.innerText = isCurrentMonth ? 'گزارش ماه جاری (فعال)' : 'گزارش آرشیو شده';
+            }
 
             if (records.length === 0) {
                 tableBody.innerHTML = '';
@@ -1917,6 +2675,12 @@
             tableBody.innerHTML = records.map((r, index) => `
                 <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
                     <td class="p-3.5 text-slate-400 text-xs">${formatNumber(index + 1)}</td>
+                    <td class="p-3.5 no-print">
+                        ${r.photo
+                            ? `<button type="button" onclick="viewRecordPhoto(${r.id})" class="block w-10 h-10 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 hover:opacity-80 transition-opacity" title="مشاهده عکس"><img src="${r.photo}" class="w-full h-full object-cover" alt="عکس رکورد"></button>`
+                            : `<span class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-300 dark:text-slate-600"><i class="fa-solid fa-image text-xs"></i></span>`
+                        }
+                    </td>
                     <td class="p-3.5 font-mono text-xs text-slate-600 dark:text-slate-300 font-semibold">${escapeHTML(r.itemCode) || '-'}</td>
                     <td class="p-3.5 font-medium text-slate-800 dark:text-slate-100">${escapeHTML(r.itemTitle)}</td>
                     <td class="p-3.5 text-xs text-slate-600 dark:text-slate-300"><span class="bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">${escapeHTML(r.itemColor) || '-'}</span></td>
@@ -1925,7 +2689,7 @@
                     <td class="p-3.5 font-bold text-emerald-600 dark:text-emerald-400">${formatNumber(r.totalPrice)}</td>
                     <td class="p-3.5">
                         <span class="text-xs px-3 py-1 rounded-lg border font-medium whitespace-nowrap inline-block ${getStatusBadgeClass(r.status)}">
-                            ${escapeHTML(r.status) || 'به موقع'}
+                            ${formatStatusWithDuration(r.status, r.durationTime)}
                         </span>
                     </td>
                     <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400">${escapeHTML(r.date)} - ${escapeHTML(r.time)}</td>
@@ -1975,7 +2739,7 @@
                         <td class="p-3">${formatNumber(r.quantity)}</td>
                         <td class="p-3">${formatNumber(r.unitPrice)}</td>
                         <td class="p-3 font-bold text-emerald-600 dark:text-emerald-400">${formatNumber(r.totalPrice)}</td>
-                        <td class="p-3"><span class="text-[11px] px-2.5 py-1 rounded-lg border inline-block ${getStatusBadgeClass(r.status)}">${escapeHTML(r.status) || 'به موقع'}</span></td>
+                        <td class="p-3"><span class="text-[11px] px-2.5 py-1 rounded-lg border inline-block ${getStatusBadgeClass(r.status)}">${formatStatusWithDuration(r.status, r.durationTime)}</span></td>
                         <td class="p-3 text-slate-500 dark:text-slate-400">${escapeHTML(r.date)}</td>
                     </tr>
                 `).join('');
@@ -2041,7 +2805,7 @@
             <td>${r.quantity}</td>
             <td>${r.unitPrice.toLocaleString('en-US')}</td>
             <td><b>${r.totalPrice.toLocaleString('en-US')}</b></td>
-            <td>${escapeHTML(r.status) || 'به موقع'}</td>
+            <td>${escapeHTML(r.status) || 'به موقع'}${r.durationTime && r.status !== 'به موقع' ? ' (' + escapeHTML(r.durationTime) + ')' : ''}</td>
             <td>${escapeHTML(r.date)}</td>
         </tr>`).join('') +
         `</table>

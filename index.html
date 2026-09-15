@@ -195,12 +195,6 @@
                         <button onclick="openTwoStepDeleteModal(); closeToolsDropdown();" class="w-full text-right px-4 py-2.5 text-xs text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 flex items-center gap-2.5 transition-colors">
                             <i class="fa-solid fa-triangle-exclamation text-rose-600 dark:text-rose-400 w-4"></i> پاک کردن داده‌ها
                         </button>
-
-                        <div class="border-t border-slate-100 dark:border-slate-800 my-1"></div>
-
-                        <button onclick="requestExitApp(); closeToolsDropdown();" class="w-full text-right px-4 py-2.5 text-xs text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2.5 transition-colors font-medium">
-                            <i class="fa-solid fa-right-from-bracket text-slate-600 dark:text-slate-300 w-4"></i> خروج از برنامه
-                        </button>
                     </div>
                 </div>
 
@@ -257,10 +251,26 @@
                 <div>
                     <p id="kpiPriceLabel" class="text-xs text-slate-400 dark:text-slate-400 font-medium">ارزش کل کارکرد (تومان)</p>
                     <h3 id="kpiTotalPrice" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1 tracking-tight">۰</h3>
+                    <p id="kpiUnknownPriceNote" class="hidden text-[11px] text-amber-600 dark:text-amber-400 mt-1"></p>
                 </div>
                 <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center">
                     <i class="fa-solid fa-wallet text-lg"></i>
                 </div>
+            </div>
+        </div>
+
+        <!-- بخش تحلیل و بینش هوشمند -->
+        <div id="aiInsightsCard" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6 border border-slate-100 dark:border-slate-800 mb-6 transition-all">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <h2 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2.5 tracking-tight">
+                    <i class="fa-solid fa-wand-magic-sparkles text-indigo-600 dark:text-indigo-400 text-lg"></i>
+                    تحلیل و بینش هوشمند
+                </h2>
+                <span class="text-[10px] text-slate-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt text-amber-400"></i> آفلاین و آنی
+                </span>
+            </div>
+            <div id="aiInsightsContainer" class="space-y-2">
             </div>
         </div>
 
@@ -282,7 +292,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">کد لباس / قطعه</label>
-                        <input type="text" id="itemCode" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        <input type="text" inputmode="numeric" id="itemCode" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">عنوان لباس / قطعه</label>
@@ -298,7 +308,11 @@
                     </div>
                     <div>
                         <label id="unitPriceLabel" class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">قیمت واحد (تومان)</label>
-                        <input type="text" inputmode="numeric" id="unitPrice" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        <input type="text" inputmode="numeric" id="unitPrice" required class="w-full p-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800/60">
+                        <label class="flex items-center gap-1.5 mt-1.5 text-[11px] text-slate-500 dark:text-slate-400 cursor-pointer select-none">
+                            <input type="checkbox" id="priceUnknownCheckbox" onchange="togglePriceUnknown()" class="w-3.5 h-3.5 rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500/30 cursor-pointer">
+                            <span>قیمت نامعلوم (هنوز تعیین نشده)</span>
+                        </label>
                     </div>
                 </div>
 
@@ -1215,6 +1229,42 @@
         let appDirHandle = null;
         let dirHandlePermissionState = 'unknown'; // 'granted' | 'prompt' | 'denied' | 'unknown'
         const supportsFileSystemAccess = 'showDirectoryPicker' in window;
+        const supportsSaveFilePicker = 'showSaveFilePicker' in window;
+        const BACKUP_DOWNLOAD_SUBFOLDER = 'پشتیبان‌های_آمار_دوخت';
+
+        /*
+         * ذخیره‌ی فایل پشتیبان:
+         * در صورتی که مرورگر از انتخاب مسیر توسط کاربر (File System Access API) پشتیبانی کند،
+         * یک پنجره‌ی انتخاب مسیر واقعی به کاربر نشان داده می‌شود تا خودش محل ذخیره را تعیین کند.
+         * در غیر این صورت (یا در صورت عدم پشتیبانی مرورگر، یا هر خطا/لغو در پنجره‌ی انتخاب مسیر
+         * که در برخی مرورگرهای موبایل رخ می‌دهد)، برای اطمینان از عدم از دست رفتن فایل پشتیبان،
+         * فایل به‌صورت خودکار درون یک زیرپوشه‌ی مجزا با نام مشخص در پوشه‌ی دانلودهای مرورگر ذخیره می‌شود.
+         */
+        async function saveBackupFile(filename, jsonString, { onSuccess } = {}) {
+            if (supportsSaveFilePicker) {
+                try {
+                    const handle = await window.showSaveFilePicker({
+                        suggestedName: filename,
+                        types: [{ description: 'فایل پشتیبان JSON', accept: { 'application/json': ['.json'] } }]
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(jsonString);
+                    await writable.close();
+                    if (onSuccess) onSuccess('picker');
+                    return;
+                } catch (err) {
+                    console.warn('انتخاب مسیر ذخیره امکان‌پذیر نبود یا لغو شد؛ برای اطمینان، فایل در پوشه دانلودها ذخیره می‌شود:', err);
+                }
+            }
+
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${BACKUP_DOWNLOAD_SUBFOLDER}/${filename}`;
+            link.click();
+            if (onSuccess) onSuccess('downloads-folder');
+        }
+
         const SETTINGS_FILE_NAME = 'تنظیمات_و_یادداشت‌ها.json';
 
         function openHandleDB() {
@@ -1651,11 +1701,12 @@
             const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
             const shopName = (appSettings.shopName || 'سامانه آمار دوخت لباس');
             const currency = appSettings.currency || 'تومان';
-            const totalAmountSum = records.reduce((sum, r) => sum + r.totalPrice, 0);
+            const totalAmountSum = sumTotalPrice(records);
+            const unknownPriceCount = countUnknownPriceRecords(records);
 
             document.getElementById('printRecordsTitle').innerText = `${shopName} - لیست کارکردها`;
             document.getElementById('printRecordsSubtitle').innerText =
-                `دوره: ${monthName} ${year}  |  تعداد رکورد: ${formatNumber(records.length)}  |  مجموع مبلغ: ${formatNumber(totalAmountSum)} ${currency}  |  تاریخ چاپ: ${currentJalali.fullDateStr}`;
+                `دوره: ${monthName} ${year}  |  تعداد رکورد: ${formatNumber(records.length)}  |  مجموع مبلغ: ${formatNumber(totalAmountSum)} ${currency}${unknownPriceCount > 0 ? '  |  ' + formatNumber(unknownPriceCount) + ' رکورد با قیمت نامعلوم' : ''}  |  تاریخ چاپ: ${currentJalali.fullDateStr}`;
 
             window.print();
         }
@@ -1983,7 +2034,7 @@
             const todayStr = currentJalali.fullDateStr;
 
             if (lastBackupDate !== todayStr) {
-                showCustomConfirm('آیا مایلید یک نسخه پشتیبان خودکار از اطلاعات امروز دانلود شود؟', (confirmed) => {
+                showCustomConfirm('آیا مایلید یک نسخه پشتیبان خودکار از اطلاعات امروز دانلود شود؟', async (confirmed) => {
                     localStorage.setItem('sewing_last_auto_backup_date', todayStr);
                     if (!confirmed) return;
 
@@ -1995,15 +2046,21 @@
                         records: allRecords,
                         notes: dailyNotes
                     };
-                    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
+                    const jsonString = JSON.stringify(backupData, null, 2);
                     const timeTag = todayStr.replace(/\//g, '');
-                    link.download = `آمار_دوخت_پشتیبان_خودکار_${timeTag}.json`;
-                    link.click();
+                    const filename = `آمار_دوخت_پشتیبان_خودکار_${timeTag}.json`;
 
-                    addLog('پشتیبان‌گیری خودکار روزانه انجام شد.', 'success');
-                    showFeedbackBanner('پشتیبان‌گیری خودکار روزانه انجام شد و فایل آن در پوشه دانلودها قرار گرفت.', 'success');
+                    await saveBackupFile(filename, jsonString, {
+                        onSuccess: (method) => {
+                            addLog('پشتیبان‌گیری خودکار روزانه انجام شد.', 'success');
+                            showFeedbackBanner(
+                                method === 'picker'
+                                    ? 'پشتیبان‌گیری خودکار روزانه انجام شد و در مسیر انتخابی شما ذخیره شد.'
+                                    : `پشتیبان‌گیری خودکار روزانه انجام شد و فایل آن در پوشه «${BACKUP_DOWNLOAD_SUBFOLDER}» درون دانلودها قرار گرفت.`,
+                                'success'
+                            );
+                        }
+                    });
                 });
             }
         }
@@ -2042,7 +2099,7 @@
             }, 400);
         }
 
-        function exportSmartBackup() {
+        async function exportSmartBackup() {
             if (allRecords.length === 0 && dailyNotes.length === 0) {
                 showFeedbackBanner('داده‌ای برای گرفتن پشتیبان وجود ندارد.', 'warn');
                 return;
@@ -2055,16 +2112,21 @@
                 records: allRecords,
                 notes: dailyNotes
             };
-            const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            
+            const jsonString = JSON.stringify(backupData, null, 2);
             const timeTag = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-            link.download = `آمار_دوخت_پشتیبان_${timeTag}.json`;
-            link.click();
-            
-            addLog('فایل پشتیبان استخراج شد.', 'success');
-            showFeedbackBanner('فایل پشتیبان (JSON) با موفقیت در پوشه دانلودها ذخیره شد.', 'success');
+            const filename = `آمار_دوخت_پشتیبان_${timeTag}.json`;
+
+            await saveBackupFile(filename, jsonString, {
+                onSuccess: (method) => {
+                    addLog('فایل پشتیبان استخراج شد.', 'success');
+                    showFeedbackBanner(
+                        method === 'picker'
+                            ? 'فایل پشتیبان (JSON) با موفقیت در مسیر انتخابی شما ذخیره شد.'
+                            : `فایل پشتیبان (JSON) با موفقیت در پوشه «${BACKUP_DOWNLOAD_SUBFOLDER}» درون دانلودها ذخیره شد.`,
+                        'success'
+                    );
+                }
+            });
         }
 
         function importSmartBackup(event) {
@@ -2300,14 +2362,15 @@
             const title = document.getElementById('itemTitle').value.trim();
             const color = document.getElementById('itemColor').value.trim();
             const qty = parsePersianInt(document.getElementById('quantity').value);
-            const price = parsePersianInt(document.getElementById('unitPrice').value);
+            const isPriceUnknown = document.getElementById('priceUnknownCheckbox').checked;
+            const price = isPriceUnknown ? null : parsePersianInt(document.getElementById('unitPrice').value);
             const status = document.getElementById('itemStatus').value;
             const date = document.getElementById('recordDate').value || info.fullDateStr;
             const time = document.getElementById('recordTime').value || new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
             const needsDuration = (status === 'تاخیر' || status === 'زودتر از موعد');
             const durationTime = needsDuration ? document.getElementById('deliveryDuration').value : '';
 
-            if (qty <= 0 || price <= 0) {
+            if (qty <= 0 || (!isPriceUnknown && price <= 0)) {
                 showFeedbackBanner('لطفاً مقادیر معتبر (بزرگ‌تر از صفر) برای تعداد و قیمت واحد وارد کنید.', 'warn');
                 return;
             }
@@ -2323,7 +2386,7 @@
                     allRecords[targetIndex] = {
                         ...allRecords[targetIndex],
                         itemCode: code, itemTitle: title, itemColor: color,
-                        quantity: qty, unitPrice: price, totalPrice: qty * price,
+                        quantity: qty, unitPrice: price, totalPrice: isPriceUnknown ? null : qty * price,
                         status: status, date: date, time: time, durationTime: durationTime,
                         photo: currentPhotoData
                     };
@@ -2333,7 +2396,7 @@
             } else {
                 const newRecord = {
                     id: Date.now(), itemCode: code, itemTitle: title, itemColor: color,
-                    quantity: qty, unitPrice: price, totalPrice: qty * price,
+                    quantity: qty, unitPrice: price, totalPrice: isPriceUnknown ? null : qty * price,
                     status: status, date: date, time: time, durationTime: durationTime,
                     photo: currentPhotoData,
                     monthKey: info.monthKey, monthName: info.monthName, year: info.year
@@ -2358,7 +2421,9 @@
             document.getElementById('itemTitle').value = record.itemTitle || '';
             document.getElementById('itemColor').value = record.itemColor || '';
             document.getElementById('quantity').value = record.quantity;
-            document.getElementById('unitPrice').value = record.unitPrice;
+            document.getElementById('priceUnknownCheckbox').checked = (record.unitPrice === null || record.unitPrice === undefined);
+            document.getElementById('unitPrice').value = (record.unitPrice === null || record.unitPrice === undefined) ? '' : record.unitPrice;
+            togglePriceUnknown();
             document.getElementById('itemStatus').value = record.status || appSettings.defaultStatus || 'به موقع';
             document.getElementById('recordDate').value = record.date;
             document.getElementById('recordTime').value = record.time;
@@ -2389,6 +2454,7 @@
             document.getElementById('recordDate').value = info.fullDateStr;
             document.getElementById('itemStatus').value = appSettings.defaultStatus || 'به موقع';
             toggleDeliveryDurationField();
+            togglePriceUnknown();
             setCurrentTimeInInput();
             removeSelectedPhoto();
 
@@ -2493,8 +2559,8 @@
             }
             if (f.qtyMin !== null && r.quantity < f.qtyMin) return false;
             if (f.qtyMax !== null && r.quantity > f.qtyMax) return false;
-            if (f.priceMin !== null && r.totalPrice < f.priceMin) return false;
-            if (f.priceMax !== null && r.totalPrice > f.priceMax) return false;
+            if (f.priceMin !== null && (typeof r.totalPrice !== 'number' || r.totalPrice < f.priceMin)) return false;
+            if (f.priceMax !== null && (typeof r.totalPrice !== 'number' || r.totalPrice > f.priceMax)) return false;
 
             return true;
         }
@@ -2559,6 +2625,167 @@
             advancedSearchFilters = null;
             renderDashboard();
             showFeedbackBanner('جستجوی پیشرفته لغو شد و نمای ماهانه بازگردانده شد.', 'info');
+        }
+
+        function getPreviousMonthKey(monthKey) {
+            let [year, month] = monthKey.split('-').map(Number);
+            month -= 1;
+            if (month < 1) { month = 12; year -= 1; }
+            return `${year}-${month}`;
+        }
+
+        /*
+         * تحلیل و بینش هوشمند از داده‌ها
+         * این تابع کاملاً محلی و بدون نیاز به سرویس یا اتصال اینترنت اجرا می‌شود.
+         * بر اساس قواعد آماری ساده روی رکوردهای همین دوره (و در صورت امکان مقایسه با ماه قبل)
+         * چند نکته‌ی کاربردی درباره‌ی روند کار کارگاه استخراج می‌کند.
+         */
+        function generateAiInsights(records) {
+            const container = document.getElementById('aiInsightsContainer');
+            if (!container) return;
+
+            if (!records || records.length === 0) {
+                container.innerHTML = `
+                    <div class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-slate-400 text-xs">
+                        <i class="fa-solid fa-circle-info"></i>
+                        برای دریافت تحلیل هوشمند، ابتدا چند رکورد در این دوره ثبت کنید.
+                    </div>`;
+                return;
+            }
+
+            const insights = [];
+            const colorClasses = {
+                rose: 'bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 border-rose-100 dark:border-rose-900/40',
+                emerald: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900/40',
+                amber: 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border-amber-100 dark:border-amber-900/40',
+                indigo: 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900/40'
+            };
+
+            // ۱) نسبت تاخیرها به رنگ لباس
+            const delayedRecords = records.filter(r => r.status === 'تاخیر');
+            if (delayedRecords.length >= 2) {
+                const colorCounts = {};
+                delayedRecords.forEach(r => {
+                    const c = (r.itemColor || 'نامشخص').trim() || 'نامشخص';
+                    colorCounts[c] = (colorCounts[c] || 0) + 1;
+                });
+                const [topColor, topCount] = Object.entries(colorCounts).sort((a, b) => b[1] - a[1])[0];
+                const percent = Math.round((topCount / delayedRecords.length) * 100);
+                if (percent >= 40) {
+                    insights.push({
+                        icon: 'fa-palette', cls: 'rose',
+                        text: `${formatNumber(percent)}٪ از تاخیرهای این دوره مربوط به لباس‌های رنگ «${escapeHTML(topColor)}» بوده‌اند.`
+                    });
+                }
+            }
+
+            // ۲) مقایسه‌ی میانگین مبلغ کارکرد با ماه قبل (فقط در نمای عادی ماهانه)
+            if (!advancedSearchFilters && typeof selectedMonthFilter === 'string') {
+                const prevKey = getPreviousMonthKey(selectedMonthFilter);
+                const prevRecords = allRecords.filter(r => r.monthKey === prevKey);
+                const knownCurrent = records.filter(r => typeof r.totalPrice === 'number');
+                const knownPrev = prevRecords.filter(r => typeof r.totalPrice === 'number');
+                if (knownPrev.length > 0 && knownCurrent.length > 0) {
+                    const currentAvg = knownCurrent.reduce((s, r) => s + r.totalPrice, 0) / knownCurrent.length;
+                    const prevAvg = knownPrev.reduce((s, r) => s + r.totalPrice, 0) / knownPrev.length;
+                    if (prevAvg > 0) {
+                        const growthPercent = Math.round(((currentAvg - prevAvg) / prevAvg) * 100);
+                        if (Math.abs(growthPercent) >= 5) {
+                            insights.push({
+                                icon: growthPercent > 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down',
+                                cls: growthPercent > 0 ? 'emerald' : 'amber',
+                                text: `میانگین مبلغ کارکرد نسبت به ماه قبل ${growthPercent > 0 ? 'رشد' : 'افت'} ${formatNumber(Math.abs(growthPercent))}٪ داشته است.`
+                            });
+                        }
+                    }
+                }
+            }
+
+            // ۳) روند سه رکورد اخیر (افزایش یا کاهش تاخیر)
+            const sortedByRecent = [...records].sort((a, b) => b.id - a.id);
+            const lastThree = sortedByRecent.slice(0, 3);
+            if (lastThree.length === 3 && lastThree.every(r => r.status === 'تاخیر')) {
+                insights.push({
+                    icon: 'fa-triangle-exclamation', cls: 'rose',
+                    text: `روند تاخیر در حال افزایش است؛ ۳ رکورد اخیر همگی با تاخیر ثبت شده‌اند.`
+                });
+            } else if (lastThree.length === 3 && lastThree.every(r => r.status !== 'تاخیر')) {
+                insights.push({
+                    icon: 'fa-circle-check', cls: 'emerald',
+                    text: `روند تحویل مطلوب است؛ ۳ رکورد اخیر بدون هیچ تاخیری ثبت شده‌اند.`
+                });
+            }
+
+            // ۴) درصد تحویل به‌موقع در کل دوره
+            if (records.length >= 3) {
+                const onTimeCount = records.filter(r => (r.status || 'به موقع') === 'به موقع').length;
+                const onTimePercent = Math.round((onTimeCount / records.length) * 100);
+                insights.push({
+                    icon: 'fa-chart-pie',
+                    cls: onTimePercent >= 70 ? 'emerald' : (onTimePercent >= 40 ? 'amber' : 'rose'),
+                    text: `${formatNumber(onTimePercent)}٪ از تحویل‌های این دوره دقیقاً به‌موقع بوده‌اند.`
+                });
+            }
+
+            // ۵) پرتکرارترین قطعه‌ی این دوره
+            if (records.length >= 3) {
+                const titleCounts = {};
+                records.forEach(r => {
+                    const t = (r.itemTitle || '').trim();
+                    if (t) titleCounts[t] = (titleCounts[t] || 0) + (r.quantity || 0);
+                });
+                const sortedTitles = Object.entries(titleCounts).sort((a, b) => b[1] - a[1]);
+                if (sortedTitles.length > 0 && sortedTitles[0][1] > 0) {
+                    const [topTitle, topQty] = sortedTitles[0];
+                    insights.push({
+                        icon: 'fa-star', cls: 'indigo',
+                        text: `پرتکرارترین قطعه‌ی این دوره «${escapeHTML(topTitle)}» با ${formatNumber(topQty)} عدد بوده است.`
+                    });
+                }
+            }
+
+            if (insights.length === 0) {
+                container.innerHTML = `
+                    <div class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-slate-400 text-xs">
+                        <i class="fa-solid fa-circle-info"></i>
+                        در حال حاضر الگوی خاصی شناسایی نشد. با ثبت رکوردهای بیشتر، تحلیل دقیق‌تر خواهد شد.
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = insights.map(ins => `
+                <div class="flex items-start gap-3 p-3 rounded-xl border ${colorClasses[ins.cls]} transition-all">
+                    <div class="w-7 h-7 rounded-lg flex items-center justify-center bg-white/70 dark:bg-white/5 shrink-0 mt-0.5">
+                        <i class="fa-solid ${ins.icon} text-xs"></i>
+                    </div>
+                    <p class="text-xs leading-relaxed font-medium pt-1">${ins.text}</p>
+                </div>
+            `).join('');
+        }
+
+        function togglePriceUnknown() {
+            const checkbox = document.getElementById('priceUnknownCheckbox');
+            const priceInput = document.getElementById('unitPrice');
+            if (checkbox.checked) {
+                priceInput.value = '';
+                priceInput.setAttribute('disabled', 'disabled');
+                priceInput.removeAttribute('required');
+            } else {
+                priceInput.removeAttribute('disabled');
+                priceInput.setAttribute('required', 'required');
+            }
+        }
+
+        function formatPriceValue(value) {
+            return (value === null || value === undefined) ? 'نامعلوم' : formatNumber(value);
+        }
+
+        function sumTotalPrice(records) {
+            return records.reduce((sum, r) => sum + (typeof r.totalPrice === 'number' ? r.totalPrice : 0), 0);
+        }
+
+        function countUnknownPriceRecords(records) {
+            return records.filter(r => r.totalPrice === null || r.totalPrice === undefined).length;
         }
 
         function getFilteredRecords() {
@@ -2647,8 +2874,20 @@
             const quickSearchInput = document.getElementById('searchInput');
             const currency = appSettings.currency || 'تومان';
 
-            const totalPrice = records.reduce((sum, r) => sum + r.totalPrice, 0);
+            const totalPrice = sumTotalPrice(records);
             document.getElementById('kpiTotalPrice').innerText = `${formatNumber(totalPrice)} ${currency}`;
+            const unknownPriceCount = countUnknownPriceRecords(records);
+            const kpiUnknownNote = document.getElementById('kpiUnknownPriceNote');
+            if (kpiUnknownNote) {
+                if (unknownPriceCount > 0) {
+                    kpiUnknownNote.innerText = `${formatNumber(unknownPriceCount)} رکورد با قیمت نامعلوم (در این مجموع لحاظ نشده)`;
+                    kpiUnknownNote.classList.remove('hidden');
+                } else {
+                    kpiUnknownNote.classList.add('hidden');
+                }
+            }
+
+            generateAiInsights(records);
 
             if (advancedSearchFilters) {
                 banner.classList.remove('hidden');
@@ -2685,8 +2924,8 @@
                     <td class="p-3.5 font-medium text-slate-800 dark:text-slate-100">${escapeHTML(r.itemTitle)}</td>
                     <td class="p-3.5 text-xs text-slate-600 dark:text-slate-300"><span class="bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">${escapeHTML(r.itemColor) || '-'}</span></td>
                     <td class="p-3.5">${formatNumber(r.quantity)}</td>
-                    <td class="p-3.5">${formatNumber(r.unitPrice)}</td>
-                    <td class="p-3.5 font-bold text-emerald-600 dark:text-emerald-400">${formatNumber(r.totalPrice)}</td>
+                    <td class="p-3.5">${formatPriceValue(r.unitPrice)}</td>
+                    <td class="p-3.5 font-bold ${r.totalPrice === null || r.totalPrice === undefined ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}">${formatPriceValue(r.totalPrice)}</td>
                     <td class="p-3.5">
                         <span class="text-xs px-3 py-1 rounded-lg border font-medium whitespace-nowrap inline-block ${getStatusBadgeClass(r.status)}">
                             ${formatStatusWithDuration(r.status, r.durationTime)}
@@ -2715,7 +2954,8 @@
             const earlyCount = records.filter(r => r.status === 'زودتر از موعد').length;
             const delayedCount = records.filter(r => r.status === 'تاخیر').length;
             const totalQtySum = records.reduce((sum, r) => sum + r.quantity, 0);
-            const totalAmountSum = records.reduce((sum, r) => sum + r.totalPrice, 0);
+            const totalAmountSum = sumTotalPrice(records);
+            const unknownPriceCount = countUnknownPriceRecords(records);
             const calcPercent = (count) => totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
 
             document.getElementById('overviewOnTimeCount').innerText = formatNumber(onTimeCount);
@@ -2726,7 +2966,7 @@
             document.getElementById('overviewDelayedPercent').innerText = `${formatNumber(calcPercent(delayedCount))}٪`;
 
             document.getElementById('overviewTotalItemsCount').innerText = `${formatNumber(totalQtySum)} عدد`;
-            document.getElementById('overviewTotalAmount').innerText = `${formatNumber(totalAmountSum)} ${currency}`;
+            document.getElementById('overviewTotalAmount').innerText = `${formatNumber(totalAmountSum)} ${currency}${unknownPriceCount > 0 ? ' (+' + formatNumber(unknownPriceCount) + ' نامعلوم)' : ''}`;
 
             modalTableBody.innerHTML = records.length === 0 
                 ? `<tr><td colspan="9" class="text-center p-4 text-slate-400">اطلاعاتی موجود نیست.</td></tr>`
@@ -2737,8 +2977,8 @@
                         <td class="p-3 font-medium text-slate-800 dark:text-slate-100">${escapeHTML(r.itemTitle)}</td>
                         <td class="p-3 text-slate-600 dark:text-slate-300">${escapeHTML(r.itemColor) || '-'}</td>
                         <td class="p-3">${formatNumber(r.quantity)}</td>
-                        <td class="p-3">${formatNumber(r.unitPrice)}</td>
-                        <td class="p-3 font-bold text-emerald-600 dark:text-emerald-400">${formatNumber(r.totalPrice)}</td>
+                        <td class="p-3">${formatPriceValue(r.unitPrice)}</td>
+                        <td class="p-3 font-bold ${r.totalPrice === null || r.totalPrice === undefined ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}">${formatPriceValue(r.totalPrice)}</td>
                         <td class="p-3"><span class="text-[11px] px-2.5 py-1 rounded-lg border inline-block ${getStatusBadgeClass(r.status)}">${formatStatusWithDuration(r.status, r.durationTime)}</span></td>
                         <td class="p-3 text-slate-500 dark:text-slate-400">${escapeHTML(r.date)}</td>
                     </tr>
@@ -2762,7 +3002,8 @@
             const currency = appSettings.currency || 'تومان';
             
             const totalQtySum = records.reduce((sum, r) => sum + r.quantity, 0);
-            const totalAmountSum = records.reduce((sum, r) => sum + r.totalPrice, 0);
+            const totalAmountSum = sumTotalPrice(records);
+            const unknownPriceCount = countUnknownPriceRecords(records);
             
             const htmlContent = `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -2803,15 +3044,15 @@
             <td>${escapeHTML(r.itemTitle)}</td>
             <td>${escapeHTML(r.itemColor) || '-'}</td>
             <td>${r.quantity}</td>
-            <td>${r.unitPrice.toLocaleString('en-US')}</td>
-            <td><b>${r.totalPrice.toLocaleString('en-US')}</b></td>
+            <td>${(r.unitPrice === null || r.unitPrice === undefined) ? 'نامعلوم' : r.unitPrice.toLocaleString('en-US')}</td>
+            <td><b>${(r.totalPrice === null || r.totalPrice === undefined) ? 'نامعلوم' : r.totalPrice.toLocaleString('en-US')}</b></td>
             <td>${escapeHTML(r.status) || 'به موقع'}${r.durationTime && r.status !== 'به موقع' ? ' (' + escapeHTML(r.durationTime) + ')' : ''}</td>
             <td>${escapeHTML(r.date)}</td>
         </tr>`).join('') +
         `</table>
         <div class="summary-box">
             <strong>مجموع کل تعداد:</strong> ${totalQtySum.toLocaleString('en-US')} عدد &nbsp;&nbsp;|&nbsp;&nbsp; 
-            <strong>مجموع کل کارکرد:</strong> ${totalAmountSum.toLocaleString('en-US')} ${currency}
+            <strong>مجموع کل کارکرد:</strong> ${totalAmountSum.toLocaleString('en-US')} ${currency}${unknownPriceCount > 0 ? ' &nbsp;&nbsp;|&nbsp;&nbsp; <span style="color:#b45309;">' + unknownPriceCount.toLocaleString('en-US') + ' رکورد با قیمت نامعلوم</span>' : ''}
         </div>
 </body>
 </html>`;

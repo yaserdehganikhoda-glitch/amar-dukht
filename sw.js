@@ -1,8 +1,7 @@
 // Service Worker برای سامانه آمار دوخت لباس
 // نسخه کش را با هر تغییر مهم در برنامه افزایش دهید تا کاربران نسخه جدید را دریافت کنند
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = `stitching-app-cache-${CACHE_VERSION}`;
-const OFFLINE_FALLBACK_PAGE = './offline.html';
 
 // فایل‌های اصلی خود برنامه
 const APP_SHELL = [
@@ -30,8 +29,6 @@ async function cacheEachSafely(cache, urls) {
         urls.map(async (url) => {
             try {
                 const response = await fetch(url, { cache: 'reload' });
-                // پاسخ‌های موفق (status 200) و پاسخ‌های opaque (فایل‌های cross-origin بدون CORS
-                // مثل CDN‌ها که status آن‌ها 0 است) هر دو قابل ذخیره‌سازی هستند.
                 if (response && (response.status === 200 || response.type === 'opaque')) {
                     await cache.put(url, response);
                 }
@@ -42,13 +39,26 @@ async function cacheEachSafely(cache, urls) {
     );
 }
 
-// نصب: ذخیره‌سازی فایل‌های اصلی برنامه + صفحه‌ی آفلاین + فایل‌های CDN در کش
-self.addEventListener('install', (event) => {
+// نصب: ذخیره‌سازی صفحه‌ی آفلاین (الگوی استاندارد Offline page) + بقیه‌ی فایل‌های اصلی برنامه و CDN
+self.addEventListener('install', function (event) {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(async (cache) => {
+        (async () => {
+            // ذخیره‌ی مستقیم صفحه‌ی آفلاین برای Offline Support
+            var offlinePage = new Request('offline.html');
+            try {
+                const response = await fetch(offlinePage);
+                const cache = await caches.open(CACHE_NAME);
+                console.log('[PWA Builder] Cached offline page during Install ' + response.url);
+                await cache.put(offlinePage, response);
+            } catch (err) {
+                console.log('[PWA Builder] Could not cache offline page during Install', err);
+            }
+
+            // کش کردن بقیه‌ی فایل‌های اصلی برنامه و منابع CDN
+            const cache = await caches.open(CACHE_NAME);
             await cacheEachSafely(cache, APP_SHELL);
             await cacheEachSafely(cache, CDN_ASSETS);
-        })
+        })()
     );
     // عمداً skipWaiting فراخوانی نمی‌شود؛ به‌روزرسانی فقط با تایید صریح کاربر
     // از طریق پیام SKIP_WAITING اعمال می‌شود (نوار اطلاع‌رسانی داخل برنامه).
@@ -74,46 +84,33 @@ self.addEventListener('message', (event) => {
     }
 });
 
-// استراتژی واکشی:
-// - برای بارگذاری صفحه (navigation): ابتدا شبکه، در قطعی اتصال از نسخه‌ی کش‌شده‌ی index.html
-//   و در نبود آن از صفحه‌ی افتادگی آفلاین (offline.html) استفاده می‌شود.
-// - برای سایر درخواست‌ها (فونت، آیکون، اسکریپت CDN و ...): ابتدا کش، سپس شبکه؛
-//   پاسخ‌های موفق یا opaque جدید هم در کش به‌روزرسانی می‌شوند تا دفعات بعد آفلاین هم در دسترس باشند.
-self.addEventListener('fetch', (event) => {
+// واکشی: ابتدا کش بررسی می‌شود؛ در نبود آن از شبکه گرفته و در کش ذخیره می‌شود؛
+// و اگر شبکه هم قطع بود (آفلاین)، صفحه‌ی اصلی کش‌شده و در نهایت offline.html نمایش داده می‌شود.
+self.addEventListener('fetch', function (event) {
     const request = event.request;
     if (request.method !== 'GET') return;
 
-    if (request.mode === 'navigate') {
-        event.respondWith(
-            fetch(request)
-                .then((response) => {
-                    const responseClone = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', responseClone));
-                    return response;
-                })
-                .catch(async () => {
-                    const cache = await caches.open(CACHE_NAME);
-                    const cachedPage = await cache.match('./index.html');
-                    if (cachedPage) return cachedPage;
-                    return cache.match(OFFLINE_FALLBACK_PAGE);
-                })
-        );
-        return;
-    }
-
     event.respondWith(
-        caches.match(request).then((cachedResponse) => {
+        caches.match(request).then(function (cachedResponse) {
             if (cachedResponse) return cachedResponse;
 
-            return fetch(request).then((networkResponse) => {
+            return fetch(request).then(function (networkResponse) {
                 if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
                     const responseClone = networkResponse.clone();
-                    caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+                    caches.open(CACHE_NAME).then(function (cache) {
+                        cache.put(request, responseClone);
+                    });
                 }
                 return networkResponse;
-            }).catch(() => {
-                // در صورت قطع اتصال و نبود نسخه کش‌شده، خطا برگردانده می‌شود
-                return new Response('', { status: 408, statusText: 'آفلاین و بدون نسخه ذخیره‌شده' });
+            }).catch(function (error) {
+                // در صورت قطع اتصال: تلاش برای نسخه‌ی کش‌شده‌ی صفحه‌ی اصلی و در نهایت صفحه‌ی آفلاین
+                console.log('[PWA Builder] Network request Failed. Serving offline page ' + error);
+                return caches.open(CACHE_NAME).then(function (cache) {
+                    return cache.match('index.html').then(function (indexMatch) {
+                        if (indexMatch) return indexMatch;
+                        return cache.match('offline.html');
+                    });
+                });
             });
         })
     );

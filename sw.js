@@ -1,6 +1,6 @@
 // Service Worker برای سامانه آمار دوخت لباس
 // نسخه کش را با هر تغییر مهم در برنامه افزایش دهید تا کاربران نسخه جدید را دریافت کنند
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const CACHE_NAME = `stitching-app-cache-${CACHE_VERSION}`;
 
 // فایل‌های اصلی خود برنامه
@@ -90,6 +90,30 @@ self.addEventListener('fetch', function (event) {
     const request = event.request;
     if (request.method !== 'GET') return;
 
+    // بارگذاری خود صفحه (index.html): همیشه ابتدا شبکه بررسی می‌شود تا تغییرات جدید
+    // بلافاصله دیده شوند؛ فقط در صورت قطع اتصال از نسخه‌ی کش‌شده استفاده می‌شود.
+    if (request.mode === 'navigate') {
+        event.respondWith(
+            fetch(request).then(function (networkResponse) {
+                const responseClone = networkResponse.clone();
+                caches.open(CACHE_NAME).then(function (cache) {
+                    cache.put('index.html', responseClone);
+                });
+                return networkResponse;
+            }).catch(function (error) {
+                console.log('[PWA Builder] Network request Failed. Serving offline page ' + error);
+                return caches.open(CACHE_NAME).then(function (cache) {
+                    return cache.match('index.html').then(function (indexMatch) {
+                        if (indexMatch) return indexMatch;
+                        return cache.match('offline.html');
+                    });
+                });
+            })
+        );
+        return;
+    }
+
+    // سایر فایل‌ها (آیکون، فونت، CDN و ...): ابتدا کش، سپس شبکه؛ چون این‌ها به‌ندرت تغییر می‌کنند.
     event.respondWith(
         caches.match(request).then(function (cachedResponse) {
             if (cachedResponse) return cachedResponse;
@@ -103,7 +127,6 @@ self.addEventListener('fetch', function (event) {
                 }
                 return networkResponse;
             }).catch(function (error) {
-                // در صورت قطع اتصال: تلاش برای نسخه‌ی کش‌شده‌ی صفحه‌ی اصلی و در نهایت صفحه‌ی آفلاین
                 console.log('[PWA Builder] Network request Failed. Serving offline page ' + error);
                 return caches.open(CACHE_NAME).then(function (cache) {
                     return cache.match('index.html').then(function (indexMatch) {

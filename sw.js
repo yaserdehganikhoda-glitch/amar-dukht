@@ -1,118 +1,86 @@
-/* ===================== سرویس‌ورکر سامانه آمار دوخت لباس ======================
-   هدف: اجرای کامل آفلاین برنامه.
-   - پوسته اصلی برنامه (index.html, manifest.json, آیکون‌ها) در نصب پیش‌بارگذاری می‌شود.
-   - فایل‌های همان مبدأ (CSS/JS محلی در صورت وجود) به روش Cache First سرو می‌شوند.
-   - منابع CDN خارجی (Tailwind, FontAwesome, فونت وزیرمتن) با روش
-     Stale-While-Revalidate کش می‌شوند تا پس از اولین بارگذاری آنلاین، در
-     حالت آفلاین هم در دسترس باشند.
-   - ناوبری‌ها (باز کردن خود صفحه) با روش Network First با بازگشت به نسخه کش‌شده
-     مدیریت می‌شوند تا هم به‌روزرسانی‌ها دریافت شوند و هم آفلاین کار کند.
-   =============================================================================== */
+// Service Worker برای سامانه آمار دوخت لباس
+// نسخه کش را با هر تغییر مهم در برنامه افزایش دهید تا کاربران نسخه جدید را دریافت کنند
+const CACHE_VERSION = 'v1';
+const CACHE_NAME = `stitching-app-cache-${CACHE_VERSION}`;
 
-const CACHE_VERSION = 'v2';
-const CACHE_NAME = `sewing-app-cache-${CACHE_VERSION}`;
-
+// فایل‌های اصلی برنامه که باید برای کارکرد آفلاین ذخیره شوند
 const APP_SHELL = [
     './',
     './index.html',
     './manifest.json',
     './icon-192.png',
     './icon-512.png',
-    './icon-maskable-512.png'
+    './icon-512-maskable.png'
 ];
 
-// ---------------------- نصب: پیش‌بارگذاری پوسته برنامه ----------------------
+// نصب: ذخیره‌سازی فایل‌های اصلی برنامه در کش
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(async (cache) => {
-            // به‌جای cache.addAll (که با شکست خوردن فقط یک فایل، کل عملیات را لغو می‌کند)
-            // هر فایل جدا واکشی و کش می‌شود تا نبودن یک فایل مانع کش‌شدن بقیه نشود.
-            const results = await Promise.allSettled(
-                APP_SHELL.map((url) =>
-                    fetch(url, { cache: 'no-cache' }).then((res) => {
-                        if (!res.ok) throw new Error(`HTTP ${res.status} برای ${url}`);
-                        return cache.put(url, res);
-                    })
-                )
-            );
-            results.forEach((r, i) => {
-                if (r.status === 'rejected') {
-                    console.warn(`Service Worker: پیش‌بارگذاری «${APP_SHELL[i]}» ناموفق بود:`, r.reason);
-                }
+        caches.open(CACHE_NAME).then((cache) => {
+            return cache.addAll(APP_SHELL).catch((err) => {
+                console.log('برخی فایل‌ها هنگام نصب کش نشدند:', err);
             });
         })
     );
-    // عمداً از skipWaiting خودکار استفاده نمی‌شود تا کاربر با کلیک روی
-    // بنر «به‌روزرسانی» در صفحه، فعال‌سازی نسخه جدید را کنترل کند.
+    // عمداً skipWaiting فراخوانی نمی‌شود؛ به‌روزرسانی فقط با تایید صریح کاربر
+    // از طریق پیام SKIP_WAITING اعمال می‌شود (نوار اطلاع‌رسانی داخل برنامه).
 });
 
-// ---------------------- فعال‌سازی: پاک‌سازی کش‌های نسخه قدیمی ----------------------
+// فعال‌سازی: پاک‌سازی نسخه‌های قدیمی کش
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys()
-            .then((keys) => Promise.all(
-                keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-            ))
-            .then(() => self.clients.claim())
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames
+                    .filter((name) => name.startsWith('stitching-app-cache-') && name !== CACHE_NAME)
+                    .map((name) => caches.delete(name))
+            );
+        }).then(() => self.clients.claim())
     );
 });
 
-// ---------------------- دریافت پیام برای فعال‌سازی فوری نسخه جدید ----------------------
+// دریافت پیام از صفحه برای اعمال فوری نسخه جدید
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
     }
 });
 
-// ---------------------- مدیریت درخواست‌ها ----------------------
+// استراتژی واکشی:
+// - برای بارگذاری صفحه (navigation): ابتدا شبکه، در صورت قطع اتصال از کش استفاده شود.
+// - برای سایر درخواست‌ها (فونت، آیکون، اسکریپت CDN و ...): ابتدا کش، سپس شبکه؛
+//   پاسخ موفق جدید هم در کش به‌روزرسانی می‌شود تا دفعات بعد آفلاین هم در دسترس باشد.
 self.addEventListener('fetch', (event) => {
     const request = event.request;
     if (request.method !== 'GET') return;
 
-    const url = new URL(request.url);
-
-    // ۱) ناوبری (بازکردن خود صفحه) → Network First با بازگشت به کش آفلاین
     if (request.mode === 'navigate') {
         event.respondWith(
             fetch(request)
                 .then((response) => {
-                    const clone = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', clone));
+                    const responseClone = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', responseClone));
                     return response;
                 })
-                .catch(() => caches.match('./index.html').then((cached) => cached || caches.match('./')))
+                .catch(() => caches.match('./index.html'))
         );
         return;
     }
 
-    // ۲) فایل‌های هم‌مبدأ (برنامه، آیکون‌ها، مانیفست) → Cache First
-    if (url.origin === self.location.origin) {
-        event.respondWith(
-            caches.match(request).then((cached) => {
-                if (cached) return cached;
-                return fetch(request).then((response) => {
-                    const clone = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-                    return response;
-                });
-            })
-        );
-        return;
-    }
-
-    // ۳) منابع CDN خارجی (Tailwind, FontAwesome, فونت وزیرمتن و ...) → Stale-While-Revalidate
     event.respondWith(
-        caches.match(request).then((cached) => {
-            const networkFetch = fetch(request)
-                .then((response) => {
-                    if (response && (response.ok || response.type === 'opaque')) {
-                        const clone = response.clone();
-                        caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-                    }
-                    return response;
-                })
-                .catch(() => cached);
-            return cached || networkFetch;
+        caches.match(request).then((cachedResponse) => {
+            if (cachedResponse) return cachedResponse;
+
+            return fetch(request).then((networkResponse) => {
+                if (networkResponse && networkResponse.status === 200) {
+                    const responseClone = networkResponse.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+                }
+                return networkResponse;
+            }).catch(() => {
+                // در صورت قطع اتصال و نبود نسخه کش‌شده، خطا برگردانده می‌شود
+                return new Response('', { status: 408, statusText: 'آفلاین و بدون نسخه ذخیره‌شده' });
+            });
         })
     );
 });

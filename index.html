@@ -157,6 +157,10 @@
                         <button onclick="lockAppNow()" class="w-full text-right px-4 py-2.5 text-xs text-indigo-700 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 flex items-center gap-2.5 transition-colors">
                             <i class="fa-solid fa-lock text-indigo-600 dark:text-indigo-400 w-4"></i> قفل کردن برنامه
                         </button>
+
+                        <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="hidden w-full text-right px-4 py-2.5 text-xs text-teal-700 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900/30 flex items-center gap-2.5 transition-colors">
+                            <i class="fa-solid fa-mobile-screen-button text-teal-600 dark:text-teal-400 w-4"></i> نصب برنامه روی دستگاه
+                        </button>
                         
                         <div class="border-t border-slate-100 dark:border-slate-800 my-1"></div>
                         <div class="px-4 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">پشتیبان‌گیری و داده‌ها</div>
@@ -953,6 +957,40 @@
                 newWorkerWaiting.postMessage({ type: 'SKIP_WAITING' });
             }
         }
+
+        /* ==================== نصب برنامه روی دستگاه (PWA Install Prompt) ==================== */
+        let deferredInstallPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredInstallPrompt = event;
+            const btn = document.getElementById('installAppBtn');
+            if (btn) btn.classList.remove('hidden');
+        });
+
+        function promptInstallApp() {
+            if (!deferredInstallPrompt) return;
+            deferredInstallPrompt.prompt();
+            deferredInstallPrompt.userChoice.then((choice) => {
+                if (choice.outcome === 'accepted') {
+                    showFeedbackBanner('برنامه در حال نصب روی دستگاه شماست.', 'success');
+                    addLog('کاربر نصب برنامه را تایید کرد.', 'info');
+                } else {
+                    addLog('کاربر نصب برنامه را لغو کرد.', 'warn');
+                }
+                deferredInstallPrompt = null;
+                const btn = document.getElementById('installAppBtn');
+                if (btn) btn.classList.add('hidden');
+            });
+        }
+
+        window.addEventListener('appinstalled', () => {
+            const btn = document.getElementById('installAppBtn');
+            if (btn) btn.classList.add('hidden');
+            deferredInstallPrompt = null;
+            addLog('برنامه با موفقیت روی دستگاه نصب شد.', 'success');
+        });
+        /* ==================== پایان نصب برنامه ==================== */
 
         window.addEventListener('offline', () => {
             showFeedbackBanner('اتصال اینترنت قطع شد؛ برنامه در حالت آفلاین ادامه می‌دهد و همه داده‌ها به‌صورت محلی ذخیره می‌شوند.', 'warn');

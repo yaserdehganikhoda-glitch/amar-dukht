@@ -1,13 +1,15 @@
 // Service Worker برای سامانه آمار دوخت لباس
 // نسخه کش را با هر تغییر مهم در برنامه افزایش دهید تا کاربران نسخه جدید را دریافت کنند
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const CACHE_NAME = `stitching-app-cache-${CACHE_VERSION}`;
+const OFFLINE_FALLBACK_PAGE = './offline.html';
 
 // فایل‌های اصلی خود برنامه
 const APP_SHELL = [
     './',
     './index.html',
     './manifest.json',
+    './offline.html',
     './icon-192.png',
     './icon-512.png',
     './icon-512-maskable.png'
@@ -40,7 +42,7 @@ async function cacheEachSafely(cache, urls) {
     );
 }
 
-// نصب: ذخیره‌سازی فایل‌های اصلی برنامه + فایل‌های CDN در کش
+// نصب: ذخیره‌سازی فایل‌های اصلی برنامه + صفحه‌ی آفلاین + فایل‌های CDN در کش
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(async (cache) => {
@@ -73,7 +75,8 @@ self.addEventListener('message', (event) => {
 });
 
 // استراتژی واکشی:
-// - برای بارگذاری صفحه (navigation): ابتدا شبکه، در صورت قطع اتصال از کش استفاده شود.
+// - برای بارگذاری صفحه (navigation): ابتدا شبکه، در قطعی اتصال از نسخه‌ی کش‌شده‌ی index.html
+//   و در نبود آن از صفحه‌ی افتادگی آفلاین (offline.html) استفاده می‌شود.
 // - برای سایر درخواست‌ها (فونت، آیکون، اسکریپت CDN و ...): ابتدا کش، سپس شبکه؛
 //   پاسخ‌های موفق یا opaque جدید هم در کش به‌روزرسانی می‌شوند تا دفعات بعد آفلاین هم در دسترس باشند.
 self.addEventListener('fetch', (event) => {
@@ -88,7 +91,12 @@ self.addEventListener('fetch', (event) => {
                     caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', responseClone));
                     return response;
                 })
-                .catch(() => caches.match('./index.html').then((r) => r || caches.match('./')))
+                .catch(async () => {
+                    const cache = await caches.open(CACHE_NAME);
+                    const cachedPage = await cache.match('./index.html');
+                    if (cachedPage) return cachedPage;
+                    return cache.match(OFFLINE_FALLBACK_PAGE);
+                })
         );
         return;
     }
@@ -109,4 +117,51 @@ self.addEventListener('fetch', (event) => {
             });
         })
     );
+});
+
+// -------------------- اعلان‌های Push --------------------
+// توجه: این برنامه سرور ندارد، پس فعلاً چیزی برای ارسال Push واقعی وجود ندارد؛
+// این بخش فقط زیرساخت را آماده می‌کند تا در آینده در صورت افزودن سرور قابل استفاده باشد.
+self.addEventListener('push', (event) => {
+    const message = event.data ? event.data.text() : 'رویداد جدیدی در سامانه آمار دوخت ثبت شد.';
+    event.waitUntil(
+        self.registration.showNotification('سامانه آمار دوخت لباس', {
+            body: message,
+            icon: './icon-192.png',
+            badge: './icon-192.png',
+            dir: 'rtl',
+            lang: 'fa'
+        })
+    );
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    event.waitUntil(
+        self.clients.matchAll({ type: 'window' }).then((clientList) => {
+            if (clientList.length > 0) return clientList[0].focus();
+            return self.clients.openWindow('./index.html');
+        })
+    );
+});
+
+// -------------------- Background Sync --------------------
+// اگر مرورگر اجازه بدهد، پس از وصل‌شدن دوباره‌ی اینترنت، کش برنامه را تازه می‌کند.
+self.addEventListener('sync', (event) => {
+    if (event.tag === 'refresh-app-cache') {
+        event.waitUntil(
+            caches.open(CACHE_NAME).then((cache) => cacheEachSafely(cache, APP_SHELL.concat(CDN_ASSETS)))
+        );
+    }
+});
+
+// -------------------- Periodic Background Sync --------------------
+// در مرورگرهایی که پشتیبانی می‌کنند (عمدتاً Chrome روی اندروید، بعد از نصب برنامه)،
+// به‌صورت دوره‌ای کش را تازه نگه می‌دارد.
+self.addEventListener('periodicsync', (event) => {
+    if (event.tag === 'refresh-app-cache') {
+        event.waitUntil(
+            caches.open(CACHE_NAME).then((cache) => cacheEachSafely(cache, APP_SHELL.concat(CDN_ASSETS)))
+        );
+    }
 });

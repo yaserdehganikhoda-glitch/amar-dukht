@@ -280,30 +280,8 @@
             </div>
         </div>
 
-        <!-- بخش تحلیل و بینش هوشمند -->
-        <div id="aiInsightsCard" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6 border border-slate-300 dark:border-slate-600 mb-6 transition-all">
-            <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleAiInsightsVisibility()">
-                <h2 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2.5 tracking-tight">
-                    <i class="fa-solid fa-wand-magic-sparkles text-indigo-600 dark:text-indigo-400 text-lg"></i>
-                    تحلیل و بینش هوشمند
-                </h2>
-                <div class="flex items-center gap-3">
-                    <span class="text-[10px] text-slate-400 hidden sm:flex items-center gap-1.5">
-                        <i class="fa-solid fa-bolt text-amber-400"></i> آفلاین و آنی
-                    </span>
-                    <button type="button" onclick="event.stopPropagation(); toggleAiInsightsVisibility();" id="aiInsightsToggleBtn" class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400 transition-colors" title="پنهان کردن تحلیل هوشمند">
-                        <i id="aiInsightsToggleIcon" class="fa-solid fa-chevron-up transition-transform duration-300"></i>
-                    </button>
-                </div>
-            </div>
-            <div id="aiInsightsBody" class="pt-4 mt-4 border-t border-slate-300 dark:border-slate-600">
-                <div id="aiInsightsContainer" class="space-y-2">
-                </div>
-            </div>
-        </div>
-
         <!-- فرم ثبت و ویرایش -->
-        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6 border border-slate-300 dark:border-slate-600 mb-6 transition-all">
+        <div id="recordFormCard" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6 border border-slate-300 dark:border-slate-600 mb-6 transition-all">
             <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-300 dark:border-slate-600">
                 <h2 id="formTitle" class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2.5 tracking-tight">
                     <i class="fa-solid fa-circle-plus text-indigo-600 dark:text-indigo-400 text-lg"></i>
@@ -424,29 +402,32 @@
                     <i class="fa-solid fa-note-sticky text-amber-500 text-lg"></i>
                     یادداشت‌های خاص روزانه
                 </h2>
-                <span class="text-xs text-slate-400">یادداشت برای تاریخ انتخابی</span>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-slate-400">یادداشت برای تاریخ انتخابی</span>
+                    <button type="button" onclick="toggleNotesCardVisibility()" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 p-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition-colors" title="جمع/باز کردن کادر">
+                        <i id="notesCardToggleIcon" class="fa-solid fa-chevron-up text-xs transition-transform"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="space-y-3">
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <div class="w-full sm:w-48">
+            <div id="notesCardBody" class="space-y-3">
+                <div class="flex items-end gap-3 flex-wrap">
+                    <div class="w-32 shrink-0">
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">تاریخ یادداشت</label>
                         <div class="relative">
-                            <input type="text" id="noteDateInput" readonly onclick="openDatePicker('noteDateInput', event)" placeholder="انتخاب تاریخ" class="w-full p-3 pr-10 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all cursor-pointer">
-                            <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
+                            <input type="text" id="noteDateInput" readonly onclick="openDatePicker('noteDateInput', event)" placeholder="انتخاب تاریخ" class="w-full p-2.5 pr-8 border border-slate-400 dark:border-slate-500 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all cursor-pointer">
+                            <span class="absolute inset-y-0 right-2.5 flex items-center pointer-events-none text-slate-400 text-xs">
                                 <i class="fa-solid fa-calendar-days"></i>
                             </span>
                         </div>
                     </div>
-                    <div class="flex-1">
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">متن یادداشت / نکته</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="noteTextInput" placeholder="مثلاً: تعطیلی کارگاه یا تحویل سفارش خاص..." class="flex-1 p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
-                            <button type="button" onclick="saveDailyNote()" class="bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-3 rounded-xl font-medium text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
-                                <i class="fa-solid fa-plus"></i> ثبت یادداشت
-                            </button>
-                        </div>
-                    </div>
+                    <button type="button" onclick="saveDailyNote()" class="bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2.5 rounded-xl font-medium text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
+                        <i class="fa-solid fa-plus"></i> ثبت یادداشت
+                    </button>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">متن یادداشت / نکته</label>
+                    <textarea id="noteTextInput" rows="4" placeholder="مثلاً: تعطیلی کارگاه یا تحویل سفارش خاص..." class="w-full p-3.5 border border-slate-400 dark:border-slate-500 rounded-xl text-base bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all resize-y"></textarea>
                 </div>
 
                 <!-- لیست یادداشت‌های ثبت شده در ماه جاری -->
@@ -543,6 +524,58 @@
             <div id="emptyState" class="hidden p-12 text-center text-slate-400">
                 <i class="fa-solid fa-folder-open text-4xl mb-2 opacity-50"></i>
                 <p class="text-sm">هیچ رکوردی یافت نشد.</p>
+            </div>
+
+            <div id="recordsSummaryFooter" class="hidden no-print grid grid-cols-1 gap-3 p-4 border-t border-slate-300 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-900/50">
+                <div class="bg-white dark:bg-slate-800 field-box-bg rounded-xl p-4 border border-slate-300 dark:border-slate-600">
+                    <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleDelaySummaryVisibility()">
+                        <h4 class="text-xs font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-hourglass-half"></i> جمع مدت زمان تاخیر
+                        </h4>
+                        <button type="button" onclick="event.stopPropagation(); toggleDelaySummaryVisibility();" id="delaySummaryToggleBtn" class="w-6 h-6 flex items-center justify-center rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 dark:hover:text-amber-400 transition-colors" title="پنهان کردن این بخش">
+                            <i id="delaySummaryToggleIcon" class="fa-solid fa-chevron-up text-xs transition-transform duration-300"></i>
+                        </button>
+                    </div>
+                    <div id="delaySummaryBody" class="mt-2">
+                        <p id="totalDelaySummaryText" class="text-sm font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">—</p>
+                        <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">بر مبنای ۸ ساعت و نیم کاری در هر روز</p>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-800 field-box-bg rounded-xl p-4 border border-slate-300 dark:border-slate-600">
+                    <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleDuplicateCodesVisibility()">
+                        <h4 class="text-xs font-bold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-copy"></i> کدهای تکراری در این لیست (با جزئیات کامل)
+                        </h4>
+                        <button type="button" onclick="event.stopPropagation(); toggleDuplicateCodesVisibility();" id="duplicateCodesToggleBtn" class="w-6 h-6 flex items-center justify-center rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400 transition-colors" title="پنهان کردن این بخش">
+                            <i id="duplicateCodesToggleIcon" class="fa-solid fa-chevron-up text-xs transition-transform duration-300"></i>
+                        </button>
+                    </div>
+                    <div id="duplicateCodesBody" class="mt-2">
+                        <div id="duplicateCodesSummaryText" class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed max-h-96 overflow-y-auto pl-1">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- بخش تحلیل و بینش هوشمند -->
+        <div id="aiInsightsCard" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6 border border-slate-300 dark:border-slate-600 mb-6 transition-all">
+            <div class="flex justify-between items-center cursor-pointer select-none" onclick="toggleAiInsightsVisibility()">
+                <h2 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2.5 tracking-tight">
+                    <i class="fa-solid fa-wand-magic-sparkles text-indigo-600 dark:text-indigo-400 text-lg"></i>
+                    تحلیل و بینش هوشمند
+                </h2>
+                <div class="flex items-center gap-3">
+                    <span class="text-[10px] text-slate-400 hidden sm:flex items-center gap-1.5">
+                        <i class="fa-solid fa-bolt text-amber-400"></i> آفلاین و آنی
+                    </span>
+                    <button type="button" onclick="event.stopPropagation(); toggleAiInsightsVisibility();" id="aiInsightsToggleBtn" class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400 transition-colors" title="پنهان کردن تحلیل هوشمند">
+                        <i id="aiInsightsToggleIcon" class="fa-solid fa-chevron-up transition-transform duration-300"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="aiInsightsBody" class="pt-4 mt-4 border-t border-slate-300 dark:border-slate-600">
+                <div id="aiInsightsContainer" class="space-y-2">
+                </div>
             </div>
         </div>
 
@@ -2216,6 +2249,56 @@
             if (btn) btn.title = collapsed ? 'نمایش تحلیل هوشمند' : 'پنهان کردن تحلیل هوشمند';
         }
 
+        function toggleDelaySummaryVisibility() {
+            const body = document.getElementById('delaySummaryBody');
+            if (!body) return;
+            const collapsed = body.classList.toggle('hidden');
+            const icon = document.getElementById('delaySummaryToggleIcon');
+            const btn = document.getElementById('delaySummaryToggleBtn');
+            if (icon) icon.classList.toggle('rotate-180', collapsed);
+            if (btn) btn.title = collapsed ? 'نمایش این بخش' : 'پنهان کردن این بخش';
+            appSettings.delaySummaryCollapsed = collapsed;
+            appSettings.updatedAt = new Date().toISOString();
+            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+            if (typeof appDirHandle !== 'undefined' && appDirHandle) saveAllMonthFilesToDirectory();
+        }
+
+        function applyDelaySummaryVisibilityFromSettings() {
+            const body = document.getElementById('delaySummaryBody');
+            if (!body) return;
+            const collapsed = !!appSettings.delaySummaryCollapsed;
+            body.classList.toggle('hidden', collapsed);
+            const icon = document.getElementById('delaySummaryToggleIcon');
+            const btn = document.getElementById('delaySummaryToggleBtn');
+            if (icon) icon.classList.toggle('rotate-180', collapsed);
+            if (btn) btn.title = collapsed ? 'نمایش این بخش' : 'پنهان کردن این بخش';
+        }
+
+        function toggleDuplicateCodesVisibility() {
+            const body = document.getElementById('duplicateCodesBody');
+            if (!body) return;
+            const collapsed = body.classList.toggle('hidden');
+            const icon = document.getElementById('duplicateCodesToggleIcon');
+            const btn = document.getElementById('duplicateCodesToggleBtn');
+            if (icon) icon.classList.toggle('rotate-180', collapsed);
+            if (btn) btn.title = collapsed ? 'نمایش این بخش' : 'پنهان کردن این بخش';
+            appSettings.duplicateCodesCollapsed = collapsed;
+            appSettings.updatedAt = new Date().toISOString();
+            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+            if (typeof appDirHandle !== 'undefined' && appDirHandle) saveAllMonthFilesToDirectory();
+        }
+
+        function applyDuplicateCodesVisibilityFromSettings() {
+            const body = document.getElementById('duplicateCodesBody');
+            if (!body) return;
+            const collapsed = !!appSettings.duplicateCodesCollapsed;
+            body.classList.toggle('hidden', collapsed);
+            const icon = document.getElementById('duplicateCodesToggleIcon');
+            const btn = document.getElementById('duplicateCodesToggleBtn');
+            if (icon) icon.classList.toggle('rotate-180', collapsed);
+            if (btn) btn.title = collapsed ? 'نمایش این بخش' : 'پنهان کردن این بخش';
+        }
+
         function applyAppSettingsToUI() {
             const currency = appSettings.currency || 'تومان';
             document.getElementById('kpiPriceLabel').innerText = `ارزش کل کارکرد (${currency})`;
@@ -2253,6 +2336,8 @@
 
             updateAppHeader();
             applyAiInsightsVisibilityFromSettings();
+            applyDelaySummaryVisibilityFromSettings();
+            applyDuplicateCodesVisibilityFromSettings();
         }
 
         function applyCustomColors() {
@@ -2796,7 +2881,11 @@
             document.getElementById('cancelEditBtn').classList.remove('flex');
             document.getElementById('cancelEditBtn').classList.remove('hidden');
             document.getElementById('cancelEditBtn').classList.add('flex');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('recordFormCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTimeout(() => {
+                const firstField = document.getElementById('itemCode');
+                if (firstField) firstField.focus();
+            }, 400);
         }
 
         function resetFormState() {
@@ -2829,6 +2918,15 @@
             });
         }
 
+        function toggleNotesCardVisibility() {
+            const body = document.getElementById('notesCardBody');
+            const icon = document.getElementById('notesCardToggleIcon');
+            const collapsed = body.classList.toggle('hidden');
+            icon.classList.toggle('fa-chevron-up', !collapsed);
+            icon.classList.toggle('fa-chevron-down', collapsed);
+            localStorage.setItem('sewing_notes_card_collapsed', collapsed ? '1' : '0');
+        }
+
         function saveDailyNote() {
             const dateInput = document.getElementById('noteDateInput').value.trim();
             const textInput = document.getElementById('noteTextInput').value.trim();
@@ -2842,7 +2940,7 @@
             if (existingNoteIndex !== -1) {
                 dailyNotes[existingNoteIndex].text = textInput;
             } else {
-                dailyNotes.unshift({ id: Date.now(), date: dateInput, text: textInput });
+                dailyNotes.unshift({ id: Date.now(), date: dateInput, text: textInput, hidden: false });
             }
 
             saveRecords();
@@ -2850,6 +2948,14 @@
             document.getElementById('noteTextInput').value = '';
             showFeedbackBanner('یادداشت روزانه با موفقیت ثبت شد.', 'success');
             addLog(`یادداشت برای تاریخ ${dateInput} ثبت شد.`, 'success');
+        }
+
+        function toggleNoteVisibility(id) {
+            const note = dailyNotes.find(n => n.id === id);
+            if (!note) return;
+            note.hidden = !note.hidden;
+            saveRecords();
+            renderDailyNotes();
         }
 
         function deleteDailyNote(id) {
@@ -2873,12 +2979,16 @@
             }
 
             container.innerHTML = dailyNotes.map(n => `
-                <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-300 dark:border-slate-600 text-xs">
-                    <div class="flex items-center gap-3">
-                        <span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-200/50">${escapeHTML(n.date)}</span>
-                        <span class="text-slate-700 dark:text-slate-200">${escapeHTML(n.text)}</span>
+                <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-300 dark:border-slate-600 text-xs overflow-hidden">
+                    <div class="flex items-center justify-between p-3 cursor-pointer" onclick="toggleNoteVisibility(${n.id})">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <i class="fa-solid fa-chevron-${n.hidden ? 'left' : 'down'} text-slate-400 text-[10px] transition-transform"></i>
+                            <span class="font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-200/50">${escapeHTML(n.date)}</span>
+                            ${n.hidden ? '<span class="text-slate-400 truncate">یادداشت جمع شده</span>' : ''}
+                        </div>
+                        <button onclick="event.stopPropagation(); deleteDailyNote(${n.id})" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors shrink-0" title="حذف یادداشت"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
-                    <button onclick="deleteDailyNote(${n.id})" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors" title="حذف یادداشت"><i class="fa-solid fa-trash-can"></i></button>
+                    ${n.hidden ? '' : `<div class="px-3 pb-3 pr-9 text-slate-700 dark:text-slate-200 whitespace-pre-wrap">${escapeHTML(n.text)}</div>`}
                 </div>
             `).join('');
         }
@@ -3333,6 +3443,99 @@
             showFeedbackBanner(`مسیر گزارش با موفقیت به «${monthName} ${year}» تغییر یافت.`, 'info');
         }
 
+        function calculateTotalDelayMinutes(records) {
+            const WORK_MINUTES_PER_DAY = 8.5 * 60; // ۸ ساعت و نیم کاری در روز
+            let totalMinutes = 0;
+            let unknownCount = 0;
+            let delayRecordCount = 0;
+            records.forEach(r => {
+                if (r.status !== 'تاخیر') return;
+                delayRecordCount++;
+                if (!r.durationTime || r.durationTime === 'نامعلوم') {
+                    unknownCount++;
+                    return;
+                }
+                const parts = r.durationTime.split(':').map(n => parseInt(n, 10) || 0);
+                totalMinutes += (parts[0] * 60 + (parts[1] || 0));
+            });
+            return { totalMinutes, unknownCount, delayRecordCount, WORK_MINUTES_PER_DAY };
+        }
+
+        function formatDelayDurationSummary(records) {
+            const { totalMinutes, unknownCount, delayRecordCount, WORK_MINUTES_PER_DAY } = calculateTotalDelayMinutes(records);
+            if (delayRecordCount === 0) {
+                return 'هیچ رکورد با وضعیت «تاخیر» در این لیست وجود ندارد.';
+            }
+            const days = Math.floor(totalMinutes / WORK_MINUTES_PER_DAY);
+            const remAfterDays = totalMinutes % WORK_MINUTES_PER_DAY;
+            const hours = Math.floor(remAfterDays / 60);
+            const minutes = Math.round(remAfterDays % 60);
+
+            const parts = [];
+            if (days > 0) parts.push(`${formatNumber(days)} روز کاری`);
+            if (hours > 0) parts.push(`${formatNumber(hours)} ساعت`);
+            if (minutes > 0 || parts.length === 0) parts.push(`${formatNumber(minutes)} دقیقه`);
+            let text = parts.join(' و ');
+
+            if (unknownCount > 0) {
+                text += `<br><span class="text-[11px] font-normal text-slate-400 dark:text-slate-500">(${formatNumber(unknownCount)} رکورد با مدت تاخیر نامعلوم، در این جمع لحاظ نشده)</span>`;
+            }
+            return text;
+        }
+
+        function calculateDuplicateCodes(records) {
+            const groups = new Map();
+            records.forEach(r => {
+                const code = (r.itemCode || '').trim();
+                if (!code) return;
+                if (!groups.has(code)) groups.set(code, []);
+                groups.get(code).push(r);
+            });
+            return [...groups.entries()]
+                .filter(([, list]) => list.length > 1)
+                .sort((a, b) => b[1].length - a[1].length);
+        }
+
+        function formatDuplicateCodesSummary(records) {
+            const duplicates = calculateDuplicateCodes(records);
+            if (duplicates.length === 0) {
+                return '<p>کد تکراری‌ای در این لیست یافت نشد.</p>';
+            }
+            const totalDuplicateRecords = duplicates.reduce((sum, [, list]) => sum + list.length, 0);
+            const currency = appSettings.currency || 'تومان';
+
+            const groupsHTML = duplicates.map(([code, list]) => {
+                const totalQty = list.reduce((s, r) => s + r.quantity, 0);
+                const hasUnknownPrice = list.some(r => r.totalPrice === null || r.totalPrice === undefined);
+                const totalPrice = list.reduce((s, r) => s + (typeof r.totalPrice === 'number' ? r.totalPrice : 0), 0);
+
+                return `
+                    <div class="border border-indigo-100 dark:border-indigo-900/40 rounded-xl overflow-hidden mb-2 last:mb-0">
+                        <div class="bg-indigo-50 dark:bg-indigo-950/40 px-3 py-2 flex flex-wrap items-center justify-between gap-2">
+                            <span class="font-bold text-indigo-700 dark:text-indigo-300 text-xs">کد ${escapeHTML(code)} <span class="opacity-70 font-normal">(${formatNumber(list.length)} کارکرد)</span></span>
+                            <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">جمع تعداد: ${formatNumber(totalQty)} — جمع مبلغ: ${formatNumber(totalPrice)}${hasUnknownPrice ? '+' : ''} ${currency}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `<p class="mb-2 font-semibold">${formatNumber(duplicates.length)} کد تکراری، در مجموع ${formatNumber(totalDuplicateRecords)} رکورد</p>${groupsHTML}`;
+        }
+
+        function renderRecordsSummaryFooter(records) {
+            const footer = document.getElementById('recordsSummaryFooter');
+            const delayText = document.getElementById('totalDelaySummaryText');
+            const dupText = document.getElementById('duplicateCodesSummaryText');
+            if (!footer || !delayText || !dupText) return;
+            if (!records || records.length === 0) {
+                footer.classList.add('hidden');
+                return;
+            }
+            footer.classList.remove('hidden');
+            delayText.innerHTML = formatDelayDurationSummary(records);
+            dupText.innerHTML = formatDuplicateCodesSummary(records);
+        }
+
         function renderDashboard() {
             applyAppSettingsToUI();
             renderMonthSelector();
@@ -3381,6 +3584,7 @@
             if (records.length === 0) {
                 tableBody.innerHTML = '';
                 emptyState.classList.remove('hidden');
+                renderRecordsSummaryFooter(records);
                 return;
             }
 
@@ -3422,6 +3626,7 @@
                     </td>
                 </tr>
             `).join('');
+            renderRecordsSummaryFooter(records);
         }
 
         function openOverviewModal() {
@@ -3575,6 +3780,12 @@
         setCurrentTimeInInput();
         populateDeliveryDurationSelects();
         applyAppSettingsToUI();
+
+        if (localStorage.getItem('sewing_notes_card_collapsed') === '1') {
+            document.getElementById('notesCardBody').classList.add('hidden');
+            document.getElementById('notesCardToggleIcon').classList.remove('fa-chevron-up');
+            document.getElementById('notesCardToggleIcon').classList.add('fa-chevron-down');
+        }
 
         checkDailyAutoBackup();
 

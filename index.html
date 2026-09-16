@@ -1370,6 +1370,7 @@
 
             if (!enabled) {
                 appSettings.pinEnabled = false;
+                appSettings.updatedAt = new Date().toISOString();
                 localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
                 if (appDirHandle) saveAllMonthFilesToDirectory();
                 updatePinLockStatusUI();
@@ -1384,6 +1385,7 @@
                     return;
                 }
                 appSettings.pinEnabled = true;
+                appSettings.updatedAt = new Date().toISOString();
                 localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
                 if (appDirHandle) saveAllMonthFilesToDirectory();
                 updatePinLockStatusUI();
@@ -1403,6 +1405,7 @@
 
             appSettings.pinHash = await hashAppPin(newPin);
             appSettings.pinEnabled = true;
+            appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
             if (appDirHandle) saveAllMonthFilesToDirectory();
             document.getElementById('settingNewPin').value = '';
@@ -1511,7 +1514,26 @@
                 const monthKeys = new Set(allRecords.map(r => r.monthKey));
                 monthKeys.add(currentJalali.monthKey); // با شروع هر ماه، فایل آن ماه (حتی خالی) ساخته می‌شود
 
-                for (const monthKey of monthKeys) {
+                // شناسایی فایل‌های ماهی که از قبل در پوشه هستند ولی دیگر هیچ رکوردی در برنامه به آن‌ها
+                // اشاره نمی‌کند (چون همه‌ی رکوردهای آن ماه حذف شده‌اند یا با ویرایشِ تاریخ به ماه دیگری
+                // منتقل شده‌اند). بدون این مرحله، فایل قدیمیِ آن ماه دست‌نخورده باقی می‌ماند و در اتصال
+                // بعدی به همین پوشه، رکوردهای حذف/جابه‌جاشده دوباره وارد برنامه می‌شوند.
+                const staleMonthKeys = new Set();
+                for await (const [name, handle] of appDirHandle.entries()) {
+                    if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name === SETTINGS_FILE_NAME) continue;
+                    try {
+                        const file = await handle.getFile();
+                        const parsed = JSON.parse(await file.text());
+                        if (parsed && parsed.app === 'sewing_statistics' && parsed.monthKey &&
+                            !monthKeys.has(parsed.monthKey) && Array.isArray(parsed.records) && parsed.records.length > 0) {
+                            staleMonthKeys.add(parsed.monthKey);
+                        }
+                    } catch (e) {
+                        // فایل نامعتبر یا غیرمرتبط؛ نادیده گرفته می‌شود
+                    }
+                }
+
+                for (const monthKey of new Set([...monthKeys, ...staleMonthKeys])) {
                     const [year, monthNumStr] = String(monthKey).split('-');
                     const monthNum = parseInt(monthNumStr, 10);
                     const monthName = PERSIAN_MONTHS[monthNum - 1] || 'نامشخص';
@@ -1591,9 +1613,16 @@
                 allRecords = [...uniqueMap.values()];
                 if (loaded.notes) dailyNotes = loaded.notes;
                 if (loaded.settings) {
-                    appSettings = loaded.settings;
-                    localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-                    applyAppSettingsToUI();
+                    const localUpdatedAt = appSettings.updatedAt ? new Date(appSettings.updatedAt).getTime() : 0;
+                    const folderUpdatedAt = loaded.settings.updatedAt ? new Date(loaded.settings.updatedAt).getTime() : 0;
+                    if (folderUpdatedAt > localUpdatedAt) {
+                        // تنظیمات فایل پوشه جدیدتر است (مثلاً از دستگاه دیگری) → جایگزین تنظیمات محلی می‌شود
+                        appSettings = loaded.settings;
+                        localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+                        applyAppSettingsToUI();
+                    }
+                    // در غیر این صورت تنظیمات محلی (جدیدتر یا هم‌زمان) حفظ می‌شود؛
+                    // چند خط پایین‌تر با saveAllMonthFilesToDirectory() روی فایل پوشه هم نوشته خواهد شد
                 }
             }
 
@@ -1770,13 +1799,14 @@
             });
         }
 
-        function performExitApp() {
-            exportSmartBackup();
+        async function performExitApp() {
+            // منتظر می‌مانیم پشتیبان‌گیری واقعاً کامل شود (از جمله در صورت نمایش پنجره‌ی انتخاب مسیر ذخیره)
+            // قبل از این‌که appHasExited=true شود و کاربر بتواند بدون هشدار تب را ببندد؛
+            // قبلاً این دو کار هم‌زمان انجام می‌شد و ممکن بود ذخیره‌سازی هنوز کامل نشده باشد.
+            await exportSmartBackup();
             appHasExited = true;
             addLog('کاربر از برنامه خارج شد و نسخه پشتیبان به‌صورت خودکار ذخیره شد.', 'warn');
-            setTimeout(function() {
-                document.getElementById('exitAppScreen').classList.remove('hidden');
-            }, 500);
+            document.getElementById('exitAppScreen').classList.remove('hidden');
         }
 
         function reEnterApp() {
@@ -1885,8 +1915,15 @@
                 showFeedbackBanner('رکوردی برای چاپ در این لیست وجود ندارد.', 'warn');
                 return;
             }
-            const [year, monthNum] = selectedMonthFilter.split('-');
-            const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
+            // وقتی جستجوی پیشرفته فعال است، رکوردهای چاپ‌شده می‌توانند مربوط به چند ماه مختلف باشند؛
+            // قبلاً در این حالت هم برچسب «دوره» به‌اشتباه فقط نام ماهِ فیلتر فعلی را نشان می‌داد.
+            const periodLabel = advancedSearchFilters
+                ? 'نتیجه جستجوی پیشرفته (چند ماه)'
+                : (() => {
+                    const [year, monthNum] = selectedMonthFilter.split('-');
+                    const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
+                    return `${monthName} ${year}`;
+                })();
             const shopName = (appSettings.shopName || 'سامانه آمار دوخت لباس');
             const currency = appSettings.currency || 'تومان';
             const totalAmountSum = sumTotalPrice(records);
@@ -1894,7 +1931,7 @@
 
             document.getElementById('printRecordsTitle').innerText = `${shopName} - لیست کارکردها`;
             document.getElementById('printRecordsSubtitle').innerText =
-                `دوره: ${monthName} ${year}  |  تعداد رکورد: ${formatNumber(records.length)}  |  مجموع مبلغ: ${formatNumber(totalAmountSum)} ${currency}${unknownPriceCount > 0 ? '  |  ' + formatNumber(unknownPriceCount) + ' رکورد با قیمت نامعلوم' : ''}  |  تاریخ چاپ: ${currentJalali.fullDateStr}`;
+                `دوره: ${periodLabel}  |  تعداد رکورد: ${formatNumber(records.length)}  |  مجموع مبلغ: ${formatNumber(totalAmountSum)} ${currency}${unknownPriceCount > 0 ? '  |  ' + formatNumber(unknownPriceCount) + ' رکورد با قیمت نامعلوم' : ''}  |  تاریخ چاپ: ${currentJalali.fullDateStr}`;
 
             window.print();
         }
@@ -2105,6 +2142,7 @@
             }
 
             appSettings.deleteCodeHash = await hashDeleteCode(codeVal);
+            appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
             document.getElementById('settingNewDeleteCode').value = '';
             document.getElementById('settingConfirmDeleteCode').value = '';
@@ -2119,7 +2157,9 @@
 
         function saveAppSettings(event) {
             event.preventDefault();
-            const shopNameVal = document.getElementById('settingShopName').value.trim();
+            // اگر نام فروشگاه خالی گذاشته شود، از مقدار پیش‌فرض استفاده می‌شود؛ قبلاً در این حالت
+            // کل فرم (از جمله تم، فونت، رنگ‌ها و واحد پول) بدون هیچ پیام خطایی ذخیره نمی‌شد.
+            const shopNameVal = document.getElementById('settingShopName').value.trim() || appSettings.shopName || 'سامانه آمار دوخت لباس';
             const currencyVal = document.getElementById('settingCurrency').value;
             const defaultStatusVal = document.getElementById('settingDefaultStatus').value;
             const themeVal = document.getElementById('settingTheme').value;
@@ -2130,25 +2170,25 @@
             const cardColorVal = document.getElementById('settingCardColor').value;
             const fieldColorVal = document.getElementById('settingFieldColor').value;
 
-            if (shopNameVal) {
-                appSettings.shopName = shopNameVal;
-                appSettings.currency = currencyVal;
-                appSettings.defaultStatus = defaultStatusVal;
-                appSettings.theme = themeVal;
-                appSettings.fontSize = fontSizeVal;
-                appSettings.numFormat = numFormatVal;
-                appSettings.fontFamily = fontFamilyVal;
-                appSettings.bgColor = bgColorVal;
-                appSettings.cardColor = cardColorVal;
-                appSettings.fieldColor = fieldColorVal;
+            appSettings.shopName = shopNameVal;
+            appSettings.currency = currencyVal;
+            appSettings.defaultStatus = defaultStatusVal;
+            appSettings.theme = themeVal;
+            appSettings.fontSize = fontSizeVal;
+            appSettings.numFormat = numFormatVal;
+            appSettings.fontFamily = fontFamilyVal;
+            appSettings.bgColor = bgColorVal;
+            appSettings.cardColor = cardColorVal;
+            appSettings.fieldColor = fieldColorVal;
 
-                localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-                applyAppSettingsToUI();
-                renderDashboard();
-                addLog('تنظیمات برنامه به‌روزرسانی شد.', 'success');
-                closeSettingsModal();
-                showFeedbackBanner('تنظیمات جدید با موفقیت ذخیره و اعمال شد.', 'success');
-            }
+            appSettings.updatedAt = new Date().toISOString();
+            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+            if (appDirHandle) saveAllMonthFilesToDirectory(); // تا فایل تنظیمات در پوشه‌ی متصل هم بلافاصله به‌روز شود
+            applyAppSettingsToUI();
+            renderDashboard();
+            addLog('تنظیمات برنامه به‌روزرسانی شد.', 'success');
+            closeSettingsModal();
+            showFeedbackBanner('تنظیمات جدید با موفقیت ذخیره و اعمال شد.', 'success');
         }
 
         function toggleAiInsightsVisibility() {
@@ -2160,6 +2200,7 @@
             if (icon) icon.classList.toggle('rotate-180', collapsed);
             if (btn) btn.title = collapsed ? 'نمایش تحلیل هوشمند' : 'پنهان کردن تحلیل هوشمند';
             appSettings.aiInsightsCollapsed = collapsed;
+            appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
             if (typeof appDirHandle !== 'undefined' && appDirHandle) saveAllMonthFilesToDirectory();
         }
@@ -2277,6 +2318,24 @@
                 monthName: PERSIAN_MONTHS[monthNum - 1] || 'نامشخص',
                 monthKey: `${yearEn}-${monthNum}`,
                 fullDateStr: `${year}/${month}/${day}`
+            };
+        }
+
+        // گرفتن اطلاعات سال/ماه از روی خودِ تاریخ انتخاب‌شده در فرم (به‌جای تاریخ امروز سیستم)
+        // این تابع تضمین می‌کند رکورد همیشه زیر ماهی که واقعاً برایش انتخاب شده ثبت/فیلتر شود.
+        function getMonthInfoFromDateStr(dateStr) {
+            const normalized = toEnglishDigits(String(dateStr || '')).trim();
+            const parts = normalized.split('/');
+            if (parts.length !== 3) return null;
+            const year = parseInt(parts[0], 10);
+            const monthNum = parseInt(parts[1], 10);
+            if (isNaN(year) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) return null;
+            return {
+                year: toPersianDigits(year), // هم‌شکل با خروجی getCurrentJalaliInfo (ارقام فارسی)
+                yearEn: String(year),
+                monthNum: monthNum,
+                monthName: PERSIAN_MONTHS[monthNum - 1] || 'نامشخص',
+                monthKey: `${year}-${monthNum}`
             };
         }
 
@@ -2410,6 +2469,7 @@
                             if (parsed.notes) dailyNotes = parsed.notes;
                             if (parsed.settings) {
                                 appSettings = parsed.settings;
+                                appSettings.updatedAt = new Date().toISOString();
                                 localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
                                 applyAppSettingsToUI();
                             }
@@ -2496,6 +2556,7 @@
             }
 
             delete appSettings.deleteCodeHash;
+            appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
             addLog('کد امنیتی پاک کردن داده‌ها بازنشانی شد.', 'warn');
             showFeedbackBanner('کد امنیتی بازنشانی شد. لطفاً از بخش تنظیمات یک کد جدید تعیین کنید.', 'success');
@@ -2648,6 +2709,11 @@
                 return;
             }
 
+            // ماه/سال رکورد همیشه باید از روی خودِ تاریخ انتخاب‌شده در فرم محاسبه شود،
+            // نه از تاریخ امروز سیستم؛ در غیر این صورت رکوردهای عقب‌افتاده/جلوافتاده
+            // زیر ماه اشتباهی فیلتر می‌شدند.
+            const dateInfo = getMonthInfoFromDateStr(date) || info;
+
             if (editingId) {
                 const targetIndex = allRecords.findIndex(r => r.id === editingId);
                 if (targetIndex !== -1) {
@@ -2656,7 +2722,8 @@
                         itemCode: code, itemTitle: title, itemColor: color,
                         quantity: qty, unitPrice: price, totalPrice: isPriceUnknown ? null : qty * price,
                         status: status, date: date, time: time, durationTime: durationTime,
-                        photo: currentPhotoData
+                        photo: currentPhotoData,
+                        monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year
                     };
                     addLog(`رکورد ${code} ویرایش شد.`, 'warn');
                     showFeedbackBanner(`رکورد با کد ${code} با موفقیت ویرایش شد.`, 'success');
@@ -2667,7 +2734,7 @@
                     quantity: qty, unitPrice: price, totalPrice: isPriceUnknown ? null : qty * price,
                     status: status, date: date, time: time, durationTime: durationTime,
                     photo: currentPhotoData,
-                    monthKey: info.monthKey, monthName: info.monthName, year: info.year
+                    monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year
                 };
                 allRecords.unshift(newRecord);
                 addLog(`رکورد جدید ${code} ثبت شد.`, 'success');
@@ -2676,7 +2743,7 @@
 
             saveRecords();
             resetFormState();
-            selectedMonthFilter = info.monthKey;
+            selectedMonthFilter = dateInfo.monthKey;
             renderDashboard();
         }
 
@@ -3242,7 +3309,12 @@
             if (!selector) return;
             const existingKeys = [...new Set(allRecords.map(r => r.monthKey))];
             if (!existingKeys.includes(currentJalali.monthKey)) existingKeys.unshift(currentJalali.monthKey);
-            existingKeys.sort().reverse();
+            // مرتب‌سازی عددی (نه رشته‌ای) تا ماه‌های دو رقمی (۱۰،۱۱،۱۲) در جای درست خودشان قرار بگیرند
+            existingKeys.sort((a, b) => {
+                const [ay, am] = a.split('-').map(Number);
+                const [by, bm] = b.split('-').map(Number);
+                return (ay * 100 + am) - (by * 100 + bm);
+            }).reverse();
 
             selector.innerHTML = existingKeys.map(key => {
                 const [year, monthNum] = key.split('-');
@@ -3357,9 +3429,16 @@
             const modal = document.getElementById('overviewModal');
             const modalTableBody = document.getElementById('overviewModalTableBody');
             const currency = appSettings.currency || 'تومان';
-            const [year, monthNum] = selectedMonthFilter.split('-');
-            const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
-            document.getElementById('modalPeriodSub').innerText = `خلاصه گزارش ماه ${monthName} ${year}`;
+            // اینجا هم مثل چاپ/خروجی HTML، وقتی جستجوی پیشرفته فعال است رکوردها می‌توانند چند ماه را
+            // شامل شوند؛ عنوان باید همین را نشان دهد، نه همیشه نام ماهِ فیلتر فعلی را.
+            const periodLabel = advancedSearchFilters
+                ? 'نتیجه جستجوی پیشرفته'
+                : (() => {
+                    const [year, monthNum] = selectedMonthFilter.split('-');
+                    const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
+                    return `ماه ${monthName} ${year}`;
+                })();
+            document.getElementById('modalPeriodSub').innerText = `خلاصه گزارش ${periodLabel}`;
 
             const totalCount = records.length;
             const onTimeCount = records.filter(r => (r.status || 'به موقع') === 'به موقع').length;
@@ -3409,8 +3488,15 @@
                 showFeedbackBanner('رکوردی برای خروجی گرفتن وجود ندارد.', 'warn');
                 return;
             }
-            const [year, monthNum] = selectedMonthFilter.split('-');
-            const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
+            // وقتی جستجوی پیشرفته فعال است، رکوردهای این خروجی می‌توانند مربوط به چند ماه مختلف باشند؛
+            // قبلاً در این حالت هم عنوان/نام فایل به‌اشتباه فقط نام ماهِ فیلتر فعلی را نشان می‌داد.
+            const periodLabel = advancedSearchFilters
+                ? 'نتیجه جستجوی پیشرفته'
+                : (() => {
+                    const [year, monthNum] = selectedMonthFilter.split('-');
+                    const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
+                    return `${monthName} ${year}`;
+                })();
             const currency = appSettings.currency || 'تومان';
             
             const totalQtySum = records.reduce((sum, r) => sum + r.quantity, 0);
@@ -3422,7 +3508,7 @@
 <head>
     <meta charset="UTF-8">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <title>گزارش ${monthName} ${year}</title>
+    <title>گزارش ${periodLabel}</title>
     <style>
         body { font-family: 'Vazirmatn', Tahoma, sans-serif; padding: 25px; color: #1e293b; direction: rtl; }
         h1 { font-size: 20px; margin-bottom: 5px; color: #0f172a; }
@@ -3435,7 +3521,7 @@
     </style>
 </head>
 <body>
-    <h1>گزارش عملکرد کارگاه - ماه ${monthName} ${year}</h1>
+    <h1>گزارش عملکرد کارگاه - ${periodLabel}</h1>
     <p>تاریخ تهیه گزارش: ${currentJalali.fullDateStr}</p>
     <table>
         <tr>
@@ -3472,11 +3558,11 @@
             const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `گزارش_آمار_دوخت_${monthName}_${year}.html`;
+            link.download = `گزارش_آمار_دوخت_${periodLabel.replace(/\s+/g, '_')}.html`;
             link.click();
             
             addLog('گزارش HTML استخراج شد.', 'success');
-            showFeedbackBanner(`فایل گزارش HTML ماه ${monthName} استخراج و ذخیره شد.`, 'success');
+            showFeedbackBanner(`فایل گزارش HTML (${periodLabel}) استخراج و ذخیره شد.`, 'success');
         }
 
         function setCurrentTimeInInput() {

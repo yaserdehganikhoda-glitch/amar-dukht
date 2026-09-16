@@ -2802,6 +2802,10 @@
             if (editingId) {
                 const targetIndex = allRecords.findIndex(r => r.id === editingId);
                 if (targetIndex !== -1) {
+                    // اگر تاریخ رکورد طوری ویرایش شود که به ماه دیگری منتقل شود، به‌جای پرش خودکارِ
+                    // نمای فعلی به آن ماه (که باعث می‌شد بقیه‌ی رکوردهای ماه جاری ناپدید به‌نظر برسند)،
+                    // فقط با یک پیام واضح به کاربر اطلاع می‌دهیم و فیلتر ماهِ در حال نمایش را دست‌نخورده نگه می‌داریم.
+                    const movedToDifferentMonth = allRecords[targetIndex].monthKey !== dateInfo.monthKey;
                     allRecords[targetIndex] = {
                         ...allRecords[targetIndex],
                         itemCode: code, itemTitle: title, itemColor: color,
@@ -2811,7 +2815,12 @@
                         monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year
                     };
                     addLog(`رکورد ${code} ویرایش شد.`, 'warn');
-                    showFeedbackBanner(`رکورد با کد ${code} با موفقیت ویرایش شد.`, 'success');
+                    showFeedbackBanner(
+                        movedToDifferentMonth
+                            ? `رکورد با کد ${code} ویرایش شد و به «${dateInfo.monthName} ${dateInfo.year}» منتقل شد. برای مشاهده‌ی آن، ماه نمایش را از بالای جدول تغییر دهید.`
+                            : `رکورد با کد ${code} با موفقیت ویرایش شد.`,
+                        'success'
+                    );
                 }
             } else {
                 const newRecord = {
@@ -2824,11 +2833,12 @@
                 allRecords.unshift(newRecord);
                 addLog(`رکورد جدید ${code} ثبت شد.`, 'success');
                 showFeedbackBanner(`رکورد جدید با کد ${code} با موفقیت ثبت شد.`, 'success');
+                // فقط برای رکورد تازه ثبت‌شده، نمای جدول به ماهِ همان رکورد پرش می‌کند تا بلافاصله دیده شود.
+                selectedMonthFilter = dateInfo.monthKey;
             }
 
             saveRecords();
             resetFormState();
-            selectedMonthFilter = dateInfo.monthKey;
             renderDashboard();
         }
 

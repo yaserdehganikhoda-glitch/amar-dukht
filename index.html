@@ -3042,14 +3042,15 @@
             prev.nextCodeStartDate = newDate;
             prev.nextCodeStartTime = newTime;
 
-            if (prev.endDateTime) {
-                const [dueDatePart, dueTimePart] = prev.endDateTime.split(' - ');
-                const dueJdn = parseJalaliDateToJdn(dueDatePart);
+            const targetWorkMinutes = parseDurationStrToMinutes(prev.workDuration);
+            if (targetWorkMinutes !== null && prev.date && prev.time) {
+                const startJdn = parseJalaliDateToJdn(prev.date);
                 const nextJdn = parseJalaliDateToJdn(newDate);
-                if (dueJdn && nextJdn) {
-                    const dueMinutes = parseTimeToMinutes(dueTimePart);
+                if (startJdn && nextJdn) {
+                    const startMinutes = parseTimeToMinutes(prev.time);
                     const nextMinutes = parseTimeToMinutes(newTime);
-                    const diff = computeWorkingMinutesDiff(dueJdn, dueMinutes, nextJdn, nextMinutes);
+                    const actualElapsed = calculateActualWorkingMinutesElapsed(startJdn, startMinutes, nextJdn, nextMinutes);
+                    const diff = actualElapsed - targetWorkMinutes;
                     prev.status = diff === 0 ? 'به موقع' : (diff > 0 ? 'تاخیر' : 'زودتر از موعد');
                     if (diff !== 0) {
                         const absDiff = Math.abs(diff);
@@ -3705,27 +3706,6 @@
             return parts[0] * 60 + parts[1];
         }
 
-        // اختلاف زمانی (بر حسب دقیقه) بین دو لحظه (تاریخ+ساعت ژولیَنی) را محاسبه می‌کند،
-        // اما هر روزی که کامل «جمعه» باشد را از این اختلاف کسر می‌کند (چون جمعه‌ها تعطیل است
-        // و نباید در محاسبه‌ی مدت زمان تاخیر/زودتر از موعد لحاظ شود).
-        function computeWorkingMinutesDiff(fromJdn, fromMinutes, toJdn, toMinutes) {
-            let sign = 1;
-            let a = fromJdn * 1440 + fromMinutes;
-            let b = toJdn * 1440 + toMinutes;
-            let startJdn = fromJdn, endJdn = toJdn;
-            if (b < a) {
-                sign = -1;
-                [a, b] = [b, a];
-                [startJdn, endJdn] = [toJdn, fromJdn];
-            }
-            let diff = b - a;
-            for (let d = startJdn; d < endJdn; d++) {
-                if (isFridayJdn(d)) diff -= 1440;
-            }
-            if (diff < 0) diff = 0;
-            return sign * diff;
-        }
-
         function sortRecords(records) {
             const sorted = [...records];
             switch (currentSortOption) {
@@ -3857,6 +3837,55 @@
             }
         }
 
+        /* ============ محاسبه‌ی «مدت زمان کاریِ واقعاً سپری‌شده» بین دو لحظه ============ */
+        // مقدار دقایق کاری (در بازه‌ی شیفت رسمی و خارج از استراحت‌ها) در یک بازه‌ی
+        // [aMin, bMin) از یک روزِ مشخص را برمی‌گرداند.
+        function workingMinutesInDayInterval(aMin, bMin) {
+            const start = Math.max(aMin, SHIFT_START);
+            const end = Math.min(bMin, SHIFT_END);
+            if (end <= start) return 0;
+            let total = end - start;
+            SHIFT_BREAKS.forEach(b => {
+                const overlapStart = Math.max(start, b.start);
+                const overlapEnd = Math.min(end, b.end);
+                if (overlapEnd > overlapStart) total -= (overlapEnd - overlapStart);
+            });
+            return Math.max(0, total);
+        }
+
+        // مدت زمان کاریِ واقعاً سپری‌شده (بر حسب دقیقه) بین لحظه‌ی شروع (startJdn/startMinute)
+        // و لحظه‌ی پایان (endJdn/endMinute) را محاسبه می‌کند؛ فقط دقایقِ داخل بازه‌ی شیفت رسمی
+        // و خارج از استراحت‌ها حساب می‌شود و روزهای جمعه به‌طور کامل تعطیل در نظر گرفته می‌شوند.
+        function calculateActualWorkingMinutesElapsed(startJdn, startMinute, endJdn, endMinute) {
+            if (!startJdn || !endJdn) return 0;
+            if (endJdn < startJdn || (endJdn === startJdn && endMinute <= startMinute)) return 0;
+
+            let total = 0;
+            if (startJdn === endJdn) {
+                if (!isFridayJdn(startJdn)) total += workingMinutesInDayInterval(startMinute, endMinute);
+                return total;
+            }
+
+            if (!isFridayJdn(startJdn)) total += workingMinutesInDayInterval(startMinute, 1440);
+            for (let d = startJdn + 1; d < endJdn; d++) {
+                if (!isFridayJdn(d)) total += SHIFT_MINUTES;
+            }
+            if (!isFridayJdn(endJdn)) total += workingMinutesInDayInterval(0, endMinute);
+
+            return total;
+        }
+
+        // تبدیل رشته‌ی «مدت زمان تحویل کار» (HH:MM) به دقیقه
+        function parseDurationStrToMinutes(durationStr) {
+            if (!durationStr) return null;
+            const parts = toEnglishDigits(durationStr).trim().split(':');
+            if (parts.length !== 2) return null;
+            const h = parseInt(parts[0], 10), m = parseInt(parts[1], 10);
+            if (isNaN(h) || isNaN(m)) return null;
+            return h * 60 + m;
+        }
+        /* ============ پایان محاسبه‌ی مدت زمان کاریِ واقعاً سپری‌شده ============ */
+
         // اجرای محاسبه‌ی خودکار: با تغییر «آمار روزانه»، «تعداد دریافتی» یا «ساعت ثبت»،
         // وضعیت تحویل و میزان تاخیر به‌صورت خودکار محاسبه و پر می‌شوند
         function runAutoDeliveryCalculation() {
@@ -3913,23 +3942,27 @@
         /* ============ پایان محاسبه خودکار زمان اتمام کار ============ */
 
         /* ============ تعیین وضعیت واقعی تحویل بر اساس تاریخ و زمان شروع کد بعد ============ */
-        // موعد مقرر (تاریخ و زمان پایان محاسبه‌شده) با لحظه‌ی واقعیِ شروع کد بعدی مقایسه می‌شود:
-        // اگر شروع کد بعد دیرتر از موعد مقرر باشد => «تاخیر»، زودتر باشد => «زودتر از موعد»، برابر باشد => «به موقع».
+        // مدت زمان کاریِ واقعاً سپری‌شده از لحظه‌ی شروع (تاریخ/ساعت ثبت) تا لحظه‌ی واقعیِ شروع
+        // کد بعدی، با «مدت زمان تحویل کار» (مدت زمان لازم/محاسبه‌شده) مقایسه می‌شود:
+        // اگر زمان سپری‌شده بیشتر از مدت لازم باشد => «تاخیر»، کمتر باشد => «زودتر از موعد»، برابر باشد => «به موقع».
         function runActualStatusCalculation() {
-            const endDateTimeStr = document.getElementById('recordEndDateTime').value.trim();
+            const workDurationStr = document.getElementById('recordWorkDuration').value.trim();
+            const startDateStr = document.getElementById('recordDate').value.trim();
+            const startTimeStr = document.getElementById('recordTime').value.trim();
             const nextDateStr = document.getElementById('nextCodeStartDate').value.trim();
             const nextTimeStr = document.getElementById('nextCodeStartTime').value.trim();
 
-            if (!endDateTimeStr || !nextDateStr || !nextTimeStr) return;
+            const targetWorkMinutes = parseDurationStrToMinutes(workDurationStr);
+            if (targetWorkMinutes === null || !startDateStr || !startTimeStr || !nextDateStr || !nextTimeStr) return;
 
-            const [dueDatePart, dueTimePart] = endDateTimeStr.split(' - ');
-            const dueJdn = parseJalaliDateToJdn(dueDatePart);
+            const startJdn = parseJalaliDateToJdn(startDateStr);
             const nextJdn = parseJalaliDateToJdn(nextDateStr);
-            if (!dueJdn || !nextJdn) return;
+            if (!startJdn || !nextJdn) return;
 
-            const dueMinutes = parseTimeToMinutes(dueTimePart);
+            const startMinutes = parseTimeToMinutes(startTimeStr);
             const nextMinutes = parseTimeToMinutes(nextTimeStr);
-            const diff = computeWorkingMinutesDiff(dueJdn, dueMinutes, nextJdn, nextMinutes);
+            const actualElapsed = calculateActualWorkingMinutesElapsed(startJdn, startMinutes, nextJdn, nextMinutes);
+            const diff = actualElapsed - targetWorkMinutes;
 
             const statusSelect = document.getElementById('itemStatus');
             statusSelect.value = diff === 0 ? 'به موقع' : (diff > 0 ? 'تاخیر' : 'زودتر از موعد');

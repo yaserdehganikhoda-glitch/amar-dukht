@@ -438,6 +438,14 @@
                     <input type="text" id="recordEndDateTime" readonly placeholder="با تکمیل آمار روزانه و تعداد دریافتی محاسبه می‌شود" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-slate-100 dark:bg-slate-800/60 dark:text-slate-200 outline-none transition-all cursor-not-allowed">
                 </div>
 
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                        مدت زمان تحویل کار
+                        <span class="text-[10px] text-indigo-500 dark:text-indigo-400 font-normal">(محاسبه خودکار، جمعه‌ها تعطیل محسوب می‌شود)</span>
+                    </label>
+                    <input type="text" id="recordWorkDuration" readonly placeholder="با تکمیل آمار روزانه و تعداد دریافتی محاسبه می‌شود" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-slate-100 dark:bg-slate-800/60 dark:text-slate-200 outline-none transition-all cursor-not-allowed">
+                </div>
+
                 <div id="autoCalcInfoBox" class="hidden bg-indigo-50/70 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 rounded-xl p-3 text-[11px] leading-relaxed text-indigo-700 dark:text-indigo-300 flex items-start gap-1.5">
                     <i class="fa-solid fa-wand-magic-sparkles mt-0.5"></i>
                     <span id="autoCalcInfoText"></span>
@@ -643,6 +651,7 @@
                             <th id="thUnitPrice" class="p-3.5">قیمت واحد (تومان)</th>
                             <th id="thTotalPrice" class="p-3.5">مبلغ کل (تومان)</th>
                             <th class="p-3.5">آمار روزانه</th>
+                            <th class="p-3.5">مدت زمان تحویل کار</th>
                             <th class="p-3.5">تاریخ و زمان پایان</th>
                             <th class="p-3.5">شروع کد بعد</th>
                             <th class="p-3.5">وضعیت</th>
@@ -3001,6 +3010,61 @@
         }
         /* ============ پایان مدیریت عکس هر رکورد ============ */
 
+        /* ============ ثبت خودکار «شروع کد بعد» روی رکورد قبلی، هنگام شروع کد جدید ============ */
+        // نزدیک‌ترین رکوردِ پیش از لحظه‌ی (تاریخ+ساعت) داده‌شده را پیدا می‌کند (رکورد «قبلی»)
+        function findPreviousRecordByDateTime(dateStr, timeStr, excludeId) {
+            const refJdn = parseJalaliDateToJdn(dateStr);
+            const refMinutes = parseTimeToMinutes(timeStr);
+            const refKey = refJdn * 1440 + refMinutes;
+            let prevRecord = null;
+            let prevKey = -Infinity;
+            allRecords.forEach(r => {
+                if (excludeId && r.id === excludeId) return;
+                const rJdn = parseJalaliDateToJdn(r.date);
+                const rMinutes = parseTimeToMinutes(r.time);
+                const rKey = rJdn * 1440 + rMinutes;
+                if (rKey < refKey && rKey > prevKey) {
+                    prevRecord = r;
+                    prevKey = rKey;
+                }
+            });
+            return prevRecord;
+        }
+
+        // وقتی رکورد جدیدی (شروع کد بعدی) ثبت می‌شود، اگر رکورد قبلی هنوز تاریخ/ساعت
+        // «شروع کد بعد» نداشته باشد (یعنی هنوز دستی پر نشده)، همین لحظه به‌عنوان آن ثبت
+        // و وضعیت تحویل + مدت زمان تاخیر/زودتر از موعدِ آن رکورد قبلی دوباره محاسبه می‌شود.
+        function applyNextCodeStartToPreviousRecord(newDate, newTime, excludeId) {
+            const prev = findPreviousRecordByDateTime(newDate, newTime, excludeId);
+            if (!prev) return;
+            if (prev.nextCodeStartDate || prev.nextCodeStartTime) return;
+
+            prev.nextCodeStartDate = newDate;
+            prev.nextCodeStartTime = newTime;
+
+            if (prev.endDateTime) {
+                const [dueDatePart, dueTimePart] = prev.endDateTime.split(' - ');
+                const dueJdn = parseJalaliDateToJdn(dueDatePart);
+                const nextJdn = parseJalaliDateToJdn(newDate);
+                if (dueJdn && nextJdn) {
+                    const dueMinutes = parseTimeToMinutes(dueTimePart);
+                    const nextMinutes = parseTimeToMinutes(newTime);
+                    const diff = computeWorkingMinutesDiff(dueJdn, dueMinutes, nextJdn, nextMinutes);
+                    prev.status = diff === 0 ? 'به موقع' : (diff > 0 ? 'تاخیر' : 'زودتر از موعد');
+                    if (diff !== 0) {
+                        const absDiff = Math.abs(diff);
+                        const h = Math.floor(absDiff / 60);
+                        const m = absDiff % 60;
+                        prev.durationTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+                    } else {
+                        prev.durationTime = '';
+                    }
+                    addLog(`تاریخ/ساعت شروع کد بعد برای رکورد ${prev.itemCode || '-'} به‌صورت خودکار ثبت و وضعیت آن (${prev.status}) به‌روزرسانی شد.`, 'info');
+                }
+            }
+        }
+        /* ============ پایان ثبت خودکار «شروع کد بعد» ============ */
+
         function handleFormSubmit(event) {
             event.preventDefault();
             const info = getCurrentJalaliInfo();
@@ -3017,6 +3081,7 @@
             const dailyStat = dailyStatRaw ? parsePersianInt(dailyStatRaw) : null;
             const receivedQuantity = qty;
             const endDateTime = document.getElementById('recordEndDateTime').value.trim() || null;
+            const workDuration = document.getElementById('recordWorkDuration').value.trim() || null;
             const nextCodeStartDate = document.getElementById('nextCodeStartDate').value.trim() || null;
             const nextCodeStartTime = document.getElementById('nextCodeStartTime').value.trim() || null;
             const date = document.getElementById('recordDate').value || info.fullDateStr;
@@ -3057,6 +3122,7 @@
                         quantity: qty, unitPrice: price, totalPrice: isPriceUnknown ? null : qty * price,
                         status: status, date: date, time: time, durationTime: durationTime,
                         dailyStat: dailyStat, receivedQuantity: receivedQuantity, endDateTime: endDateTime,
+                        workDuration: workDuration,
                         nextCodeStartDate: nextCodeStartDate, nextCodeStartTime: nextCodeStartTime,
                         photo: currentPhotoData,
                         monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year
@@ -3075,10 +3141,15 @@
                     quantity: qty, unitPrice: price, totalPrice: isPriceUnknown ? null : qty * price,
                     status: status, date: date, time: time, durationTime: durationTime,
                     dailyStat: dailyStat, receivedQuantity: receivedQuantity, endDateTime: endDateTime,
+                    workDuration: workDuration,
                     nextCodeStartDate: nextCodeStartDate, nextCodeStartTime: nextCodeStartTime,
                     photo: currentPhotoData,
                     monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year
                 };
+                // پیش از افزودن رکورد جدید، اگر رکورد قبلی (از نظر زمانی) هنوز «تاریخ/ساعت شروع کد بعد»
+                // نداشته باشد، همین لحظه‌ی شروع کد جدید به‌عنوان آن ثبت و وضعیت/تاخیرِ رکورد قبلی
+                // به‌صورت خودکار محاسبه و در لیست کارکردها به‌روزرسانی می‌شود.
+                applyNextCodeStartToPreviousRecord(date, time, null);
                 allRecords.unshift(newRecord);
                 addLog(`رکورد جدید ${code} ثبت شد.`, 'success');
                 showFeedbackBanner(`رکورد جدید با کد ${code} با موفقیت ثبت شد.`, 'success');
@@ -3109,6 +3180,7 @@
                 ? ((record.receivedQuantity === null || record.receivedQuantity === undefined) ? '' : record.receivedQuantity)
                 : record.quantity;
             document.getElementById('recordEndDateTime').value = record.endDateTime || '';
+            document.getElementById('recordWorkDuration').value = record.workDuration || '';
             document.getElementById('nextCodeStartDate').value = record.nextCodeStartDate || '';
             document.getElementById('nextCodeStartTime').value = record.nextCodeStartTime || '';
             document.getElementById('recordDate').value = record.date;
@@ -3168,6 +3240,7 @@
             removeSelectedPhoto();
             document.getElementById('autoCalcInfoBox').classList.add('hidden');
             document.getElementById('recordEndDateTime').value = '';
+            document.getElementById('recordWorkDuration').value = '';
             document.getElementById('nextCodeStartDate').value = '';
             document.getElementById('nextCodeStartTime').value = '';
 
@@ -3336,6 +3409,20 @@
                 return PERSIAN_WEEKDAYS_FULL[(jsDay + 1) % 7];
             } catch (e) {
                 return '';
+            }
+        }
+
+        // بررسی تعطیل بودن جمعه برای یک شماره‌روز ژولیَنی (JDN) مشخص
+        function isFridayJdn(jdn) {
+            if (!jdn) return false;
+            try {
+                const { jy, jm, jd } = d2j(jdn);
+                const g = jalaaliToGregorian(jy, jm, jd);
+                const jsDay = new Date(g.gy, g.gm - 1, g.gd).getDay();
+                // در تقویم شمسی، جمعه معادل jsDay === 5 (Friday در تقویم میلادی) است.
+                return jsDay === 5;
+            } catch (e) {
+                return false;
             }
         }
 
@@ -3618,6 +3705,27 @@
             return parts[0] * 60 + parts[1];
         }
 
+        // اختلاف زمانی (بر حسب دقیقه) بین دو لحظه (تاریخ+ساعت ژولیَنی) را محاسبه می‌کند،
+        // اما هر روزی که کامل «جمعه» باشد را از این اختلاف کسر می‌کند (چون جمعه‌ها تعطیل است
+        // و نباید در محاسبه‌ی مدت زمان تاخیر/زودتر از موعد لحاظ شود).
+        function computeWorkingMinutesDiff(fromJdn, fromMinutes, toJdn, toMinutes) {
+            let sign = 1;
+            let a = fromJdn * 1440 + fromMinutes;
+            let b = toJdn * 1440 + toMinutes;
+            let startJdn = fromJdn, endJdn = toJdn;
+            if (b < a) {
+                sign = -1;
+                [a, b] = [b, a];
+                [startJdn, endJdn] = [toJdn, fromJdn];
+            }
+            let diff = b - a;
+            for (let d = startJdn; d < endJdn; d++) {
+                if (isFridayJdn(d)) diff -= 1440;
+            }
+            if (diff < 0) diff = 0;
+            return sign * diff;
+        }
+
         function sortRecords(records) {
             const sorted = [...records];
             switch (currentSortOption) {
@@ -3681,17 +3789,31 @@
         }
 
         // اگر لحظه‌ی جاری بیرون از بازه‌ی رسمی کار (۰۸:۰۰ تا ۱۸:۰۰) باشد،
-        // آن را به شروع نزدیک‌ترین شیفت کاری بعدی (همان روز یا روز بعد) می‌برد
-        function jumpToShiftWindow(totalMinutes) {
-            const day = Math.floor(totalMinutes / 1440);
-            const m = totalMinutes % 1440;
-            if (m < SHIFT_START) return day * 1440 + SHIFT_START;
-            if (m >= SHIFT_END) return (day + 1) * 1440 + SHIFT_START;
-            return totalMinutes;
+        // آن را به شروع نزدیک‌ترین شیفت کاری بعدی (همان روز یا روز بعد) می‌برد.
+        // اگر startJdn داده شود، روزهایی که «جمعه» هستند نیز به‌طور کامل تعطیل در نظر گرفته
+        // و رد می‌شوند (کار به شیفتِ اولین روز غیر جمعه‌ی بعدی منتقل می‌شود).
+        function jumpToShiftWindow(totalMinutes, startJdn) {
+            let day = Math.floor(totalMinutes / 1440);
+            let m = totalMinutes % 1440;
+            let result;
+            if (m < SHIFT_START) result = day * 1440 + SHIFT_START;
+            else if (m >= SHIFT_END) result = (day + 1) * 1440 + SHIFT_START;
+            else result = totalMinutes;
+
+            if (startJdn) {
+                let guard = 0;
+                let curDay = Math.floor(result / 1440);
+                while (isFridayJdn(startJdn + curDay) && guard < 14) {
+                    curDay++;
+                    result = curDay * 1440 + SHIFT_START;
+                    guard++;
+                }
+            }
+            return result;
         }
 
-        // فرمول: (تایم کاری شیفت / آمار روزانه) * تعداد دریافتی، با شبیه‌سازی دقیق استراحت‌ها و پرش شیفت
-        function calculateCompletionEstimate(startTimeStr, dailyStatVal, receivedQtyVal) {
+        // فرمول: (تایم کاری شیفت / آمار روزانه) * تعداد دریافتی، با شبیه‌سازی دقیق استراحت‌ها، پرش شیفت و تعطیلی جمعه‌ها
+        function calculateCompletionEstimate(startTimeStr, dailyStatVal, receivedQtyVal, startDateStr) {
             if (!startTimeStr || !dailyStatVal || dailyStatVal <= 0 || !receivedQtyVal || receivedQtyVal < 0) return null;
 
             const durationMinutes = (SHIFT_MINUTES / dailyStatVal) * receivedQtyVal;
@@ -3702,11 +3824,12 @@
             const [startHour, startMin] = startTimeStr.split(':').map(Number);
             if (isNaN(startHour) || isNaN(startMin)) return null;
             const startTotalMinutes = startHour * 60 + startMin;
+            const startJdn = startDateStr ? parseJalaliDateToJdn(startDateStr) : null;
             let currentTotalMinutes = startTotalMinutes;
             let workingMinutesDone = 0;
 
             while (workingMinutesDone < targetWorkMinutes) {
-                currentTotalMinutes = jumpToShiftWindow(currentTotalMinutes);
+                currentTotalMinutes = jumpToShiftWindow(currentTotalMinutes, startJdn);
                 if (!isShiftBreakMinute(currentTotalMinutes)) workingMinutesDone++;
                 currentTotalMinutes++;
             }
@@ -3740,14 +3863,17 @@
             const infoBox = document.getElementById('autoCalcInfoBox');
             const infoText = document.getElementById('autoCalcInfoText');
             const endDateTimeField = document.getElementById('recordEndDateTime');
+            const workDurationField = document.getElementById('recordWorkDuration');
             const startTimeStr = document.getElementById('recordTime').value;
+            const startDateStr = document.getElementById('recordDate').value;
             const dailyStatVal = parsePersianInt(document.getElementById('dailyStat').value.trim());
             const receivedQtyVal = parsePersianInt(document.getElementById('receivedQuantity').value.trim());
 
-            const result = calculateCompletionEstimate(startTimeStr, dailyStatVal, receivedQtyVal);
+            const result = calculateCompletionEstimate(startTimeStr, dailyStatVal, receivedQtyVal, startDateStr);
             if (!result) {
                 infoBox.classList.add('hidden');
                 endDateTimeField.value = '';
+                if (workDurationField) workDurationField.value = '';
                 return;
             }
 
@@ -3762,9 +3888,11 @@
             infoText.innerText = `مدت زمان لازم: ${durationText} | ساعت تخمینی اتمام: ${result.endTimeStr}${dayNoticeText}`;
             infoBox.classList.remove('hidden');
 
-            const startDateStr = document.getElementById('recordDate').value;
             const endDateStr = computeEndJalaliDateStr(startDateStr, result.daysPassed);
             endDateTimeField.value = endDateStr ? `${endDateStr} - ${result.endTimeStr}` : '';
+            if (workDurationField) {
+                workDurationField.value = `${String(result.hoursNeeded).padStart(2, '0')}:${String(result.minsNeeded).padStart(2, '0')}`;
+            }
 
             const statusSelect = document.getElementById('itemStatus');
             statusSelect.value = result.daysPassed > 0 ? 'تاخیر' : 'به موقع';
@@ -3801,7 +3929,7 @@
 
             const dueMinutes = parseTimeToMinutes(dueTimePart);
             const nextMinutes = parseTimeToMinutes(nextTimeStr);
-            const diff = (nextJdn * 1440 + nextMinutes) - (dueJdn * 1440 + dueMinutes);
+            const diff = computeWorkingMinutesDiff(dueJdn, dueMinutes, nextJdn, nextMinutes);
 
             const statusSelect = document.getElementById('itemStatus');
             statusSelect.value = diff === 0 ? 'به موقع' : (diff > 0 ? 'تاخیر' : 'زودتر از موعد');
@@ -4118,6 +4246,7 @@
                     <td class="p-3.5 tabular-nums">${formatPriceValue(r.unitPrice)}</td>
                     <td class="p-3.5 font-bold tabular-nums ${r.totalPrice === null || r.totalPrice === undefined ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}">${formatPriceValue(r.totalPrice)}</td>
                     <td class="p-3.5 tabular-nums">${(r.dailyStat === null || r.dailyStat === undefined) ? '-' : formatNumber(r.dailyStat)}</td>
+                    <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${r.workDuration ? escapeHTML(r.workDuration) : '-'}</td>
                     <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${r.endDateTime ? escapeHTML(r.endDateTime) : '-'}</td>
                     <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${r.nextCodeStartDate ? (escapeHTML(r.nextCodeStartDate) + (r.nextCodeStartTime ? ' <span class="opacity-60">-</span> ' + escapeHTML(r.nextCodeStartTime) : '')) : '-'}</td>
                     <td class="p-3.5">

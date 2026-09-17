@@ -3928,11 +3928,15 @@
             toggleDeliveryDurationField();
 
             if (result.daysPassed > 0) {
-                document.getElementById('deliveryDurationUnknown').checked = false;
+                // تا وقتی تاریخ/ساعت واقعیِ شروع کد بعد ثبت نشده باشد، مقدار دقیق «مدت زمان تاخیر»
+                // قابل تعیین نیست (چون تاخیر واقعی فقط با مقایسه‌ی زمان کاریِ واقعاً سپری‌شده تا
+                // شروع کد بعد، با مدت زمان تحویل کار، به‌دست می‌آید). بنابراین فیلد به‌صورت «نامعلوم»
+                // علامت زده می‌شود تا با ثبت تاریخ/ساعت شروع کد بعد (در runActualStatusCalculation)
+                // به‌طور خودکار با مقدار واقعی جایگزین شود.
+                document.getElementById('deliveryDurationUnknown').checked = true;
                 toggleDeliveryDurationUnknown();
-                document.getElementById('deliveryDurationHour').value = String(Math.min(23, result.hoursNeeded));
-                const roundedM = Math.min(55, Math.round(result.minsNeeded / 5) * 5);
-                document.getElementById('deliveryDurationMinute').value = String(roundedM);
+                document.getElementById('deliveryDurationHour').value = '0';
+                document.getElementById('deliveryDurationMinute').value = '0';
             }
 
             // پس از تغییر ورودی‌های محاسبه‌ی خودکار (که موعد مقرر را جابه‌جا می‌کنند)،

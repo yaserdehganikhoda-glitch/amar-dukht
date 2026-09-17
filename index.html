@@ -388,8 +388,8 @@
                         <input type="text" id="itemColor" required class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">تعداد (عدد)</label>
-                        <input type="text" inputmode="numeric" id="quantity" required class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">تعداد دریافتی</label>
+                        <input type="text" inputmode="numeric" id="receivedQuantity" required oninput="runAutoDeliveryCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
                         <label id="unitPriceLabel" class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">قیمت واحد (تومان)</label>
@@ -425,15 +425,9 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">آمار روزانه</label>
-                        <input type="text" inputmode="numeric" id="dailyStat" oninput="runAutoDeliveryCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">تعداد دریافتی</label>
-                        <input type="text" inputmode="numeric" id="receivedQuantity" oninput="runAutoDeliveryCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
-                    </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">آمار روزانه</label>
+                    <input type="text" inputmode="numeric" id="dailyStat" oninput="runAutoDeliveryCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                 </div>
 
                 <div>
@@ -447,6 +441,32 @@
                 <div id="autoCalcInfoBox" class="hidden bg-indigo-50/70 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 rounded-xl p-3 text-[11px] leading-relaxed text-indigo-700 dark:text-indigo-300 flex items-start gap-1.5">
                     <i class="fa-solid fa-wand-magic-sparkles mt-0.5"></i>
                     <span id="autoCalcInfoText"></span>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-3 flex items-center gap-1.5">
+                        <i class="fa-solid fa-forward"></i> تاریخ و زمان شروع کد بعد
+                        <span class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">(اختیاری)</span>
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">تاریخ شروع کد بعد</label>
+                            <div class="relative">
+                                <input type="text" id="nextCodeStartDate" readonly onclick="openDatePicker('nextCodeStartDate', event)" placeholder="انتخاب تاریخ" class="w-full p-3 pr-10 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all cursor-pointer">
+                                <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">ساعت شروع کد بعد</label>
+                            <input type="time" id="nextCodeStartTime" oninput="runActualStatusCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        </div>
+                    </div>
+                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 mt-3">
+                        <i class="fa-solid fa-circle-info ml-1"></i>
+                        با ثبت تاریخ و زمان شروع کد بعدی، وضعیت تحویل و مدت زمان تاخیر/زودتر از موعدِ همین رکورد بر اساس آن محاسبه و به‌روزرسانی می‌شود.
+                    </p>
                 </div>
 
                 <div id="deliveryDurationWrapper" class="hidden bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 rounded-xl p-4 transition-all">
@@ -619,12 +639,12 @@
                             <th class="p-3.5">کد</th>
                             <th class="p-3.5">عنوان لباس</th>
                             <th class="p-3.5">رنگ</th>
-                            <th class="p-3.5">تعداد</th>
+                            <th class="p-3.5">تعداد دریافتی</th>
                             <th id="thUnitPrice" class="p-3.5">قیمت واحد (تومان)</th>
                             <th id="thTotalPrice" class="p-3.5">مبلغ کل (تومان)</th>
                             <th class="p-3.5">آمار روزانه</th>
-                            <th class="p-3.5">تعداد دریافتی</th>
                             <th class="p-3.5">تاریخ و زمان پایان</th>
+                            <th class="p-3.5">شروع کد بعد</th>
                             <th class="p-3.5">وضعیت</th>
                             <th class="p-3.5">تاریخ و ساعت</th>
                             <th class="p-3.5 text-center no-print">عملیات</th>
@@ -1179,7 +1199,7 @@
                                 <th class="p-3">کد</th>
                                 <th class="p-3">عنوان</th>
                                 <th class="p-3">رنگ</th>
-                                <th class="p-3">تعداد</th>
+                                <th class="p-3">تعداد دریافتی</th>
                                 <th class="p-3">قیمت واحد</th>
                                 <th class="p-3">مبلغ کل</th>
                                 <th class="p-3">وضعیت</th>
@@ -2279,6 +2299,7 @@
             if (input) {
                 input.value = formatJalaliDate(jy, jm, day);
                 if (targetId === 'recordDate') runAutoDeliveryCalculation();
+                if (targetId === 'nextCodeStartDate') runActualStatusCalculation();
             }
             closeDatePicker();
         }
@@ -2289,6 +2310,7 @@
             if (input) {
                 input.value = currentJalali.fullDateStr;
                 if (targetId === 'recordDate') runAutoDeliveryCalculation();
+                if (targetId === 'nextCodeStartDate') runActualStatusCalculation();
             }
             closeDatePicker();
         }
@@ -2987,15 +3009,16 @@
             const code = document.getElementById('itemCode').value.trim();
             const title = document.getElementById('itemTitle').value.trim();
             const color = document.getElementById('itemColor').value.trim();
-            const qty = parsePersianInt(document.getElementById('quantity').value);
+            const qty = parsePersianInt(document.getElementById('receivedQuantity').value);
             const isPriceUnknown = document.getElementById('priceUnknownCheckbox').checked;
             const price = isPriceUnknown ? null : parsePersianInt(document.getElementById('unitPrice').value);
             const status = document.getElementById('itemStatus').value;
             const dailyStatRaw = document.getElementById('dailyStat').value.trim();
             const dailyStat = dailyStatRaw ? parsePersianInt(dailyStatRaw) : null;
-            const receivedQtyRaw = document.getElementById('receivedQuantity').value.trim();
-            const receivedQuantity = receivedQtyRaw ? parsePersianInt(receivedQtyRaw) : null;
+            const receivedQuantity = qty;
             const endDateTime = document.getElementById('recordEndDateTime').value.trim() || null;
+            const nextCodeStartDate = document.getElementById('nextCodeStartDate').value.trim() || null;
+            const nextCodeStartTime = document.getElementById('nextCodeStartTime').value.trim() || null;
             const date = document.getElementById('recordDate').value || info.fullDateStr;
             const time = document.getElementById('recordTime').value || new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
             const needsDuration = (status === 'تاخیر' || status === 'زودتر از موعد');
@@ -3012,7 +3035,7 @@
             }
 
             if (qty <= 0 || (!isPriceUnknown && price <= 0)) {
-                showFeedbackBanner('لطفاً مقادیر معتبر (بزرگ‌تر از صفر) برای تعداد و قیمت واحد وارد کنید.', 'warn');
+                showFeedbackBanner('لطفاً مقادیر معتبر (بزرگ‌تر از صفر) برای تعداد دریافتی و قیمت واحد وارد کنید.', 'warn');
                 return;
             }
 
@@ -3034,6 +3057,7 @@
                         quantity: qty, unitPrice: price, totalPrice: isPriceUnknown ? null : qty * price,
                         status: status, date: date, time: time, durationTime: durationTime,
                         dailyStat: dailyStat, receivedQuantity: receivedQuantity, endDateTime: endDateTime,
+                        nextCodeStartDate: nextCodeStartDate, nextCodeStartTime: nextCodeStartTime,
                         photo: currentPhotoData,
                         monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year
                     };
@@ -3051,6 +3075,7 @@
                     quantity: qty, unitPrice: price, totalPrice: isPriceUnknown ? null : qty * price,
                     status: status, date: date, time: time, durationTime: durationTime,
                     dailyStat: dailyStat, receivedQuantity: receivedQuantity, endDateTime: endDateTime,
+                    nextCodeStartDate: nextCodeStartDate, nextCodeStartTime: nextCodeStartTime,
                     photo: currentPhotoData,
                     monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year
                 };
@@ -3074,14 +3099,18 @@
             document.getElementById('itemCode').value = record.itemCode || '';
             document.getElementById('itemTitle').value = record.itemTitle || '';
             document.getElementById('itemColor').value = record.itemColor || '';
-            document.getElementById('quantity').value = record.quantity;
             document.getElementById('priceUnknownCheckbox').checked = (record.unitPrice === null || record.unitPrice === undefined);
             document.getElementById('unitPrice').value = (record.unitPrice === null || record.unitPrice === undefined) ? '' : record.unitPrice;
             togglePriceUnknown();
             document.getElementById('itemStatus').value = record.status || appSettings.defaultStatus || 'به موقع';
             document.getElementById('dailyStat').value = (record.dailyStat === null || record.dailyStat === undefined) ? '' : record.dailyStat;
-            document.getElementById('receivedQuantity').value = (record.receivedQuantity === null || record.receivedQuantity === undefined) ? '' : record.receivedQuantity;
+            // تعداد دریافتی، جایگزینِ فیلد قدیمیِ «تعداد» است؛ برای سازگاری با رکوردهای قدیمی از خودِ quantity پر می‌شود.
+            document.getElementById('receivedQuantity').value = (record.quantity === null || record.quantity === undefined)
+                ? ((record.receivedQuantity === null || record.receivedQuantity === undefined) ? '' : record.receivedQuantity)
+                : record.quantity;
             document.getElementById('recordEndDateTime').value = record.endDateTime || '';
+            document.getElementById('nextCodeStartDate').value = record.nextCodeStartDate || '';
+            document.getElementById('nextCodeStartTime').value = record.nextCodeStartTime || '';
             document.getElementById('recordDate').value = record.date;
             document.getElementById('recordTime').value = record.time;
             toggleDeliveryDurationField();
@@ -3104,6 +3133,7 @@
             }
             toggleDeliveryDurationUnknown();
             runAutoDeliveryCalculation();
+            runActualStatusCalculation();
 
             if (record.photo) {
                 currentPhotoData = record.photo;
@@ -3138,6 +3168,8 @@
             removeSelectedPhoto();
             document.getElementById('autoCalcInfoBox').classList.add('hidden');
             document.getElementById('recordEndDateTime').value = '';
+            document.getElementById('nextCodeStartDate').value = '';
+            document.getElementById('nextCodeStartTime').value = '';
 
             document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-circle-plus text-indigo-600 dark:text-indigo-400"></i> ثبت کارکرد جدید`;
             document.getElementById('submitBtn').className = "tactile-btn w-full bg-indigo-600 text-white py-3.5 rounded-xl font-medium text-sm hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow";
@@ -3745,8 +3777,47 @@
                 const roundedM = Math.min(55, Math.round(result.minsNeeded / 5) * 5);
                 document.getElementById('deliveryDurationMinute').value = String(roundedM);
             }
+
+            // پس از تغییر ورودی‌های محاسبه‌ی خودکار (که موعد مقرر را جابه‌جا می‌کنند)،
+            // اگر تاریخ/ساعت شروع کد بعد از قبل ثبت شده باشد، وضعیت واقعی هم دوباره محاسبه می‌شود.
+            runActualStatusCalculation();
         }
         /* ============ پایان محاسبه خودکار زمان اتمام کار ============ */
+
+        /* ============ تعیین وضعیت واقعی تحویل بر اساس تاریخ و زمان شروع کد بعد ============ */
+        // موعد مقرر (تاریخ و زمان پایان محاسبه‌شده) با لحظه‌ی واقعیِ شروع کد بعدی مقایسه می‌شود:
+        // اگر شروع کد بعد دیرتر از موعد مقرر باشد => «تاخیر»، زودتر باشد => «زودتر از موعد»، برابر باشد => «به موقع».
+        function runActualStatusCalculation() {
+            const endDateTimeStr = document.getElementById('recordEndDateTime').value.trim();
+            const nextDateStr = document.getElementById('nextCodeStartDate').value.trim();
+            const nextTimeStr = document.getElementById('nextCodeStartTime').value.trim();
+
+            if (!endDateTimeStr || !nextDateStr || !nextTimeStr) return;
+
+            const [dueDatePart, dueTimePart] = endDateTimeStr.split(' - ');
+            const dueJdn = parseJalaliDateToJdn(dueDatePart);
+            const nextJdn = parseJalaliDateToJdn(nextDateStr);
+            if (!dueJdn || !nextJdn) return;
+
+            const dueMinutes = parseTimeToMinutes(dueTimePart);
+            const nextMinutes = parseTimeToMinutes(nextTimeStr);
+            const diff = (nextJdn * 1440 + nextMinutes) - (dueJdn * 1440 + dueMinutes);
+
+            const statusSelect = document.getElementById('itemStatus');
+            statusSelect.value = diff === 0 ? 'به موقع' : (diff > 0 ? 'تاخیر' : 'زودتر از موعد');
+            toggleDeliveryDurationField();
+
+            if (diff !== 0) {
+                const absDiff = Math.abs(diff);
+                const h = Math.floor(absDiff / 60);
+                const m = absDiff % 60;
+                document.getElementById('deliveryDurationUnknown').checked = false;
+                toggleDeliveryDurationUnknown();
+                document.getElementById('deliveryDurationHour').value = String(Math.min(23, h));
+                document.getElementById('deliveryDurationMinute').value = String(Math.min(55, Math.round(m / 5) * 5));
+            }
+        }
+        /* ============ پایان تعیین وضعیت واقعی تحویل ============ */
 
         function populateDeliveryDurationSelects() {
             const hourSelect = document.getElementById('deliveryDurationHour');
@@ -4047,8 +4118,8 @@
                     <td class="p-3.5 tabular-nums">${formatPriceValue(r.unitPrice)}</td>
                     <td class="p-3.5 font-bold tabular-nums ${r.totalPrice === null || r.totalPrice === undefined ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}">${formatPriceValue(r.totalPrice)}</td>
                     <td class="p-3.5 tabular-nums">${(r.dailyStat === null || r.dailyStat === undefined) ? '-' : formatNumber(r.dailyStat)}</td>
-                    <td class="p-3.5 tabular-nums">${(r.receivedQuantity === null || r.receivedQuantity === undefined) ? '-' : formatNumber(r.receivedQuantity)}</td>
                     <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${r.endDateTime ? escapeHTML(r.endDateTime) : '-'}</td>
+                    <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${r.nextCodeStartDate ? (escapeHTML(r.nextCodeStartDate) + (r.nextCodeStartTime ? ' <span class="opacity-60">-</span> ' + escapeHTML(r.nextCodeStartTime) : '')) : '-'}</td>
                     <td class="p-3.5">
                         <span class="text-xs px-3 py-1 rounded-full border font-medium whitespace-nowrap inline-flex items-center gap-1.5 ${getStatusBadgeClass(r.status)}">
                             <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background-color:${getStatusAccentColor(r.status)}"></span>
@@ -4172,9 +4243,10 @@
             <th>کد لباس</th>
             <th>عنوان لباس</th>
             <th>رنگ</th>
-            <th>تعداد</th>
+            <th>تعداد دریافتی</th>
             <th>قیمت واحد (${currency})</th>
             <th>مبلغ کل (${currency})</th>
+            <th>شروع کد بعد</th>
             <th>وضعیت</th>
             <th>تاریخ ثبت</th>
         </tr>` +
@@ -4187,6 +4259,7 @@
             <td>${r.quantity}</td>
             <td>${(r.unitPrice === null || r.unitPrice === undefined) ? 'نامعلوم' : r.unitPrice.toLocaleString('en-US')}</td>
             <td><b>${(r.totalPrice === null || r.totalPrice === undefined) ? 'نامعلوم' : r.totalPrice.toLocaleString('en-US')}</b></td>
+            <td>${r.nextCodeStartDate ? escapeHTML(r.nextCodeStartDate) + (r.nextCodeStartTime ? ' - ' + escapeHTML(r.nextCodeStartTime) : '') : '-'}</td>
             <td>${escapeHTML(r.status) || 'به موقع'}${r.durationTime && r.status !== 'به موقع' ? ' (' + escapeHTML(r.durationTime) + ')' : ''}</td>
             <td>${escapeHTML(r.date)}</td>
         </tr>`).join('') +

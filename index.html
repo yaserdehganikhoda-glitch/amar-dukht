@@ -302,6 +302,9 @@
                 سامانه آمار دوخت لباس
             </h1>
             <p id="mainAppSubtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-normal">سیستم هوشمند آمار و مدیریت دوخت</p>
+            <div class="mt-3 flex justify-center">
+                <span id="streakBadgeText" class="hidden"></span>
+            </div>
             
             <div id="syncStatus" style="display:none" class="text-xs text-emerald-600 dark:text-emerald-400 mt-4 font-medium inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-900">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -364,6 +367,18 @@
                     <i class="fa-solid fa-wallet text-lg"></i>
                 </div>
             </div>
+        </div>
+
+        <!-- کارت پیشرفت کار جاری و اعلان‌های هوشمند تحویل -->
+        <div id="activeProgressCard" class="hidden bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-300 dark:border-slate-600 mb-6 transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-stopwatch text-indigo-600 dark:text-indigo-400"></i>
+                    پیشرفت کار جاری
+                </h3>
+                <span id="activeProgressPercentBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">—</span>
+            </div>
+            <div id="activeProgressList"></div>
         </div>
 
         <!-- فرم ثبت و ویرایش -->
@@ -1078,6 +1093,31 @@
                     </button>
                 </div>
 
+                <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
+                    <h3 class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-bell"></i> اعلان‌های هوشمند پیشرفت کار
+                    </h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        با فعال بودن این گزینه، در چهار مرحله‌ی ۲۵٪، ۵۰٪، ۷۵٪ و ۹۰٪ از زمان مجاز تحویل کدِ در حال دوختِ فعلی، و همچنین وقتی خودِ موعد تحویل برسد (و هر ۲۰ دقیقه تا زمانی‌که رکورد بعدی ثبت شود)، یک اعلان مرورگر و پیام هشدار داخل برنامه دریافت می‌کنید. علاوه بر آن، عنوان تب و آیکون برنامه هم هنگام تاخیر هشدار می‌دهند تا کار با تاخیر تمام نشود.
+                    </p>
+                    <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                        <input type="checkbox" id="settingNotificationsEnabled" class="w-4 h-4 rounded accent-indigo-600">
+                        فعال‌سازی اعلان‌های پلکانی پیشرفت (۲۵٪ تا پایان مهلت)
+                    </label>
+                    <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                        <input type="checkbox" id="settingVoiceAlertsEnabled" class="w-4 h-4 rounded accent-indigo-600">
+                        پخش هشدار صوتی گفتاری (فارسی) در لحظات حساس
+                    </label>
+                    <button type="button" onclick="requestNotificationPermission()" class="w-full py-2.5 border border-indigo-200 dark:border-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded-xl text-sm hover:bg-indigo-50 dark:hover:bg-indigo-950/30 font-medium transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-bell"></i> درخواست اجازه اعلان مرورگر
+                    </button>
+                    <p id="notificationPermissionStatusText" class="text-xs font-semibold"></p>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 border border-slate-300 dark:border-slate-600 flex items-center justify-between">
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400">رکورد کدهای متوالی به‌موقع:</span>
+                        <span class="text-xs font-bold text-orange-600 dark:text-orange-400"><i class="fa-solid fa-fire"></i> جاری: <span id="settingCurrentStreakVal">۰</span> &nbsp;|&nbsp; بهترین: <span id="settingBestStreakVal">۰</span></span>
+                    </div>
+                </div>
+
                 <div class="space-y-3">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">وضعیت حافظه سامانه</h3>
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 text-xs space-y-2">
@@ -1411,7 +1451,11 @@
             fontFamily: 'Vazirmatn',
             bgColor: 'default',
             cardColor: 'default',
-            fieldColor: 'default'
+            fieldColor: 'default',
+            notificationsEnabled: false,
+            voiceAlertsEnabled: false,
+            onTimeStreak: 0,
+            bestStreak: 0
         };
         let saveTimeout = null;
         let hasPendingSave = false;
@@ -2361,7 +2405,13 @@
             document.getElementById('settingNewPin').value = '';
             document.getElementById('settingConfirmPin').value = '';
             updatePinLockStatusUI();
-            
+
+            document.getElementById('settingNotificationsEnabled').checked = !!appSettings.notificationsEnabled;
+            document.getElementById('settingVoiceAlertsEnabled').checked = !!appSettings.voiceAlertsEnabled;
+            document.getElementById('settingCurrentStreakVal').innerText = formatNumber(appSettings.onTimeStreak || 0);
+            document.getElementById('settingBestStreakVal').innerText = formatNumber(appSettings.bestStreak || 0);
+            updateNotificationPermissionStatusUI();
+
             const totalRecords = allRecords.length;
             document.getElementById('storageTotalRecordsCount').innerText = formatNumber(totalRecords);
             
@@ -2451,6 +2501,8 @@
             const bgColorVal = document.getElementById('settingBgColor').value;
             const cardColorVal = document.getElementById('settingCardColor').value;
             const fieldColorVal = document.getElementById('settingFieldColor').value;
+            const notificationsEnabledVal = document.getElementById('settingNotificationsEnabled').checked;
+            const voiceAlertsEnabledVal = document.getElementById('settingVoiceAlertsEnabled').checked;
 
             appSettings.shopName = shopNameVal;
             appSettings.currency = currencyVal;
@@ -2462,12 +2514,15 @@
             appSettings.bgColor = bgColorVal;
             appSettings.cardColor = cardColorVal;
             appSettings.fieldColor = fieldColorVal;
+            appSettings.notificationsEnabled = notificationsEnabledVal;
+            appSettings.voiceAlertsEnabled = voiceAlertsEnabledVal;
 
             appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
             if (appDirHandle) saveAllMonthFilesToDirectory(); // تا فایل تنظیمات در پوشه‌ی متصل هم بلافاصله به‌روز شود
             applyAppSettingsToUI();
             renderDashboard();
+            checkDeliveryProgressNotifications();
             addLog('تنظیمات برنامه به‌روزرسانی شد.', 'success');
             closeSettingsModal();
             showFeedbackBanner('تنظیمات جدید با موفقیت ذخیره و اعمال شد.', 'success');
@@ -3059,6 +3114,7 @@
             } else {
                 rec.durationTime = '';
             }
+            updateOnTimeStreak(rec);
             return true;
         }
 
@@ -3185,7 +3241,8 @@
                         dailyStat: dailyStat, receivedQuantity: receivedQuantity, endDateTime: endDateTime,
                         workDuration: workDuration,
                         photo: currentPhotoData,
-                        monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year
+                        monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year,
+                        notifiedStages: [], notifiedFull: false, lastOverdueNotifyAt: null, mutedUntil: null, streakCounted: false
                     };
 
                     // اگر تاریخ/ساعت ثبتِ همین رکورد تغییر کرده باشد، ممکن است رکوردی که قبلاً
@@ -4123,10 +4180,370 @@
             dupText.innerHTML = formatDuplicateCodesSummary(records);
         }
 
+        /* ==================== اعلان‌های هوشمند پیشرفت کار (برای جلوگیری از تاخیر) ==================== */
+        const OVERDUE_RENOTIFY_MINUTES = 20; // فاصله‌ی یادآوری‌های مکرر بعد از گذشتن موعد تحویل
+
+        // رکورد «در حال انجام» فعلی: جدیدترین رکوردی که هنوز «شروع کد بعد» برایش ثبت نشده؛
+        // یعنی همان کدی که خیاط همین الان روی آن مشغول است.
+        function getCurrentActiveRecord() {
+            const openRecords = allRecords.filter(r => !r.nextCodeStartDate && r.workDuration && r.date && r.time);
+            if (openRecords.length === 0) return null;
+            return openRecords.reduce((latest, r) => {
+                const rKey = parseJalaliDateToJdn(r.date) * 1440 + parseTimeToMinutes(r.time);
+                const lKey = parseJalaliDateToJdn(latest.date) * 1440 + parseTimeToMinutes(latest.time);
+                return rKey > lKey ? r : latest;
+            });
+        }
+
+        // درصد پیشرفت رکورد نسبت به «مدت زمان تحویل کار» هدف، بر مبنای همان منطق دقیقِ محاسبه‌ی
+        // زمان کاریِ واقعی (با احتساب استراحت‌ها، پایان شیفت و تعطیلی جمعه‌ها) که در بقیه‌ی برنامه هم استفاده می‌شود.
+        function computeRecordProgress(rec) {
+            const targetMinutes = parseDurationStrToMinutes(rec.workDuration);
+            if (targetMinutes === null || targetMinutes <= 0) return null;
+            const startJdn = parseJalaliDateToJdn(rec.date);
+            const startMinute = parseTimeToMinutes(rec.time);
+            if (!startJdn) return null;
+
+            const nowInfo = getCurrentJalaliInfo();
+            const nowJdn = parseJalaliDateToJdn(nowInfo.fullDateStr);
+            const now = new Date();
+            const nowMinute = now.getHours() * 60 + now.getMinutes();
+
+            const elapsed = calculateActualWorkingMinutesElapsed(startJdn, startMinute, nowJdn, nowMinute);
+            const percent = Math.round((elapsed / targetMinutes) * 100);
+            return { targetMinutes, elapsed, percent, remainingMinutes: targetMinutes - elapsed };
+        }
+
+        function formatMinutesDuration(mins) {
+            const absMins = Math.abs(Math.round(mins));
+            const h = Math.floor(absMins / 60);
+            const m = absMins % 60;
+            let text = '';
+            if (h > 0) text += `${formatNumber(h)} ساعت `;
+            if (m > 0 || h === 0) text += `${formatNumber(m)} دقیقه`;
+            return text.trim();
+        }
+
+        // بوق کوتاه هشدار (بدون نیاز به فایل صوتی خارجی)؛ در برخی مرورگرها بدون تعامل اخیر کاربر پخش نمی‌شود.
+        function playAlertSound(urgent) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.connect(g); g.connect(ctx.destination);
+                o.type = 'sine';
+                o.frequency.value = urgent ? 880 : 640;
+                g.gain.setValueAtTime(0.001, ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+                g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (urgent ? 0.5 : 0.3));
+                o.start();
+                o.stop(ctx.currentTime + (urgent ? 0.55 : 0.35));
+                if (urgent) setTimeout(() => playAlertSound(false), 350);
+            } catch (e) { /* پخش صدا در برخی مرورگرها بدون تعامل کاربر امکان‌پذیر نیست */ }
+        }
+
+        function sendBrowserNotification(title, body, tag, requireInteraction) {
+            if (!('Notification' in window) || Notification.permission !== 'granted') return;
+            const options = {
+                body,
+                icon: 'icon-192.png',
+                badge: 'icon-192.png',
+                tag,
+                renotify: true,
+                requireInteraction: !!requireInteraction,
+                vibrate: requireInteraction ? [250, 100, 250, 100, 250] : [150]
+            };
+            try {
+                if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.ready.then(reg => reg.showNotification(title, options)).catch(() => { try { new Notification(title, options); } catch (e2) {} });
+                } else {
+                    new Notification(title, options);
+                }
+            } catch (e) {
+                console.error('خطا در ارسال اعلان:', e);
+            }
+        }
+
+        function updateNotificationPermissionStatusUI() {
+            const statusEl = document.getElementById('notificationPermissionStatusText');
+            if (!statusEl) return;
+            if (!('Notification' in window)) {
+                statusEl.innerText = 'مرورگر شما از اعلان‌های سیستمی پشتیبانی نمی‌کند.';
+                statusEl.className = 'text-xs font-semibold text-slate-400';
+                return;
+            }
+            if (Notification.permission === 'granted') {
+                statusEl.innerText = 'وضعیت: اجازه‌ی اعلان مرورگر داده شده است.';
+                statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
+            } else if (Notification.permission === 'denied') {
+                statusEl.innerText = 'وضعیت: اعلان مرورگر مسدود شده؛ برای فعال‌سازی از تنظیمات سایتِ مرورگرتان اجازه را تغییر دهید.';
+                statusEl.className = 'text-xs font-semibold text-rose-600 dark:text-rose-400';
+            } else {
+                statusEl.innerText = 'وضعیت: هنوز اجازه‌ی اعلان درخواست نشده است.';
+                statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
+            }
+        }
+
+        async function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                showFeedbackBanner('مرورگر شما از اعلان‌های سیستمی پشتیبانی نمی‌کند.', 'warn');
+                return;
+            }
+            try {
+                const perm = await Notification.requestPermission();
+                updateNotificationPermissionStatusUI();
+                if (perm === 'granted') {
+                    showFeedbackBanner('اعلان‌های مرورگر فعال شد.', 'success');
+                    addLog('اجازه‌ی اعلان مرورگر داده شد.', 'success');
+                } else {
+                    showFeedbackBanner('اجازه‌ی اعلان داده نشد؛ در این حالت فقط پیام‌های داخل برنامه نمایش داده می‌شوند.', 'warn');
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // مراحل هشدار پیشرفت؛ هر چه درصد بالاتر می‌رود، لحن اعلان جدی‌تر می‌شود
+        const PROGRESS_STAGES = [
+            { threshold: 25, emoji: '🟢', title: 'یک‌چهارم زمان گذشت', urgent: false },
+            { threshold: 50, emoji: '⏳', title: 'نیمی از زمان تحویل گذشت', urgent: false },
+            { threshold: 75, emoji: '🟠', title: 'فقط ۲۵٪ از زمان باقی مانده', urgent: false },
+            { threshold: 90, emoji: '🔴', title: 'فرصت رو به پایان است!', urgent: true }
+        ];
+
+        // پخش هشدار گفتاریِ فارسی (اختیاری، فقط برای رویدادهای حساس)
+        function speakPersianAlert(text) {
+            if (!appSettings.voiceAlertsEnabled) return;
+            if (!('speechSynthesis' in window)) return;
+            try {
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'fa-IR';
+                utter.rate = 0.95;
+                utter.volume = 1;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utter);
+            } catch (e) { /* در برخی مرورگرها بدون تعامل کاربر قابل پخش نیست */ }
+        }
+
+        // نشان‌گر عددی روی آیکون برنامه (فقط در حالت نصب‌شده/PWA و مرورگرهای پشتیبان)
+        function updateAppBadge(count) {
+            if (!('setAppBadge' in navigator)) return;
+            try {
+                if (count > 0) navigator.setAppBadge(count).catch(() => {});
+                else navigator.clearAppBadge().catch(() => {});
+            } catch (e) { /* بی‌اهمیت */ }
+        }
+
+        // تغییر رنگ فاویکون به قرمز هنگام تاخیر، برای جلب توجه حتی از میان تب‌های زیاد باز مرورگر
+        let originalFaviconHref = null;
+        function setDynamicFavicon(colorHex) {
+            const link = document.querySelector('link[rel="icon"]');
+            if (!link) return;
+            if (originalFaviconHref === null) originalFaviconHref = link.getAttribute('href');
+            if (!colorHex) { link.setAttribute('href', originalFaviconHref); return; }
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 32; canvas.height = 32;
+                const ctx = canvas.getContext('2d');
+                ctx.beginPath();
+                ctx.arc(16, 16, 15, 0, Math.PI * 2);
+                ctx.fillStyle = colorHex;
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 20px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('!', 16, 18);
+                link.setAttribute('href', canvas.toDataURL('image/png'));
+            } catch (e) { /* بی‌اهمیت */ }
+        }
+
+        // چشمک زدن عنوان تب فقط وقتی تب در پس‌زمینه و کار عقب افتاده است؛ با برگشت کاربر به تب، فوراً متوقف می‌شود
+        let titleFlashInterval = null;
+        let originalPageTitle = document.title;
+        function updateAttentionIndicators() {
+            const rec = getCurrentActiveRecord();
+            const progress = rec ? computeRecordProgress(rec) : null;
+            const overdue = !!(progress && progress.percent >= 100);
+            const nearDeadline = !!(progress && progress.percent >= 75 && progress.percent < 100);
+
+            setDynamicFavicon(overdue ? '#e11d48' : (nearDeadline ? '#f59e0b' : null));
+
+            if (overdue && document.hidden && appSettings.notificationsEnabled) {
+                if (!titleFlashInterval) {
+                    let toggle = false;
+                    titleFlashInterval = setInterval(() => {
+                        document.title = toggle ? originalPageTitle : '🚨 موعد تحویل رسید!';
+                        toggle = !toggle;
+                    }, 1500);
+                }
+            } else if (titleFlashInterval) {
+                clearInterval(titleFlashInterval);
+                titleFlashInterval = null;
+                document.title = originalPageTitle;
+            }
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) document.title = originalPageTitle;
+            updateAttentionIndicators();
+        });
+
+        // بی‌صدا کردن موقت اعلان‌های رکورد جاری (۳۰ دقیقه)؛ فقط اعلان‌ها را به تعویق می‌اندازد، نه خودِ مهلت را
+        function snoozeActiveNotifications() {
+            const rec = getCurrentActiveRecord();
+            if (!rec) return;
+            rec.mutedUntil = Date.now() + 30 * 60 * 1000;
+            saveRecords();
+            addLog(`اعلان‌های کد ${rec.itemCode || '-'} به مدت ۳۰ دقیقه بی‌صدا شد.`, 'info');
+            showFeedbackBanner('اعلان‌های این کد به مدت ۳۰ دقیقه بی‌صدا شد (خودِ مهلت تحویل تغییری نکرد).', 'info');
+            renderActiveProgressWidget();
+        }
+
+        // به‌روزرسانی رکورد «کدهای متوالیِ به‌موقع»؛ برای هر رکورد فقط یک‌بار (در اولین قطعی‌شدن وضعیت) شمرده می‌شود
+        function updateOnTimeStreak(rec) {
+            if (rec.streakCounted) return;
+            rec.streakCounted = true;
+            if (rec.status === 'تاخیر') {
+                appSettings.onTimeStreak = 0;
+            } else {
+                appSettings.onTimeStreak = (appSettings.onTimeStreak || 0) + 1;
+                if (appSettings.onTimeStreak > (appSettings.bestStreak || 0)) {
+                    appSettings.bestStreak = appSettings.onTimeStreak;
+                }
+            }
+            appSettings.updatedAt = new Date().toISOString();
+            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+            if (appDirHandle) saveAllMonthFilesToDirectory();
+            renderStreakBadge();
+        }
+
+        function renderStreakBadge() {
+            const el = document.getElementById('streakBadgeText');
+            if (!el) return;
+            const streak = appSettings.onTimeStreak || 0;
+            if (streak <= 0) { el.className = 'hidden'; return; }
+            const isRecord = streak > 1 && streak === (appSettings.bestStreak || 0);
+            el.className = 'inline-flex text-xs font-bold px-3 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-900 items-center gap-1.5';
+            el.innerHTML = `<i class="fa-solid fa-fire"></i> ${formatNumber(streak)} کد متوالی به‌موقع${isRecord ? ' — رکورد شخصی 🏆' : ''}`;
+        }
+
+        // بررسی دوره‌ای پیشرفتِ رکورد جاری و ارسال اعلانِ پلکانی در چند نقطه‌ی کلیدی:
+        // ۲۵٪ / ۵۰٪ / ۷۵٪ / ۹۰٪ از زمان مجاز، و رسیدن/گذشتن از خودِ موعد تحویل (با یادآوری‌های مکرر هر ۲۰ دقیقه)
+        function checkDeliveryProgressNotifications() {
+            const rec = getCurrentActiveRecord();
+            if (!rec) { updateAppBadge(0); return; }
+            const progress = computeRecordProgress(rec);
+            if (!progress) { updateAppBadge(0); return; }
+            if (!rec.notifiedStages) rec.notifiedStages = [];
+
+            updateAppBadge(progress.percent >= 100 ? 1 : 0);
+
+            if (!appSettings.notificationsEnabled) { renderActiveProgressWidget(); return; }
+
+            const muted = rec.mutedUntil && Date.now() < rec.mutedUntil;
+            let changed = false;
+
+            if (!muted && progress.percent < 100) {
+                // برای جلوگیری از سیل اعلان (مثلاً اگر برنامه مدتی بسته بوده)، فقط بالاترین مرحله‌ی
+                // تازه‌رسیده اعلان می‌شود؛ مراحلِ زیرِ آن هم به‌صورت خاموش «دیده‌شده» علامت می‌خورند.
+                const reached = PROGRESS_STAGES.filter(s => progress.percent >= s.threshold && !rec.notifiedStages.includes(s.threshold));
+                if (reached.length > 0) {
+                    const stage = reached[reached.length - 1];
+                    PROGRESS_STAGES.forEach(s => { if (s.threshold <= stage.threshold && !rec.notifiedStages.includes(s.threshold)) rec.notifiedStages.push(s.threshold); });
+                    const msg = `کد ${rec.itemCode || '-'} (${rec.itemTitle || '-'}) — ${formatNumber(progress.percent)}٪ از زمان مجاز گذشت. حدود ${formatMinutesDuration(progress.remainingMinutes)} تا موعد باقی مانده.`;
+                    sendBrowserNotification(`${stage.emoji} ${stage.title}`, msg, 'sewing-stage-' + stage.threshold + '-' + rec.id, stage.urgent);
+                    showFeedbackBanner(`${stage.emoji} ${msg}`, stage.urgent ? 'warn' : 'info');
+                    addLog(`اعلان ${formatNumber(stage.threshold)}٪ پیشرفت برای کد ${rec.itemCode || '-'} ارسال شد.`, stage.urgent ? 'warn' : 'info');
+                    playAlertSound(stage.urgent);
+                    if (stage.urgent) speakPersianAlert(`توجه، فرصت کد ${rec.itemCode || ''} رو به پایان است`);
+                    changed = true;
+                }
+            }
+
+            if (progress.percent >= 100 && !muted) {
+                if (!rec.notifiedFull) {
+                    const msg = `موعد تحویل کد ${rec.itemCode || '-'} (${rec.itemTitle || '-'}) رسید! برای جلوگیری از ثبت تاخیر، همین الان کار را تمام کن یا رکورد بعدی را ثبت بزن.`;
+                    sendBrowserNotification('⚠️ موعد تحویل رسید', msg, 'sewing-progress-100-' + rec.id, true);
+                    showFeedbackBanner('⚠️ ' + msg, 'warn');
+                    addLog(`اعلان پایان مهلت برای کد ${rec.itemCode || '-'} ارسال شد.`, 'warn');
+                    playAlertSound(true);
+                    speakPersianAlert(`موعد تحویل کد ${rec.itemCode || ''} رسید`);
+                    rec.notifiedFull = true;
+                    rec.lastOverdueNotifyAt = Date.now();
+                    changed = true;
+                } else {
+                    const last = rec.lastOverdueNotifyAt || 0;
+                    if (Date.now() - last >= OVERDUE_RENOTIFY_MINUTES * 60 * 1000) {
+                        const overdueBy = formatMinutesDuration(progress.remainingMinutes);
+                        const msg = `کد ${rec.itemCode || '-'} حدود ${overdueBy} از موعدش تاخیر دارد. لطفاً هر چه زودتر کار را تمام و ثبت کن.`;
+                        sendBrowserNotification('🚨 یادآوری تاخیر', msg, 'sewing-progress-overdue-' + rec.id, true);
+                        showFeedbackBanner('🚨 ' + msg, 'warn');
+                        addLog(`یادآوری تاخیر برای کد ${rec.itemCode || '-'} ارسال شد.`, 'warn');
+                        playAlertSound(true);
+                        speakPersianAlert(`هنوز کد ${rec.itemCode || ''} تحویل داده نشده`);
+                        rec.lastOverdueNotifyAt = Date.now();
+                        changed = true;
+                    }
+                }
+            }
+
+            if (changed) saveRecords();
+            renderActiveProgressWidget();
+        }
+
+        // نمایش نوار پیشرفتِ زنده‌ی کار جاری در بالای صفحه
+        function renderActiveProgressWidget() {
+            const card = document.getElementById('activeProgressCard');
+            const list = document.getElementById('activeProgressList');
+            const badge = document.getElementById('activeProgressPercentBadge');
+            if (!card || !list) return;
+
+            const rec = getCurrentActiveRecord();
+            if (!rec) { card.classList.add('hidden'); updateAttentionIndicators(); return; }
+            const progress = computeRecordProgress(rec);
+            if (!progress) { card.classList.add('hidden'); updateAttentionIndicators(); return; }
+
+            card.classList.remove('hidden');
+            const percentClamped = Math.max(0, Math.min(100, progress.percent));
+            const isOverdue = progress.percent >= 100;
+            const isUrgent = progress.percent >= 90 && progress.percent < 100;
+            const isWarn = progress.percent >= 50 && progress.percent < 90;
+            const barColor = isOverdue ? 'bg-rose-500' : (isUrgent ? 'bg-orange-500' : (isWarn ? 'bg-amber-500' : 'bg-emerald-500'));
+            const badgeColor = isOverdue ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300' : (isUrgent ? 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300' : (isWarn ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300' : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300'));
+            const isMuted = rec.mutedUntil && Date.now() < rec.mutedUntil;
+
+            if (badge) {
+                badge.className = `text-xs font-bold px-2.5 py-1 rounded-full ${badgeColor}`;
+                badge.innerText = `${formatNumber(Math.min(999, progress.percent))}٪${isMuted ? ' 🔇' : ''}`;
+            }
+
+            const remainingText = isOverdue
+                ? `<span class="text-rose-600 dark:text-rose-400 font-bold">${formatMinutesDuration(progress.remainingMinutes)} تاخیر از موعد</span>`
+                : `<span class="text-slate-500 dark:text-slate-400">${formatMinutesDuration(progress.remainingMinutes)} تا موعد تحویل باقی مانده</span>`;
+
+            list.innerHTML = `
+                <div class="flex justify-between items-center mb-1.5 text-xs flex-wrap gap-1">
+                    <span class="font-bold text-slate-700 dark:text-slate-200">کد ${escapeHTML(rec.itemCode) || '-'} — ${escapeHTML(rec.itemTitle) || '-'}</span>
+                    ${remainingText}
+                </div>
+                <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div class="${barColor} h-full transition-all duration-700" style="width:${percentClamped}%"></div>
+                </div>
+                <div class="flex items-center justify-between mt-1.5">
+                    <div class="text-[10px] text-slate-400 dark:text-slate-500">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
+                    ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print text-[10px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatNumber(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
+                </div>
+            `;
+            updateAttentionIndicators();
+        }
+        /* ==================== پایان اعلان‌های هوشمند پیشرفت کار ==================== */
+
         function renderDashboard() {
             applyAppSettingsToUI();
             renderMonthSelector();
             renderDailyNotes();
+            renderActiveProgressWidget();
+            renderStreakBadge();
             const sortSelect = document.getElementById('sortOptionSelect');
             if (sortSelect) sortSelect.value = currentSortOption;
             const records = getFilteredRecords();
@@ -4400,6 +4817,14 @@
         addLog(`سامانه بارگذاری شد. تاریخ: ${currentJalali.fullDateStr}`, 'info');
         renderDashboard();
         initStorageFolderConnection();
+
+        // بررسی دوره‌ای پیشرفت کار جاری برای اعلان‌های هوشمند (هر ۱ دقیقه یک‌بار)،
+        // و تازه‌سازیِ سریع‌ترِ خودِ نوار پیشرفت (هر ۲۰ ثانیه) برای حس «زنده» بودن شمارش
+        updateNotificationPermissionStatusUI();
+        renderStreakBadge();
+        checkDeliveryProgressNotifications();
+        setInterval(checkDeliveryProgressNotifications, 60 * 1000);
+        setInterval(renderActiveProgressWidget, 20 * 1000);
     </script>
 </body>
 </html>

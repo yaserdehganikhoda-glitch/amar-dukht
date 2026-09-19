@@ -302,6 +302,9 @@
                 سامانه آمار دوخت لباس
             </h1>
             <p id="mainAppSubtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-normal">سیستم هوشمند آمار و مدیریت دوخت</p>
+            <div class="mt-3 flex justify-center">
+                <span id="streakBadgeText" class="hidden"></span>
+            </div>
             
             <div id="syncStatus" style="display:none" class="text-xs text-emerald-600 dark:text-emerald-400 mt-4 font-medium inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-900">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -364,6 +367,18 @@
                     <i class="fa-solid fa-wallet text-lg"></i>
                 </div>
             </div>
+        </div>
+
+        <!-- کارت پیشرفت کار جاری و اعلان‌های هوشمند تحویل -->
+        <div id="activeProgressCard" class="hidden bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-300 dark:border-slate-600 mb-6 transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-stopwatch text-indigo-600 dark:text-indigo-400"></i>
+                    پیشرفت کار جاری
+                </h3>
+                <span id="activeProgressPercentBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">—</span>
+            </div>
+            <div id="activeProgressList"></div>
         </div>
 
         <!-- فرم ثبت و ویرایش -->
@@ -437,20 +452,22 @@
                     <input type="text" inputmode="numeric" id="dailyStat" oninput="runAutoDeliveryCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                 </div>
 
-                <div>
-                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                        تاریخ و زمان پایان
-                        <span class="text-[10px] text-indigo-500 dark:text-indigo-400 font-normal">(محاسبه خودکار)</span>
-                    </label>
-                    <input type="text" id="recordEndDateTime" readonly placeholder="با تکمیل آمار روزانه و تعداد دریافتی محاسبه می‌شود" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-slate-100 dark:bg-slate-800/60 dark:text-slate-200 outline-none transition-all cursor-not-allowed">
-                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label title="محاسبه خودکار" class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-flag-checkered text-indigo-400 dark:text-indigo-500 text-[10px]"></i>
+                            تاریخ و زمان پایان
+                        </label>
+                        <input type="text" id="recordEndDateTime" readonly class="w-full p-2 border border-indigo-200 dark:border-slate-600 rounded-lg text-xs text-center font-semibold bg-indigo-50/60 dark:bg-slate-800/60 text-indigo-700 dark:text-slate-200 outline-none transition-all cursor-not-allowed">
+                    </div>
 
-                <div>
-                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                        مدت زمان تحویل کار
-                        <span class="text-[10px] text-indigo-500 dark:text-indigo-400 font-normal">(محاسبه خودکار، جمعه‌ها تعطیل محسوب می‌شود)</span>
-                    </label>
-                    <input type="text" id="recordWorkDuration" readonly placeholder="با تکمیل آمار روزانه و تعداد دریافتی محاسبه می‌شود" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-slate-100 dark:bg-slate-800/60 dark:text-slate-200 outline-none transition-all cursor-not-allowed">
+                    <div>
+                        <label title="محاسبه خودکار، جمعه‌ها تعطیل محسوب می‌شود" class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-hourglass text-indigo-400 dark:text-indigo-500 text-[10px]"></i>
+                            مدت زمان تحویل کار
+                        </label>
+                        <input type="text" id="recordWorkDuration" readonly class="w-full p-2 border border-indigo-200 dark:border-slate-600 rounded-lg text-xs text-center font-semibold bg-indigo-50/60 dark:bg-slate-800/60 text-indigo-700 dark:text-slate-200 outline-none transition-all cursor-not-allowed">
+                    </div>
                 </div>
 
                 <div id="autoCalcInfoBox" class="hidden bg-indigo-50/70 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 rounded-xl p-3 text-[11px] leading-relaxed text-indigo-700 dark:text-indigo-300 flex items-start gap-1.5">
@@ -458,30 +475,9 @@
                     <span id="autoCalcInfoText"></span>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-3 flex items-center gap-1.5">
-                        <i class="fa-solid fa-forward"></i> تاریخ و زمان شروع کد بعد
-                        <span class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">(اختیاری)</span>
-                    </label>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">تاریخ شروع کد بعد</label>
-                            <div class="relative">
-                                <input type="text" id="nextCodeStartDate" readonly onclick="openDatePicker('nextCodeStartDate', event)" placeholder="انتخاب تاریخ" class="w-full p-3 pr-10 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all cursor-pointer">
-                                <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
-                                    <i class="fa-solid fa-calendar-days"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">ساعت شروع کد بعد</label>
-                            <input type="time" id="nextCodeStartTime" oninput="runActualStatusCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
-                        </div>
-                    </div>
-                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 mt-3">
-                        <i class="fa-solid fa-circle-info ml-1"></i>
-                        با ثبت تاریخ و زمان شروع کد بعدی، وضعیت تحویل و مدت زمان تاخیر/زودتر از موعدِ همین رکورد بر اساس آن محاسبه و به‌روزرسانی می‌شود.
-                    </p>
+                <div class="bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 rounded-xl p-3.5 text-[11px] leading-relaxed text-indigo-700 dark:text-indigo-300 flex items-start gap-1.5">
+                    <i class="fa-solid fa-forward mt-0.5"></i>
+                    <span>«شروع کد بعد» و وضعیت نهایی تحویل (تاخیر/زودتر از موعد) این رکورد، به‌طور کاملاً خودکار و بر اساس تاریخ و ساعتِ ثبتِ رکوردِ بعدی محاسبه می‌شود؛ نیازی به وارد کردن دستی نیست.</span>
                 </div>
 
                 <div id="deliveryDurationWrapper" class="hidden bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 rounded-xl p-4 transition-all">
@@ -688,7 +684,7 @@
                     </div>
                     <div id="delaySummaryBody" class="mt-2">
                         <p id="totalDelaySummaryText" class="text-sm font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">—</p>
-                        <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">بر مبنای ۸ ساعت و نیم کاری در هر روز</p>
+                        <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">بر مبنای ۸ ساعت و ۱۵ دقیقه کاری در هر روز</p>
                     </div>
                 </div>
                 <div class="bg-white dark:bg-slate-800 field-box-bg rounded-xl p-4 border border-slate-300 dark:border-slate-600">
@@ -1097,6 +1093,55 @@
                     </button>
                 </div>
 
+                <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
+                    <h3 class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-bell"></i> اعلان‌های هوشمند پیشرفت کار
+                    </h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                        با فعال بودن این گزینه، اعلان‌ها دقیقاً مثل یک پیامک یا یادآوریِ گوشی در نوار اعلان‌های سیستم نمایش داده می‌شوند (نه یک پیام داخل صفحه) و تا لمس نشوند باقی می‌مانند: در چهار مرحله‌ی ۲۵٪، ۵۰٪، ۷۵٪ و ۹۰٪ از زمان مجاز تحویل کدِ در حال دوختِ فعلی، و همچنین وقتی خودِ موعد تحویل برسد (و هر ۲۰ دقیقه تا زمانی‌که رکورد بعدی ثبت شود). عنوان تب و آیکون برنامه هم هنگام تاخیر هشدار می‌دهند.
+                    </p>
+                    <p class="text-[11px] text-teal-700 dark:text-teal-400 leading-relaxed bg-teal-50 dark:bg-teal-950/30 rounded-lg p-2.5 border border-teal-100 dark:border-teal-900/40">
+                        <i class="fa-solid fa-circle-info ml-1"></i>
+                        برای دریافت این اعلان‌ها به‌صورت واقعیِ گوشی (به‌خصوص در آیفون)، ابتدا برنامه را از منوی مرورگر به «صفحه اصلی» اضافه کنید (Add to Home Screen) و همیشه از همان آیکون بازش کنید؛ سپس دکمه‌ی زیر را بزنید.
+                    </p>
+                    <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                        <input type="checkbox" id="settingNotificationsEnabled" class="w-4 h-4 rounded accent-indigo-600">
+                        فعال‌سازی اعلان‌های پلکانی پیشرفت (۲۵٪ تا پایان مهلت)
+                    </label>
+                    <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                        <input type="checkbox" id="settingVoiceAlertsEnabled" class="w-4 h-4 rounded accent-indigo-600">
+                        پخش هشدار صوتی گفتاری (فارسی) در لحظات حساس
+                    </label>
+                    <button type="button" onclick="requestNotificationPermission()" class="w-full py-2.5 border border-indigo-200 dark:border-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded-xl text-sm hover:bg-indigo-50 dark:hover:bg-indigo-950/30 font-medium transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-bell"></i> درخواست اجازه اعلان مرورگر
+                    </button>
+                    <p id="notificationPermissionStatusText" class="text-xs font-semibold"></p>
+                    <button type="button" onclick="sendTestNotification()" class="w-full py-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> ارسال اعلان آزمایشی (برای بررسی نمایش روی صفحه)
+                    </button>
+
+                    <div class="rounded-xl border border-amber-200 dark:border-amber-900/50 overflow-hidden">
+                        <button type="button" onclick="toggleXiaomiGuide()" class="w-full flex items-center justify-between px-3 py-2.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-xs font-bold transition-colors">
+                            <span><i class="fa-solid fa-mobile-screen-button"></i> راهنمای اختصاصی گوشی‌های شیائومی (HyperOS / MIUI)</span>
+                            <i id="xiaomiGuideToggleIcon" class="fa-solid fa-chevron-down text-[10px] transition-transform"></i>
+                        </button>
+                        <div id="xiaomiGuideBody" class="hidden p-3 text-[11px] leading-relaxed text-slate-600 dark:text-slate-300 space-y-2 bg-white dark:bg-slate-900">
+                            <p>گوشی‌های شیائومی به‌طور پیش‌فرض اعلان‌های اپ‌های تحت مرورگر را فقط در «نوار اعلان‌ها» نشان می‌دهند، نه به‌صورت بنر روی صفحه یا قفل صفحه. برای تغییر این رفتار، این چهار مورد را در گوشی خودتان بررسی کنید:</p>
+                            <ol class="list-decimal pr-4 space-y-1.5">
+                                <li>مسیر <b>تنظیمات ← Notifications &amp; Control center ← App notifications</b> را باز کنید، Chrome (یا نام این برنامه اگر با Add to Home Screen نصبش کرده‌اید) را پیدا کنید و «نمایش روی صفحه قفل» و «اعلان شناور / بنر» را برایش فعال کنید.</li>
+                                <li>مسیر <b>تنظیمات ← برنامه‌ها ← مجوزها ← اجرای خودکار (Autostart)</b> را باز کنید و آن را برای Chrome روشن کنید تا اعلان حتی وقتی برنامه در پس‌زمینه بسته شده هم برسد.</li>
+                                <li>مسیر <b>تنظیمات ← باتری ← صرفه‌جویی باتری برنامه</b> را باز کنید و برای Chrome گزینه‌ی «بدون محدودیت» را انتخاب کنید (نه «صرفه‌جویی» یا «محدودشده»).</li>
+                                <li>برنامه را حتماً با «Add to Home Screen» به صفحه اصلی اضافه کرده و همیشه از همان آیکون بازش کنید، نه از تب مرورگر.</li>
+                            </ol>
+                            <p class="text-amber-700 dark:text-amber-400">این چهار تنظیم در اختیار خودِ سیستم‌عامل گوشی است؛ هیچ برنامه یا وب‌سایتی نمی‌تواند آن‌ها را به‌صورت خودکار عوض کند، فقط شما می‌توانید از مسیر بالا انجامشان دهید.</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 border border-slate-300 dark:border-slate-600 flex items-center justify-between">
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400">رکورد کدهای متوالی به‌موقع:</span>
+                        <span class="text-xs font-bold text-orange-600 dark:text-orange-400"><i class="fa-solid fa-fire"></i> جاری: <span id="settingCurrentStreakVal">۰</span> &nbsp;|&nbsp; بهترین: <span id="settingBestStreakVal">۰</span></span>
+                    </div>
+                </div>
+
                 <div class="space-y-3">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">وضعیت حافظه سامانه</h3>
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 text-xs space-y-2">
@@ -1430,7 +1475,11 @@
             fontFamily: 'Vazirmatn',
             bgColor: 'default',
             cardColor: 'default',
-            fieldColor: 'default'
+            fieldColor: 'default',
+            notificationsEnabled: false,
+            voiceAlertsEnabled: false,
+            onTimeStreak: 0,
+            bestStreak: 0
         };
         let saveTimeout = null;
         let hasPendingSave = false;
@@ -2128,6 +2177,14 @@
             return appSettings.numFormat === 'english' ? yearStr : toPersianDigits(yearStr);
         }
 
+        // مشابه formatYearDigits ولی برای یک تاریخ کامل (مثل currentJalali.fullDateStr)؛
+        // چند جای برنامه (سرتیتر گزارش‌های خروجی) این تاریخ را همیشه با ارقام فارسی نشان
+        // می‌دادند، حتی وقتی تنظیم «فرمت اعداد» روی «انگلیسی» بود.
+        function formatDateDigits(dateStr) {
+            const normalized = toEnglishDigits(String(dateStr || ''));
+            return appSettings.numFormat === 'english' ? normalized : toPersianDigits(normalized);
+        }
+
         function toggleToolsDropdown(event) {
             event.stopPropagation();
             const menu = document.getElementById('toolsDropdownMenu');
@@ -2219,7 +2276,7 @@
 
             document.getElementById('printRecordsTitle').innerText = `${shopName} - لیست کارکردها`;
             document.getElementById('printRecordsSubtitle').innerText =
-                `دوره: ${periodLabel}  |  تعداد رکورد: ${formatNumber(records.length)}  |  مجموع مبلغ: ${formatNumber(totalAmountSum)} ${currency}${unknownPriceCount > 0 ? '  |  ' + formatNumber(unknownPriceCount) + ' رکورد با قیمت نامعلوم' : ''}  |  تاریخ چاپ: ${currentJalali.fullDateStr}`;
+                `دوره: ${periodLabel}  |  تعداد رکورد: ${formatNumber(records.length)}  |  مجموع مبلغ: ${formatNumber(totalAmountSum)} ${currency}${unknownPriceCount > 0 ? '  |  ' + formatNumber(unknownPriceCount) + ' رکورد با قیمت نامعلوم' : ''}  |  تاریخ چاپ: ${formatDateDigits(currentJalali.fullDateStr)}`;
 
             window.print();
         }
@@ -2324,7 +2381,6 @@
             if (input) {
                 input.value = formatJalaliDate(jy, jm, day);
                 if (targetId === 'recordDate') runAutoDeliveryCalculation();
-                if (targetId === 'nextCodeStartDate') runActualStatusCalculation();
             }
             closeDatePicker();
         }
@@ -2335,7 +2391,6 @@
             if (input) {
                 input.value = currentJalali.fullDateStr;
                 if (targetId === 'recordDate') runAutoDeliveryCalculation();
-                if (targetId === 'nextCodeStartDate') runActualStatusCalculation();
             }
             closeDatePicker();
         }
@@ -2374,7 +2429,13 @@
             document.getElementById('settingNewPin').value = '';
             document.getElementById('settingConfirmPin').value = '';
             updatePinLockStatusUI();
-            
+
+            document.getElementById('settingNotificationsEnabled').checked = !!appSettings.notificationsEnabled;
+            document.getElementById('settingVoiceAlertsEnabled').checked = !!appSettings.voiceAlertsEnabled;
+            document.getElementById('settingCurrentStreakVal').innerText = formatNumber(appSettings.onTimeStreak || 0);
+            document.getElementById('settingBestStreakVal').innerText = formatNumber(appSettings.bestStreak || 0);
+            updateNotificationPermissionStatusUI();
+
             const totalRecords = allRecords.length;
             document.getElementById('storageTotalRecordsCount').innerText = formatNumber(totalRecords);
             
@@ -2464,6 +2525,8 @@
             const bgColorVal = document.getElementById('settingBgColor').value;
             const cardColorVal = document.getElementById('settingCardColor').value;
             const fieldColorVal = document.getElementById('settingFieldColor').value;
+            const notificationsEnabledVal = document.getElementById('settingNotificationsEnabled').checked;
+            const voiceAlertsEnabledVal = document.getElementById('settingVoiceAlertsEnabled').checked;
 
             appSettings.shopName = shopNameVal;
             appSettings.currency = currencyVal;
@@ -2475,12 +2538,15 @@
             appSettings.bgColor = bgColorVal;
             appSettings.cardColor = cardColorVal;
             appSettings.fieldColor = fieldColorVal;
+            appSettings.notificationsEnabled = notificationsEnabledVal;
+            appSettings.voiceAlertsEnabled = voiceAlertsEnabledVal;
 
             appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
             if (appDirHandle) saveAllMonthFilesToDirectory(); // تا فایل تنظیمات در پوشه‌ی متصل هم بلافاصله به‌روز شود
             applyAppSettingsToUI();
             renderDashboard();
+            checkDeliveryProgressNotifications();
             addLog('تنظیمات برنامه به‌روزرسانی شد.', 'success');
             closeSettingsModal();
             showFeedbackBanner('تنظیمات جدید با موفقیت ذخیره و اعمال شد.', 'success');
@@ -2920,7 +2986,7 @@
             const titleElement = document.getElementById('mainAppTitle');
             if (titleElement) {
                 const customShopName = appSettings.shopName || 'سامانه آمار دوخت لباس';
-                titleElement.innerText = `${customShopName} - گزارش ماه ${currentJalali.monthName} ${currentJalali.year}`;
+                titleElement.innerText = `${customShopName} - گزارش ماه ${currentJalali.monthName} ${formatYearDigits(currentJalali.yearEn)}`;
             }
         }
 
@@ -3002,7 +3068,7 @@
         }
         /* ============ پایان مدیریت عکس هر رکورد ============ */
 
-        /* ============ ثبت خودکار «شروع کد بعد» روی رکورد قبلی، هنگام شروع کد جدید ============ */
+        /* ============ ثبت/به‌روزرسانی خودکار «شروع کد بعد» روی رکورد قبلی، هنگام ثبت یا ویرایش هر رکورد ============ */
         // نزدیک‌ترین رکوردِ پیش از لحظه‌ی (تاریخ+ساعت) داده‌شده را پیدا می‌کند (رکورد «قبلی»)
         function findPreviousRecordByDateTime(dateStr, timeStr, excludeId) {
             const refJdn = parseJalaliDateToJdn(dateStr);
@@ -3023,40 +3089,122 @@
             return prevRecord;
         }
 
-        // وقتی رکورد جدیدی (شروع کد بعدی) ثبت می‌شود، اگر رکورد قبلی هنوز تاریخ/ساعت
-        // «شروع کد بعد» نداشته باشد (یعنی هنوز دستی پر نشده)، همین لحظه به‌عنوان آن ثبت
-        // و وضعیت تحویل + مدت زمان تاخیر/زودتر از موعدِ آن رکورد قبلی دوباره محاسبه می‌شود.
+        // نزدیک‌ترین رکوردِ پس از لحظه‌ی (تاریخ+ساعت) داده‌شده را پیدا می‌کند (رکورد «بعدی»)؛
+        // معکوسِ findPreviousRecordByDateTime و برای پیدا کردنِ «شروع کد بعدِ واقعی» یک رکورد به کار می‌رود.
+        function findNextRecordByDateTime(dateStr, timeStr, excludeId) {
+            const refJdn = parseJalaliDateToJdn(dateStr);
+            const refMinutes = parseTimeToMinutes(timeStr);
+            const refKey = refJdn * 1440 + refMinutes;
+            let nextRecord = null;
+            let nextKey = Infinity;
+            allRecords.forEach(r => {
+                if (excludeId && r.id === excludeId) return;
+                const rJdn = parseJalaliDateToJdn(r.date);
+                const rMinutes = parseTimeToMinutes(r.time);
+                const rKey = rJdn * 1440 + rMinutes;
+                if (rKey > refKey && rKey < nextKey) {
+                    nextRecord = r;
+                    nextKey = rKey;
+                }
+            });
+            return nextRecord;
+        }
+
+        // مقایسه‌ی «مدت زمان تحویل کار» (هدف) رکورد با زمان کاریِ واقعاً سپری‌شده تا لحظه‌ی شروع
+        // کد بعدیِ واقعی، و تنظیم وضعیت (تاخیر/زودتر از موعد/به‌موقع) و مقدار آن روی رکورد.
+        // خروجی: true اگر محاسبه واقعاً انجام شد (یعنی داده‌های لازم کامل بودند).
+        function computeAndSetDeliveryStatus(rec, nextDateStr, nextTimeStr) {
+            rec.nextCodeStartDate = nextDateStr;
+            rec.nextCodeStartTime = nextTimeStr;
+
+            const targetWorkMinutes = parseDurationStrToMinutes(rec.workDuration);
+            if (targetWorkMinutes === null || !rec.date || !rec.time) return false;
+
+            const startJdn = parseJalaliDateToJdn(rec.date);
+            const nextJdn = parseJalaliDateToJdn(nextDateStr);
+            if (!startJdn || !nextJdn) return false;
+
+            const startMinutes = parseTimeToMinutes(rec.time);
+            const nextMinutes = parseTimeToMinutes(nextTimeStr);
+            const actualElapsed = calculateActualWorkingMinutesElapsed(startJdn, startMinutes, nextJdn, nextMinutes);
+            const diff = actualElapsed - targetWorkMinutes;
+
+            rec.status = diff === 0 ? 'به موقع' : (diff > 0 ? 'تاخیر' : 'زودتر از موعد');
+            if (diff !== 0) {
+                const absDiff = Math.abs(diff);
+                const h = Math.floor(absDiff / 60);
+                const m = absDiff % 60;
+                rec.durationTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+            } else {
+                rec.durationTime = '';
+            }
+            updateOnTimeStreak(rec);
+            return true;
+        }
+
+        // وقتی رکوردی دیگر هیچ «رکورد بعدیِ واقعی»ای نداشته باشد (مثلاً چون رکوردی که قبلاً به آن
+        // اشاره می‌کرد ویرایش/جابه‌جا شده)، وضعیت آن به همان تخمین اولیه‌ی بر اساس آمار روزانه و
+        // تعداد دریافتی بازمی‌گردد؛ دقیقاً همان منطقی که در runAutoDeliveryCalculation اجرا می‌شود.
+        function revertRecordToEstimatedStatus(rec) {
+            rec.nextCodeStartDate = null;
+            rec.nextCodeStartTime = null;
+            const est = calculateCompletionEstimate(rec.time, rec.dailyStat, rec.quantity, rec.date);
+            if (!est) return;
+            rec.status = est.daysPassed > 0 ? 'تاخیر' : 'به موقع';
+            rec.durationTime = est.daysPassed > 0 ? 'نامعلوم' : '';
+        }
+
+        // نسخه‌ی ملایم‌ترِ syncNextCodeStartLink، مخصوص خودِ رکوردی که همین الان ویرایش شده است:
+        // اگر رکورد بعدیِ واقعی‌ای برایش پیدا شود، وضعیت بر مبنای آن (دقیق‌تر از تخمین فرم) محاسبه
+        // و جایگزین می‌شود؛ ولی اگر رکورد بعدیِ واقعی‌ای وجود نداشته باشد، فقط اشاره‌گر قدیمی/نامعتبر
+        // پاک می‌شود و وضعیت/مدت‌زمانی که همین الان از فرم ثبت شده (تخمین تازه یا مقدار دستی کاربر)
+        // دست‌نخورده باقی می‌ماند — چون اینجا چیزی برای بازگرداندن به «تخمین» وجود ندارد، خودِ فرم
+        // همین الان آن تخمین/مقدار را ارسال کرده است.
+        function refreshOwnNextCodeStartLink(rec) {
+            const next = findNextRecordByDateTime(rec.date, rec.time, rec.id);
+            if (next) {
+                const updated = computeAndSetDeliveryStatus(rec, next.date, next.time);
+                if (updated) {
+                    addLog(`وضعیت رکورد ${rec.itemCode || '-'} بر اساس رکورد بعدیِ واقعی (${next.itemCode || '-'}) دوباره محاسبه شد (${rec.status}).`, 'info');
+                }
+            } else if (rec.nextCodeStartDate || rec.nextCodeStartTime) {
+                rec.nextCodeStartDate = null;
+                rec.nextCodeStartTime = null;
+            }
+        }
+
+        // رکورد داده‌شده را با نزدیک‌ترین رکورد بعدیِ واقعاً موجود (بر اساس تاریخ/ساعت ثبت) همگام
+        // می‌کند: اگر چنین رکوردی پیدا شود، «شروع کد بعد» و وضعیت تحویل بر همان مبنا دوباره محاسبه
+        // می‌شود؛ در غیر این صورت رکورد به وضعیت تخمینی اولیه‌ی خودش بازمی‌گردد. این تابع برای
+        // اصلاح رکوردهایی به کار می‌رود که رکورد بعدیِ آن‌ها (از نظر زمانی) ویرایش شده است.
+        function syncNextCodeStartLink(rec) {
+            const next = findNextRecordByDateTime(rec.date, rec.time, rec.id);
+            if (next) {
+                const updated = computeAndSetDeliveryStatus(rec, next.date, next.time);
+                if (updated) {
+                    addLog(`به‌دلیل ویرایش رکورد مجاور، وضعیت رکورد ${rec.itemCode || '-'} دوباره محاسبه شد (${rec.status}).`, 'info');
+                }
+            } else {
+                revertRecordToEstimatedStatus(rec);
+                addLog(`به‌دلیل ویرایش رکورد مجاور، رکورد ${rec.itemCode || '-'} دیگر رکورد بعدیِ واقعی ندارد؛ وضعیت آن به تخمین اولیه بازگشت.`, 'info');
+            }
+        }
+
+        // وقتی رکوردی (تازه ثبت‌شده یا تازه ویرایش‌شده) ثبت می‌شود، اگر رکورد قبلیِ آن (از نظر
+        // زمانی) هنوز تاریخ/ساعت «شروع کد بعد» نداشته باشد، همین لحظه به‌عنوان آن ثبت و وضعیت
+        // تحویل + مدت زمان تاخیر/زودتر از موعدِ آن رکورد قبلی دوباره محاسبه می‌شود. این تنها مسیر
+        // پر شدن «شروع کد بعد» است (بدون ورودی دستی) و هم بعد از ثبت و هم بعد از ویرایش اجرا می‌شود.
         function applyNextCodeStartToPreviousRecord(newDate, newTime, excludeId) {
             const prev = findPreviousRecordByDateTime(newDate, newTime, excludeId);
             if (!prev) return;
             if (prev.nextCodeStartDate || prev.nextCodeStartTime) return;
 
-            prev.nextCodeStartDate = newDate;
-            prev.nextCodeStartTime = newTime;
-
-            const targetWorkMinutes = parseDurationStrToMinutes(prev.workDuration);
-            if (targetWorkMinutes !== null && prev.date && prev.time) {
-                const startJdn = parseJalaliDateToJdn(prev.date);
-                const nextJdn = parseJalaliDateToJdn(newDate);
-                if (startJdn && nextJdn) {
-                    const startMinutes = parseTimeToMinutes(prev.time);
-                    const nextMinutes = parseTimeToMinutes(newTime);
-                    const actualElapsed = calculateActualWorkingMinutesElapsed(startJdn, startMinutes, nextJdn, nextMinutes);
-                    const diff = actualElapsed - targetWorkMinutes;
-                    prev.status = diff === 0 ? 'به موقع' : (diff > 0 ? 'تاخیر' : 'زودتر از موعد');
-                    if (diff !== 0) {
-                        const absDiff = Math.abs(diff);
-                        const h = Math.floor(absDiff / 60);
-                        const m = absDiff % 60;
-                        prev.durationTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-                    } else {
-                        prev.durationTime = '';
-                    }
-                    addLog(`تاریخ/ساعت شروع کد بعد برای رکورد ${prev.itemCode || '-'} به‌صورت خودکار ثبت و وضعیت آن (${prev.status}) به‌روزرسانی شد.`, 'info');
-                }
+            const updated = computeAndSetDeliveryStatus(prev, newDate, newTime);
+            if (updated) {
+                addLog(`تاریخ/ساعت شروع کد بعد برای رکورد ${prev.itemCode || '-'} به‌صورت خودکار ثبت و وضعیت آن (${prev.status}) به‌روزرسانی شد.`, 'info');
             }
         }
-        /* ============ پایان ثبت خودکار «شروع کد بعد» ============ */
+        /* ============ پایان ثبت/به‌روزرسانی خودکار «شروع کد بعد» ============ */
 
         function handleFormSubmit(event) {
             event.preventDefault();
@@ -3075,8 +3223,6 @@
             const receivedQuantity = qty;
             const endDateTime = document.getElementById('recordEndDateTime').value.trim() || null;
             const workDuration = document.getElementById('recordWorkDuration').value.trim() || null;
-            const nextCodeStartDate = document.getElementById('nextCodeStartDate').value.trim() || null;
-            const nextCodeStartTime = document.getElementById('nextCodeStartTime').value.trim() || null;
             const date = document.getElementById('recordDate').value || info.fullDateStr;
             const time = document.getElementById('recordTime').value || new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
             const needsDuration = (status === 'تاخیر' || status === 'زودتر از موعد');
@@ -3109,6 +3255,8 @@
                     // نمای فعلی به آن ماه (که باعث می‌شد بقیه‌ی رکوردهای ماه جاری ناپدید به‌نظر برسند)،
                     // فقط با یک پیام واضح به کاربر اطلاع می‌دهیم و فیلتر ماهِ در حال نمایش را دست‌نخورده نگه می‌داریم.
                     const movedToDifferentMonth = allRecords[targetIndex].monthKey !== dateInfo.monthKey;
+                    const oldDate = allRecords[targetIndex].date;
+                    const oldTime = allRecords[targetIndex].time;
                     allRecords[targetIndex] = {
                         ...allRecords[targetIndex],
                         itemCode: code, itemTitle: title, itemColor: color,
@@ -3116,10 +3264,31 @@
                         status: status, date: date, time: time, durationTime: durationTime,
                         dailyStat: dailyStat, receivedQuantity: receivedQuantity, endDateTime: endDateTime,
                         workDuration: workDuration,
-                        nextCodeStartDate: nextCodeStartDate, nextCodeStartTime: nextCodeStartTime,
                         photo: currentPhotoData,
-                        monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year
+                        monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year,
+                        notifiedStages: [], notifiedFull: false, lastOverdueNotifyAt: null, mutedUntil: null, streakCounted: false
                     };
+
+                    // اگر تاریخ/ساعت ثبتِ همین رکورد تغییر کرده باشد، ممکن است رکوردی که قبلاً
+                    // همین لحظه‌ی قدیمی را به‌عنوان «شروع کد بعد» خودش ثبت کرده بود، دیگر با واقعیت
+                    // هم‌خوانی نداشته باشد؛ آن رکورد پیدا و دوباره با رکورد بعدیِ واقعی‌اش همگام می‌شود.
+                    if (oldDate !== date || oldTime !== time) {
+                        const staleOwner = allRecords.find(r =>
+                            r.id !== editingId && r.nextCodeStartDate === oldDate && r.nextCodeStartTime === oldTime
+                        );
+                        if (staleOwner) syncNextCodeStartLink(staleOwner);
+                    }
+
+                    // اگر خودِ همین رکورد از قبل «شروع کد بعد» داشت (رکوردی بعد از آن وجود داشت)،
+                    // آن اشاره‌گر هم ممکن است با تغییر تاریخ/ساعت یا مدت‌زمان هدف نامعتبر شده باشد؛
+                    // بر مبنای رکورد بعدیِ واقعیِ فعلی (در صورت وجود) دوباره محاسبه می‌شود.
+                    refreshOwnNextCodeStartLink(allRecords[targetIndex]);
+
+                    // مشابه ثبت رکورد جدید: رکورد قبلیِ (از نظر زمانی) همین رکورد نیز، در صورتی که
+                    // هنوز «شروع کد بعد» نداشته باشد، بر اساس تاریخ/ساعت (جدید یا بازویرایش‌شده‌ی)
+                    // همین رکورد به‌روزرسانی و وضعیت تحویلش دوباره محاسبه می‌شود.
+                    applyNextCodeStartToPreviousRecord(date, time, editingId);
+
                     addLog(`رکورد ${code} ویرایش شد.`, 'warn');
                     showFeedbackBanner(
                         movedToDifferentMonth
@@ -3135,7 +3304,6 @@
                     status: status, date: date, time: time, durationTime: durationTime,
                     dailyStat: dailyStat, receivedQuantity: receivedQuantity, endDateTime: endDateTime,
                     workDuration: workDuration,
-                    nextCodeStartDate: nextCodeStartDate, nextCodeStartTime: nextCodeStartTime,
                     photo: currentPhotoData,
                     monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year
                 };
@@ -3174,8 +3342,6 @@
                 : record.quantity;
             document.getElementById('recordEndDateTime').value = record.endDateTime || '';
             document.getElementById('recordWorkDuration').value = record.workDuration || '';
-            document.getElementById('nextCodeStartDate').value = record.nextCodeStartDate || '';
-            document.getElementById('nextCodeStartTime').value = record.nextCodeStartTime || '';
             document.getElementById('recordDate').value = record.date;
             document.getElementById('recordTime').value = record.time;
             toggleDeliveryDurationField();
@@ -3189,7 +3355,7 @@
                 const parsedM = parseInt(durM, 10) || 0;
                 const roundedM = Math.min(55, Math.round(parsedM / 5) * 5);
                 document.getElementById('deliveryDurationUnknown').checked = false;
-                document.getElementById('deliveryDurationHour').value = String(Math.min(23, parsedH));
+                document.getElementById('deliveryDurationHour').value = String(Math.min(200, parsedH));
                 document.getElementById('deliveryDurationMinute').value = String(roundedM);
             } else {
                 document.getElementById('deliveryDurationUnknown').checked = false;
@@ -3198,7 +3364,6 @@
             }
             toggleDeliveryDurationUnknown();
             runAutoDeliveryCalculation();
-            runActualStatusCalculation();
 
             if (record.photo) {
                 currentPhotoData = record.photo;
@@ -3234,8 +3399,6 @@
             document.getElementById('autoCalcInfoBox').classList.add('hidden');
             document.getElementById('recordEndDateTime').value = '';
             document.getElementById('recordWorkDuration').value = '';
-            document.getElementById('nextCodeStartDate').value = '';
-            document.getElementById('nextCodeStartTime').value = '';
 
             document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-circle-plus text-indigo-600 dark:text-indigo-400"></i> ثبت کارکرد جدید`;
             document.getElementById('submitBtn').className = "tactile-btn w-full bg-indigo-600 text-white py-3.5 rounded-xl font-medium text-sm hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow";
@@ -3803,64 +3966,23 @@
                 // تا وقتی تاریخ/ساعت واقعیِ شروع کد بعد ثبت نشده باشد، مقدار دقیق «مدت زمان تاخیر»
                 // قابل تعیین نیست (چون تاخیر واقعی فقط با مقایسه‌ی زمان کاریِ واقعاً سپری‌شده تا
                 // شروع کد بعد، با مدت زمان تحویل کار، به‌دست می‌آید). بنابراین فیلد به‌صورت «نامعلوم»
-                // علامت زده می‌شود تا با ثبت تاریخ/ساعت شروع کد بعد (در runActualStatusCalculation)
+                // علامت زده می‌شود تا با ثبت رکورد بعدی (در applyNextCodeStartToPreviousRecord)
                 // به‌طور خودکار با مقدار واقعی جایگزین شود.
                 document.getElementById('deliveryDurationUnknown').checked = true;
                 toggleDeliveryDurationUnknown();
                 document.getElementById('deliveryDurationHour').value = '0';
                 document.getElementById('deliveryDurationMinute').value = '0';
             }
-
-            // پس از تغییر ورودی‌های محاسبه‌ی خودکار (که موعد مقرر را جابه‌جا می‌کنند)،
-            // اگر تاریخ/ساعت شروع کد بعد از قبل ثبت شده باشد، وضعیت واقعی هم دوباره محاسبه می‌شود.
-            runActualStatusCalculation();
         }
         /* ============ پایان محاسبه خودکار زمان اتمام کار ============ */
-
-        /* ============ تعیین وضعیت واقعی تحویل بر اساس تاریخ و زمان شروع کد بعد ============ */
-        // مدت زمان کاریِ واقعاً سپری‌شده از لحظه‌ی شروع (تاریخ/ساعت ثبت) تا لحظه‌ی واقعیِ شروع
-        // کد بعدی، با «مدت زمان تحویل کار» (مدت زمان لازم/محاسبه‌شده) مقایسه می‌شود:
-        // اگر زمان سپری‌شده بیشتر از مدت لازم باشد => «تاخیر»، کمتر باشد => «زودتر از موعد»، برابر باشد => «به موقع».
-        function runActualStatusCalculation() {
-            const workDurationStr = document.getElementById('recordWorkDuration').value.trim();
-            const startDateStr = document.getElementById('recordDate').value.trim();
-            const startTimeStr = document.getElementById('recordTime').value.trim();
-            const nextDateStr = document.getElementById('nextCodeStartDate').value.trim();
-            const nextTimeStr = document.getElementById('nextCodeStartTime').value.trim();
-
-            const targetWorkMinutes = parseDurationStrToMinutes(workDurationStr);
-            if (targetWorkMinutes === null || !startDateStr || !startTimeStr || !nextDateStr || !nextTimeStr) return;
-
-            const startJdn = parseJalaliDateToJdn(startDateStr);
-            const nextJdn = parseJalaliDateToJdn(nextDateStr);
-            if (!startJdn || !nextJdn) return;
-
-            const startMinutes = parseTimeToMinutes(startTimeStr);
-            const nextMinutes = parseTimeToMinutes(nextTimeStr);
-            const actualElapsed = calculateActualWorkingMinutesElapsed(startJdn, startMinutes, nextJdn, nextMinutes);
-            const diff = actualElapsed - targetWorkMinutes;
-
-            const statusSelect = document.getElementById('itemStatus');
-            statusSelect.value = diff === 0 ? 'به موقع' : (diff > 0 ? 'تاخیر' : 'زودتر از موعد');
-            toggleDeliveryDurationField();
-
-            if (diff !== 0) {
-                const absDiff = Math.abs(diff);
-                const h = Math.floor(absDiff / 60);
-                const m = absDiff % 60;
-                document.getElementById('deliveryDurationUnknown').checked = false;
-                toggleDeliveryDurationUnknown();
-                document.getElementById('deliveryDurationHour').value = String(Math.min(23, h));
-                document.getElementById('deliveryDurationMinute').value = String(Math.min(55, Math.round(m / 5) * 5));
-            }
-        }
-        /* ============ پایان تعیین وضعیت واقعی تحویل ============ */
 
         function populateDeliveryDurationSelects() {
             const hourSelect = document.getElementById('deliveryDurationHour');
             const minuteSelect = document.getElementById('deliveryDurationMinute');
             if (!hourSelect || !minuteSelect) return;
-            hourSelect.innerHTML = Array.from({ length: 24 }, (_, h) =>
+            // بازه‌ی ساعت تا ۲۰۰ ساعت (حدود ۸ روز) گسترش یافت؛ قبلاً فقط ۰ تا ۲۳ ساعت قابل انتخاب بود
+            // و هر تاخیر/زودتر-از-موعدِ بیش از یک شبانه‌روز به‌صورت نامعلوم گرد می‌شد یا مقدار غلط ذخیره می‌شد.
+            hourSelect.innerHTML = Array.from({ length: 201 }, (_, h) =>
                 `<option value="${h}">${formatNumber(h)} ساعت</option>`
             ).join('');
             minuteSelect.innerHTML = Array.from({ length: 12 }, (_, i) => i * 5).map(m =>
@@ -3987,7 +4109,10 @@
         }
 
         function calculateTotalDelayMinutes(records) {
-            const WORK_MINUTES_PER_DAY = 8.5 * 60; // ۸ ساعت و نیم کاری در روز
+            // باید دقیقاً برابر با SHIFT_MINUTES باشد (همان ۸ ساعت و ۱۵ دقیقه کاری واقعی هر روز که
+            // در محاسبه‌ی مدت زمان تحویل/تاخیر هر رکورد استفاده می‌شود)؛ قبلاً اینجا به‌اشتباه عدد
+            // ثابت و متفاوتِ ۸.۵ ساعت به‌کار رفته بود که با بقیه‌ی برنامه هم‌خوان نبود.
+            const WORK_MINUTES_PER_DAY = SHIFT_MINUTES;
             let totalMinutes = 0;
             let unknownCount = 0;
             let delayRecordCount = 0;
@@ -4079,10 +4204,419 @@
             dupText.innerHTML = formatDuplicateCodesSummary(records);
         }
 
+        /* ==================== اعلان‌های هوشمند پیشرفت کار (برای جلوگیری از تاخیر) ==================== */
+        const OVERDUE_RENOTIFY_MINUTES = 20; // فاصله‌ی یادآوری‌های مکرر بعد از گذشتن موعد تحویل
+
+        // رکورد «در حال انجام» فعلی: جدیدترین رکوردی که هنوز «شروع کد بعد» برایش ثبت نشده؛
+        // یعنی همان کدی که خیاط همین الان روی آن مشغول است.
+        function getCurrentActiveRecord() {
+            const openRecords = allRecords.filter(r => !r.nextCodeStartDate && r.workDuration && r.date && r.time);
+            if (openRecords.length === 0) return null;
+            return openRecords.reduce((latest, r) => {
+                const rKey = parseJalaliDateToJdn(r.date) * 1440 + parseTimeToMinutes(r.time);
+                const lKey = parseJalaliDateToJdn(latest.date) * 1440 + parseTimeToMinutes(latest.time);
+                return rKey > lKey ? r : latest;
+            });
+        }
+
+        // درصد پیشرفت رکورد نسبت به «مدت زمان تحویل کار» هدف، بر مبنای همان منطق دقیقِ محاسبه‌ی
+        // زمان کاریِ واقعی (با احتساب استراحت‌ها، پایان شیفت و تعطیلی جمعه‌ها) که در بقیه‌ی برنامه هم استفاده می‌شود.
+        function computeRecordProgress(rec) {
+            const targetMinutes = parseDurationStrToMinutes(rec.workDuration);
+            if (targetMinutes === null || targetMinutes <= 0) return null;
+            const startJdn = parseJalaliDateToJdn(rec.date);
+            const startMinute = parseTimeToMinutes(rec.time);
+            if (!startJdn) return null;
+
+            const nowInfo = getCurrentJalaliInfo();
+            const nowJdn = parseJalaliDateToJdn(nowInfo.fullDateStr);
+            const now = new Date();
+            const nowMinute = now.getHours() * 60 + now.getMinutes();
+
+            const elapsed = calculateActualWorkingMinutesElapsed(startJdn, startMinute, nowJdn, nowMinute);
+            const percent = Math.round((elapsed / targetMinutes) * 100);
+            return { targetMinutes, elapsed, percent, remainingMinutes: targetMinutes - elapsed };
+        }
+
+        function formatMinutesDuration(mins) {
+            const absMins = Math.abs(Math.round(mins));
+            const h = Math.floor(absMins / 60);
+            const m = absMins % 60;
+            let text = '';
+            if (h > 0) text += `${formatNumber(h)} ساعت `;
+            if (m > 0 || h === 0) text += `${formatNumber(m)} دقیقه`;
+            return text.trim();
+        }
+
+        // بوق کوتاه هشدار (بدون نیاز به فایل صوتی خارجی)؛ در برخی مرورگرها بدون تعامل اخیر کاربر پخش نمی‌شود.
+        function playAlertSound(urgent) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.connect(g); g.connect(ctx.destination);
+                o.type = 'sine';
+                o.frequency.value = urgent ? 880 : 640;
+                g.gain.setValueAtTime(0.001, ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+                g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (urgent ? 0.5 : 0.3));
+                o.start();
+                o.stop(ctx.currentTime + (urgent ? 0.55 : 0.35));
+                if (urgent) setTimeout(() => playAlertSound(false), 350);
+            } catch (e) { /* پخش صدا در برخی مرورگرها بدون تعامل کاربر امکان‌پذیر نیست */ }
+        }
+
+        // ارسال اعلان به شکل واقعیِ سیستم‌عامل گوشی (دقیقاً مثل اعلان پیامک یا یادآوری)؛
+        // همیشه از طریق Service Worker ارسال می‌شود تا در نوار اعلان‌های اندروید/iOS بنشیند،
+        // پایدار بماند (تا لمس نشود از بین نمی‌رود) و با هر بار تکرار دوباره لرزش/صدا بدهد.
+        function sendBrowserNotification(title, body, tag, urgent) {
+            if (!('Notification' in window) || Notification.permission !== 'granted') return false;
+            const appLabel = appSettings.shopName || 'آمار دوخت';
+            const options = {
+                body,
+                icon: 'icon-192.png',
+                badge: 'icon-192.png',
+                tag,
+                renotify: true,
+                requireInteraction: true, // مثل پیامک/یادآوری‌های گوشی، تا لمس نشود از نوار اعلان‌ها پاک نشود
+                silent: false,
+                dir: 'rtl',
+                lang: 'fa',
+                timestamp: Date.now(),
+                vibrate: urgent ? [300, 100, 300, 100, 300] : [200, 80, 200]
+            };
+            try {
+                if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.ready.then(reg => reg.showNotification(`${appLabel} • ${title}`, options)).catch(() => { try { new Notification(`${appLabel} • ${title}`, options); } catch (e2) {} });
+                } else if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
+                    navigator.serviceWorker.getRegistration().then(reg => {
+                        if (reg) reg.showNotification(`${appLabel} • ${title}`, options);
+                        else new Notification(`${appLabel} • ${title}`, options);
+                    }).catch(() => { try { new Notification(`${appLabel} • ${title}`, options); } catch (e2) {} });
+                } else {
+                    new Notification(`${appLabel} • ${title}`, options);
+                }
+            } catch (e) {
+                console.error('خطا در ارسال اعلان:', e);
+                return false;
+            }
+            return true;
+        }
+
+        // نقطه‌ی واحدِ اطلاع‌رسانی: اگر اجازه‌ی اعلان گوشی داده شده باشد، فقط همان اعلان واقعی
+        // نمایش داده می‌شود (نه بنر داخل صفحه)؛ فقط وقتی اجازه داده نشده، به‌جای آن یک بنر
+        // داخل برنامه به‌عنوان جایگزین نشان داده می‌شود تا پیام از دست نرود.
+        function notifyUser(title, body, tag, urgent) {
+            const delivered = sendBrowserNotification(title, body, tag, urgent);
+            if (!delivered) {
+                showFeedbackBanner(`${title} — ${body}`, urgent ? 'warn' : 'info');
+            }
+        }
+
+        function updateNotificationPermissionStatusUI() {
+            const statusEl = document.getElementById('notificationPermissionStatusText');
+            if (!statusEl) return;
+            if (!('Notification' in window)) {
+                statusEl.innerText = 'مرورگر شما از اعلان‌های سیستمی پشتیبانی نمی‌کند.';
+                statusEl.className = 'text-xs font-semibold text-slate-400';
+                return;
+            }
+            if (Notification.permission === 'granted') {
+                statusEl.innerText = 'وضعیت: اجازه‌ی اعلان مرورگر داده شده است.';
+                statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
+            } else if (Notification.permission === 'denied') {
+                statusEl.innerText = 'وضعیت: اعلان مرورگر مسدود شده؛ برای فعال‌سازی از تنظیمات سایتِ مرورگرتان اجازه را تغییر دهید.';
+                statusEl.className = 'text-xs font-semibold text-rose-600 dark:text-rose-400';
+            } else {
+                statusEl.innerText = 'وضعیت: هنوز اجازه‌ی اعلان درخواست نشده است.';
+                statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
+            }
+        }
+
+        async function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                showFeedbackBanner('مرورگر شما از اعلان‌های سیستمی پشتیبانی نمی‌کند.', 'warn');
+                return;
+            }
+            try {
+                const perm = await Notification.requestPermission();
+                updateNotificationPermissionStatusUI();
+                if (perm === 'granted') {
+                    showFeedbackBanner('اعلان‌های مرورگر فعال شد.', 'success');
+                    addLog('اجازه‌ی اعلان مرورگر داده شد.', 'success');
+                } else {
+                    showFeedbackBanner('اجازه‌ی اعلان داده نشد؛ در این حالت فقط پیام‌های داخل برنامه نمایش داده می‌شوند.', 'warn');
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // ارسال یک اعلان آزمایشی فوری؛ برای اینکه کاربر بلافاصله (بدون صبر برای رسیدن به ۲۵٪ پیشرفت
+        // واقعی) بتواند بررسی کند آیا اعلان‌ها روی صفحه/صفحه‌قفل گوشی به‌صورت بنر ظاهر می‌شوند یا نه.
+        function sendTestNotification() {
+            if (!('Notification' in window) || Notification.permission !== 'granted') {
+                showFeedbackBanner('برای ارسال اعلان آزمایشی، ابتدا باید اجازه‌ی اعلان مرورگر را بدهید.', 'warn');
+                return;
+            }
+            const delivered = sendBrowserNotification(
+                '🔔 اعلان آزمایشی',
+                'اگر این پیام را به‌صورت بنر روی صفحه یا صفحه قفل گوشی دیدید، تنظیمات درست است. اگر فقط داخل نوار اعلان‌ها بود، راهنمای زیر را ببینید.',
+                'sewing-test-' + Date.now(),
+                true
+            );
+            if (delivered) {
+                showFeedbackBanner('اعلان آزمایشی ارسال شد؛ صفحه یا نوار اعلان گوشی را بررسی کنید.', 'info');
+                addLog('یک اعلان آزمایشی ارسال شد.', 'info');
+            }
+        }
+
+        function toggleXiaomiGuide() {
+            const body = document.getElementById('xiaomiGuideBody');
+            const icon = document.getElementById('xiaomiGuideToggleIcon');
+            if (!body) return;
+            const collapsed = body.classList.toggle('hidden');
+            if (icon) icon.classList.toggle('rotate-180', !collapsed);
+        }
+
+        // مراحل هشدار پیشرفت؛ هر چه درصد بالاتر می‌رود، لحن اعلان جدی‌تر می‌شود
+        const PROGRESS_STAGES = [
+            { threshold: 25, emoji: '🟢', title: 'یک‌چهارم زمان گذشت', urgent: false },
+            { threshold: 50, emoji: '⏳', title: 'نیمی از زمان تحویل گذشت', urgent: false },
+            { threshold: 75, emoji: '🟠', title: 'فقط ۲۵٪ از زمان باقی مانده', urgent: false },
+            { threshold: 90, emoji: '🔴', title: 'فرصت رو به پایان است!', urgent: true }
+        ];
+
+        // پخش هشدار گفتاریِ فارسی (اختیاری، فقط برای رویدادهای حساس)
+        function speakPersianAlert(text) {
+            if (!appSettings.voiceAlertsEnabled) return;
+            if (!('speechSynthesis' in window)) return;
+            try {
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'fa-IR';
+                utter.rate = 0.95;
+                utter.volume = 1;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utter);
+            } catch (e) { /* در برخی مرورگرها بدون تعامل کاربر قابل پخش نیست */ }
+        }
+
+        // نشان‌گر عددی روی آیکون برنامه (فقط در حالت نصب‌شده/PWA و مرورگرهای پشتیبان)
+        function updateAppBadge(count) {
+            if (!('setAppBadge' in navigator)) return;
+            try {
+                if (count > 0) navigator.setAppBadge(count).catch(() => {});
+                else navigator.clearAppBadge().catch(() => {});
+            } catch (e) { /* بی‌اهمیت */ }
+        }
+
+        // تغییر رنگ فاویکون به قرمز هنگام تاخیر، برای جلب توجه حتی از میان تب‌های زیاد باز مرورگر
+        let originalFaviconHref = null;
+        function setDynamicFavicon(colorHex) {
+            const link = document.querySelector('link[rel="icon"]');
+            if (!link) return;
+            if (originalFaviconHref === null) originalFaviconHref = link.getAttribute('href');
+            if (!colorHex) { link.setAttribute('href', originalFaviconHref); return; }
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 32; canvas.height = 32;
+                const ctx = canvas.getContext('2d');
+                ctx.beginPath();
+                ctx.arc(16, 16, 15, 0, Math.PI * 2);
+                ctx.fillStyle = colorHex;
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 20px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('!', 16, 18);
+                link.setAttribute('href', canvas.toDataURL('image/png'));
+            } catch (e) { /* بی‌اهمیت */ }
+        }
+
+        // چشمک زدن عنوان تب فقط وقتی تب در پس‌زمینه و کار عقب افتاده است؛ با برگشت کاربر به تب، فوراً متوقف می‌شود
+        let titleFlashInterval = null;
+        let originalPageTitle = document.title;
+        function updateAttentionIndicators() {
+            const rec = getCurrentActiveRecord();
+            const progress = rec ? computeRecordProgress(rec) : null;
+            const overdue = !!(progress && progress.percent >= 100);
+            const nearDeadline = !!(progress && progress.percent >= 75 && progress.percent < 100);
+
+            setDynamicFavicon(overdue ? '#e11d48' : (nearDeadline ? '#f59e0b' : null));
+
+            if (overdue && document.hidden && appSettings.notificationsEnabled) {
+                if (!titleFlashInterval) {
+                    let toggle = false;
+                    titleFlashInterval = setInterval(() => {
+                        document.title = toggle ? originalPageTitle : '🚨 موعد تحویل رسید!';
+                        toggle = !toggle;
+                    }, 1500);
+                }
+            } else if (titleFlashInterval) {
+                clearInterval(titleFlashInterval);
+                titleFlashInterval = null;
+                document.title = originalPageTitle;
+            }
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) document.title = originalPageTitle;
+            updateAttentionIndicators();
+        });
+
+        // بی‌صدا کردن موقت اعلان‌های رکورد جاری (۳۰ دقیقه)؛ فقط اعلان‌ها را به تعویق می‌اندازد، نه خودِ مهلت را
+        function snoozeActiveNotifications() {
+            const rec = getCurrentActiveRecord();
+            if (!rec) return;
+            rec.mutedUntil = Date.now() + 30 * 60 * 1000;
+            saveRecords();
+            addLog(`اعلان‌های کد ${rec.itemCode || '-'} به مدت ۳۰ دقیقه بی‌صدا شد.`, 'info');
+            showFeedbackBanner('اعلان‌های این کد به مدت ۳۰ دقیقه بی‌صدا شد (خودِ مهلت تحویل تغییری نکرد).', 'info');
+            renderActiveProgressWidget();
+        }
+
+        // به‌روزرسانی رکورد «کدهای متوالیِ به‌موقع»؛ برای هر رکورد فقط یک‌بار (در اولین قطعی‌شدن وضعیت) شمرده می‌شود
+        function updateOnTimeStreak(rec) {
+            if (rec.streakCounted) return;
+            rec.streakCounted = true;
+            if (rec.status === 'تاخیر') {
+                appSettings.onTimeStreak = 0;
+            } else {
+                appSettings.onTimeStreak = (appSettings.onTimeStreak || 0) + 1;
+                if (appSettings.onTimeStreak > (appSettings.bestStreak || 0)) {
+                    appSettings.bestStreak = appSettings.onTimeStreak;
+                }
+            }
+            appSettings.updatedAt = new Date().toISOString();
+            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+            if (appDirHandle) saveAllMonthFilesToDirectory();
+            renderStreakBadge();
+        }
+
+        function renderStreakBadge() {
+            const el = document.getElementById('streakBadgeText');
+            if (!el) return;
+            const streak = appSettings.onTimeStreak || 0;
+            if (streak <= 0) { el.className = 'hidden'; return; }
+            const isRecord = streak > 1 && streak === (appSettings.bestStreak || 0);
+            el.className = 'inline-flex text-xs font-bold px-3 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-900 items-center gap-1.5';
+            el.innerHTML = `<i class="fa-solid fa-fire"></i> ${formatNumber(streak)} کد متوالی به‌موقع${isRecord ? ' — رکورد شخصی 🏆' : ''}`;
+        }
+
+        // بررسی دوره‌ای پیشرفتِ رکورد جاری و ارسال اعلانِ پلکانی در چند نقطه‌ی کلیدی:
+        // ۲۵٪ / ۵۰٪ / ۷۵٪ / ۹۰٪ از زمان مجاز، و رسیدن/گذشتن از خودِ موعد تحویل (با یادآوری‌های مکرر هر ۲۰ دقیقه)
+        function checkDeliveryProgressNotifications() {
+            const rec = getCurrentActiveRecord();
+            if (!rec) { updateAppBadge(0); return; }
+            const progress = computeRecordProgress(rec);
+            if (!progress) { updateAppBadge(0); return; }
+            if (!rec.notifiedStages) rec.notifiedStages = [];
+
+            updateAppBadge(progress.percent >= 100 ? 1 : 0);
+
+            if (!appSettings.notificationsEnabled) { renderActiveProgressWidget(); return; }
+
+            const muted = rec.mutedUntil && Date.now() < rec.mutedUntil;
+            let changed = false;
+
+            if (!muted && progress.percent < 100) {
+                // برای جلوگیری از سیل اعلان (مثلاً اگر برنامه مدتی بسته بوده)، فقط بالاترین مرحله‌ی
+                // تازه‌رسیده اعلان می‌شود؛ مراحلِ زیرِ آن هم به‌صورت خاموش «دیده‌شده» علامت می‌خورند.
+                const reached = PROGRESS_STAGES.filter(s => progress.percent >= s.threshold && !rec.notifiedStages.includes(s.threshold));
+                if (reached.length > 0) {
+                    const stage = reached[reached.length - 1];
+                    PROGRESS_STAGES.forEach(s => { if (s.threshold <= stage.threshold && !rec.notifiedStages.includes(s.threshold)) rec.notifiedStages.push(s.threshold); });
+                    const msg = `کد ${rec.itemCode || '-'} (${rec.itemTitle || '-'}) — ${formatNumber(progress.percent)}٪ از زمان مجاز گذشت. حدود ${formatMinutesDuration(progress.remainingMinutes)} تا موعد باقی مانده.`;
+                    notifyUser(`${stage.emoji} ${stage.title}`, msg, 'sewing-stage-' + stage.threshold + '-' + rec.id, stage.urgent);
+                    addLog(`اعلان ${formatNumber(stage.threshold)}٪ پیشرفت برای کد ${rec.itemCode || '-'} ارسال شد.`, stage.urgent ? 'warn' : 'info');
+                    playAlertSound(stage.urgent);
+                    if (stage.urgent) speakPersianAlert(`توجه، فرصت کد ${rec.itemCode || ''} رو به پایان است`);
+                    changed = true;
+                }
+            }
+
+            if (progress.percent >= 100 && !muted) {
+                if (!rec.notifiedFull) {
+                    const msg = `موعد تحویل کد ${rec.itemCode || '-'} (${rec.itemTitle || '-'}) رسید! برای جلوگیری از ثبت تاخیر، همین الان کار را تمام کن یا رکورد بعدی را ثبت بزن.`;
+                    notifyUser('⚠️ موعد تحویل رسید', msg, 'sewing-progress-100-' + rec.id, true);
+                    addLog(`اعلان پایان مهلت برای کد ${rec.itemCode || '-'} ارسال شد.`, 'warn');
+                    playAlertSound(true);
+                    speakPersianAlert(`موعد تحویل کد ${rec.itemCode || ''} رسید`);
+                    rec.notifiedFull = true;
+                    rec.lastOverdueNotifyAt = Date.now();
+                    changed = true;
+                } else {
+                    const last = rec.lastOverdueNotifyAt || 0;
+                    if (Date.now() - last >= OVERDUE_RENOTIFY_MINUTES * 60 * 1000) {
+                        const overdueBy = formatMinutesDuration(progress.remainingMinutes);
+                        const msg = `کد ${rec.itemCode || '-'} حدود ${overdueBy} از موعدش تاخیر دارد. لطفاً هر چه زودتر کار را تمام و ثبت کن.`;
+                        notifyUser('🚨 یادآوری تاخیر', msg, 'sewing-progress-overdue-' + rec.id, true);
+                        addLog(`یادآوری تاخیر برای کد ${rec.itemCode || '-'} ارسال شد.`, 'warn');
+                        playAlertSound(true);
+                        speakPersianAlert(`هنوز کد ${rec.itemCode || ''} تحویل داده نشده`);
+                        rec.lastOverdueNotifyAt = Date.now();
+                        changed = true;
+                    }
+                }
+            }
+
+            if (changed) saveRecords();
+            renderActiveProgressWidget();
+        }
+
+        // نمایش نوار پیشرفتِ زنده‌ی کار جاری در بالای صفحه
+        function renderActiveProgressWidget() {
+            const card = document.getElementById('activeProgressCard');
+            const list = document.getElementById('activeProgressList');
+            const badge = document.getElementById('activeProgressPercentBadge');
+            if (!card || !list) return;
+
+            const rec = getCurrentActiveRecord();
+            if (!rec) { card.classList.add('hidden'); updateAttentionIndicators(); return; }
+            const progress = computeRecordProgress(rec);
+            if (!progress) { card.classList.add('hidden'); updateAttentionIndicators(); return; }
+
+            card.classList.remove('hidden');
+            const percentClamped = Math.max(0, Math.min(100, progress.percent));
+            const isOverdue = progress.percent >= 100;
+            const isUrgent = progress.percent >= 90 && progress.percent < 100;
+            const isWarn = progress.percent >= 50 && progress.percent < 90;
+            const barColor = isOverdue ? 'bg-rose-500' : (isUrgent ? 'bg-orange-500' : (isWarn ? 'bg-amber-500' : 'bg-emerald-500'));
+            const badgeColor = isOverdue ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300' : (isUrgent ? 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300' : (isWarn ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300' : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300'));
+            const isMuted = rec.mutedUntil && Date.now() < rec.mutedUntil;
+
+            if (badge) {
+                badge.className = `text-xs font-bold px-2.5 py-1 rounded-full ${badgeColor}`;
+                badge.innerText = `${formatNumber(Math.min(999, progress.percent))}٪${isMuted ? ' 🔇' : ''}`;
+            }
+
+            const remainingText = isOverdue
+                ? `<span class="text-rose-600 dark:text-rose-400 font-bold">${formatMinutesDuration(progress.remainingMinutes)} تاخیر از موعد</span>`
+                : `<span class="text-slate-500 dark:text-slate-400">${formatMinutesDuration(progress.remainingMinutes)} تا موعد تحویل باقی مانده</span>`;
+
+            list.innerHTML = `
+                <div class="flex justify-between items-center mb-1.5 text-xs flex-wrap gap-1">
+                    <span class="font-bold text-slate-700 dark:text-slate-200">کد ${escapeHTML(rec.itemCode) || '-'} — ${escapeHTML(rec.itemTitle) || '-'}</span>
+                    ${remainingText}
+                </div>
+                <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div class="${barColor} h-full transition-all duration-700" style="width:${percentClamped}%"></div>
+                </div>
+                <div class="flex items-center justify-between mt-1.5">
+                    <div class="text-[10px] text-slate-400 dark:text-slate-500">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
+                    ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print text-[10px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatNumber(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
+                </div>
+            `;
+            updateAttentionIndicators();
+        }
+        /* ==================== پایان اعلان‌های هوشمند پیشرفت کار ==================== */
+
         function renderDashboard() {
             applyAppSettingsToUI();
             renderMonthSelector();
             renderDailyNotes();
+            renderActiveProgressWidget();
+            renderStreakBadge();
             const sortSelect = document.getElementById('sortOptionSelect');
             if (sortSelect) sortSelect.value = currentSortOption;
             const records = getFilteredRecords();
@@ -4272,7 +4806,7 @@
 </head>
 <body>
     <h1>گزارش عملکرد کارگاه - ${periodLabel}</h1>
-    <p>تاریخ تهیه گزارش: ${currentJalali.fullDateStr}</p>
+    <p>تاریخ تهیه گزارش: ${formatDateDigits(currentJalali.fullDateStr)}</p>
     <table>
         <tr>
             <th>ردیف</th>
@@ -4356,6 +4890,14 @@
         addLog(`سامانه بارگذاری شد. تاریخ: ${currentJalali.fullDateStr}`, 'info');
         renderDashboard();
         initStorageFolderConnection();
+
+        // بررسی دوره‌ای پیشرفت کار جاری برای اعلان‌های هوشمند (هر ۱ دقیقه یک‌بار)،
+        // و تازه‌سازیِ سریع‌ترِ خودِ نوار پیشرفت (هر ۲۰ ثانیه) برای حس «زنده» بودن شمارش
+        updateNotificationPermissionStatusUI();
+        renderStreakBadge();
+        checkDeliveryProgressNotifications();
+        setInterval(checkDeliveryProgressNotifications, 60 * 1000);
+        setInterval(renderActiveProgressWidget, 20 * 1000);
     </script>
 </body>
 </html>

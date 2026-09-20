@@ -1215,7 +1215,11 @@
                             <i class="fa-solid fa-table-cells"></i> ویجت وضعیت زنده (صفحه اصلی گوشی)
                         </h4>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                            گوشی‌ها (اندروید/iOS) به یک وب‌سایت اجازه‌ی نصب ویجت واقعی روی صفحه اصلی را نمی‌دهند — این محدودیتِ خودِ سیستم‌عامل است، نه چیزی که کد این برنامه بتواند دورش بزند. نزدیک‌ترین جایگزینِ واقعی: یک اعلانِ دائمی و بی‌صدا در نوار اعلان‌ها که مثل یک ویجت، کد در حال دوخت، درصد پیشرفت و زمان باقی‌مانده را نشان می‌دهد و هر دقیقه خودش به‌روز می‌شود — بدون اینکه هر بار صدا یا لرزش بدهد.
+                            گوشی‌ها (اندروید/iOS) به یک وب‌سایت اجازه‌ی نصب ویجت واقعی روی صفحه اصلی را نمی‌دهند — این محدودیتِ خودِ سیستم‌عامل است، نه چیزی که کد این برنامه بتواند دورش بزند. نزدیک‌ترین جایگزینِ واقعی: یک اعلانِ دائمی و بی‌صدا در نوار اعلان‌ها که مثل یک ویجت، کد در حال دوخت، درصد پیشرفت و زمان باقی‌مانده را نشان می‌دهد.
+                        </p>
+                        <p class="text-[11px] text-amber-700 dark:text-amber-400 leading-relaxed bg-amber-50 dark:bg-amber-950/30 rounded-lg p-2.5 border border-amber-100 dark:border-amber-900/40">
+                            <i class="fa-solid fa-triangle-exclamation ml-1"></i>
+                            وقتی برنامه باز و روی صفحه است، این اعلان هر ۶۰ ثانیه دقیقاً به‌روز می‌شود. اما وقتی برنامه را می‌بندید یا گوشی قفل می‌شود، مرورگر اجرای جاوااسکریپت صفحه را متوقف می‌کند و آپدیت خودکار متوقف می‌شود. برنامه سعی می‌کند از طریق «Periodic Background Sync» این اعلان را حتی در این حالت هم دوره‌ای به‌روز نگه دارد، اما این قابلیت فقط در Chrome/Edge اندروید و فقط وقتی برنامه با «Add to Home Screen» نصب شده باشد وجود دارد؛ فاصله‌ی دقیق آپدیت (از چند دقیقه تا چند ساعت) کاملاً دست خودِ مرورگر است، نه برنامه، و در iOS/Safari و Firefox اصلاً پشتیبانی نمی‌شود.
                         </p>
                         <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
                             <input type="checkbox" id="settingLiveWidgetEnabled" class="w-4 h-4 rounded accent-teal-600">
@@ -3008,6 +3012,7 @@
             appSettings.notificationsEnabled = notificationsEnabledVal;
             appSettings.voiceAlertsEnabled = voiceAlertsEnabledVal;
             appSettings.liveWidgetEnabled = liveWidgetEnabledVal;
+            if (liveWidgetEnabledVal) registerLiveWidgetPeriodicSync(); else unregisterLiveWidgetPeriodicSync();
 
             appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
@@ -4989,6 +4994,7 @@
                 if (perm === 'granted') {
                     showFeedbackBanner('اعلان‌های مرورگر فعال شد.', 'success');
                     addLog('اجازه‌ی اعلان مرورگر داده شد.', 'success');
+                    if (appSettings.liveWidgetEnabled) registerLiveWidgetPeriodicSync();
                 } else {
                     showFeedbackBanner('اجازه‌ی اعلان داده نشد؛ در این حالت فقط پیام‌های داخل برنامه نمایش داده می‌شوند.', 'warn');
                 }
@@ -5205,7 +5211,84 @@
         // همیشه کد در حال دوخت و درصد پیشرفت را نشان می‌دهد و خودش هر یک دقیقه به‌روزرسانی می‌شود،
         // بدون اینکه هر بار صدا/لرزش بدهد (چون صرفاً برای دیدن سریع وضعیت است، نه هشدار).
         const LIVE_WIDGET_TAG = 'sewing-live-status-widget';
+
+        /* ==================== خلاصه‌ی وضعیت ویجت زنده در IndexedDB + Periodic Background Sync ====================
+         * سرویس‌ورکر به localStorage صفحه دسترسی ندارد؛ برای این‌که اعلانِ «وضعیت زنده» بتواند حتی
+         * وقتی صفحه بسته/در پس‌زمینه است هم (تا حد امکان) به‌روزرسانی شود، یک خلاصه‌ی سبک از داده‌ی
+         * لازم (فقط رکورد در حال انجام + چند تنظیم) در IndexedDB نگه داشته می‌شود تا سرویس‌ورکر
+         * بتواند مستقلاً بخواندش. توجه: Periodic Background Sync فقط در Chrome/Edge (اندروید/دسکتاپ)
+         * و فقط برای برنامه‌ی نصب‌شده («Add to Home Screen») وجود دارد؛ فاصله‌ی واقعی اجرا دست خودِ
+         * مرورگر است (از چند دقیقه تا چند ساعت)، نه تضمینی که کد بتواند بدهد.
+         */
+        const LIVE_WIDGET_DB_NAME = 'sewing_live_widget_db';
+        const LIVE_WIDGET_STORE = 'state';
+        let liveWidgetDbPromise = null;
+        function getLiveWidgetDB() {
+            if (!liveWidgetDbPromise) {
+                liveWidgetDbPromise = new Promise((resolve, reject) => {
+                    if (!window.indexedDB) return reject(new Error('IndexedDB در دسترس نیست'));
+                    const req = indexedDB.open(LIVE_WIDGET_DB_NAME, 1);
+                    req.onupgradeneeded = () => { req.result.createObjectStore(LIVE_WIDGET_STORE); };
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+            }
+            return liveWidgetDbPromise;
+        }
+        async function syncLiveWidgetStateToIDB() {
+            try {
+                const rec = getCurrentActiveRecord();
+                const snapshot = {
+                    activeRecord: rec ? {
+                        id: rec.id, itemCode: rec.itemCode || '', itemTitle: rec.itemTitle || '',
+                        date: rec.date, time: rec.time, workDuration: rec.workDuration
+                    } : null,
+                    shopName: appSettings.shopName || 'آمار دوخت',
+                    liveWidgetEnabled: !!appSettings.liveWidgetEnabled,
+                    numFormat: appSettings.numFormat || 'persian',
+                    updatedAt: Date.now()
+                };
+                const db = await getLiveWidgetDB();
+                await new Promise((resolve, reject) => {
+                    const tx = db.transaction(LIVE_WIDGET_STORE, 'readwrite');
+                    tx.objectStore(LIVE_WIDGET_STORE).put(snapshot, 'snapshot');
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => reject(tx.error);
+                });
+            } catch (e) {
+                console.warn('ذخیره‌ی وضعیت ویجت زنده در IndexedDB ناموفق بود:', e);
+            }
+        }
+
+        async function registerLiveWidgetPeriodicSync() {
+            try {
+                if (!('serviceWorker' in navigator)) return false;
+                const reg = await navigator.serviceWorker.ready;
+                if (!('periodicSync' in reg)) return false;
+                if ('permissions' in navigator) {
+                    try {
+                        const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
+                        if (status.state !== 'granted') return false;
+                    } catch (e) { /* در برخی مرورگرها این پرمیشن اصلاً تعریف نشده؛ نادیده گرفته می‌شود */ }
+                }
+                await reg.periodicSync.register('live-widget-refresh', { minInterval: 15 * 60 * 1000 });
+                return true;
+            } catch (e) {
+                console.warn('ثبت Periodic Background Sync ناموفق بود (طبیعی است اگر برنامه نصب نشده یا مرورگر پشتیبانی نکند):', e);
+                return false;
+            }
+        }
+        async function unregisterLiveWidgetPeriodicSync() {
+            try {
+                if (!('serviceWorker' in navigator)) return;
+                const reg = await navigator.serviceWorker.ready;
+                if (reg.periodicSync) await reg.periodicSync.unregister('live-widget-refresh');
+            } catch (e) { /* بی‌اهمیت */ }
+        }
+        /* ==================== پایان بخش IndexedDB + Periodic Background Sync ==================== */
+
         function updateLiveStatusNotification() {
+            syncLiveWidgetStateToIDB();
             if (!('Notification' in window) || Notification.permission !== 'granted') return;
             if (!navigator.serviceWorker) return;
 
@@ -5642,6 +5725,7 @@
         initPhotoStore();
         initStorageFolderConnection();
         handleStartupShortcutAction();
+        if (appSettings.liveWidgetEnabled) registerLiveWidgetPeriodicSync();
 
         // بررسی دوره‌ای پیشرفت کار جاری برای اعلان‌های هوشمند (هر ۱ دقیقه یک‌بار)،
         // و تازه‌سازیِ سریع‌ترِ خودِ نوار پیشرفت (هر ۲۰ ثانیه) برای حس «زنده» بودن شمارش

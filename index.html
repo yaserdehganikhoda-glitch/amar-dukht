@@ -490,7 +490,7 @@
 
                 <div class="bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 rounded-xl p-3.5 text-[11px] leading-relaxed text-indigo-700 dark:text-indigo-300 flex items-start gap-1.5">
                     <i class="fa-solid fa-forward mt-0.5"></i>
-                    <span>«شروع کد بعد» و وضعیت نهایی تحویل (تاخیر/زودتر از موعد) این رکورد، به‌طور کاملاً خودکار و بر اساس تاریخ و ساعتِ ثبتِ رکوردِ بعدی محاسبه می‌شود؛ نیازی به وارد کردن دستی نیست.</span>
+                    <span>«شروع کد بعد» و وضعیت نهایی تحویل (تاخیر/زودتر از موعد) این رکورد، به‌طور کاملاً خودکار و بر اساس تاریخ و ساعتِ ثبتِ رکوردِ بعدی (یا دکمه‌ی «کار تمام شد» در ویجت پیشرفت) محاسبه می‌شود؛ تا آن زمان وضعیت «به موقع» (در انتظار) است.</span>
                 </div>
 
                 <div id="deliveryDurationWrapper" class="hidden bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 rounded-xl p-4 transition-all">
@@ -975,6 +975,11 @@
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">مشخصات پایه</h3>
                     <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">حاشیه‌ی «به‌موقع» (دقیقه)</label>
+                        <input type="text" inputmode="numeric" id="settingOnTimeTolerance" placeholder="مثلاً ۵" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                        <p class="text-[11px] leading-relaxed text-slate-400 dark:text-slate-500 mt-1">اگر اختلاف زمان واقعی با مدت هدف کمتر از این مقدار باشد، وضعیت «به موقع» ثبت می‌شود (۰ = دقیقاً بدون اختلاف، حداکثر ۱۲۰).</p>
+                    </div>
+                    <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">عنوان کارگاه / سامانه</label>
                         <input type="text" id="settingShopName" oninput="updateSettingsProfilePreview()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                     </div>
@@ -1183,7 +1188,7 @@
                         <i class="fa-solid fa-bell"></i> اعلان‌های هوشمند پیشرفت کار
                     </h3>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                        با فعال بودن این گزینه، اعلان‌ها دقیقاً مثل یک پیامک یا یادآوریِ گوشی در نوار اعلان‌های سیستم نمایش داده می‌شوند (نه یک پیام داخل صفحه) و تا لمس نشوند باقی می‌مانند: در چهار مرحله‌ی ۲۵٪، ۵۰٪، ۷۵٪ و ۹۰٪ از زمان مجاز تحویل کدِ در حال دوختِ فعلی، و همچنین وقتی خودِ موعد تحویل برسد (و هر ۲۰ دقیقه تا زمانی‌که رکورد بعدی ثبت شود). عنوان تب و آیکون برنامه هم هنگام تاخیر هشدار می‌دهند.
+                        با فعال بودن این گزینه، اعلان‌ها دقیقاً مثل یک پیامک یا یادآوریِ گوشی در نوار اعلان‌های سیستم نمایش داده می‌شوند (نه یک پیام داخل صفحه) و تا لمس نشوند باقی می‌مانند: در چهار مرحله‌ی ۲۵٪، ۵۰٪، ۷۵٪ و ۹۰٪ از زمان مجاز تحویل کدِ در حال دوختِ فعلی، و همچنین وقتی خودِ موعد تحویل برسد (و هر ۲۰ دقیقه (فقط در ساعات کاری) تا زمانی‌که رکورد بعدی ثبت یا دکمه‌ی «کار تمام شد» زده شود). عنوان تب و آیکون برنامه هم هنگام تاخیر هشدار می‌دهند.
                     </p>
                     <p class="text-[11px] text-teal-700 dark:text-teal-400 leading-relaxed bg-teal-50 dark:bg-teal-950/30 rounded-lg p-2.5 border border-teal-100 dark:border-teal-900/40">
                         <i class="fa-solid fa-circle-info ml-1"></i>
@@ -1555,19 +1560,324 @@
             return String(str).replace(/\d/g, d => persianDigits[d]);
         }
         function toEnglishDigits(str) {
-            return String(str).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+            // هم ارقام فارسی (۰-۹) و هم عربی-هندی (٠-٩)
+            return String(str).replace(/[\u06F0-\u06F9\u0660-\u0669]/g, d => {
+                const c = d.charCodeAt(0);
+                return c >= 0x06F0 ? c - 0x06F0 : c - 0x0660;
+            });
         }
         function formatJalaliDate(jy, jm, jd) {
             return `${toPersianDigits(jy)}/${toPersianDigits(jm)}/${toPersianDigits(jd)}`;
         }
         /* ==================== پایان توابع تبدیل تقویم ==================== */
 
-        let allRecords = JSON.parse(localStorage.getItem('sewing_statistics_records_v13')) || [];
-        let dailyNotes = JSON.parse(localStorage.getItem('sewing_daily_notes_v13')) || [];
-        let appSettings = JSON.parse(localStorage.getItem('sewing_app_settings_v13')) || { 
+                /* ==================== [اصلاحیه ۱–۳] لایه‌ی ایمن بارگذاری، اعتبارسنجی، همگام‌سازی و ذخیره‌ی عکس ==================== */
+        const SALT_KEY = 'sewing_install_salt_v1';
+        const TOMBSTONE_KEY = 'sewing_tombstones_v1';
+        const TOMBSTONE_TTL_MS = 180 * 24 * 3600 * 1000; // ۱۸۰ روز
+        const STATUS_LIST = ['به موقع', 'تاخیر', 'زودتر از موعد'];
+        const NOTE_TYPES = ['normal', 'reminder', 'holiday'];
+        let _fallbackIdCounter = 0;
+
+        // خواندن امن از localStorage: اگر JSON خراب بود، نسخه‌ی خراب کنار گذاشته می‌شود و برنامه بالا می‌آید
+        function safeLoadJSON(key, fallback) {
+            let raw = null;
+            try { raw = localStorage.getItem(key); } catch (e) { return fallback; }
+            if (raw === null) return fallback;
+            try {
+                return JSON.parse(raw);
+            } catch (e) {
+                console.error('داده‌ی خراب در', key, e);
+                try { localStorage.setItem(key + '_corrupt_' + Date.now(), raw); } catch (e2) { /* حافظه پر است */ }
+                setTimeout(() => {
+                    if (typeof showFeedbackBanner === 'function') {
+                        showFeedbackBanner('بخشی از داده‌های ذخیره‌شده خراب بود و بازیابی نشد. نسخه‌ی خراب کنار گذاشته شد؛ در صورت داشتن فایل پشتیبان آن را بارگذاری کنید.', 'warn');
+                    }
+                }, 800);
+                return fallback;
+            }
+        }
+
+        function isSafeImageDataUrl(v) {
+            return typeof v === 'string' && /^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+\/=]+$/.test(v);
+        }
+
+        function sanitizeRecord(r) {
+            if (!r || typeof r !== 'object' || Array.isArray(r)) return null;
+            const str = (v, max = 200) => (v === null || v === undefined) ? '' : String(v).slice(0, max);
+            const optStr = (v, max = 200) => (v === null || v === undefined || v === '') ? null : String(v).slice(0, max);
+            const num = v => (v === null || v === undefined || v === '' || !Number.isFinite(Number(v))) ? null : Number(v);
+
+            let id = Number(r.id);
+            if (!Number.isSafeInteger(id) || id <= 0) id = Date.now() + (_fallbackIdCounter++);
+
+            const qtyNum = num(r.quantity);
+            const quantity = qtyNum !== null ? qtyNum : (num(r.receivedQuantity) !== null ? num(r.receivedQuantity) : 0);
+            const unitPrice = num(r.unitPrice);
+            let totalPrice = num(r.totalPrice);
+            if (unitPrice === null) totalPrice = null;
+            else if (totalPrice === null) totalPrice = quantity * unitPrice;
+
+            const date = str(r.date, 20);
+            const info = getMonthInfoFromDateStr(date);
+            let monthKey, monthName, year;
+            if (info) {
+                monthKey = info.monthKey; monthName = info.monthName; year = info.year;
+            } else {
+                const fb = getCurrentJalaliInfo();
+                monthKey = /^\d{4}-\d{1,2}$/.test(String(r.monthKey)) ? String(r.monthKey) : fb.monthKey;
+                const mNum = parseInt(monthKey.split('-')[1], 10);
+                monthName = PERSIAN_MONTHS[mNum - 1] || 'نامشخص';
+                year = toPersianDigits(monthKey.split('-')[0]);
+            }
+
+            const dt = str(r.durationTime, 20);
+            const durationTime = (dt === 'نامعلوم' || /^\d{1,3}:\d{2}$/.test(toEnglishDigits(dt))) ? dt : '';
+            const upd = Number(r.updatedAt);
+
+            return {
+                id,
+                itemCode: str(r.itemCode, 60), itemTitle: str(r.itemTitle, 200), itemColor: str(r.itemColor, 60),
+                quantity, unitPrice, totalPrice,
+                status: STATUS_LIST.includes(r.status) ? r.status : 'به موقع',
+                date, time: str(r.time, 10), durationTime,
+                dailyStat: num(r.dailyStat), receivedQuantity: num(r.receivedQuantity),
+                endDateTime: optStr(r.endDateTime, 40), workDuration: optStr(r.workDuration, 10),
+                nextCodeStartDate: optStr(r.nextCodeStartDate, 20), nextCodeStartTime: optStr(r.nextCodeStartTime, 10),
+                finishedDate: optStr(r.finishedDate, 20), finishedTime: optStr(r.finishedTime, 10),
+                photo: isSafeImageDataUrl(r.photo) ? r.photo : null,
+                hasPhoto: !!r.hasPhoto,
+                monthKey, monthName, year,
+                notifiedStages: Array.isArray(r.notifiedStages) ? r.notifiedStages.map(Number).filter(Number.isFinite) : [],
+                notifiedFull: !!r.notifiedFull,
+                lastOverdueNotifyAt: num(r.lastOverdueNotifyAt),
+                mutedUntil: num(r.mutedUntil),
+                streakCounted: !!r.streakCounted,
+                // رکوردهای قدیمی updatedAt نداشتند؛ id (زمان ساخت) جایگزین منطقی آن است
+                updatedAt: (Number.isFinite(upd) && upd > 0) ? upd : id
+            };
+        }
+
+        function sanitizeNote(n) {
+            if (!n || typeof n !== 'object' || Array.isArray(n)) return null;
+            let id = Number(n.id);
+            if (!Number.isSafeInteger(id) || id <= 0) id = Date.now() + (_fallbackIdCounter++);
+            const upd = Number(n.updatedAt);
+            return {
+                id,
+                date: String(n.date == null ? '' : n.date).slice(0, 20),
+                text: String(n.text == null ? '' : n.text).slice(0, 5000),
+                type: NOTE_TYPES.includes(n.type) ? n.type : 'normal',
+                hidden: !!n.hidden,
+                updatedAt: (Number.isFinite(upd) && upd > 0) ? upd : id
+            };
+        }
+
+        function sanitizeSettings(src) {
+            const base = (src && typeof src === 'object' && !Array.isArray(src)) ? src : {};
+            const s = { ...DEFAULT_APP_SETTINGS, ...base };
+            const pick = (v, allowed, def) => allowed.includes(v) ? v : def;
+            s.currency = pick(s.currency, ['تومان', 'ریال'], 'تومان');
+            s.defaultStatus = pick(s.defaultStatus, STATUS_LIST, 'به موقع');
+            s.theme = pick(s.theme, ['light', 'dark'], 'light');
+            s.fontSize = pick(s.fontSize, ['small', 'normal', 'large', 'xlarge'], 'normal');
+            s.numFormat = pick(s.numFormat, ['persian', 'english'], 'persian');
+            const tolRaw = Number(s.onTimeToleranceMinutes);
+            s.onTimeToleranceMinutes = Number.isFinite(tolRaw) ? Math.max(0, Math.min(120, Math.floor(tolRaw))) : 5;
+            s.fontFamily = pick(s.fontFamily, ['Vazirmatn', 'Vazir', 'Sahel', 'Samim', 'Shabnam'], 'Vazirmatn');
+            const colorOk = c => c === 'default' || (typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c));
+            ['bgColor', 'cardColor', 'fieldColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
+            s.shopName = String(s.shopName || DEFAULT_APP_SETTINGS.shopName).slice(0, 120);
+            ['ownerName', 'ownerPhone', 'ownerAddress'].forEach(k => { s[k] = String(s[k] == null ? '' : s[k]).slice(0, 200); });
+            s.ownerPhoto = isSafeImageDataUrl(s.ownerPhoto) ? s.ownerPhoto : null;
+            s.pinHash = (typeof s.pinHash === 'string' && s.pinHash) ? s.pinHash : null;
+            s.pinEnabled = !!s.pinEnabled && !!s.pinHash;
+            if (typeof s.deleteCodeHash !== 'string' || !s.deleteCodeHash) delete s.deleteCodeHash;
+            ['notificationsEnabled', 'voiceAlertsEnabled', 'liveWidgetEnabled'].forEach(k => { s[k] = !!s[k]; });
+            s.onTimeStreak = Math.max(0, Number(s.onTimeStreak) || 0);
+            s.bestStreak = Math.max(0, Number(s.bestStreak) || 0);
+            return s;
+        }
+
+        // پذیرش تنظیمات از منبع بیرونی (بکاپ/پوشه). هش رمز و کد امنیتی فقط با همان salt قابل تطبیق است.
+        function adoptExternalSettings(settings, salt) {
+            const s = (settings && typeof settings === 'object') ? { ...settings } : {};
+            const saltOk = typeof salt === 'string' && /^[0-9a-fA-F]{32}$/.test(salt);
+            if (saltOk) {
+                try { localStorage.setItem(SALT_KEY, salt.toLowerCase()); } catch (e) { /* بی‌اهمیت */ }
+            } else if (s.pinHash || s.deleteCodeHash) {
+                // بکاپ قدیمی بدون salt: هش قابل تطبیق نیست و کاربر برای همیشه قفل می‌شد
+                s.pinEnabled = false;
+                delete s.pinHash;
+                delete s.deleteCodeHash;
+                setTimeout(() => {
+                    if (typeof showFeedbackBanner === 'function') {
+                        showFeedbackBanner('این پشتیبان مربوط به نسخه‌ی قدیمی بود و رمز/کد امنیتی آن قابل بازیابی نیست؛ قفل غیرفعال شد. لطفاً از تنظیمات دوباره تعیین کنید.', 'warn');
+                    }
+                }, 60);
+            }
+            return s;
+        }
+
+        /* ---- گورستان حذف‌ها (tombstone) و ادغام بر اساس updatedAt ---- */
+        function normalizeTombstones(t) {
+            const out = { records: {}, notes: {} };
+            const now = Date.now();
+            ['records', 'notes'].forEach(k => {
+                const src = t && typeof t === 'object' ? t[k] : null;
+                if (src && typeof src === 'object') {
+                    Object.keys(src).forEach(id => {
+                        const ts = Number(src[id]);
+                        if (/^\d+$/.test(id) && Number.isFinite(ts) && now - ts < TOMBSTONE_TTL_MS) out[k][id] = ts;
+                    });
+                }
+            });
+            return out;
+        }
+        function mergeTombstones(a, b) {
+            const out = { records: { ...a.records }, notes: { ...a.notes } };
+            ['records', 'notes'].forEach(k => {
+                Object.keys(b[k] || {}).forEach(id => {
+                    if (!(id in out[k]) || b[k][id] > out[k][id]) out[k][id] = b[k][id];
+                });
+            });
+            return out;
+        }
+        let tombstones = normalizeTombstones(safeLoadJSON(TOMBSTONE_KEY, null));
+        function addTombstone(kind, id) { tombstones[kind][String(id)] = Date.now(); }
+
+        // ادغام دو لیست: برای هر id نسخه‌ی جدیدتر (updatedAt) برنده است؛ در تساوی، نسخه‌ی محلی می‌ماند.
+        // موردی که tombstone جدیدتر یا مساوی از آخرین ویرایشش دارد حذف می‌شود.
+        function mergeById(localList, remoteList, kind, remoteTombstones) {
+            if (remoteTombstones) tombstones = mergeTombstones(tombstones, remoteTombstones);
+            const map = new Map();
+            [...localList, ...remoteList].forEach(item => {
+                const cur = map.get(item.id);
+                if (!cur || (item.updatedAt || 0) > (cur.updatedAt || 0)) map.set(item.id, item);
+            });
+            const dead = tombstones[kind];
+            return [...map.values()].filter(item => !(dead[String(item.id)] >= (item.updatedAt || 0)));
+        }
+
+        function generateRecordId() {
+            let id = Date.now();
+            const used = new Set(allRecords.map(r => r.id));
+            while (used.has(id)) id++;
+            return id;
+        }
+
+        /* ---- ذخیره‌ی عکس‌ها در IndexedDB (خارج از سقف ~۵MB ی localStorage) ---- */
+        const PHOTO_DB_NAME = 'sewing_app_photos_db';
+        const PHOTO_STORE = 'photos';
+        let photoIdbOk = false;
+        let photoDbPromise = null;
+        const photoSynced = new Map(); // id -> آخرین مقدار عکسِ نوشته/خوانده‌شده از IDB
+        let photoStoreReadyResolve;
+        const photoStoreReady = new Promise(res => { photoStoreReadyResolve = res; });
+
+        function getPhotoDB() {
+            if (!photoDbPromise) {
+                photoDbPromise = new Promise((resolve, reject) => {
+                    if (!window.indexedDB) return reject(new Error('IndexedDB در دسترس نیست'));
+                    const req = indexedDB.open(PHOTO_DB_NAME, 1);
+                    req.onupgradeneeded = () => { req.result.createObjectStore(PHOTO_STORE); };
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+            }
+            return photoDbPromise;
+        }
+        async function idbReadAllPhotos() {
+            const db = await getPhotoDB();
+            return new Promise((resolve, reject) => {
+                const out = new Map();
+                const req = db.transaction(PHOTO_STORE, 'readonly').objectStore(PHOTO_STORE).openCursor();
+                req.onsuccess = () => {
+                    const c = req.result;
+                    if (c) { out.set(c.key, c.value); c.continue(); } else resolve(out);
+                };
+                req.onerror = () => reject(req.error);
+            });
+        }
+        async function idbApplyPhotoChanges(puts, deletes) {
+            const db = await getPhotoDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(PHOTO_STORE, 'readwrite');
+                const st = tx.objectStore(PHOTO_STORE);
+                puts.forEach(([k, v]) => st.put(v, k));
+                deletes.forEach(k => st.delete(k));
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+                tx.onabort = () => reject(tx.error);
+            });
+        }
+        // فقط تغییرات را می‌نویسد. اگر IDB در دسترس نباشد false برمی‌گرداند و عکس‌ها در localStorage می‌مانند.
+        async function persistPhotos() {
+            await photoStoreReady;
+            if (!photoIdbOk) return false;
+            const puts = [], deletes = [], live = new Set();
+            allRecords.forEach(r => {
+                live.add(r.id);
+                if (r.photo) { if (photoSynced.get(r.id) !== r.photo) puts.push([r.id, r.photo]); }
+                else if (photoSynced.has(r.id)) deletes.push(r.id);
+            });
+            photoSynced.forEach((_, id) => { if (!live.has(id)) deletes.push(id); });
+            if (puts.length || deletes.length) {
+                await idbApplyPhotoChanges(puts, deletes);
+                puts.forEach(([id, v]) => photoSynced.set(id, v));
+                deletes.forEach(id => photoSynced.delete(id));
+            }
+            return true;
+        }
+        function stripPhotoForStorage(r) {
+            const { photo, ...rest } = r;
+            return { ...rest, hasPhoto: !!photo };
+        }
+        async function initPhotoStore() {
+            try {
+                const stored = await idbReadAllPhotos();
+                photoIdbOk = true;
+                allRecords.forEach(r => {
+                    if (!r.photo && stored.has(r.id) && isSafeImageDataUrl(stored.get(r.id))) r.photo = stored.get(r.id);
+                });
+                stored.forEach((v, k) => photoSynced.set(k, v));
+            } catch (e) {
+                photoIdbOk = false;
+                console.warn('IndexedDB برای عکس‌ها در دسترس نیست؛ عکس‌ها در localStorage می‌مانند.', e);
+            } finally {
+                photoStoreReadyResolve();
+            }
+            renderDashboard();
+            // مهاجرت خودکار عکس‌های قدیمیِ داخل localStorage به IndexedDB
+            if (photoIdbOk && allRecords.some(r => r.photo && photoSynced.get(r.id) !== r.photo)) saveRecords();
+            if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+        }
+
+        /* ---- event delegation به‌جای onclick با id درون رشته‌ی HTML ---- */
+        document.addEventListener('click', function (e) {
+            const el = e.target.closest ? e.target.closest('[data-action]') : null;
+            if (!el) return;
+            const id = Number(el.dataset.id);
+            if (!Number.isFinite(id)) return;
+            switch (el.dataset.action) {
+                case 'edit': editRecord(id); break;
+                case 'delete': deleteRecord(id); break;
+                case 'photo': viewRecordPhoto(id); break;
+                case 'toggle-note': toggleNoteVisibility(id); break;
+                case 'delete-note': deleteDailyNote(id); break;
+                case 'finish-active': finishRecordNow(id); break;
+                case 'unfinish': unfinishRecord(id); break;
+            }
+        });
+        /* ==================== پایان لایه‌ی اصلاحیه ==================== */
+
+        let allRecords = (() => { const raw = safeLoadJSON('sewing_statistics_records_v13', []); return Array.isArray(raw) ? raw.map(sanitizeRecord).filter(Boolean) : []; })();
+        let dailyNotes = (() => { const raw = safeLoadJSON('sewing_daily_notes_v13', []); return Array.isArray(raw) ? raw.map(sanitizeNote).filter(Boolean) : []; })();
+        const DEFAULT_APP_SETTINGS = { 
             shopName: 'سامانه آمار دوخت لباس',
             currency: 'تومان',
             defaultStatus: 'به موقع',
+            onTimeToleranceMinutes: 5,
             theme: 'light',
             fontSize: 'normal',
             numFormat: 'persian',
@@ -1587,6 +1897,7 @@
             ownerAddress: '',
             ownerPhoto: null
         };
+        let appSettings = sanitizeSettings(safeLoadJSON('sewing_app_settings_v13', null));
         let saveTimeout = null;
         let hasPendingSave = false;
 
@@ -1890,7 +2201,9 @@
                     app: 'sewing_statistics',
                     updatedAt: new Date().toISOString(),
                     notes: dailyNotes,
-                    settings: appSettings
+                    settings: appSettings,
+                    installSalt: getOrCreateInstallSalt(),
+                    tombstones: tombstones
                 }, null, 2));
                 await settingsWritable.close();
 
@@ -1906,6 +2219,8 @@
             const collectedRecords = [];
             let collectedNotes = null;
             let collectedSettings = null;
+            let collectedSalt = null;
+            let collectedTombstones = null;
             let hasAnyFile = false;
 
             for await (const [name, handle] of appDirHandle.entries()) {
@@ -1916,20 +2231,22 @@
                     if (!parsed || parsed.app !== 'sewing_statistics') continue;
                     hasAnyFile = true;
                     if (Array.isArray(parsed.records)) {
-                        collectedRecords.push(...parsed.records);
+                        parsed.records.forEach(rr => { const clean = sanitizeRecord(rr); if (clean) collectedRecords.push(clean); });
                     }
                     if (parsed.notes || parsed.settings) {
                         collectedNotes = parsed.notes || collectedNotes;
                         collectedSettings = parsed.settings || collectedSettings;
+                        if (parsed.installSalt) collectedSalt = parsed.installSalt;
+                        if (parsed.tombstones) { const tb = normalizeTombstones(parsed.tombstones); collectedTombstones = collectedTombstones ? mergeTombstones(collectedTombstones, tb) : tb; }
                     }
                 } catch (e) {
                     console.warn('فایل نامعتبر در پوشه نادیده گرفته شد:', name, e);
                 }
             }
 
-            const uniqueMap = new Map();
-            collectedRecords.forEach(r => uniqueMap.set(r.id, r));
-            return { records: [...uniqueMap.values()], notes: collectedNotes, settings: collectedSettings, hasAnyFile };
+            const newest = new Map();
+            collectedRecords.forEach(r => { const cur = newest.get(r.id); if (!cur || r.updatedAt > cur.updatedAt) newest.set(r.id, r); });
+            return { records: [...newest.values()], notes: Array.isArray(collectedNotes) ? collectedNotes.map(sanitizeNote).filter(Boolean) : null, settings: collectedSettings, salt: collectedSalt, tombstones: collectedTombstones, hasAnyFile };
         }
 
         async function connectToDirHandle(handle, isFreshSelection) {
@@ -1943,17 +2260,14 @@
 
             const loaded = await loadAllMonthFilesFromDirectory();
             if (loaded.hasAnyFile) {
-                const uniqueMap = new Map();
-                allRecords.forEach(r => uniqueMap.set(r.id, r));
-                loaded.records.forEach(r => uniqueMap.set(r.id, r));
-                allRecords = [...uniqueMap.values()];
-                if (loaded.notes) dailyNotes = loaded.notes;
+                allRecords = mergeById(allRecords, loaded.records, 'records', loaded.tombstones);
+                if (loaded.notes) dailyNotes = mergeById(dailyNotes, loaded.notes, 'notes', null);
                 if (loaded.settings) {
                     const localUpdatedAt = appSettings.updatedAt ? new Date(appSettings.updatedAt).getTime() : 0;
                     const folderUpdatedAt = loaded.settings.updatedAt ? new Date(loaded.settings.updatedAt).getTime() : 0;
                     if (folderUpdatedAt > localUpdatedAt) {
                         // تنظیمات فایل پوشه جدیدتر است (مثلاً از دستگاه دیگری) → جایگزین تنظیمات محلی می‌شود
-                        appSettings = loaded.settings;
+                        appSettings = sanitizeSettings(adoptExternalSettings(loaded.settings, loaded.salt));
                         localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
                         applyAppSettingsToUI();
                     }
@@ -2047,17 +2361,14 @@
                     return;
                 }
 
-                const uniqueMap = new Map();
-                allRecords.forEach(r => uniqueMap.set(r.id, r));
-                loaded.records.forEach(r => uniqueMap.set(r.id, r));
-                allRecords = [...uniqueMap.values()];
+                allRecords = mergeById(allRecords, loaded.records, 'records', loaded.tombstones);
 
-                if (loaded.notes) dailyNotes = loaded.notes;
+                if (loaded.notes) dailyNotes = mergeById(dailyNotes, loaded.notes, 'notes', null);
                 if (loaded.settings) {
                     const localUpdatedAt = appSettings.updatedAt ? new Date(appSettings.updatedAt).getTime() : 0;
                     const folderUpdatedAt = loaded.settings.updatedAt ? new Date(loaded.settings.updatedAt).getTime() : 0;
                     if (folderUpdatedAt > localUpdatedAt) {
-                        appSettings = loaded.settings;
+                        appSettings = sanitizeSettings(adoptExternalSettings(loaded.settings, loaded.salt));
                         localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
                         applyAppSettingsToUI();
                     }
@@ -2254,14 +2565,12 @@
         }
 
         function parsePersianInt(str) {
-            if (!str) return 0;
-            const persianDigits = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
-            let cleanStr = String(str).replace(/,/g, '');
-            for (let i = 0; i < 10; i++) {
-                cleanStr = cleanStr.replace(persianDigits[i], i);
-            }
-            const val = parseInt(cleanStr, 10);
-            return isNaN(val) ? 0 : val;
+            if (str === null || str === undefined) return 0;
+            // جداکننده‌های هزارگان (, ٬ ،)، فاصله و نیم‌فاصله حذف می‌شوند
+            const clean = toEnglishDigits(String(str)).replace(/[,\u066C\u060C\s\u200c\u200e\u200f]/g, '');
+            if (!/^\d+$/.test(clean)) return 0; // ورودی نامعتبر به‌جای عدد اشتباه، ۰ می‌شود تا اعتبارسنجی فرم خطا بدهد
+            const val = parseInt(clean, 10);
+            return Number.isSafeInteger(val) ? val : 0;
         }
 
         function formatNumber(num) {
@@ -2561,6 +2870,7 @@
             document.getElementById('settingShopName').value = appSettings.shopName || 'سامانه آمار دوخت لباس';
             document.getElementById('settingCurrency').value = appSettings.currency || 'تومان';
             document.getElementById('settingDefaultStatus').value = appSettings.defaultStatus || 'به موقع';
+            document.getElementById('settingOnTimeTolerance').value = formatNumber(getOnTimeTolerance()).replace(/,/g, '');
             document.getElementById('settingTheme').value = appSettings.theme || 'light';
             document.getElementById('settingFontSize').value = appSettings.fontSize || 'normal';
             document.getElementById('settingNumFormat').value = appSettings.numFormat || 'persian';
@@ -2687,6 +2997,7 @@
             appSettings.shopName = shopNameVal;
             appSettings.currency = currencyVal;
             appSettings.defaultStatus = defaultStatusVal;
+            appSettings.onTimeToleranceMinutes = Math.max(0, Math.min(120, parsePersianInt(document.getElementById('settingOnTimeTolerance').value)));
             appSettings.theme = themeVal;
             appSettings.fontSize = fontSizeVal;
             appSettings.numFormat = numFormatVal;
@@ -2908,7 +3219,9 @@
                         timestamp: new Date().toISOString(),
                         settings: appSettings,
                         records: allRecords,
-                        notes: dailyNotes
+                        notes: dailyNotes,
+                        installSalt: getOrCreateInstallSalt(),
+                        tombstones: tombstones
                     };
                     const jsonString = JSON.stringify(backupData, null, 2);
                     const timeTag = todayStr.replace(/\//g, '');
@@ -2940,9 +3253,12 @@
             clearTimeout(saveTimeout);
             hasPendingSave = true;
 
-            saveTimeout = setTimeout(() => {
+            saveTimeout = setTimeout(async () => {
                 try {
-                    localStorage.setItem('sewing_statistics_records_v13', JSON.stringify(allRecords));
+                    let photosPersisted = false;
+                    try { photosPersisted = await persistPhotos(); } catch (photoErr) { console.warn('ذخیره‌ی عکس در IndexedDB ناموفق بود؛ عکس‌ها در localStorage نگه داشته می‌شوند.', photoErr); }
+                    localStorage.setItem('sewing_statistics_records_v13', JSON.stringify(photosPersisted ? allRecords.map(stripPhotoForStorage) : allRecords));
+                    localStorage.setItem(TOMBSTONE_KEY, JSON.stringify(tombstones));
                     localStorage.setItem('sewing_daily_notes_v13', JSON.stringify(dailyNotes));
                     addLog('تغییرات در حافظه محلی ذخیره شد.', 'success');
                     hasPendingSave = false;
@@ -2979,7 +3295,9 @@
                 timestamp: new Date().toISOString(),
                 settings: appSettings,
                 records: allRecords,
-                notes: dailyNotes
+                notes: dailyNotes,
+                installSalt: getOrCreateInstallSalt(),
+                tombstones: tombstones
             };
             const jsonString = JSON.stringify(backupData, null, 2);
             const timeTag = new Date().toISOString().slice(0, 10).replace(/-/g, '');
@@ -3012,10 +3330,22 @@
 
                     showCustomConfirm('آیا از جایگزینی داده‌ها با فایل پشتیبان اطمینان دارید؟', (confirmed) => {
                         if (confirmed) {
-                            allRecords = parsed.records;
-                            if (parsed.notes) dailyNotes = parsed.notes;
+                            const importedRecords = parsed.records.map(sanitizeRecord).filter(Boolean);
+                            const importedIds = new Set(importedRecords.map(r => r.id));
+                            const nowTs = Date.now();
+                            allRecords.forEach(r => { if (!importedIds.has(r.id)) tombstones.records[String(r.id)] = nowTs; });
+                            if (parsed.tombstones) tombstones = mergeTombstones(tombstones, normalizeTombstones(parsed.tombstones));
+                            importedIds.forEach(id => { delete tombstones.records[String(id)]; });
+                            allRecords = importedRecords;
+                            if (Array.isArray(parsed.notes)) {
+                                const importedNotes = parsed.notes.map(sanitizeNote).filter(Boolean);
+                                const noteIds = new Set(importedNotes.map(n => n.id));
+                                dailyNotes.forEach(n => { if (!noteIds.has(n.id)) tombstones.notes[String(n.id)] = nowTs; });
+                                noteIds.forEach(id => { delete tombstones.notes[String(id)]; });
+                                dailyNotes = importedNotes;
+                            }
                             if (parsed.settings) {
-                                appSettings = parsed.settings;
+                                appSettings = sanitizeSettings(adoptExternalSettings(parsed.settings, parsed.installSalt));
                                 appSettings.updatedAt = new Date().toISOString();
                                 localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
                                 applyAppSettingsToUI();
@@ -3037,12 +3367,7 @@
 
         function normalizeDigits(str) {
             if (!str) return '';
-            const persianDigits = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
-            let cleanStr = String(str).trim();
-            for (let i = 0; i < 10; i++) {
-                cleanStr = cleanStr.replace(persianDigits[i], i);
-            }
-            return cleanStr.replace(/[^0-9]/g, '');
+            return toEnglishDigits(String(str).trim()).replace(/[^0-9]/g, '');
         }
 
         function openTwoStepDeleteModal() {
@@ -3130,6 +3455,8 @@
                 return;
             }
 
+            allRecords.forEach(r => addTombstone('records', r.id));
+            dailyNotes.forEach(n => addTombstone('notes', n.id));
             allRecords = [];
             dailyNotes = [];
             saveRecords();
@@ -3373,45 +3700,98 @@
         // مقایسه‌ی «مدت زمان تحویل کار» (هدف) رکورد با زمان کاریِ واقعاً سپری‌شده تا لحظه‌ی شروع
         // کد بعدیِ واقعی، و تنظیم وضعیت (تاخیر/زودتر از موعد/به‌موقع) و مقدار آن روی رکورد.
         // خروجی: true اگر محاسبه واقعاً انجام شد (یعنی داده‌های لازم کامل بودند).
-        function computeAndSetDeliveryStatus(rec, nextDateStr, nextTimeStr) {
-            rec.nextCodeStartDate = nextDateStr;
-            rec.nextCodeStartTime = nextTimeStr;
+        function getOnTimeTolerance() {
+            const t = Number(appSettings.onTimeToleranceMinutes);
+            return (Number.isFinite(t) && t >= 0) ? Math.min(120, Math.floor(t)) : 0;
+        }
 
-            const targetWorkMinutes = parseDurationStrToMinutes(rec.workDuration);
-            if (targetWorkMinutes === null || !rec.date || !rec.time) return false;
+        // آیا همین لحظه داخل ساعات کاری (غیر جمعه، ۰۸:۰۰ تا ۱۸:۰۰) هستیم؟ (برای یادآوری‌های مکرر)
+        function isWithinWorkingTimeNow() {
+            const jdn = parseJalaliDateToJdn(getCurrentJalaliInfo().fullDateStr);
+            if (jdn && isFridayJdn(jdn)) return false;
+            const now = new Date();
+            const m = now.getHours() * 60 + now.getMinutes();
+            return m >= SHIFT_START && m < SHIFT_END;
+        }
 
+        // مقایسه‌ی زمان کاریِ واقعاً سپری‌شده تا لحظه‌ی پایان (شروع کد بعد یا «کار تمام شد») با مدت هدف
+        function evaluateDeliveryAgainst(rec, endDateStr, endTimeStr) {
+            const target = parseDurationStrToMinutes(rec.workDuration);
+            if (target === null || !rec.date || !rec.time || !endDateStr || !endTimeStr) return false;
             const startJdn = parseJalaliDateToJdn(rec.date);
-            const nextJdn = parseJalaliDateToJdn(nextDateStr);
-            if (!startJdn || !nextJdn) return false;
+            const endJdn = parseJalaliDateToJdn(endDateStr);
+            if (!startJdn || !endJdn) return false;
 
-            const startMinutes = parseTimeToMinutes(rec.time);
-            const nextMinutes = parseTimeToMinutes(nextTimeStr);
-            const actualElapsed = calculateActualWorkingMinutesElapsed(startJdn, startMinutes, nextJdn, nextMinutes);
-            const diff = actualElapsed - targetWorkMinutes;
-
-            rec.status = diff === 0 ? 'به موقع' : (diff > 0 ? 'تاخیر' : 'زودتر از موعد');
-            if (diff !== 0) {
-                const absDiff = Math.abs(diff);
-                const h = Math.floor(absDiff / 60);
-                const m = absDiff % 60;
-                rec.durationTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-            } else {
+            const actual = calculateActualWorkingMinutesElapsed(startJdn, parseTimeToMinutes(rec.time), endJdn, parseTimeToMinutes(endTimeStr));
+            const diff = actual - target;
+            if (Math.abs(diff) <= getOnTimeTolerance()) {
+                rec.status = 'به موقع';
                 rec.durationTime = '';
+            } else {
+                rec.status = diff > 0 ? 'تاخیر' : 'زودتر از موعد';
+                const absDiff = Math.abs(diff);
+                rec.durationTime = `${String(Math.floor(absDiff / 60)).padStart(2, '0')}:${String(absDiff % 60).padStart(2, '0')}`;
             }
             updateOnTimeStreak(rec);
             return true;
+        }
+
+        function computeAndSetDeliveryStatus(rec, nextDateStr, nextTimeStr) {
+            rec.updatedAt = Date.now();
+            rec.nextCodeStartDate = nextDateStr;
+            rec.nextCodeStartTime = nextTimeStr;
+            return evaluateDeliveryAgainst(rec, nextDateStr, nextTimeStr);
+        }
+
+        // دکمه‌ی «کار تمام شد»: زمان پایان همین لحظه ثبت و وضعیت نهایی محاسبه می‌شود
+        function finishRecordNow(id) {
+            const rec = allRecords.find(r => r.id === id);
+            if (!rec || rec.finishedDate) return;
+            const nowInfo = getCurrentJalaliInfo();
+            const now = new Date();
+            const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            showCustomConfirm(`پایان کار کد ${rec.itemCode || '-'} همین الان (${formatDateDigits(nowInfo.fullDateStr)} - ${formatDateDigits(hhmm)}) ثبت شود؟`, (confirmed) => {
+                if (!confirmed) return;
+                rec.finishedDate = nowInfo.fullDateStr;
+                rec.finishedTime = hhmm;
+                rec.mutedUntil = null;
+                rec.updatedAt = Date.now();
+                evaluateDeliveryAgainst(rec, rec.finishedDate, rec.finishedTime);
+                saveRecords();
+                renderDashboard();
+                checkDeliveryProgressNotifications();
+                addLog(`پایان کار کد ${rec.itemCode || '-'} ثبت شد (${rec.status}).`, 'success');
+                showFeedbackBanner(`کار کد ${rec.itemCode || '-'} تمام شد — وضعیت: ${rec.status}${rec.durationTime ? ' (' + rec.durationTime + ')' : ''}`, rec.status === 'تاخیر' ? 'warn' : 'success');
+            });
+        }
+
+        function unfinishRecord(id) {
+            const rec = allRecords.find(r => r.id === id);
+            if (!rec || !rec.finishedDate) return;
+            showCustomConfirm('ثبت پایان کار این کد لغو شود؟ وضعیت بر اساس رکورد بعدی (در صورت وجود) دوباره محاسبه می‌شود.', (confirmed) => {
+                if (!confirmed) return;
+                rec.finishedDate = null;
+                rec.finishedTime = null;
+                rec.updatedAt = Date.now();
+                syncNextCodeStartLink(rec);
+                saveRecords();
+                renderDashboard();
+                checkDeliveryProgressNotifications();
+                addLog(`ثبت پایان کار کد ${rec.itemCode || '-'} لغو شد.`, 'warn');
+            });
         }
 
         // وقتی رکوردی دیگر هیچ «رکورد بعدیِ واقعی»ای نداشته باشد (مثلاً چون رکوردی که قبلاً به آن
         // اشاره می‌کرد ویرایش/جابه‌جا شده)، وضعیت آن به همان تخمین اولیه‌ی بر اساس آمار روزانه و
         // تعداد دریافتی بازمی‌گردد؛ دقیقاً همان منطقی که در runAutoDeliveryCalculation اجرا می‌شود.
         function revertRecordToEstimatedStatus(rec) {
+            rec.updatedAt = Date.now();
             rec.nextCodeStartDate = null;
             rec.nextCodeStartTime = null;
             const est = calculateCompletionEstimate(rec.time, rec.dailyStat, rec.quantity, rec.date);
             if (!est) return;
-            rec.status = est.daysPassed > 0 ? 'تاخیر' : 'به موقع';
-            rec.durationTime = est.daysPassed > 0 ? 'نامعلوم' : '';
+            rec.status = 'به موقع';
+            rec.durationTime = '';
         }
 
         // نسخه‌ی ملایم‌ترِ syncNextCodeStartLink، مخصوص خودِ رکوردی که همین الان ویرایش شده است:
@@ -3421,6 +3801,7 @@
         // دست‌نخورده باقی می‌ماند — چون اینجا چیزی برای بازگرداندن به «تخمین» وجود ندارد، خودِ فرم
         // همین الان آن تخمین/مقدار را ارسال کرده است.
         function refreshOwnNextCodeStartLink(rec) {
+            if (rec.finishedDate) { evaluateDeliveryAgainst(rec, rec.finishedDate, rec.finishedTime); return; }
             const next = findNextRecordByDateTime(rec.date, rec.time, rec.id);
             if (next) {
                 const updated = computeAndSetDeliveryStatus(rec, next.date, next.time);
@@ -3428,6 +3809,7 @@
                     addLog(`وضعیت رکورد ${rec.itemCode || '-'} بر اساس رکورد بعدیِ واقعی (${next.itemCode || '-'}) دوباره محاسبه شد (${rec.status}).`, 'info');
                 }
             } else if (rec.nextCodeStartDate || rec.nextCodeStartTime) {
+                rec.updatedAt = Date.now();
                 rec.nextCodeStartDate = null;
                 rec.nextCodeStartTime = null;
             }
@@ -3438,6 +3820,7 @@
         // می‌شود؛ در غیر این صورت رکورد به وضعیت تخمینی اولیه‌ی خودش بازمی‌گردد. این تابع برای
         // اصلاح رکوردهایی به کار می‌رود که رکورد بعدیِ آن‌ها (از نظر زمانی) ویرایش شده است.
         function syncNextCodeStartLink(rec) {
+            if (rec.finishedDate) return;
             const next = findNextRecordByDateTime(rec.date, rec.time, rec.id);
             if (next) {
                 const updated = computeAndSetDeliveryStatus(rec, next.date, next.time);
@@ -3457,7 +3840,7 @@
         function applyNextCodeStartToPreviousRecord(newDate, newTime, excludeId) {
             const prev = findPreviousRecordByDateTime(newDate, newTime, excludeId);
             if (!prev) return;
-            if (prev.nextCodeStartDate || prev.nextCodeStartTime) return;
+            if (prev.finishedDate) return;
 
             const updated = computeAndSetDeliveryStatus(prev, newDate, newTime);
             if (updated) {
@@ -3526,7 +3909,7 @@
                         workDuration: workDuration,
                         photo: currentPhotoData,
                         monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year,
-                        notifiedStages: [], notifiedFull: false, lastOverdueNotifyAt: null, mutedUntil: null, streakCounted: false
+                        notifiedStages: [], notifiedFull: false, lastOverdueNotifyAt: null, mutedUntil: null, updatedAt: Date.now()
                     };
 
                     // اگر تاریخ/ساعت ثبتِ همین رکورد تغییر کرده باشد، ممکن است رکوردی که قبلاً
@@ -3559,7 +3942,7 @@
                 }
             } else {
                 const newRecord = {
-                    id: Date.now(), itemCode: code, itemTitle: title, itemColor: color,
+                    id: generateRecordId(), updatedAt: Date.now(), itemCode: code, itemTitle: title, itemColor: color,
                     quantity: qty, unitPrice: price, totalPrice: isPriceUnknown ? null : qty * price,
                     status: status, date: date, time: time, durationTime: durationTime,
                     dailyStat: dailyStat, receivedQuantity: receivedQuantity, endDateTime: endDateTime,
@@ -3572,6 +3955,8 @@
                 // به‌صورت خودکار محاسبه و در لیست کارکردها به‌روزرسانی می‌شود.
                 applyNextCodeStartToPreviousRecord(date, time, null);
                 allRecords.unshift(newRecord);
+                // اگر رکوردی بعد از این تاریخ/ساعت از قبل وجود دارد (ثبت عقب‌افتاده)، لینک «شروع کد بعد» همین رکورد هم ساخته شود
+                refreshOwnNextCodeStartLink(newRecord);
                 addLog(`رکورد جدید ${code} ثبت شد.`, 'success');
                 showFeedbackBanner(`رکورد جدید با کد ${code} با موفقیت ثبت شد.`, 'success');
                 // فقط برای رکورد تازه ثبت‌شده، نمای جدول به ماهِ همان رکورد پرش می‌کند تا بلافاصله دیده شود.
@@ -3623,7 +4008,7 @@
                 document.getElementById('deliveryDurationMinute').value = '0';
             }
             toggleDeliveryDurationUnknown();
-            runAutoDeliveryCalculation();
+            runAutoDeliveryCalculation(true);
 
             if (record.photo) {
                 currentPhotoData = record.photo;
@@ -3670,7 +4055,14 @@
         function deleteRecord(id) {
             showCustomConfirm('آیا از حذف این رکورد اطمینان دارید؟', (confirmed) => {
                 if (confirmed) {
+                    addTombstone('records', id);
+                    const removedRec = allRecords.find(r => r.id === id);
                     allRecords = allRecords.filter(r => r.id !== id);
+                    if (removedRec) {
+                        // رکوردی که «شروع کد بعد»ش به رکورد حذف‌شده اشاره می‌کرد، دوباره با رکورد بعدیِ واقعی همگام می‌شود
+                        const owner = allRecords.find(r => r.nextCodeStartDate === removedRec.date && r.nextCodeStartTime === removedRec.time);
+                        if (owner) syncNextCodeStartLink(owner);
+                    }
                     saveRecords();
                     renderDashboard();
                     addLog(`یک رکورد حذف شد.`, 'warn');
@@ -3741,8 +4133,9 @@
             if (existingNoteIndex !== -1) {
                 dailyNotes[existingNoteIndex].text = textInput;
                 dailyNotes[existingNoteIndex].type = typeInput;
+                dailyNotes[existingNoteIndex].updatedAt = Date.now();
             } else {
-                dailyNotes.unshift({ id: Date.now(), date: dateInput, text: textInput, type: typeInput, hidden: false });
+                dailyNotes.unshift({ id: Date.now(), date: dateInput, text: textInput, type: typeInput, hidden: false, updatedAt: Date.now() });
             }
 
             saveRecords();
@@ -3764,6 +4157,7 @@
         function deleteDailyNote(id) {
             showCustomConfirm('آیا از حذف این یادداشت اطمینان دارید؟', (confirmed) => {
                 if (confirmed) {
+                    addTombstone('notes', id);
                     dailyNotes = dailyNotes.filter(n => n.id !== id);
                     saveRecords();
                     renderDailyNotes();
@@ -3814,14 +4208,14 @@
                 const weekday = getWeekdayLabelForJalaliDate(n.date);
                 return `
                 <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-300 dark:border-slate-600 ${meta.border} text-xs overflow-hidden">
-                    <div class="flex items-center justify-between p-3 cursor-pointer" onclick="toggleNoteVisibility(${n.id})">
+                    <div class="flex items-center justify-between p-3 cursor-pointer" data-action="toggle-note" data-id="${Number(n.id)}">
                         <div class="flex items-center gap-2 min-w-0 flex-wrap">
                             <i class="fa-solid fa-chevron-${n.hidden ? 'left' : 'down'} text-slate-400 text-[10px] transition-transform shrink-0"></i>
                             <span class="font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">${weekday ? escapeHTML(weekday) + '، ' : ''}${escapeHTML(n.date)}</span>
                             ${isToday ? '<span class="bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold px-2 py-0.5 rounded-full">امروز</span>' : ''}
                             ${meta.label ? `<span class="${meta.badge} text-[10px] font-bold px-2 py-0.5 rounded-full">${meta.label}</span>` : ''}
                         </div>
-                        <button onclick="event.stopPropagation(); deleteDailyNote(${n.id})" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors shrink-0" title="حذف یادداشت"><i class="fa-solid fa-trash-can"></i></button>
+                        <button data-action="delete-note" data-id="${Number(n.id)}" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors shrink-0" title="حذف یادداشت"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                     ${n.hidden ? '' : `<div class="px-3 pb-3 pr-9 text-slate-700 dark:text-slate-200 whitespace-pre-wrap">${escapeHTML(n.text)}</div>`}
                 </div>
@@ -4183,7 +4577,7 @@
 
         // اجرای محاسبه‌ی خودکار: با تغییر «آمار روزانه»، «تعداد دریافتی» یا «ساعت ثبت»،
         // وضعیت تحویل و میزان تاخیر به‌صورت خودکار محاسبه و پر می‌شوند
-        function runAutoDeliveryCalculation() {
+        function runAutoDeliveryCalculation(keepStatus) {
             const infoBox = document.getElementById('autoCalcInfoBox');
             const infoText = document.getElementById('autoCalcInfoText');
             const endDateTimeField = document.getElementById('recordEndDateTime');
@@ -4218,20 +4612,11 @@
                 workDurationField.value = `${String(result.hoursNeeded).padStart(2, '0')}:${String(result.minsNeeded).padStart(2, '0')}`;
             }
 
-            const statusSelect = document.getElementById('itemStatus');
-            statusSelect.value = result.daysPassed > 0 ? 'تاخیر' : 'به موقع';
-            toggleDeliveryDurationField();
-
-            if (result.daysPassed > 0) {
-                // تا وقتی تاریخ/ساعت واقعیِ شروع کد بعد ثبت نشده باشد، مقدار دقیق «مدت زمان تاخیر»
-                // قابل تعیین نیست (چون تاخیر واقعی فقط با مقایسه‌ی زمان کاریِ واقعاً سپری‌شده تا
-                // شروع کد بعد، با مدت زمان تحویل کار، به‌دست می‌آید). بنابراین فیلد به‌صورت «نامعلوم»
-                // علامت زده می‌شود تا با ثبت رکورد بعدی (در applyNextCodeStartToPreviousRecord)
-                // به‌طور خودکار با مقدار واقعی جایگزین شود.
-                document.getElementById('deliveryDurationUnknown').checked = true;
-                toggleDeliveryDurationUnknown();
-                document.getElementById('deliveryDurationHour').value = '0';
-                document.getElementById('deliveryDurationMinute').value = '0';
+            if (!keepStatus) {
+                // وضعیت نهایی فقط با ثبت کد بعد یا «کار تمام شد» قطعی می‌شود؛ تا آن زمان «به موقع» (در انتظار) است.
+                // عبور کار از یک شبانه‌روز (یا شروع در جمعه/پایان شیفت) به‌تنهایی تاخیر نیست.
+                document.getElementById('itemStatus').value = 'به موقع';
+                toggleDeliveryDurationField();
             }
         }
         /* ============ پایان محاسبه خودکار زمان اتمام کار ============ */
@@ -4441,7 +4826,7 @@
                     <div class="border border-indigo-100 dark:border-indigo-900/40 rounded-xl overflow-hidden mb-2 last:mb-0">
                         <div class="bg-indigo-50 dark:bg-indigo-950/40 px-3 py-2 flex flex-wrap items-center justify-between gap-2">
                             <span class="font-bold text-indigo-700 dark:text-indigo-300 text-xs">کد ${escapeHTML(code)} <span class="opacity-70 font-normal">(${formatNumber(list.length)} کارکرد)</span></span>
-                            <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">جمع تعداد: ${formatNumber(totalQty)} — جمع مبلغ: ${formatNumber(totalPrice)}${hasUnknownPrice ? '+' : ''} ${currency}</span>
+                            <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">جمع تعداد: ${formatNumber(totalQty)} — جمع مبلغ: ${formatNumber(totalPrice)}${hasUnknownPrice ? '+' : ''} ${escapeHTML(currency)}</span>
                         </div>
                     </div>
                 `;
@@ -4470,7 +4855,7 @@
         // رکورد «در حال انجام» فعلی: جدیدترین رکوردی که هنوز «شروع کد بعد» برایش ثبت نشده؛
         // یعنی همان کدی که خیاط همین الان روی آن مشغول است.
         function getCurrentActiveRecord() {
-            const openRecords = allRecords.filter(r => !r.nextCodeStartDate && r.workDuration && r.date && r.time);
+            const openRecords = allRecords.filter(r => !r.nextCodeStartDate && !r.finishedDate && r.workDuration && r.date && r.time);
             if (openRecords.length === 0) return null;
             return openRecords.reduce((latest, r) => {
                 const rKey = parseJalaliDateToJdn(r.date) * 1440 + parseTimeToMinutes(r.time);
@@ -4902,7 +5287,7 @@
                     changed = true;
                 } else {
                     const last = rec.lastOverdueNotifyAt || 0;
-                    if (Date.now() - last >= OVERDUE_RENOTIFY_MINUTES * 60 * 1000) {
+                    if (isWithinWorkingTimeNow() && Date.now() - last >= OVERDUE_RENOTIFY_MINUTES * 60 * 1000) {
                         const overdueBy = formatMinutesDuration(progress.remainingMinutes);
                         const msg = `کد ${rec.itemCode || '-'} حدود ${overdueBy} از موعدش تاخیر دارد. لطفاً هر چه زودتر کار را تمام و ثبت کن.`;
                         notifyUser('🚨 یادآوری تاخیر', msg, 'sewing-progress-overdue-' + rec.id, true);
@@ -4968,6 +5353,7 @@
                     <div class="font-bold text-slate-700 dark:text-slate-200 truncate">کد ${escapeHTML(rec.itemCode) || '-'} — ${escapeHTML(rec.itemTitle) || '-'}</div>
                     <div class="mt-1">${remainingText}</div>
                     <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
+                    <button type="button" data-action="finish-active" data-id="${Number(rec.id)}" class="no-print mt-2 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition-colors"><i class="fa-solid fa-circle-check"></i> کار تمام شد</button>
                     ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print mt-1.5 text-[10px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatNumber(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
                 </div>
             `;
@@ -5033,7 +5419,7 @@
                     <td class="p-3.5 text-slate-400 text-xs">${formatNumber(index + 1)}</td>
                     <td class="p-3.5 no-print">
                         ${r.photo
-                            ? `<button type="button" onclick="viewRecordPhoto(${r.id})" class="block w-10 h-10 rounded-xl overflow-hidden ring-2 ring-white dark:ring-slate-900 border border-slate-400 dark:border-slate-500 shadow-sm hover:scale-105 hover:opacity-90 transition-all" title="مشاهده عکس"><img src="${escapeHTML(r.photo)}" class="w-full h-full object-cover" alt="عکس رکورد"></button>`
+                            ? `<button type="button" data-action="photo" data-id="${Number(r.id)}" class="block w-10 h-10 rounded-xl overflow-hidden ring-2 ring-white dark:ring-slate-900 border border-slate-400 dark:border-slate-500 shadow-sm hover:scale-105 hover:opacity-90 transition-all" title="مشاهده عکس"><img src="${escapeHTML(r.photo)}" class="w-full h-full object-cover" alt="عکس رکورد"></button>`
                             : `<span class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-300 dark:text-slate-600"><i class="fa-solid fa-image text-xs"></i></span>`
                         }
                     </td>
@@ -5053,7 +5439,7 @@
                     <td class="p-3.5 tabular-nums">${(r.dailyStat === null || r.dailyStat === undefined) ? '-' : formatNumber(r.dailyStat)}</td>
                     <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${r.workDuration ? escapeHTML(r.workDuration) : '-'}</td>
                     <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${r.endDateTime ? escapeHTML(r.endDateTime) : '-'}</td>
-                    <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${r.nextCodeStartDate ? (escapeHTML(r.nextCodeStartDate) + (r.nextCodeStartTime ? ' <span class="opacity-60">-</span> ' + escapeHTML(r.nextCodeStartTime) : '')) : '-'}</td>
+                    <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${r.nextCodeStartDate ? (escapeHTML(r.nextCodeStartDate) + (r.nextCodeStartTime ? ' <span class="opacity-60">-</span> ' + escapeHTML(r.nextCodeStartTime) : '')) : (r.finishedDate ? '<span class="text-emerald-600 dark:text-emerald-400" title="پایان کار ثبت‌شده">✔ ' + escapeHTML(r.finishedDate) + (r.finishedTime ? ' - ' + escapeHTML(r.finishedTime) : '') + ' <button type="button" data-action="unfinish" data-id="' + Number(r.id) + '" class="no-print opacity-60 hover:opacity-100" title="لغو ثبت پایان"><i class="fa-solid fa-rotate-left"></i></button></span>' : '-')}</td>
                     <td class="p-3.5">
                         <span class="text-xs px-3 py-1 rounded-full border font-medium whitespace-nowrap inline-flex items-center gap-1.5 ${getStatusBadgeClass(r.status)}">
                             <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background-color:${getStatusAccentColor(r.status)}"></span>
@@ -5063,8 +5449,8 @@
                     <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${escapeHTML(r.date)} <span class="opacity-60">-</span> ${escapeHTML(r.time)}</td>
                     <td class="p-3.5 text-center no-print">
                         <div class="flex items-center justify-center gap-1.5 opacity-70 group-hover:opacity-100 transition-opacity">
-                            <button onclick="editRecord(${r.id})" class="w-8 h-8 flex items-center justify-center rounded-full text-amber-600 hover:text-amber-800 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors" title="ویرایش"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="deleteRecord(${r.id})" class="w-8 h-8 flex items-center justify-center rounded-full text-rose-500 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors" title="حذف"><i class="fa-solid fa-trash-can"></i></button>
+                            <button data-action="edit" data-id="${Number(r.id)}" class="w-8 h-8 flex items-center justify-center rounded-full text-amber-600 hover:text-amber-800 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors" title="ویرایش"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button data-action="delete" data-id="${Number(r.id)}" class="w-8 h-8 flex items-center justify-center rounded-full text-rose-500 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors" title="حذف"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -5253,6 +5639,7 @@
 
         addLog(`سامانه بارگذاری شد. تاریخ: ${currentJalali.fullDateStr}`, 'info');
         renderDashboard();
+        initPhotoStore();
         initStorageFolderConnection();
         handleStartupShortcutAction();
 

@@ -5,7 +5,7 @@
  * هر بار index.html را روی هاست تغییر می‌دهید، عدد VERSION را هم یکی زیاد کنید؛
  * تغییر همین فایل باعث می‌شود بنر «نسخه جدید آماده است» در برنامه ظاهر شود.
  */
-const VERSION = 'v3';
+const VERSION = 'v4';
 const CACHE = 'sewing-stats-' + VERSION;
 const SCOPE = self.registration.scope;
 const INDEX_URL = new URL('index.html', SCOPE).href;
@@ -63,7 +63,8 @@ function withTimeout(promise, ms) {
 async function handleNavigation(request) {
   const cache = await caches.open(CACHE);
   try {
-    const res = await withTimeout(fetch(request), 4000);
+    // cache:'no-cache' یعنی حتماً با سرور راستی‌آزمایی شود؛ وگرنه کش HTTP مرورگر/CDN می‌تواند نسخه‌ی قدیمی index.html را برگرداند و در کش برنامه هم بنویسد
+    const res = await withTimeout(fetch(INDEX_URL, { cache: 'no-cache' }), 4000);
     if (res && res.ok) cache.put(INDEX_URL, res.clone());
     return res;
   } catch (e) {
@@ -78,7 +79,9 @@ async function handleNavigation(request) {
 async function staleWhileRevalidate(event) {
   const cache = await caches.open(CACHE);
   const cached = await cache.match(event.request);
-  const network = fetch(event.request).then(res => {
+  const sameOrigin = new URL(event.request.url).origin === self.location.origin;
+  const netReq = sameOrigin ? new Request(event.request, { cache: 'no-cache' }) : event.request;
+  const network = fetch(netReq).then(res => {
     if (res && (res.ok || res.type === 'opaque')) cache.put(event.request, res.clone());
     return res;
   }).catch(() => null);

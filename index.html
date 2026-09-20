@@ -1270,6 +1270,13 @@
                             <span class="text-slate-500 dark:text-slate-400">فضای مصرفی حافظه مرورگر:</span>
                             <span id="storageUsageSize" class="font-bold text-emerald-600 dark:text-emerald-400">۰ کیلوبایت</span>
                         </div>
+                        <div class="flex justify-between gap-2">
+                            <span class="text-slate-500 dark:text-slate-400 shrink-0">نسخه‌ی اجرا‌شده:</span>
+                            <span id="appBuildInfo" dir="ltr" class="font-bold text-slate-700 dark:text-slate-200 text-left">—</span>
+                        </div>
+                        <button type="button" onclick="forceRefreshApp()" class="w-full mt-1 py-2 border border-teal-200 dark:border-teal-900/50 text-teal-700 dark:text-teal-300 rounded-xl text-xs hover:bg-teal-50 dark:hover:bg-teal-950/30 font-medium transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-arrows-rotate"></i> به‌روزرسانی اجباری برنامه (داده‌ها پاک نمی‌شوند)
+                        </button>
                     </div>
                 </div>
                 </div>
@@ -1584,6 +1591,8 @@
         /* ==================== پایان توابع تبدیل تقویم ==================== */
 
                 /* ==================== [اصلاحیه ۱–۳] لایه‌ی ایمن بارگذاری، اعتبارسنجی، همگام‌سازی و ذخیره‌ی عکس ==================== */
+        // شناسه‌ی نسخه‌ی این فایل؛ در تنظیمات (تب حافظه) نشان داده می‌شود تا معلوم باشد کدام نسخه اجرا شده است
+        const APP_BUILD = 'r4';
         const SALT_KEY = 'sewing_install_salt_v1';
         const TOMBSTONE_KEY = 'sewing_tombstones_v1';
         const TOMBSTONE_TTL_MS = 180 * 24 * 3600 * 1000; // ۱۸۰ روز
@@ -2916,6 +2925,12 @@
             const sizeInBytes = new Blob([dataString]).size;
             const sizeInKB = (sizeInBytes / 1024).toFixed(2);
             document.getElementById('storageUsageSize').innerText = `${formatNumber(sizeInKB)} کیلوبایت`;
+            (async () => {
+                let cacheInfo = '—';
+                try { cacheInfo = (await caches.keys()).filter(k => k.startsWith('sewing-stats-')).join(', ') || '—'; } catch (e) { /* بی‌اهمیت */ }
+                const el = document.getElementById('appBuildInfo');
+                if (el) el.innerText = `${APP_BUILD} | ${cacheInfo}`;
+            })();
 
             updateSettingsProfilePreview();
             switchSettingsTab('profile');
@@ -5464,7 +5479,7 @@
                     { action: 'finish', title: '✔ کار تمام شد' },
                     { action: 'snooze', title: '🔕 ۳۰ دقیقه بی‌صدا' }
                 ],
-                data: { live: true }
+                data: { live: true, build: APP_BUILD }
             };
             if (cardStyle) {
                 const image = await drawProgressWidgetImage(rec, progress);
@@ -5489,6 +5504,29 @@
                 addLog('نمایش ویجت وضعیت زنده ناموفق بود (اعلان توسط مرورگر رد شد).', 'warn');
                 return false;
             }
+        }
+
+        // پاک کردن کش برنامه و سرویس‌ورکر و بارگذاری دوباره؛ رکوردها/یادداشت‌ها/تنظیمات (localStorage و IndexedDB) دست‌نخورده می‌مانند
+        function forceRefreshApp() {
+            if (!navigator.onLine) {
+                showFeedbackBanner('برای به‌روزرسانی اجباری به اینترنت نیاز است.', 'warn');
+                return;
+            }
+            showCustomConfirm('کش برنامه پاک و صفحه از نو بارگذاری شود؟ رکوردها، یادداشت‌ها و تنظیمات شما دست‌نخورده می‌ماند.', async (confirmed) => {
+                if (!confirmed) return;
+                try {
+                    if (hasPendingSave) await new Promise(r => setTimeout(r, 900));
+                    if ('serviceWorker' in navigator) {
+                        const regs = await navigator.serviceWorker.getRegistrations();
+                        await Promise.all(regs.map(r => r.unregister()));
+                    }
+                    if (window.caches) {
+                        const keys = await caches.keys();
+                        await Promise.all(keys.map(k => caches.delete(k)));
+                    }
+                } catch (e) { console.warn(e); }
+                window.location.reload();
+            });
         }
 
         function checkDeliveryProgressNotifications() {

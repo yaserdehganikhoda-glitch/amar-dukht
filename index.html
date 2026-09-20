@@ -1221,6 +1221,14 @@
                             <input type="checkbox" id="settingLiveWidgetEnabled" class="w-4 h-4 rounded accent-teal-600">
                             فعال‌سازی ویجت وضعیت زنده در نوار اعلان‌ها
                         </label>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">سبک نمایش ویجت</label>
+                            <select id="settingLiveWidgetStyle" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all">
+                                <option value="text">متنی سبک با نوار ▰▱ (پیش‌فرض؛ فونت خودِ گوشی)</option>
+                                <option value="card">کارت تصویری با فونت وزیرمتن (سنگین‌تر)</option>
+                            </select>
+                            <p class="text-[11px] leading-relaxed text-slate-400 dark:text-slate-500 mt-1">فونت متن اعلان را خودِ اندروید تعیین می‌کند؛ فقط در «کارت تصویری» فونت وزیرمتن دیده می‌شود. در هر دو سبک، رنگ وضعیت (🟢🟡🟠🔴) و دکمه‌های «کار تمام شد» و «۳۰ دقیقه بی‌صدا» فعال است.</p>
+                        </div>
                         <button type="button" onclick="testLiveWidget()" class="w-full py-2 border border-teal-200 dark:border-teal-900/50 text-teal-700 dark:text-teal-300 rounded-xl text-xs hover:bg-teal-50 dark:hover:bg-teal-950/30 font-medium transition-colors flex items-center justify-center gap-2">
                             <i class="fa-solid fa-stethoscope"></i> بررسی و آزمایش ویجت (تشخیص مشکل)
                         </button>
@@ -1688,6 +1696,7 @@
             s.numFormat = pick(s.numFormat, ['persian', 'english'], 'persian');
             const tolRaw = Number(s.onTimeToleranceMinutes);
             s.onTimeToleranceMinutes = Number.isFinite(tolRaw) ? Math.max(0, Math.min(120, Math.floor(tolRaw))) : 5;
+            s.liveWidgetStyle = pick(s.liveWidgetStyle, ['text', 'card'], 'text');
             s.fontFamily = pick(s.fontFamily, ['Vazirmatn', 'Vazir', 'Sahel', 'Samim', 'Shabnam'], 'Vazirmatn');
             const colorOk = c => c === 'default' || (typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c));
             ['bgColor', 'cardColor', 'fieldColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
@@ -1882,6 +1891,7 @@
             currency: 'تومان',
             defaultStatus: 'به موقع',
             onTimeToleranceMinutes: 5,
+            liveWidgetStyle: 'text',
             theme: 'light',
             fontSize: 'normal',
             numFormat: 'persian',
@@ -2662,6 +2672,8 @@
                     bottomNavGoRecords();
                 } else if (action === 'notes') {
                     bottomNavGoNotes();
+                } else if (action === 'finish' || action === 'snooze') {
+                    handleNotificationAction(action);
                 }
             }, 300);
         }
@@ -2892,6 +2904,7 @@
             document.getElementById('settingNotificationsEnabled').checked = !!appSettings.notificationsEnabled;
             document.getElementById('settingVoiceAlertsEnabled').checked = !!appSettings.voiceAlertsEnabled;
             document.getElementById('settingLiveWidgetEnabled').checked = !!appSettings.liveWidgetEnabled;
+            document.getElementById('settingLiveWidgetStyle').value = appSettings.liveWidgetStyle === 'card' ? 'card' : 'text';
             document.getElementById('settingCurrentStreakVal').innerText = formatNumber(appSettings.onTimeStreak || 0);
             document.getElementById('settingBestStreakVal').innerText = formatNumber(appSettings.bestStreak || 0);
             updateNotificationPermissionStatusUI();
@@ -3012,6 +3025,7 @@
             appSettings.notificationsEnabled = notificationsEnabledVal;
             appSettings.voiceAlertsEnabled = voiceAlertsEnabledVal;
             appSettings.liveWidgetEnabled = liveWidgetEnabledVal;
+            appSettings.liveWidgetStyle = document.getElementById('settingLiveWidgetStyle').value === 'card' ? 'card' : 'text';
             if ((liveWidgetEnabledVal || notificationsEnabledVal) && 'Notification' in window && Notification.permission === 'default') {
                 Notification.requestPermission().then(() => {
                     updateNotificationPermissionStatusUI();
@@ -4930,7 +4944,7 @@
             const options = {
                 body,
                 icon: 'icon-192.png',
-                badge: 'icon-192.png',
+                badge: 'badge-96.png',
                 tag,
                 renotify: true,
                 requireInteraction: true, // مثل پیامک/یادآوری‌های گوشی، تا لمس نشود از نوار اعلان‌ها پاک نشود
@@ -5163,50 +5177,140 @@
         // بررسی دوره‌ای پیشرفتِ رکورد جاری و ارسال اعلانِ پلکانی در چند نقطه‌ی کلیدی:
         // ۲۵٪ / ۵۰٪ / ۷۵٪ / ۹۰٪ از زمان مجاز، و رسیدن/گذشتن از خودِ موعد تحویل (با یادآوری‌های مکرر هر ۲۰ دقیقه)
         // ترسیم یک تصویر کوچک از نوار پیشرفت (شبیه ویجت) برای نمایش داخل بدنه‌ی اعلانِ دائمی
-        function drawProgressWidgetImage(rec, progress) {
+        // رنگ و شکلک وضعیت ویجت بر اساس درصد پیشرفت: سبز → زرد → نارنجی → قرمز (تاخیر)
+        function getWidgetState(p) {
+            if (p >= 100) return { emoji: '🔴', color: '#f43f5e', text: '#fda4af' };
+            if (p >= 90) return { emoji: '🟠', color: '#f97316', text: '#fdba74' };
+            if (p >= 50) return { emoji: '🟡', color: '#f59e0b', text: '#fcd34d' };
+            return { emoji: '🟢', color: '#10b981', text: '#6ee7b7' };
+        }
+        function widgetBar(p) {
+            const n = Math.max(0, Math.min(10, Math.round(p / 10)));
+            return '▰'.repeat(n) + '▱'.repeat(10 - n);
+        }
+        // «موعد ۱۴:۳۰» (اگر موعد امروز نباشد، تاریخ هم می‌آید)
+        function widgetDeadlineLabel(rec) {
+            if (!rec.endDateTime) return '';
+            const parts = String(rec.endDateTime).split(' - ');
+            const time = (parts.length > 1 ? parts[1] : parts[0]).trim();
+            const dateStr = parts.length > 1 ? parts[0].trim() : '';
+            const sameDay = !dateStr || toEnglishDigits(dateStr) === toEnglishDigits(getCurrentJalaliInfo().fullDateStr);
+            return sameDay ? `موعد ${time}` : `موعد ${dateStr} ${time}`;
+        }
+
+        // آیکون بزرگ اعلان: حلقه‌ی پیشرفت رنگیِ وضعیت با عددِ درصد (فونت وزیرمتن) — طرح متنی را بدون تصویر بزرگ زیبا می‌کند
+        async function drawProgressRingIcon(percent) {
             try {
+                try {
+                    if (document.fonts && document.fonts.load) {
+                        await Promise.race([document.fonts.load('700 48px Vazirmatn'), new Promise(r => setTimeout(r, 1200))]);
+                    }
+                } catch (e) { /* فونت جایگزین */ }
+                const S = 192, k = 2;
                 const canvas = document.createElement('canvas');
-                canvas.width = 640; canvas.height = 200;
+                canvas.width = S * k; canvas.height = S * k;
                 const ctx = canvas.getContext('2d');
-                const isOverdue = progress.percent >= 100;
-                const isUrgent = progress.percent >= 90 && progress.percent < 100;
-                const isWarn = progress.percent >= 50 && progress.percent < 90;
-                const barColor = isOverdue ? '#e11d48' : (isUrgent ? '#f97316' : (isWarn ? '#f59e0b' : '#10b981'));
+                ctx.scale(k, k);
+                const st = getWidgetState(percent);
+                // پس‌زمینه‌ی تیره‌ی گرد تا در هر دو حالت روشن/تاریک نوار اعلان خوانا باشد
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.arc(S / 2, S / 2, S / 2, 0, Math.PI * 2);
+                ctx.fill();
+                const cx = S / 2, cy = S / 2, r = 68;
+                ctx.lineWidth = 16;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = '#1e293b';
+                ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+                const ratio = Math.max(0.02, Math.min(1, percent / 100));
+                ctx.strokeStyle = st.color;
+                ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * ratio); ctx.stroke();
+                const txt = formatNumber(Math.min(999, percent));
+                ctx.fillStyle = '#f1f5f9';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.font = `700 ${txt.length >= 3 ? 40 : 52}px 'Vazirmatn', Tahoma, sans-serif`;
+                ctx.fillText(txt, cx, cy + 2);
+                return canvas.toDataURL('image/png');
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function drawProgressWidgetImage(rec, progress) {
+            try {
+                try {
+                    if (document.fonts && document.fonts.load) {
+                        await Promise.race([
+                            Promise.all([document.fonts.load('700 40px Vazirmatn'), document.fonts.load('400 30px Vazirmatn')]),
+                            new Promise(r => setTimeout(r, 1500))
+                        ]);
+                    }
+                } catch (e) { /* فونت نیامد؛ فونت جایگزین استفاده می‌شود */ }
+
+                const W = 800, H = 400, k = 2;
+                const canvas = document.createElement('canvas');
+                canvas.width = W * k; canvas.height = H * k;
+                const ctx = canvas.getContext('2d');
+                ctx.scale(k, k);
+                const F = "'Vazirmatn', Tahoma, sans-serif";
+                const p = progress.percent;
+                const st = getWidgetState(p);
+                const overdue = p >= 100;
+                const rr = (x, y, w, h, r) => {
+                    ctx.beginPath();
+                    ctx.moveTo(x + r, y);
+                    ctx.arcTo(x + w, y, x + w, y + h, r);
+                    ctx.arcTo(x + w, y + h, x, y + h, r);
+                    ctx.arcTo(x, y + h, x, y, r);
+                    ctx.arcTo(x, y, x + w, y, r);
+                    ctx.closePath();
+                };
 
                 ctx.fillStyle = '#0f172a';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillRect(0, 0, W, H);
+                ctx.direction = 'rtl';
+                ctx.textBaseline = 'alphabetic';
 
-                ctx.fillStyle = '#f1f5f9';
-                ctx.font = 'bold 34px Tahoma, sans-serif';
+                let head = `کد ${rec.itemCode || '-'} • ${rec.itemTitle || '-'}`;
+                if (head.length > 34) head = head.slice(0, 33) + '…';
                 ctx.textAlign = 'right';
-                ctx.textBaseline = 'top';
-                ctx.fillText(`کد ${rec.itemCode || '-'} — ${rec.itemTitle || '-'}`, canvas.width - 20, 20);
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = `400 28px ${F}`;
+                ctx.fillText(head, W - 40, 62);
 
-                const barX = 20, barY = 90, barW = canvas.width - 40, barH = 34;
-                ctx.fillStyle = '#334155';
-                ctx.beginPath();
-                ctx.roundRect(barX, barY, barW, barH, 17);
-                ctx.fill();
-
-                const fillW = Math.max(barH, barW * Math.min(100, progress.percent) / 100);
-                ctx.fillStyle = barColor;
-                ctx.beginPath();
-                ctx.roundRect(barX, barY, fillW, barH, 17);
-                ctx.fill();
-
+                ctx.textAlign = 'left';
                 ctx.fillStyle = '#f1f5f9';
-                ctx.font = 'bold 30px Tahoma, sans-serif';
+                ctx.font = `700 104px ${F}`;
+                ctx.fillText(`${formatNumber(Math.min(999, p))}٪`, 40, 172);
+
+                // ده پله؛ از راست به چپ پر می‌شوند (جهت خواندن فارسی)
+                const gap = 8, sw = (720 - 9 * gap) / 10;
+                for (let i = 0; i < 10; i++) {
+                    const xr = 760 - (i + 1) * sw - i * gap;
+                    ctx.fillStyle = '#1e293b';
+                    rr(xr, 214, sw, 62, 12); ctx.fill();
+                    const f = Math.max(0, Math.min(1, Math.min(p, 100) / 10 - i));
+                    if (f > 0) {
+                        ctx.fillStyle = st.color;
+                        rr(xr + sw * (1 - f), 214, sw * f, 62, 12); ctx.fill();
+                    }
+                }
+
+                const remain = overdue
+                    ? `${formatMinutesDuration(progress.remainingMinutes)} تاخیر`
+                    : `${formatMinutesDuration(progress.remainingMinutes)} مانده`;
                 ctx.textAlign = 'right';
-                ctx.fillText(`${progress.percent}٪`, canvas.width - 20, 145);
-
-                ctx.fillStyle = isOverdue ? '#fca5a5' : '#94a3b8';
-                ctx.font = '24px Tahoma, sans-serif';
-                ctx.fillText(
-                    isOverdue ? `${formatMinutesDuration(progress.remainingMinutes)} تاخیر از موعد` : `${formatMinutesDuration(progress.remainingMinutes)} تا موعد باقی مانده`,
-                    barX + fillW > canvas.width - 220 ? canvas.width - 20 : canvas.width - 200,
-                    145
-                );
-
+                ctx.fillStyle = st.text;
+                ctx.font = `700 32px ${F}`;
+                ctx.fillText(remain, W - 40, 350);
+                const dl = widgetDeadlineLabel(rec);
+                if (dl) {
+                    ctx.textAlign = 'left';
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = `400 26px ${F}`;
+                    ctx.fillText(dl, 40, 350);
+                }
                 return canvas.toDataURL('image/png');
             } catch (e) {
                 return null;
@@ -5229,6 +5333,23 @@
         }
 
         // بررسی دلایل احتمالیِ کار نکردنِ ویجت؛ خروجی: لیست مشکلات (خالی = همه چیز درست است)
+        // دکمه‌های اعلان (از sw.js می‌رسند): پایان کار / بی‌صدا
+        function handleNotificationAction(action) {
+            const rec = getCurrentActiveRecord();
+            if (action === 'finish') {
+                if (!rec) { showFeedbackBanner('کار جاری‌ای برای ثبت پایان وجود ندارد.', 'warn'); return; }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                finishRecordNow(rec.id);
+            } else if (action === 'snooze') {
+                if (rec) snoozeActiveNotifications();
+            }
+        }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', e => {
+                if (e.data && e.data.type === 'NOTIF_ACTION') handleNotificationAction(e.data.action);
+            });
+        }
+
         async function diagnoseLiveWidget() {
             const env = [];   // پیش‌نیازهای دستگاه/مرورگر (بدون آن‌ها هیچ اعلانی نمایش داده نمی‌شود)
             const data = [];  // وضعیت داده‌ها و تنظیمات برنامه
@@ -5308,7 +5429,7 @@
             };
             let rec, progress;
             if (demo) {
-                rec = { itemCode: '۱۲۳', itemTitle: 'نمونه آزمایشی', endDateTime: '' };
+                rec = { itemCode: '۱۲۳', itemTitle: 'نمونه آزمایشی', endDateTime: getCurrentJalaliInfo().fullDateStr + ' - ۱۴:۳۰' };
                 progress = { percent: 42, remainingMinutes: 95 };
             } else {
                 if (!appSettings.liveWidgetEnabled) { await closeAll(); return false; }
@@ -5317,27 +5438,42 @@
                 if (!rec || !progress) { await closeAll(); return false; }
             }
 
+            const st = getWidgetState(progress.percent);
             const isOverdue = progress.percent >= 100;
-            const statusText = isOverdue
-                ? `${formatMinutesDuration(progress.remainingMinutes)} تاخیر از موعد`
-                : `${formatMinutesDuration(progress.remainingMinutes)} تا موعد باقی مانده`;
-            const deadlineText = rec.endDateTime ? ` • موعد: ${rec.endDateTime}` : '';
-
+            const RLM = '\u200f'; // جهت راست‌به‌چپ برای هر خط تا نوار از راست پر شود
+            const pctText = `${formatNumber(Math.min(999, progress.percent))}٪`;
+            const remainText = isOverdue
+                ? `${formatMinutesDuration(progress.remainingMinutes)} تاخیر`
+                : `${formatMinutesDuration(progress.remainingMinutes)} مانده`;
+            const deadlineLabel = widgetDeadlineLabel(rec);
+            const infoLine = `${RLM}${isOverdue ? '⚠ ' : ''}${remainText}${deadlineLabel ? ' • ' + deadlineLabel : ''}`;
+            const cardStyle = appSettings.liveWidgetStyle === 'card';
+            const title = `${st.emoji} کد ${rec.itemCode || '-'} • ${rec.itemTitle || '-'}${demo ? ' (آزمایشی)' : ''}`;
             const options = {
-                body: `کد ${rec.itemCode || '-'} — ${rec.itemTitle || '-'} • ${formatNumber(progress.percent)}٪ • ${statusText}${deadlineText}`,
+                body: cardStyle ? infoLine : `${RLM}${widgetBar(progress.percent)}  ${pctText}\n${infoLine}`,
                 icon: 'icon-192.png',
-                badge: 'icon-192.png',
+                badge: 'badge-96.png',
                 tag: LIVE_WIDGET_TAG,
                 renotify: false, // فقط محتوا آپدیت می‌شود، بدون صدا/لرزش دوباره — رفتار «ویجت»، نه «هشدار»
                 requireInteraction: true,
                 silent: true,
                 dir: 'rtl',
                 lang: 'fa',
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                actions: [
+                    { action: 'finish', title: '✔ کار تمام شد' },
+                    { action: 'snooze', title: '🔕 ۳۰ دقیقه بی‌صدا' }
+                ],
+                data: { live: true }
             };
-            const image = drawProgressWidgetImage(rec, progress);
-            if (image) options.image = image;
-            const title = `📊 وضعیت زنده — ${appSettings.shopName || 'آمار دوخت'}${demo ? ' (آزمایشی)' : ''}`;
+            if (cardStyle) {
+                const image = await drawProgressWidgetImage(rec, progress);
+                if (image) options.image = image;
+            }
+            else {
+                const ringIcon = await drawProgressRingIcon(progress.percent);
+                if (ringIcon) options.icon = ringIcon;
+            }
 
             try {
                 await reg.showNotification(title, options);
@@ -5348,6 +5484,8 @@
                     delete options.image; // برخی مرورگرها/گوشی‌ها تصویر بزرگ در اعلان را نمی‌پذیرند
                     try { await reg.showNotification(title, options); return true; } catch (e2) { console.warn(e2); }
                 }
+                delete options.actions;
+                try { await reg.showNotification(title, options); return true; } catch (e3) { console.warn(e3); }
                 addLog('نمایش ویجت وضعیت زنده ناموفق بود (اعلان توسط مرورگر رد شد).', 'warn');
                 return false;
             }

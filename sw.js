@@ -5,12 +5,12 @@
  * هر بار index.html را روی هاست تغییر می‌دهید، عدد VERSION را هم یکی زیاد کنید؛
  * تغییر همین فایل باعث می‌شود بنر «نسخه جدید آماده است» در برنامه ظاهر شود.
  */
-const VERSION = 'v1';
+const VERSION = 'v3';
 const CACHE = 'sewing-stats-' + VERSION;
 const SCOPE = self.registration.scope;
 const INDEX_URL = new URL('index.html', SCOPE).href;
 
-const LOCAL_ASSETS = ['index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png']
+const LOCAL_ASSETS = ['index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'badge-96.png']
   .map(p => new URL(p, SCOPE).href);
 
 // منابع خارجی که index.html به آن‌ها نیاز دارد؛ در نصب دانلود می‌شوند تا اولین بار آفلاین هم کار کند
@@ -96,13 +96,39 @@ self.addEventListener('fetch', event => {
   }
 });
 
-// کلیک روی اعلان: اگر برنامه باز است همان را جلو بیاور، وگرنه باز کن
+// کلیک روی اعلان یا دکمه‌های آن («کار تمام شد» / «۳۰ دقیقه بی‌صدا»)
 self.addEventListener('notificationclick', event => {
-  event.notification.close();
+  const n = event.notification;
+  const action = event.action;
   event.waitUntil((async () => {
     const list = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-    for (const c of list) {
-      if (c.url.startsWith(SCOPE) && 'focus' in c) return c.focus();
+    const appClients = list.filter(c => c.url.startsWith(SCOPE));
+
+    if (action === 'finish' || action === 'snooze') {
+      if (action === 'snooze' && n.tag === 'sewing-live-status-widget') {
+        // لمس دکمه، اعلان را می‌بندد؛ ویجت باید در نوار بماند، پس همان محتوا دوباره نمایش داده می‌شود
+        try {
+          await self.registration.showNotification(n.title, {
+            body: n.body, icon: n.icon, badge: n.badge, tag: n.tag, image: n.image || undefined,
+            actions: n.actions, data: n.data, dir: n.dir, lang: n.lang,
+            silent: true, renotify: false, requireInteraction: true, timestamp: n.timestamp
+          });
+        } catch (e) { /* بی‌اهمیت */ }
+      } else {
+        n.close();
+      }
+      if (appClients.length) {
+        appClients.forEach(c => c.postMessage({ type: 'NOTIF_ACTION', action }));
+        if (action === 'finish') { try { await appClients[0].focus(); } catch (e) { /* بی‌اهمیت */ } }
+      } else {
+        await self.clients.openWindow(new URL('index.html?action=' + action, SCOPE).href);
+      }
+      return;
+    }
+
+    n.close();
+    for (const c of appClients) {
+      if ('focus' in c) return c.focus();
     }
     return self.clients.openWindow(new URL('index.html?action=progress', SCOPE).href);
   })());

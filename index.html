@@ -1215,16 +1215,16 @@
                             <i class="fa-solid fa-table-cells"></i> ویجت وضعیت زنده (صفحه اصلی گوشی)
                         </h4>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                            گوشی‌ها (اندروید/iOS) به یک وب‌سایت اجازه‌ی نصب ویجت واقعی روی صفحه اصلی را نمی‌دهند — این محدودیتِ خودِ سیستم‌عامل است، نه چیزی که کد این برنامه بتواند دورش بزند. نزدیک‌ترین جایگزینِ واقعی: یک اعلانِ دائمی و بی‌صدا در نوار اعلان‌ها که مثل یک ویجت، کد در حال دوخت، درصد پیشرفت و زمان باقی‌مانده را نشان می‌دهد.
-                        </p>
-                        <p class="text-[11px] text-amber-700 dark:text-amber-400 leading-relaxed bg-amber-50 dark:bg-amber-950/30 rounded-lg p-2.5 border border-amber-100 dark:border-amber-900/40">
-                            <i class="fa-solid fa-triangle-exclamation ml-1"></i>
-                            وقتی برنامه باز و روی صفحه است، این اعلان هر ۶۰ ثانیه دقیقاً به‌روز می‌شود. اما وقتی برنامه را می‌بندید یا گوشی قفل می‌شود، مرورگر اجرای جاوااسکریپت صفحه را متوقف می‌کند و آپدیت خودکار متوقف می‌شود. برنامه سعی می‌کند از طریق «Periodic Background Sync» این اعلان را حتی در این حالت هم دوره‌ای به‌روز نگه دارد، اما این قابلیت فقط در Chrome/Edge اندروید و فقط وقتی برنامه با «Add to Home Screen» نصب شده باشد وجود دارد؛ فاصله‌ی دقیق آپدیت (از چند دقیقه تا چند ساعت) کاملاً دست خودِ مرورگر است، نه برنامه، و در iOS/Safari و Firefox اصلاً پشتیبانی نمی‌شود.
+                            گوشی‌ها (اندروید/iOS) به یک وب‌سایت اجازه‌ی نصب ویجت واقعی روی صفحه اصلی را نمی‌دهند — این محدودیتِ خودِ سیستم‌عامل است، نه چیزی که کد این برنامه بتواند دورش بزند. نزدیک‌ترین جایگزینِ واقعی: یک اعلانِ دائمی و بی‌صدا در نوار اعلان‌ها که مثل یک ویجت، کد در حال دوخت، درصد پیشرفت و زمان باقی‌مانده را نشان می‌دهد و تا وقتی برنامه در پس‌زمینه‌ی گوشی زنده است هر دقیقه به‌روز می‌شود (اگر مرورگر برنامه را ببندد یا بخواباند، متن آخرین وضعیت و «موعد» باقی می‌ماند و با بازکردن برنامه تازه می‌شود) — بدون اینکه هر بار صدا یا لرزش بدهد.
                         </p>
                         <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
                             <input type="checkbox" id="settingLiveWidgetEnabled" class="w-4 h-4 rounded accent-teal-600">
                             فعال‌سازی ویجت وضعیت زنده در نوار اعلان‌ها
                         </label>
+                        <button type="button" onclick="testLiveWidget()" class="w-full py-2 border border-teal-200 dark:border-teal-900/50 text-teal-700 dark:text-teal-300 rounded-xl text-xs hover:bg-teal-50 dark:hover:bg-teal-950/30 font-medium transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-stethoscope"></i> بررسی و آزمایش ویجت (تشخیص مشکل)
+                        </button>
+                        <p id="liveWidgetDiagText" class="text-[11px] leading-relaxed text-slate-500"></p>
                     </div>
 
                     <div class="rounded-xl border border-amber-200 dark:border-amber-900/50 overflow-hidden">
@@ -3012,7 +3012,12 @@
             appSettings.notificationsEnabled = notificationsEnabledVal;
             appSettings.voiceAlertsEnabled = voiceAlertsEnabledVal;
             appSettings.liveWidgetEnabled = liveWidgetEnabledVal;
-            if (liveWidgetEnabledVal) registerLiveWidgetPeriodicSync(); else unregisterLiveWidgetPeriodicSync();
+            if ((liveWidgetEnabledVal || notificationsEnabledVal) && 'Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(() => {
+                    updateNotificationPermissionStatusUI();
+                    checkDeliveryProgressNotifications();
+                }).catch(() => {});
+            }
 
             appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
@@ -4993,8 +4998,8 @@
                 updateNotificationPermissionStatusUI();
                 if (perm === 'granted') {
                     showFeedbackBanner('اعلان‌های مرورگر فعال شد.', 'success');
+                    checkDeliveryProgressNotifications();
                     addLog('اجازه‌ی اعلان مرورگر داده شد.', 'success');
-                    if (appSettings.liveWidgetEnabled) registerLiveWidgetPeriodicSync();
                 } else {
                     showFeedbackBanner('اجازه‌ی اعلان داده نشد؛ در این حالت فقط پیام‌های داخل برنامه نمایش داده می‌شوند.', 'warn');
                 }
@@ -5113,6 +5118,7 @@
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) document.title = originalPageTitle;
             updateAttentionIndicators();
+            if (!document.hidden) checkDeliveryProgressNotifications(); // با برگشت به برنامه، ویجت/اعلان‌ها فوراً تازه شوند
         });
 
         // بی‌صدا کردن موقت اعلان‌های رکورد جاری (۳۰ دقیقه)؛ فقط اعلان‌ها را به تعویق می‌اندازد، نه خودِ مهلت را
@@ -5211,120 +5217,140 @@
         // همیشه کد در حال دوخت و درصد پیشرفت را نشان می‌دهد و خودش هر یک دقیقه به‌روزرسانی می‌شود،
         // بدون اینکه هر بار صدا/لرزش بدهد (چون صرفاً برای دیدن سریع وضعیت است، نه هشدار).
         const LIVE_WIDGET_TAG = 'sewing-live-status-widget';
-
-        /* ==================== خلاصه‌ی وضعیت ویجت زنده در IndexedDB + Periodic Background Sync ====================
-         * سرویس‌ورکر به localStorage صفحه دسترسی ندارد؛ برای این‌که اعلانِ «وضعیت زنده» بتواند حتی
-         * وقتی صفحه بسته/در پس‌زمینه است هم (تا حد امکان) به‌روزرسانی شود، یک خلاصه‌ی سبک از داده‌ی
-         * لازم (فقط رکورد در حال انجام + چند تنظیم) در IndexedDB نگه داشته می‌شود تا سرویس‌ورکر
-         * بتواند مستقلاً بخواندش. توجه: Periodic Background Sync فقط در Chrome/Edge (اندروید/دسکتاپ)
-         * و فقط برای برنامه‌ی نصب‌شده («Add to Home Screen») وجود دارد؛ فاصله‌ی واقعی اجرا دست خودِ
-         * مرورگر است (از چند دقیقه تا چند ساعت)، نه تضمینی که کد بتواند بدهد.
-         */
-        const LIVE_WIDGET_DB_NAME = 'sewing_live_widget_db';
-        const LIVE_WIDGET_STORE = 'state';
-        let liveWidgetDbPromise = null;
-        function getLiveWidgetDB() {
-            if (!liveWidgetDbPromise) {
-                liveWidgetDbPromise = new Promise((resolve, reject) => {
-                    if (!window.indexedDB) return reject(new Error('IndexedDB در دسترس نیست'));
-                    const req = indexedDB.open(LIVE_WIDGET_DB_NAME, 1);
-                    req.onupgradeneeded = () => { req.result.createObjectStore(LIVE_WIDGET_STORE); };
-                    req.onsuccess = () => resolve(req.result);
-                    req.onerror = () => reject(req.error);
-                });
-            }
-            return liveWidgetDbPromise;
-        }
-        async function syncLiveWidgetStateToIDB() {
+        // گرفتن رجیستریِ Service Worker با مهلت؛ اگر sw.js ثبت نشده باشد، `ready` برای همیشه معلق می‌ماند
+        async function getSwRegistrationSafe(timeoutMs) {
+            if (!navigator.serviceWorker) return null;
             try {
-                const rec = getCurrentActiveRecord();
-                const snapshot = {
-                    activeRecord: rec ? {
-                        id: rec.id, itemCode: rec.itemCode || '', itemTitle: rec.itemTitle || '',
-                        date: rec.date, time: rec.time, workDuration: rec.workDuration
-                    } : null,
-                    shopName: appSettings.shopName || 'آمار دوخت',
-                    liveWidgetEnabled: !!appSettings.liveWidgetEnabled,
-                    numFormat: appSettings.numFormat || 'persian',
-                    updatedAt: Date.now()
-                };
-                const db = await getLiveWidgetDB();
-                await new Promise((resolve, reject) => {
-                    const tx = db.transaction(LIVE_WIDGET_STORE, 'readwrite');
-                    tx.objectStore(LIVE_WIDGET_STORE).put(snapshot, 'snapshot');
-                    tx.oncomplete = () => resolve();
-                    tx.onerror = () => reject(tx.error);
-                });
-            } catch (e) {
-                console.warn('ذخیره‌ی وضعیت ویجت زنده در IndexedDB ناموفق بود:', e);
-            }
+                return await Promise.race([
+                    navigator.serviceWorker.ready,
+                    new Promise(resolve => setTimeout(() => resolve(null), timeoutMs || 4000))
+                ]);
+            } catch (e) { return null; }
         }
 
-        async function registerLiveWidgetPeriodicSync() {
-            try {
-                if (!('serviceWorker' in navigator)) return false;
-                const reg = await navigator.serviceWorker.ready;
-                if (!('periodicSync' in reg)) return false;
-                if ('permissions' in navigator) {
+        // بررسی دلایل احتمالیِ کار نکردنِ ویجت؛ خروجی: لیست مشکلات (خالی = همه چیز درست است)
+        async function diagnoseLiveWidget() {
+            const env = [];   // پیش‌نیازهای دستگاه/مرورگر (بدون آن‌ها هیچ اعلانی نمایش داده نمی‌شود)
+            const data = [];  // وضعیت داده‌ها و تنظیمات برنامه
+            if (!window.isSecureContext) env.push('صفحه روی HTTPS (یا localhost) باز نشده؛ اعلان و Service Worker کار نمی‌کند.');
+            if (!('Notification' in window)) {
+                env.push('این مرورگر از اعلان پشتیبانی نمی‌کند (در آیفون فقط بعد از «Add to Home Screen» و iOS 16.4 به بالا).');
+            } else if (Notification.permission === 'denied') {
+                env.push('اجازه‌ی اعلان برای این سایت مسدود شده؛ از تنظیمات مرورگر/گوشی باید باز شود.');
+            } else if (Notification.permission !== 'granted') {
+                env.push('هنوز اجازه‌ی اعلان داده نشده؛ دکمه‌ی «درخواست اجازه اعلان مرورگر» را بزنید.');
+            }
+            if (!('serviceWorker' in navigator)) {
+                env.push('Service Worker در این مرورگر پشتیبانی نمی‌شود.');
+            } else {
+                let reg = await getSwRegistrationSafe(2500);
+                if (!reg) {
+                    // یک‌بار ثبت مستقیم تا خطای واقعی (مثلاً 404 بودن sw.js) مشخص شود
                     try {
-                        const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
-                        if (status.state !== 'granted') return false;
-                    } catch (e) { /* در برخی مرورگرها این پرمیشن اصلاً تعریف نشده؛ نادیده گرفته می‌شود */ }
+                        await navigator.serviceWorker.register('sw.js');
+                        reg = await getSwRegistrationSafe(4000);
+                    } catch (e) {
+                        env.push('ثبت sw.js ناموفق بود: ' + ((e && e.message) ? e.message : e) + ' — فایل sw.js باید دقیقاً کنار index.html و روی همان سرور آپلود شده باشد.');
+                    }
+                    if (!reg && !env.some(x => x.startsWith('ثبت sw.js'))) env.push('Service Worker فعال نشد؛ صفحه را یک‌بار کامل ببندید و دوباره باز کنید.');
                 }
-                await reg.periodicSync.register('live-widget-refresh', { minInterval: 15 * 60 * 1000 });
+            }
+            if (!appSettings.liveWidgetEnabled) data.push('گزینه‌ی «فعال‌سازی ویجت وضعیت زنده» روشن و ذخیره نشده است (بعد از زدن تیک، «ذخیره تنظیمات» را بزنید).');
+            if (!getCurrentActiveRecord()) {
+                data.push('کار جاری‌ای وجود ندارد. ویجت فقط برای آخرین رکوردی نمایش داده می‌شود که «آمار روزانه» دارد (تا مدت هدف محاسبه شود) و هنوز کد بعدی برایش ثبت نشده یا «کار تمام شد» زده نشده است.');
+            }
+            return { env, data };
+        }
+
+        async function testLiveWidget() {
+            const out = document.getElementById('liveWidgetDiagText');
+            if (out) { out.className = 'text-[11px] leading-relaxed text-slate-500'; out.innerText = 'در حال بررسی...'; }
+            const { env, data } = await diagnoseLiveWidget();
+            const lines = [];
+            let tone = 'ok';
+            if (env.length > 0) {
+                tone = 'bad';
+                lines.push('<b>مشکل در پیش‌نیازهای دستگاه/مرورگر:</b>');
+                env.forEach(p => lines.push('• ' + escapeHTML(p)));
+            } else {
+                // اعلان آزمایشی با داده‌ی نمونه: مشخص می‌کند خودِ دستگاه توانایی نمایش ویجت را دارد یا نه
+                const shown = await updateLiveStatusNotification({ demo: true });
+                if (shown) {
+                    lines.push('✅ اعلان آزمایشی فرستاده شد؛ نوار اعلان‌های گوشی را کامل پایین بکشید. (اعلان بی‌صدا است و در اندروید ممکن است زیر بخش «Silent / بی‌صدا» یا جمع‌شده باشد.)');
+                } else {
+                    tone = 'bad';
+                    lines.push('❌ پیش‌نیازها درست است ولی مرورگر/گوشی اعلان را نمایش نداد؛ جزئیات در «رویدادها» (لاگ سیستم) ثبت شد. تنظیمات اعلانِ Chrome و بخش راهنمای شیائومی را بررسی کنید.');
+                }
+            }
+            if (data.length > 0) {
+                if (tone === 'ok') tone = 'warn';
+                lines.push('<b>وضعیت داده‌ها/تنظیمات (دلیل نبودن ویجت واقعی):</b>');
+                data.forEach(p => lines.push('• ' + escapeHTML(p)));
+                if (env.length === 0) lines.push('اعلان آزمایشی، اگر ویجت فعال یا کار جاری نباشد، حداکثر تا یک دقیقه بعد خودکار بسته می‌شود.');
+            } else if (env.length === 0) {
+                lines.push('✅ تنظیمات و کار جاری درست است؛ ویجت واقعی هم باید هر دقیقه به‌روز شود.');
+            }
+            if (out) {
+                out.className = 'text-[11px] leading-relaxed ' + (tone === 'bad' ? 'text-rose-600 dark:text-rose-400' : (tone === 'warn' ? 'text-amber-700 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'));
+                out.innerHTML = lines.join('<br>');
+            }
+        }
+
+        // opts.demo = true: نمایش اعلان با داده‌ی نمونه، مستقل از کار جاری و تیک تنظیمات (فقط برای آزمایش)
+        async function updateLiveStatusNotification(opts) {
+            const demo = !!(opts && opts.demo);
+            if (!('Notification' in window) || Notification.permission !== 'granted') return false;
+            const reg = await getSwRegistrationSafe(4000);
+            if (!reg) return false;
+
+            const closeAll = async () => {
+                try { (await reg.getNotifications({ tag: LIVE_WIDGET_TAG })).forEach(n => n.close()); } catch (e) { /* بی‌اهمیت */ }
+            };
+            let rec, progress;
+            if (demo) {
+                rec = { itemCode: '۱۲۳', itemTitle: 'نمونه آزمایشی', endDateTime: '' };
+                progress = { percent: 42, remainingMinutes: 95 };
+            } else {
+                if (!appSettings.liveWidgetEnabled) { await closeAll(); return false; }
+                rec = getCurrentActiveRecord();
+                progress = rec ? computeRecordProgress(rec) : null;
+                if (!rec || !progress) { await closeAll(); return false; }
+            }
+
+            const isOverdue = progress.percent >= 100;
+            const statusText = isOverdue
+                ? `${formatMinutesDuration(progress.remainingMinutes)} تاخیر از موعد`
+                : `${formatMinutesDuration(progress.remainingMinutes)} تا موعد باقی مانده`;
+            const deadlineText = rec.endDateTime ? ` • موعد: ${rec.endDateTime}` : '';
+
+            const options = {
+                body: `کد ${rec.itemCode || '-'} — ${rec.itemTitle || '-'} • ${formatNumber(progress.percent)}٪ • ${statusText}${deadlineText}`,
+                icon: 'icon-192.png',
+                badge: 'icon-192.png',
+                tag: LIVE_WIDGET_TAG,
+                renotify: false, // فقط محتوا آپدیت می‌شود، بدون صدا/لرزش دوباره — رفتار «ویجت»، نه «هشدار»
+                requireInteraction: true,
+                silent: true,
+                dir: 'rtl',
+                lang: 'fa',
+                timestamp: Date.now()
+            };
+            const image = drawProgressWidgetImage(rec, progress);
+            if (image) options.image = image;
+            const title = `📊 وضعیت زنده — ${appSettings.shopName || 'آمار دوخت'}${demo ? ' (آزمایشی)' : ''}`;
+
+            try {
+                await reg.showNotification(title, options);
                 return true;
             } catch (e) {
-                console.warn('ثبت Periodic Background Sync ناموفق بود (طبیعی است اگر برنامه نصب نشده یا مرورگر پشتیبانی نکند):', e);
+                console.warn('نمایش ویجت با تصویر ناموفق بود:', e);
+                if (options.image) {
+                    delete options.image; // برخی مرورگرها/گوشی‌ها تصویر بزرگ در اعلان را نمی‌پذیرند
+                    try { await reg.showNotification(title, options); return true; } catch (e2) { console.warn(e2); }
+                }
+                addLog('نمایش ویجت وضعیت زنده ناموفق بود (اعلان توسط مرورگر رد شد).', 'warn');
                 return false;
             }
-        }
-        async function unregisterLiveWidgetPeriodicSync() {
-            try {
-                if (!('serviceWorker' in navigator)) return;
-                const reg = await navigator.serviceWorker.ready;
-                if (reg.periodicSync) await reg.periodicSync.unregister('live-widget-refresh');
-            } catch (e) { /* بی‌اهمیت */ }
-        }
-        /* ==================== پایان بخش IndexedDB + Periodic Background Sync ==================== */
-
-        function updateLiveStatusNotification() {
-            syncLiveWidgetStateToIDB();
-            if (!('Notification' in window) || Notification.permission !== 'granted') return;
-            if (!navigator.serviceWorker) return;
-
-            navigator.serviceWorker.ready.then(reg => {
-                if (!appSettings.liveWidgetEnabled) {
-                    reg.getNotifications({ tag: LIVE_WIDGET_TAG }).then(list => list.forEach(n => n.close()));
-                    return;
-                }
-                const rec = getCurrentActiveRecord();
-                const progress = rec ? computeRecordProgress(rec) : null;
-                if (!rec || !progress) {
-                    reg.getNotifications({ tag: LIVE_WIDGET_TAG }).then(list => list.forEach(n => n.close()));
-                    return;
-                }
-
-                const image = drawProgressWidgetImage(rec, progress);
-                const isOverdue = progress.percent >= 100;
-                const statusText = isOverdue
-                    ? `${formatMinutesDuration(progress.remainingMinutes)} تاخیر از موعد`
-                    : `${formatMinutesDuration(progress.remainingMinutes)} تا موعد باقی مانده`;
-
-                const options = {
-                    body: `کد ${rec.itemCode || '-'} — ${rec.itemTitle || '-'} • ${formatNumber(progress.percent)}٪ • ${statusText}`,
-                    icon: 'icon-192.png',
-                    badge: 'icon-192.png',
-                    tag: LIVE_WIDGET_TAG,
-                    renotify: false, // فقط محتوا آپدیت می‌شود، بدون صدا/لرزش دوباره — رفتار «ویجت»، نه «هشدار»
-                    requireInteraction: true,
-                    silent: true,
-                    dir: 'rtl',
-                    lang: 'fa',
-                    timestamp: Date.now()
-                };
-                if (image) options.image = image;
-                reg.showNotification(`📊 وضعیت زنده — ${appSettings.shopName || 'آمار دوخت'}`, options).catch(() => {});
-            }).catch(() => {});
         }
 
         function checkDeliveryProgressNotifications() {
@@ -5725,7 +5751,6 @@
         initPhotoStore();
         initStorageFolderConnection();
         handleStartupShortcutAction();
-        if (appSettings.liveWidgetEnabled) registerLiveWidgetPeriodicSync();
 
         // بررسی دوره‌ای پیشرفت کار جاری برای اعلان‌های هوشمند (هر ۱ دقیقه یک‌بار)،
         // و تازه‌سازیِ سریع‌ترِ خودِ نوار پیشرفت (هر ۲۰ ثانیه) برای حس «زنده» بودن شمارش

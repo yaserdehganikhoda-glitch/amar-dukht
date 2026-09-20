@@ -1,66 +1,46 @@
 {
-  "id": "/",
+  "id": "./",
   "name": "سامانه آمار دوخت لباس",
   "short_name": "آمار دوخت",
-  "description": "سامانه هوشمند ثبت و پیگیری آمار دوخت، مدیریت زمان تحویل، یادداشت‌های روزانه و اعلان‌های هوشمند پیشرفت کار برای خیاط‌ها و کارگاه‌های دوخت.",
-  "start_url": "index.html",
+  "description": "ثبت و مدیریت آمار دوخت، پیشرفت کار جاری و گزارش‌های ماهانه",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
-  "orientation": "portrait-primary",
-  "dir": "rtl",
-  "lang": "fa-IR",
+  "orientation": "portrait",
   "background_color": "#f8fafc",
   "theme_color": "#4f46e5",
-  "categories": ["business", "productivity", "utilities"],
+  "categories": ["business", "productivity"],
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512-maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
     {
       "name": "ثبت کارکرد جدید",
-      "short_name": "ثبت جدید",
-      "description": "رفتن مستقیم به فرم ثبت کارکرد جدید",
-      "url": "index.html?action=add",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "short_name": "ثبت",
+      "url": "./index.html?action=add",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "پیشرفت کار جاری",
-      "short_name": "پیشرفت کار",
-      "description": "مشاهده‌ی وضعیت پیشرفت کدِ در حال دوخت",
-      "url": "index.html?action=progress",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "short_name": "پیشرفت",
+      "url": "./index.html?action=progress",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "لیست کارکردها",
       "short_name": "رکوردها",
-      "description": "مشاهده‌ی جدول کارکردهای ثبت‌شده",
-      "url": "index.html?action=records",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "url": "./index.html?action=records",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "یادداشت‌های روزانه",
-      "short_name": "یادداشت‌ها",
-      "description": "مشاهده و ثبت یادداشت‌های خاص روزانه",
-      "url": "index.html?action=notes",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "short_name": "یادداشت",
+      "url": "./index.html?action=notes",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }

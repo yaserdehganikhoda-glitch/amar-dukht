@@ -22,14 +22,17 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
 
     - name: Install Cordova
       run: npm install -g cordova
 
-    - name: Build Android APK
+    - name: Accept Android SDK Licenses
+      run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
+    - name: Prepare and Build Cordova Android
       run: |
-        cordova platform add android
+        cordova platform add android@latest
         cordova build android --debug
 
     - name: Upload APK Artifact

@@ -24,28 +24,16 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
+    - name: Install Cordova
+      run: npm install -g cordova
 
-    - name: Install Dependencies
+    - name: Build APK with Cordova
       run: |
-        npm install
-        npm install @capacitor/core @capacitor/cli @capacitor/android
-
-    - name: Initialize Capacitor and Build
-      run: |
-        npx cap init "amar-dukht" "com.sewing.app" --web-dir www || true
-        npx cap add android || true
-        npx cap sync android
-        cd android && ./gradlew assembleDebug
+        cordova config set target android
+        cordova platform add android@12.0.0 --save || true
+        cordova build android --debug
 
     - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: SewingApp-APK
-        path: android/app/build/outputs/apk/debug/app-debug.apk
-
-    - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: SewingApp-APK

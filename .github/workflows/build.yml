@@ -24,39 +24,16 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Accept Android SDK Licenses
-      run: |
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+    - name: Install Bubblewrap CLI
+      run: npm install -g @bubblewrap/cli
 
-    - name: Prepare Cordova Project
+    - name: Initialize and Build Android App
       run: |
-        npm install -g cordova
-        cordova create cordova_app com.sewing.app SewingApp
-        rm -rf cordova_app/www/*
-        cp -r index.html manifest.json sw.js icon-*.png cordova_app/www/ 2>/dev/null || true
-        cp -r www/* cordova_app/www/ 2>/dev/null || true
+        bubblewrap init --manifest=manifest.json
+        bubblewrap build
 
-    - name: Configure and Build Android
-      run: |
-        cd cordova_app
-        cat << 'EOF' > config.xml
-        <?xml version='1.0' encoding='utf-8'?>
-        <widget id="com.sewing.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-            <name>SewingApp</name>
-            <description>Sewing Statistics Application</description>
-            <author email="dev@example.com">Phoenix.Yaser</author>
-            <content src="index.html" />
-            <access origin="*" />
-            <allow-intent href="http://*/*" />
-            <allow-intent href="https://*/*" />
-            <preference name="CORDOVA_ANDROID_GRADLE_DISTRIBUTION_URL" value="https\://services.gradle.org/distributions/gradle-8.2-all.zip" />
-        </widget>
-        EOF
-        cordova platform add android@12.0.0
-        cordova build android --debug
-
-    - name: Upload APK
+    - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: SewingApp-APK
-        path: cordova_app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+        path: ./*.apk

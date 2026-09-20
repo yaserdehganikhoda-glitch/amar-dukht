@@ -24,17 +24,29 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Prepare Cordova Project Structure
+    - name: Prepare Cordova Project
       run: |
         npm install -g cordova
-        cordova create cordova_app com.sewing.amar_dukht "amar-dukht"
+        cordova create cordova_app com.sewing.app SewingApp
         rm -rf cordova_app/www/*
         cp -r index.html manifest.json sw.js icon-*.png cordova_app/www/ 2>/dev/null || true
         cp -r www/* cordova_app/www/ 2>/dev/null || true
 
-    - name: Build Android APK
+    - name: Configure and Build Android
       run: |
         cd cordova_app
+        cat << 'EOF' > config.xml
+        <?xml version='1.0' encoding='utf-8'?>
+        <widget id="com.sewing.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+            <name>SewingApp</name>
+            <description>Sewing Statistics Application</description>
+            <author email="dev@example.com">Phoenix.Yaser</author>
+            <content src="index.html" />
+            <access origin="*" />
+            <allow-intent href="http://*/*" />
+            <allow-intent href="https://*/*" />
+        </widget>
+        EOF
         cordova platform add android@12.0.0
         cordova build android --debug
 

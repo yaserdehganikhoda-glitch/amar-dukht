@@ -24,17 +24,22 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Install Cordova
-      run: npm install -g cordova
-
-    - name: Build APK with Cordova
+    - name: Prepare Cordova Project Structure
       run: |
-        cordova config set target android
-        cordova platform add android@12.0.0 --save || true
+        npm install -g cordova
+        cordova create cordova_app com.sewing.amar_dukht "amar-dukht"
+        rm -rf cordova_app/www/*
+        cp -r index.html manifest.json sw.js icon-*.png cordova_app/www/ 2>/dev/null || true
+        cp -r www/* cordova_app/www/ 2>/dev/null || true
+
+    - name: Build Android APK
+      run: |
+        cd cordova_app
+        cordova platform add android@12.0.0
         cordova build android --debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: SewingApp-APK
-        path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+        path: cordova_app/platforms/android/app/build/outputs/apk/debug/app-debug.apk

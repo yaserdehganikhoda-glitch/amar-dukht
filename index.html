@@ -302,6 +302,7 @@
                 سامانه آمار دوخت لباس
             </h1>
             <p id="mainAppSubtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-normal">سیستم هوشمند آمار و مدیریت دوخت</p>
+            <p id="ownerInfoLine" class="hidden text-xs text-slate-400 dark:text-slate-500 mt-1"></p>
             <div class="mt-3 flex justify-center">
                 <span id="streakBadgeText" class="hidden"></span>
             </div>
@@ -371,14 +372,26 @@
 
         <!-- کارت پیشرفت کار جاری و اعلان‌های هوشمند تحویل -->
         <div id="activeProgressCard" class="hidden bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-300 dark:border-slate-600 mb-6 transition-all">
-            <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center justify-between mb-4">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
                     <i class="fa-solid fa-stopwatch text-indigo-600 dark:text-indigo-400"></i>
-                    پیشرفت کار جاری
+                    ویجت پیشرفت کار جاری
                 </h3>
                 <span id="activeProgressPercentBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">—</span>
             </div>
-            <div id="activeProgressList"></div>
+            <div class="flex items-center gap-4">
+                <div class="relative shrink-0" style="width:86px;height:86px;">
+                    <svg viewBox="0 0 88 88" class="w-full h-full -rotate-90">
+                        <circle cx="44" cy="44" r="38" fill="none" stroke-width="7" class="stroke-slate-100 dark:stroke-slate-800"></circle>
+                        <circle id="progressRingArc" cx="44" cy="44" r="38" fill="none" stroke-width="7" stroke-linecap="round" stroke="#10b981" stroke-dasharray="238.76" stroke-dashoffset="238.76" class="transition-all duration-700 ease-out"></circle>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="progressRingPercentText" class="text-base font-extrabold text-slate-700 dark:text-slate-100">۰٪</span>
+                        <i id="progressRingStatusIcon" class="fa-solid fa-scissors text-[10px] text-slate-400 dark:text-slate-500 mt-0.5"></i>
+                    </div>
+                </div>
+                <div id="activeProgressList" class="flex-1 min-w-0"></div>
+            </div>
         </div>
 
         <!-- فرم ثبت و ویرایش -->
@@ -643,23 +656,23 @@
 
             <div class="overflow-x-auto max-h-[60vh]">
                 <table class="w-full text-right text-sm">
-                    <thead class="bg-slate-100/70 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 text-xs border-b-2 border-slate-400 dark:border-slate-500">
+                    <thead class="text-slate-600 dark:text-slate-300 text-xs">
                         <tr>
-                            <th class="p-3.5">#</th>
-                            <th class="p-3.5 no-print">عکس</th>
-                            <th class="p-3.5">کد</th>
-                            <th class="p-3.5">عنوان لباس</th>
-                            <th class="p-3.5">رنگ</th>
-                            <th class="p-3.5">تعداد دریافتی</th>
-                            <th id="thUnitPrice" class="p-3.5">قیمت واحد (تومان)</th>
-                            <th id="thTotalPrice" class="p-3.5">مبلغ کل (تومان)</th>
-                            <th class="p-3.5">آمار روزانه</th>
-                            <th class="p-3.5">مدت زمان تحویل کار</th>
-                            <th class="p-3.5">تاریخ و زمان پایان</th>
-                            <th class="p-3.5">شروع کد بعد</th>
-                            <th class="p-3.5">وضعیت</th>
-                            <th class="p-3.5">تاریخ و ساعت</th>
-                            <th class="p-3.5 text-center no-print">عملیات</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">#</th>
+                            <th class="sticky top-0 z-10 p-3.5 no-print bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عکس</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">کد</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عنوان لباس</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">رنگ</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">تعداد دریافتی</th>
+                            <th id="thUnitPrice" class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">قیمت واحد (تومان)</th>
+                            <th id="thTotalPrice" class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">مبلغ کل (تومان)</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">آمار روزانه</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">مدت زمان تحویل کار</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">تاریخ و زمان پایان</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">شروع کد بعد</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">وضعیت</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">تاریخ و ساعت</th>
+                            <th class="sticky top-0 z-10 p-3.5 text-center no-print bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عملیات</th>
                         </tr>
                     </thead>
                     <tbody id="recordsTableBody" class="divide-y divide-slate-300 dark:divide-slate-600">
@@ -881,23 +894,89 @@
 
     <!-- مدال تنظیمات و ظاهر برنامه -->
     <div id="settingsModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-5 my-8 transition-all">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-300 dark:border-slate-600">
-                <h2 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                    <i class="fa-solid fa-gear text-purple-600 dark:text-purple-400"></i>
-                    تنظیمات و ظاهر برنامه
-                </h2>
-                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl transition-colors">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-xl w-full shadow-2xl border border-slate-300 dark:border-slate-600 my-8 transition-all overflow-hidden">
+            <div class="bg-gradient-to-l from-purple-700 to-indigo-700 px-6 py-5 text-white relative">
+                <button onclick="closeSettingsModal()" class="absolute top-4 left-4 text-white/80 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
+                <h2 class="text-lg font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-sliders"></i> تنظیمات و پیکربندی سامانه
+                </h2>
+                <p class="text-xs text-white/75 mt-1">مدیریت پروفایل، ظاهر، امنیت و اعلان‌های برنامه</p>
+
+                <div class="mt-4 flex items-center gap-3 bg-white/10 rounded-xl p-3 backdrop-blur-sm border border-white/10">
+                    <div class="w-11 h-11 rounded-full bg-white/15 flex items-center justify-center overflow-hidden shrink-0 border-2 border-white/25">
+                        <img id="settingsProfilePreviewImg" src="" class="hidden w-full h-full object-cover" alt="پروفایل">
+                        <i id="settingsProfilePreviewIcon" class="fa-solid fa-user text-white/80"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <p id="settingsProfilePreviewName" class="text-sm font-bold truncate">کاربر مهمان</p>
+                        <p id="settingsProfilePreviewSub" class="text-[11px] text-white/70 truncate">سامانه آمار دوخت لباس</p>
+                    </div>
+                </div>
             </div>
-            
-            <div class="space-y-4 max-h-[65vh] overflow-y-auto pl-1">
+
+            <div class="flex items-center gap-1 px-4 pt-3 overflow-x-auto border-b border-slate-200 dark:border-slate-700">
+                <button type="button" onclick="switchSettingsTab('profile')" data-settings-tab="profile" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
+                    <i class="fa-solid fa-id-badge"></i> پروفایل
+                </button>
+                <button type="button" onclick="switchSettingsTab('appearance')" data-settings-tab="appearance" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
+                    <i class="fa-solid fa-palette"></i> ظاهری
+                </button>
+                <button type="button" onclick="switchSettingsTab('security')" data-settings-tab="security" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
+                    <i class="fa-solid fa-shield-halved"></i> امنیت
+                </button>
+                <button type="button" onclick="switchSettingsTab('notifications')" data-settings-tab="notifications" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
+                    <i class="fa-solid fa-bell"></i> اعلان‌ها
+                </button>
+                <button type="button" onclick="switchSettingsTab('storage')" data-settings-tab="storage" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
+                    <i class="fa-solid fa-database"></i> حافظه
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4 max-h-[52vh] overflow-y-auto">
+                <div id="settingsTab-profile" class="settings-tab-panel space-y-5">
+                <div class="space-y-3 pb-4 border-b border-slate-200 dark:border-slate-700">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-id-badge"></i> پروفایل کاربری
+                    </h3>
+                    <div class="flex items-center gap-4">
+                        <div class="relative shrink-0">
+                            <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 flex items-center justify-center overflow-hidden">
+                                <img id="settingOwnerPhotoPreview" src="" class="hidden w-full h-full object-cover" alt="عکس پروفایل">
+                                <i id="settingOwnerPhotoIcon" class="fa-solid fa-user text-2xl text-slate-300 dark:text-slate-600"></i>
+                            </div>
+                            <button type="button" onclick="document.getElementById('settingOwnerPhotoInput').click()" class="absolute -bottom-1 -left-1 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-[10px] shadow" title="تغییر عکس پروفایل">
+                                <i class="fa-solid fa-camera"></i>
+                            </button>
+                            <input type="file" id="settingOwnerPhotoInput" accept="image/*" class="hidden" onchange="handleOwnerPhotoSelect(event)">
+                        </div>
+                        <div class="flex-1 min-w-0 flex flex-wrap items-center gap-x-3 gap-y-1">
+                            <button type="button" onclick="document.getElementById('settingOwnerPhotoInput').click()" class="text-xs text-purple-600 dark:text-purple-400 font-medium hover:underline">تغییر عکس پروفایل</button>
+                            <button type="button" id="removeOwnerPhotoBtn" onclick="removeOwnerPhoto()" class="hidden text-xs text-rose-600 dark:text-rose-400 font-medium hover:underline">حذف عکس</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">نام و نام خانوادگی</label>
+                        <input type="text" id="settingOwnerName" oninput="updateSettingsProfilePreview()" placeholder="مثلاً علی محمدی" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">شماره تماس</label>
+                            <input type="text" inputmode="tel" id="settingOwnerPhone" placeholder="مثلاً ۰۹۱۲۱۲۳۴۵۶۷" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">آدرس کارگاه (اختیاری)</label>
+                            <input type="text" id="settingOwnerAddress" placeholder="مثلاً تهران، ..." class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">مشخصات پایه</h3>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">عنوان کارگاه / سامانه</label>
-                        <input type="text" id="settingShopName" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                        <input type="text" id="settingShopName" oninput="updateSettingsProfilePreview()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
@@ -917,7 +996,9 @@
                         </div>
                     </div>
                 </div>
+                </div>
 
+                <div id="settingsTab-appearance" class="settings-tab-panel hidden space-y-4">
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">تنظیمات ظاهری و محیطی</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1042,7 +1123,9 @@
                         رنگ‌های سفارشی مستقل از حالت روشن/تاریک اعمال می‌شوند؛ گزینه «پیش‌فرض سامانه» رنگ‌بندی استاندارد را برمی‌گرداند. «کادرها» شامل کارت‌های بزرگ (مثل فرم و جدول) و «فیلدها» شامل جعبه‌های ورودی و دکمه‌های کوچک نوار ابزار است.
                     </p>
                 </div>
+                </div>
 
+                <div id="settingsTab-security" class="settings-tab-panel hidden space-y-4">
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
                     <h3 class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-lock"></i> قفل ورود به برنامه
@@ -1092,7 +1175,9 @@
                         <i class="fa-solid fa-key"></i> ذخیره کد امنیتی
                     </button>
                 </div>
+                </div>
 
+                <div id="settingsTab-notifications" class="settings-tab-panel hidden space-y-4">
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
                     <h3 class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-bell"></i> اعلان‌های هوشمند پیشرفت کار
@@ -1120,6 +1205,19 @@
                         <i class="fa-solid fa-paper-plane"></i> ارسال اعلان آزمایشی (برای بررسی نمایش روی صفحه)
                     </button>
 
+                    <div class="space-y-2.5 pt-3 mt-1 border-t border-dashed border-slate-300 dark:border-slate-600">
+                        <h4 class="text-[11px] font-bold text-teal-700 dark:text-teal-400 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-table-cells"></i> ویجت وضعیت زنده (صفحه اصلی گوشی)
+                        </h4>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                            گوشی‌ها (اندروید/iOS) به یک وب‌سایت اجازه‌ی نصب ویجت واقعی روی صفحه اصلی را نمی‌دهند — این محدودیتِ خودِ سیستم‌عامل است، نه چیزی که کد این برنامه بتواند دورش بزند. نزدیک‌ترین جایگزینِ واقعی: یک اعلانِ دائمی و بی‌صدا در نوار اعلان‌ها که مثل یک ویجت، کد در حال دوخت، درصد پیشرفت و زمان باقی‌مانده را نشان می‌دهد و هر دقیقه خودش به‌روز می‌شود — بدون اینکه هر بار صدا یا لرزش بدهد.
+                        </p>
+                        <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                            <input type="checkbox" id="settingLiveWidgetEnabled" class="w-4 h-4 rounded accent-teal-600">
+                            فعال‌سازی ویجت وضعیت زنده در نوار اعلان‌ها
+                        </label>
+                    </div>
+
                     <div class="rounded-xl border border-amber-200 dark:border-amber-900/50 overflow-hidden">
                         <button type="button" onclick="toggleXiaomiGuide()" class="w-full flex items-center justify-between px-3 py-2.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-xs font-bold transition-colors">
                             <span><i class="fa-solid fa-mobile-screen-button"></i> راهنمای اختصاصی گوشی‌های شیائومی (HyperOS / MIUI)</span>
@@ -1141,7 +1239,9 @@
                         <span class="text-xs font-bold text-orange-600 dark:text-orange-400"><i class="fa-solid fa-fire"></i> جاری: <span id="settingCurrentStreakVal">۰</span> &nbsp;|&nbsp; بهترین: <span id="settingBestStreakVal">۰</span></span>
                     </div>
                 </div>
+                </div>
 
+                <div id="settingsTab-storage" class="settings-tab-panel hidden space-y-4">
                 <div class="space-y-3">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">وضعیت حافظه سامانه</h3>
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 text-xs space-y-2">
@@ -1155,9 +1255,10 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
 
-            <div class="flex justify-end gap-2 pt-3 border-t border-slate-300 dark:border-slate-600">
+            <div class="flex justify-end gap-2 px-6 py-4 border-t border-slate-300 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-900/50">
                 <button onclick="closeSettingsModal()" class="px-4 py-2 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">انصراف</button>
                 <button onclick="saveAppSettings(event)" class="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm hover:bg-purple-700 transition-colors shadow-sm">ذخیره تنظیمات</button>
             </div>
@@ -1478,8 +1579,13 @@
             fieldColor: 'default',
             notificationsEnabled: false,
             voiceAlertsEnabled: false,
+            liveWidgetEnabled: false,
             onTimeStreak: 0,
-            bestStreak: 0
+            bestStreak: 0,
+            ownerName: '',
+            ownerPhone: '',
+            ownerAddress: '',
+            ownerPhoto: null
         };
         let saveTimeout = null;
         let hasPendingSave = false;
@@ -2227,6 +2333,26 @@
             if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
+        // اجرای اکشنِ میان‌بر صفحه اصلی گوشی (App Shortcuts در manifest.json)؛ مثلاً وقتی کاربر
+        // از منوی لمس‌طولانیِ آیکون برنامه، «ثبت کارکرد جدید» یا «پیشرفت کار جاری» را انتخاب می‌کند.
+        function handleStartupShortcutAction() {
+            const params = new URLSearchParams(window.location.search);
+            const action = params.get('action');
+            if (!action) return;
+            setTimeout(() => {
+                if (action === 'add') {
+                    bottomNavGoAddRecord();
+                } else if (action === 'progress') {
+                    const card = document.getElementById('activeProgressCard');
+                    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (action === 'records') {
+                    bottomNavGoRecords();
+                } else if (action === 'notes') {
+                    bottomNavGoNotes();
+                }
+            }, 300);
+        }
+
         function bottomNavOpenMore(event) {
             if (event) event.stopPropagation();
             const menu = document.getElementById('toolsDropdownMenu');
@@ -2273,10 +2399,11 @@
             const currency = appSettings.currency || 'تومان';
             const totalAmountSum = sumTotalPrice(records);
             const unknownPriceCount = countUnknownPriceRecords(records);
+            const ownerLine = getOwnerInfoLineText();
 
             document.getElementById('printRecordsTitle').innerText = `${shopName} - لیست کارکردها`;
             document.getElementById('printRecordsSubtitle').innerText =
-                `دوره: ${periodLabel}  |  تعداد رکورد: ${formatNumber(records.length)}  |  مجموع مبلغ: ${formatNumber(totalAmountSum)} ${currency}${unknownPriceCount > 0 ? '  |  ' + formatNumber(unknownPriceCount) + ' رکورد با قیمت نامعلوم' : ''}  |  تاریخ چاپ: ${formatDateDigits(currentJalali.fullDateStr)}`;
+                `${ownerLine ? ownerLine + '  |  ' : ''}دوره: ${periodLabel}  |  تعداد رکورد: ${formatNumber(records.length)}  |  مجموع مبلغ: ${formatNumber(totalAmountSum)} ${currency}${unknownPriceCount > 0 ? '  |  ' + formatNumber(unknownPriceCount) + ' رکورد با قیمت نامعلوم' : ''}  |  تاریخ چاپ: ${formatDateDigits(currentJalali.fullDateStr)}`;
 
             window.print();
         }
@@ -2413,6 +2540,24 @@
         }
 
         function openSettingsModal() {
+            document.getElementById('settingOwnerName').value = appSettings.ownerName || '';
+            document.getElementById('settingOwnerPhone').value = appSettings.ownerPhone || '';
+            document.getElementById('settingOwnerAddress').value = appSettings.ownerAddress || '';
+            currentOwnerPhotoData = appSettings.ownerPhoto || null;
+            const ownerPhotoPreview = document.getElementById('settingOwnerPhotoPreview');
+            const ownerPhotoIcon = document.getElementById('settingOwnerPhotoIcon');
+            const removePhotoBtn = document.getElementById('removeOwnerPhotoBtn');
+            if (currentOwnerPhotoData) {
+                ownerPhotoPreview.src = currentOwnerPhotoData;
+                ownerPhotoPreview.classList.remove('hidden');
+                ownerPhotoIcon.classList.add('hidden');
+                removePhotoBtn.classList.remove('hidden');
+            } else {
+                ownerPhotoPreview.classList.add('hidden');
+                ownerPhotoIcon.classList.remove('hidden');
+                removePhotoBtn.classList.add('hidden');
+            }
+
             document.getElementById('settingShopName').value = appSettings.shopName || 'سامانه آمار دوخت لباس';
             document.getElementById('settingCurrency').value = appSettings.currency || 'تومان';
             document.getElementById('settingDefaultStatus').value = appSettings.defaultStatus || 'به موقع';
@@ -2432,6 +2577,7 @@
 
             document.getElementById('settingNotificationsEnabled').checked = !!appSettings.notificationsEnabled;
             document.getElementById('settingVoiceAlertsEnabled').checked = !!appSettings.voiceAlertsEnabled;
+            document.getElementById('settingLiveWidgetEnabled').checked = !!appSettings.liveWidgetEnabled;
             document.getElementById('settingCurrentStreakVal').innerText = formatNumber(appSettings.onTimeStreak || 0);
             document.getElementById('settingBestStreakVal').innerText = formatNumber(appSettings.bestStreak || 0);
             updateNotificationPermissionStatusUI();
@@ -2444,6 +2590,8 @@
             const sizeInKB = (sizeInBytes / 1024).toFixed(2);
             document.getElementById('storageUsageSize').innerText = `${formatNumber(sizeInKB)} کیلوبایت`;
 
+            updateSettingsProfilePreview();
+            switchSettingsTab('profile');
             document.getElementById('settingsModal').classList.remove('hidden');
         }
 
@@ -2513,6 +2661,9 @@
 
         function saveAppSettings(event) {
             event.preventDefault();
+            const ownerNameVal = document.getElementById('settingOwnerName').value.trim();
+            const ownerPhoneVal = document.getElementById('settingOwnerPhone').value.trim();
+            const ownerAddressVal = document.getElementById('settingOwnerAddress').value.trim();
             // اگر نام فروشگاه خالی گذاشته شود، از مقدار پیش‌فرض استفاده می‌شود؛ قبلاً در این حالت
             // کل فرم (از جمله تم، فونت، رنگ‌ها و واحد پول) بدون هیچ پیام خطایی ذخیره نمی‌شد.
             const shopNameVal = document.getElementById('settingShopName').value.trim() || appSettings.shopName || 'سامانه آمار دوخت لباس';
@@ -2527,7 +2678,12 @@
             const fieldColorVal = document.getElementById('settingFieldColor').value;
             const notificationsEnabledVal = document.getElementById('settingNotificationsEnabled').checked;
             const voiceAlertsEnabledVal = document.getElementById('settingVoiceAlertsEnabled').checked;
+            const liveWidgetEnabledVal = document.getElementById('settingLiveWidgetEnabled').checked;
 
+            appSettings.ownerName = ownerNameVal;
+            appSettings.ownerPhone = ownerPhoneVal;
+            appSettings.ownerAddress = ownerAddressVal;
+            appSettings.ownerPhoto = currentOwnerPhotoData;
             appSettings.shopName = shopNameVal;
             appSettings.currency = currencyVal;
             appSettings.defaultStatus = defaultStatusVal;
@@ -2540,6 +2696,7 @@
             appSettings.fieldColor = fieldColorVal;
             appSettings.notificationsEnabled = notificationsEnabledVal;
             appSettings.voiceAlertsEnabled = voiceAlertsEnabledVal;
+            appSettings.liveWidgetEnabled = liveWidgetEnabledVal;
 
             appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
@@ -2982,11 +3139,29 @@
             closeDeleteCodeModal();
         }
 
+        // متن «مسئول: نام | تماس: شماره» برای استفاده در هدر برنامه و گزارش‌های رسمی چاپی/خروجی
+        function getOwnerInfoLineText() {
+            const parts = [];
+            if (appSettings.ownerName) parts.push(`مسئول: ${appSettings.ownerName}`);
+            if (appSettings.ownerPhone) parts.push(`تماس: ${appSettings.ownerPhone}`);
+            return parts.join('  |  ');
+        }
+
         function updateAppHeader() {
             const titleElement = document.getElementById('mainAppTitle');
             if (titleElement) {
                 const customShopName = appSettings.shopName || 'سامانه آمار دوخت لباس';
                 titleElement.innerText = `${customShopName} - گزارش ماه ${currentJalali.monthName} ${formatYearDigits(currentJalali.yearEn)}`;
+            }
+            const ownerLine = document.getElementById('ownerInfoLine');
+            if (ownerLine) {
+                const infoText = getOwnerInfoLineText();
+                if (infoText) {
+                    ownerLine.innerText = infoText;
+                    ownerLine.classList.remove('hidden');
+                } else {
+                    ownerLine.classList.add('hidden');
+                }
             }
         }
 
@@ -3054,6 +3229,91 @@
             document.getElementById('photoPreviewWrap').classList.add('hidden');
             document.getElementById('photoPreviewImg').src = '';
         }
+
+        /* ============ مدیریت پروفایل کاربری (تب «پروفایل» در تنظیمات) ============ */
+        let currentOwnerPhotoData = null; // دیتای عکس پروفایل در حال ویرایش (base64) یا null
+
+        async function handleOwnerPhotoSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                showFeedbackBanner('لطفاً یک فایل تصویری معتبر انتخاب کنید.', 'warn');
+                event.target.value = '';
+                return;
+            }
+            try {
+                const dataUrl = await compressImageFile(file, 400, 0.7);
+                currentOwnerPhotoData = dataUrl;
+                const preview = document.getElementById('settingOwnerPhotoPreview');
+                const icon = document.getElementById('settingOwnerPhotoIcon');
+                const removeBtn = document.getElementById('removeOwnerPhotoBtn');
+                preview.src = dataUrl;
+                preview.classList.remove('hidden');
+                icon.classList.add('hidden');
+                removeBtn.classList.remove('hidden');
+                updateSettingsProfilePreview();
+            } catch (err) {
+                console.error(err);
+                showFeedbackBanner('خطا در پردازش عکس پروفایل.', 'warn');
+            } finally {
+                event.target.value = '';
+            }
+        }
+
+        function removeOwnerPhoto() {
+            currentOwnerPhotoData = null;
+            document.getElementById('settingOwnerPhotoPreview').classList.add('hidden');
+            document.getElementById('settingOwnerPhotoIcon').classList.remove('hidden');
+            document.getElementById('removeOwnerPhotoBtn').classList.add('hidden');
+            updateSettingsProfilePreview();
+        }
+
+        // پیش‌نمایش زنده‌ی کارت پروفایل در هدر مدال تنظیمات، هم‌زمان با تایپ کاربر
+        function updateSettingsProfilePreview() {
+            const nameEl = document.getElementById('settingsProfilePreviewName');
+            const subEl = document.getElementById('settingsProfilePreviewSub');
+            const imgEl = document.getElementById('settingsProfilePreviewImg');
+            const iconEl = document.getElementById('settingsProfilePreviewIcon');
+            if (!nameEl || !subEl) return;
+
+            const nameInput = document.getElementById('settingOwnerName');
+            const shopInput = document.getElementById('settingShopName');
+            const ownerName = nameInput ? nameInput.value.trim() : (appSettings.ownerName || '');
+            const shopName = shopInput ? shopInput.value.trim() : (appSettings.shopName || '');
+
+            nameEl.innerText = ownerName || 'کاربر مهمان';
+            subEl.innerText = shopName || 'سامانه آمار دوخت لباس';
+
+            if (currentOwnerPhotoData) {
+                imgEl.src = currentOwnerPhotoData;
+                imgEl.classList.remove('hidden');
+                iconEl.classList.add('hidden');
+            } else {
+                imgEl.classList.add('hidden');
+                iconEl.classList.remove('hidden');
+            }
+        }
+
+        // جابه‌جایی بین تب‌های مدال تنظیمات (پروفایل، ظاهری، امنیت، اعلان‌ها، حافظه)
+        function switchSettingsTab(tabName) {
+            document.querySelectorAll('.settings-tab-panel').forEach(panel => {
+                panel.classList.toggle('hidden', panel.id !== `settingsTab-${tabName}`);
+            });
+            document.querySelectorAll('.settings-tab-btn').forEach(btn => {
+                const isActive = btn.getAttribute('data-settings-tab') === tabName;
+                btn.classList.toggle('bg-purple-50', isActive);
+                btn.classList.toggle('dark:bg-purple-950/40', isActive);
+                btn.classList.toggle('text-purple-700', isActive);
+                btn.classList.toggle('dark:text-purple-300', isActive);
+                btn.classList.toggle('border-b-2', isActive);
+                btn.classList.toggle('border-purple-600', isActive);
+                btn.classList.toggle('text-slate-400', !isActive);
+                btn.classList.toggle('dark:text-slate-500', !isActive);
+            });
+            const scrollArea = document.querySelector('#settingsModal .overflow-y-auto');
+            if (scrollArea) scrollArea.scrollTop = 0;
+        }
+        /* ============ پایان مدیریت پروفایل کاربری ============ */
 
         function viewRecordPhoto(id) {
             const record = allRecords.find(r => r.id === id);
@@ -4505,14 +4765,109 @@
 
         // بررسی دوره‌ای پیشرفتِ رکورد جاری و ارسال اعلانِ پلکانی در چند نقطه‌ی کلیدی:
         // ۲۵٪ / ۵۰٪ / ۷۵٪ / ۹۰٪ از زمان مجاز، و رسیدن/گذشتن از خودِ موعد تحویل (با یادآوری‌های مکرر هر ۲۰ دقیقه)
+        // ترسیم یک تصویر کوچک از نوار پیشرفت (شبیه ویجت) برای نمایش داخل بدنه‌ی اعلانِ دائمی
+        function drawProgressWidgetImage(rec, progress) {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 640; canvas.height = 200;
+                const ctx = canvas.getContext('2d');
+                const isOverdue = progress.percent >= 100;
+                const isUrgent = progress.percent >= 90 && progress.percent < 100;
+                const isWarn = progress.percent >= 50 && progress.percent < 90;
+                const barColor = isOverdue ? '#e11d48' : (isUrgent ? '#f97316' : (isWarn ? '#f59e0b' : '#10b981'));
+
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#f1f5f9';
+                ctx.font = 'bold 34px Tahoma, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'top';
+                ctx.fillText(`کد ${rec.itemCode || '-'} — ${rec.itemTitle || '-'}`, canvas.width - 20, 20);
+
+                const barX = 20, barY = 90, barW = canvas.width - 40, barH = 34;
+                ctx.fillStyle = '#334155';
+                ctx.beginPath();
+                ctx.roundRect(barX, barY, barW, barH, 17);
+                ctx.fill();
+
+                const fillW = Math.max(barH, barW * Math.min(100, progress.percent) / 100);
+                ctx.fillStyle = barColor;
+                ctx.beginPath();
+                ctx.roundRect(barX, barY, fillW, barH, 17);
+                ctx.fill();
+
+                ctx.fillStyle = '#f1f5f9';
+                ctx.font = 'bold 30px Tahoma, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(`${progress.percent}٪`, canvas.width - 20, 145);
+
+                ctx.fillStyle = isOverdue ? '#fca5a5' : '#94a3b8';
+                ctx.font = '24px Tahoma, sans-serif';
+                ctx.fillText(
+                    isOverdue ? `${formatMinutesDuration(progress.remainingMinutes)} تاخیر از موعد` : `${formatMinutesDuration(progress.remainingMinutes)} تا موعد باقی مانده`,
+                    barX + fillW > canvas.width - 220 ? canvas.width - 20 : canvas.width - 200,
+                    145
+                );
+
+                return canvas.toDataURL('image/png');
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // ویجت وضعیت زنده: یک اعلان دائمی و بی‌صدا در نوار اعلان‌های گوشی که مثل یک ویجت صفحه اصلی
+        // همیشه کد در حال دوخت و درصد پیشرفت را نشان می‌دهد و خودش هر یک دقیقه به‌روزرسانی می‌شود،
+        // بدون اینکه هر بار صدا/لرزش بدهد (چون صرفاً برای دیدن سریع وضعیت است، نه هشدار).
+        const LIVE_WIDGET_TAG = 'sewing-live-status-widget';
+        function updateLiveStatusNotification() {
+            if (!('Notification' in window) || Notification.permission !== 'granted') return;
+            if (!navigator.serviceWorker) return;
+
+            navigator.serviceWorker.ready.then(reg => {
+                if (!appSettings.liveWidgetEnabled) {
+                    reg.getNotifications({ tag: LIVE_WIDGET_TAG }).then(list => list.forEach(n => n.close()));
+                    return;
+                }
+                const rec = getCurrentActiveRecord();
+                const progress = rec ? computeRecordProgress(rec) : null;
+                if (!rec || !progress) {
+                    reg.getNotifications({ tag: LIVE_WIDGET_TAG }).then(list => list.forEach(n => n.close()));
+                    return;
+                }
+
+                const image = drawProgressWidgetImage(rec, progress);
+                const isOverdue = progress.percent >= 100;
+                const statusText = isOverdue
+                    ? `${formatMinutesDuration(progress.remainingMinutes)} تاخیر از موعد`
+                    : `${formatMinutesDuration(progress.remainingMinutes)} تا موعد باقی مانده`;
+
+                const options = {
+                    body: `کد ${rec.itemCode || '-'} — ${rec.itemTitle || '-'} • ${formatNumber(progress.percent)}٪ • ${statusText}`,
+                    icon: 'icon-192.png',
+                    badge: 'icon-192.png',
+                    tag: LIVE_WIDGET_TAG,
+                    renotify: false, // فقط محتوا آپدیت می‌شود، بدون صدا/لرزش دوباره — رفتار «ویجت»، نه «هشدار»
+                    requireInteraction: true,
+                    silent: true,
+                    dir: 'rtl',
+                    lang: 'fa',
+                    timestamp: Date.now()
+                };
+                if (image) options.image = image;
+                reg.showNotification(`📊 وضعیت زنده — ${appSettings.shopName || 'آمار دوخت'}`, options).catch(() => {});
+            }).catch(() => {});
+        }
+
         function checkDeliveryProgressNotifications() {
             const rec = getCurrentActiveRecord();
-            if (!rec) { updateAppBadge(0); return; }
+            if (!rec) { updateAppBadge(0); updateLiveStatusNotification(); return; }
             const progress = computeRecordProgress(rec);
-            if (!progress) { updateAppBadge(0); return; }
+            if (!progress) { updateAppBadge(0); updateLiveStatusNotification(); return; }
             if (!rec.notifiedStages) rec.notifiedStages = [];
 
             updateAppBadge(progress.percent >= 100 ? 1 : 0);
+            updateLiveStatusNotification();
 
             if (!appSettings.notificationsEnabled) { renderActiveProgressWidget(); return; }
 
@@ -4569,6 +4924,9 @@
             const card = document.getElementById('activeProgressCard');
             const list = document.getElementById('activeProgressList');
             const badge = document.getElementById('activeProgressPercentBadge');
+            const ring = document.getElementById('progressRingArc');
+            const ringText = document.getElementById('progressRingPercentText');
+            const ringIcon = document.getElementById('progressRingStatusIcon');
             if (!card || !list) return;
 
             const rec = getCurrentActiveRecord();
@@ -4577,13 +4935,24 @@
             if (!progress) { card.classList.add('hidden'); updateAttentionIndicators(); return; }
 
             card.classList.remove('hidden');
-            const percentClamped = Math.max(0, Math.min(100, progress.percent));
             const isOverdue = progress.percent >= 100;
             const isUrgent = progress.percent >= 90 && progress.percent < 100;
             const isWarn = progress.percent >= 50 && progress.percent < 90;
-            const barColor = isOverdue ? 'bg-rose-500' : (isUrgent ? 'bg-orange-500' : (isWarn ? 'bg-amber-500' : 'bg-emerald-500'));
+            const statusHex = isOverdue ? '#e11d48' : (isUrgent ? '#f97316' : (isWarn ? '#f59e0b' : '#10b981'));
             const badgeColor = isOverdue ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300' : (isUrgent ? 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300' : (isWarn ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300' : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300'));
             const isMuted = rec.mutedUntil && Date.now() < rec.mutedUntil;
+
+            // به‌روزرسانی ویجت رینگ دایره‌ای: هر چه پیشرفت بیشتر، کمانِ رنگی کامل‌تر می‌شود
+            if (ring) {
+                const circumference = 2 * Math.PI * 38;
+                const ratio = Math.max(0, Math.min(1, progress.percent / 100));
+                ring.setAttribute('stroke-dasharray', circumference.toFixed(2));
+                ring.style.strokeDashoffset = (circumference * (1 - ratio)).toFixed(2);
+                ring.setAttribute('stroke', statusHex);
+                ring.classList.toggle('animate-pulse', isOverdue);
+            }
+            if (ringText) ringText.innerText = `${formatNumber(Math.min(999, progress.percent))}٪`;
+            if (ringIcon) ringIcon.className = `fa-solid ${isOverdue ? 'fa-triangle-exclamation' : 'fa-scissors'} text-[10px] mt-0.5 ${isOverdue ? 'text-rose-500' : 'text-slate-400 dark:text-slate-500'}`;
 
             if (badge) {
                 badge.className = `text-xs font-bold px-2.5 py-1 rounded-full ${badgeColor}`;
@@ -4592,19 +4961,14 @@
 
             const remainingText = isOverdue
                 ? `<span class="text-rose-600 dark:text-rose-400 font-bold">${formatMinutesDuration(progress.remainingMinutes)} تاخیر از موعد</span>`
-                : `<span class="text-slate-500 dark:text-slate-400">${formatMinutesDuration(progress.remainingMinutes)} تا موعد تحویل باقی مانده</span>`;
+                : `<span class="text-slate-500 dark:text-slate-400">${formatMinutesDuration(progress.remainingMinutes)} تا موعد باقی مانده</span>`;
 
             list.innerHTML = `
-                <div class="flex justify-between items-center mb-1.5 text-xs flex-wrap gap-1">
-                    <span class="font-bold text-slate-700 dark:text-slate-200">کد ${escapeHTML(rec.itemCode) || '-'} — ${escapeHTML(rec.itemTitle) || '-'}</span>
-                    ${remainingText}
-                </div>
-                <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                    <div class="${barColor} h-full transition-all duration-700" style="width:${percentClamped}%"></div>
-                </div>
-                <div class="flex items-center justify-between mt-1.5">
-                    <div class="text-[10px] text-slate-400 dark:text-slate-500">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
-                    ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print text-[10px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatNumber(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
+                <div class="text-xs">
+                    <div class="font-bold text-slate-700 dark:text-slate-200 truncate">کد ${escapeHTML(rec.itemCode) || '-'} — ${escapeHTML(rec.itemTitle) || '-'}</div>
+                    <div class="mt-1">${remainingText}</div>
+                    <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
+                    ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print mt-1.5 text-[10px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatNumber(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
                 </div>
             `;
             updateAttentionIndicators();
@@ -4722,7 +5086,7 @@
                     const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
                     return `ماه ${monthName} ${formatYearDigits(year)}`;
                 })();
-            document.getElementById('modalPeriodSub').innerText = `خلاصه گزارش ${periodLabel}`;
+            document.getElementById('modalPeriodSub').innerText = `خلاصه گزارش ${periodLabel}${getOwnerInfoLineText() ? '  |  ' + getOwnerInfoLineText() : ''}`;
 
             const totalCount = records.length;
             const onTimeCount = records.filter(r => (r.status || 'به موقع') === 'به موقع').length;
@@ -4806,7 +5170,7 @@
 </head>
 <body>
     <h1>گزارش عملکرد کارگاه - ${periodLabel}</h1>
-    <p>تاریخ تهیه گزارش: ${formatDateDigits(currentJalali.fullDateStr)}</p>
+    <p>${getOwnerInfoLineText() ? escapeHTML(getOwnerInfoLineText()) + ' &nbsp;|&nbsp; ' : ''}تاریخ تهیه گزارش: ${formatDateDigits(currentJalali.fullDateStr)}</p>
     <table>
         <tr>
             <th>ردیف</th>
@@ -4890,6 +5254,7 @@
         addLog(`سامانه بارگذاری شد. تاریخ: ${currentJalali.fullDateStr}`, 'info');
         renderDashboard();
         initStorageFolderConnection();
+        handleStartupShortcutAction();
 
         // بررسی دوره‌ای پیشرفت کار جاری برای اعلان‌های هوشمند (هر ۱ دقیقه یک‌بار)،
         // و تازه‌سازیِ سریع‌ترِ خودِ نوار پیشرفت (هر ۲۰ ثانیه) برای حس «زنده» بودن شمارش

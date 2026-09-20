@@ -1,187 +1,145 @@
-// Service Worker برای سامانه آمار دوخت لباس
-// نسخه کش را با هر تغییر مهم در برنامه افزایش دهید تا کاربران نسخه جدید را دریافت کنند
-const CACHE_VERSION = 'v5';
-const CACHE_NAME = `stitching-app-cache-${CACHE_VERSION}`;
+/*
+ * Service Worker — سامانه آمار دوخت لباس
+ * وظایف: کش کردن پوسته‌ی برنامه برای کار آفلاین، به‌روزرسانی کنترل‌شده (با تایید کاربر از طریق
+ * بنر «نسخه جدید آماده است»)، و هدایت درست کاربر هنگام لمس اعلان‌های پیشرفت کار.
+ *
+ * برای انتشار نسخه‌ی جدید برنامه: فقط کافی‌ست CACHE_VERSION زیر را عوض کنید (مثلاً v2, v3, ...).
+ * با تغییر این عدد، مرورگر نسخه‌ی جدید همین فایل را نصب می‌کند، کش قدیمی را (بعد از تایید کاربر
+ * در همان بنر) پاک می‌کند و کش تازه می‌سازد؛ بدون این تغییر، مرورگر فایل قدیمی را از کش خودش
+ * می‌خواند و اصلاً متوجه آپدیت نمی‌شود.
+ */
 
-// فایل‌های اصلی خود برنامه
-const APP_SHELL = [
+const CACHE_VERSION = 'v1';
+const APP_SHELL_CACHE = `sewing-app-shell-${CACHE_VERSION}`;
+const RUNTIME_CACHE = `sewing-app-runtime-${CACHE_VERSION}`;
+
+// فایل‌های اصلی پوسته‌ی برنامه که در نصب اولیه، از قبل کش می‌شوند تا برنامه حتی بدون اینترنت هم بالا بیاید
+const APP_SHELL_FILES = [
     './',
     './index.html',
     './manifest.json',
-    './offline.html',
     './icon-192.png',
     './icon-512.png',
     './icon-512-maskable.png'
 ];
 
-// فایل‌های خارجی (CDN) که برنامه برای نمایش صحیح به آن‌ها نیاز دارد؛
-// بدون این‌ها، حالت آفلاین کار می‌کند ولی ظاهر برنامه (استایل/آیکون/فونت) خراب می‌شود.
-const CDN_ASSETS = [
-    'https://cdn.tailwindcss.com',
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-    'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css'
-];
-
-// کش کردن یک‌به‌یک هر فایل به‌صورت مجزا، به‌جای cache.addAll که اتمیک است
-// (اگر فقط یکی از فایل‌ها ناموفق باشد، cache.addAll همه را لغو می‌کند و هیچ‌چیز کش نمی‌شود).
-async function cacheEachSafely(cache, urls) {
-    await Promise.allSettled(
-        urls.map(async (url) => {
-            try {
-                const response = await fetch(url, { cache: 'reload' });
-                if (response && (response.status === 200 || response.type === 'opaque')) {
-                    await cache.put(url, response);
-                }
-            } catch (err) {
-                console.log('کش نشد:', url, err);
-            }
+/* ==================== نصب: پیش‌کش کردن پوسته‌ی برنامه ==================== */
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(APP_SHELL_CACHE).then((cache) => {
+            // هر فایل جدا اضافه می‌شود (به‌جای cache.addAll) تا اگر یکی از فایل‌ها (مثلاً یک آیکون
+            // که هنوز روی سرور آپلود نشده) در دسترس نبود، کل نصب سرویس‌ورکر با خطا متوقف نشود.
+            return Promise.all(
+                APP_SHELL_FILES.map((url) =>
+                    cache.add(url).catch((err) => {
+                        console.warn('[SW] عدم موفقیت در پیش‌کش کردن:', url, err);
+                    })
+                )
+            );
         })
     );
-}
-
-// نصب: ذخیره‌سازی صفحه‌ی آفلاین (الگوی استاندارد Offline page) + بقیه‌ی فایل‌های اصلی برنامه و CDN
-self.addEventListener('install', function (event) {
-    event.waitUntil(
-        (async () => {
-            // ذخیره‌ی مستقیم صفحه‌ی آفلاین برای Offline Support
-            var offlinePage = new Request('offline.html');
-            try {
-                const response = await fetch(offlinePage);
-                const cache = await caches.open(CACHE_NAME);
-                console.log('[PWA Builder] Cached offline page during Install ' + response.url);
-                await cache.put(offlinePage, response);
-            } catch (err) {
-                console.log('[PWA Builder] Could not cache offline page during Install', err);
-            }
-
-            // کش کردن بقیه‌ی فایل‌های اصلی برنامه و منابع CDN
-            const cache = await caches.open(CACHE_NAME);
-            await cacheEachSafely(cache, APP_SHELL);
-            await cacheEachSafely(cache, CDN_ASSETS);
-        })()
-    );
-    // عمداً skipWaiting فراخوانی نمی‌شود؛ به‌روزرسانی فقط با تایید صریح کاربر
-    // از طریق پیام SKIP_WAITING اعمال می‌شود (نوار اطلاع‌رسانی داخل برنامه).
+    // عمداً self.skipWaiting() اینجا صدا زده نمی‌شود؛ می‌خواهیم نسخه‌ی جدید در حالت «در انتظار»
+    // بماند تا index.html بنر «نسخه جدید آماده است» را نشان دهد و کاربر خودش زمان به‌روزرسانی را تایید کند.
 });
 
-// فعال‌سازی: پاک‌سازی نسخه‌های قدیمی کش
+/* ==================== فعال‌سازی: پاک‌سازی کش‌های نسخه‌های قدیمی ==================== */
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
+        caches.keys().then((cacheNames) =>
+            Promise.all(
                 cacheNames
-                    .filter((name) => name.startsWith('stitching-app-cache-') && name !== CACHE_NAME)
+                    .filter((name) => name !== APP_SHELL_CACHE && name !== RUNTIME_CACHE)
                     .map((name) => caches.delete(name))
-            );
-        }).then(() => self.clients.claim())
+            )
+        ).then(() => self.clients.claim()) // کنترل تب‌های باز را بلافاصله به نسخه‌ی جدید می‌دهد
     );
 });
 
-// دریافت پیام از صفحه برای اعمال فوری نسخه جدید
+/* ==================== دریافت پیام از صفحه (دکمه «به‌روزرسانی» در بنر برنامه) ==================== */
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
     }
 });
 
-// واکشی: ابتدا کش بررسی می‌شود؛ در نبود آن از شبکه گرفته و در کش ذخیره می‌شود؛
-// و اگر شبکه هم قطع بود (آفلاین)، صفحه‌ی اصلی کش‌شده و در نهایت offline.html نمایش داده می‌شود.
-self.addEventListener('fetch', function (event) {
+/* ==================== استراتژی fetch ====================
+ * ناوبری‌های صفحه (بارگذاری خودِ index.html): ابتدا شبکه، در صورت آفلاین بودن از کش.
+ * بقیه‌ی درخواست‌های GET (آیکون‌ها، فونت‌ها، Tailwind/FontAwesome از CDN، و غیره):
+ * Stale-While-Revalidate — بلافاصله از کش پاسخ داده می‌شود (اگر موجود باشد) تا برنامه سریع
+ * بالا بیاید، و هم‌زمان در پس‌زمینه نسخه‌ی تازه از شبکه گرفته و جایگزین کش می‌شود.
+ */
+self.addEventListener('fetch', (event) => {
     const request = event.request;
-    if (request.method !== 'GET') return;
+    if (request.method !== 'GET') return; // درخواست‌های غیر GET دست‌نخورده به شبکه می‌روند
 
-    // بارگذاری خود صفحه (index.html): همیشه ابتدا شبکه بررسی می‌شود تا تغییرات جدید
-    // بلافاصله دیده شوند؛ فقط در صورت قطع اتصال از نسخه‌ی کش‌شده استفاده می‌شود.
     if (request.mode === 'navigate') {
-        event.respondWith(
-            fetch(request).then(function (networkResponse) {
-                const responseClone = networkResponse.clone();
-                caches.open(CACHE_NAME).then(function (cache) {
-                    cache.put('index.html', responseClone);
-                });
-                return networkResponse;
-            }).catch(function (error) {
-                console.log('[PWA Builder] Network request Failed. Serving offline page ' + error);
-                return caches.open(CACHE_NAME).then(function (cache) {
-                    return cache.match('index.html').then(function (indexMatch) {
-                        if (indexMatch) return indexMatch;
-                        return cache.match('offline.html');
-                    });
-                });
-            })
-        );
+        event.respondWith(networkFirstForNavigation(request));
         return;
     }
 
-    // سایر فایل‌ها (آیکون، فونت، CDN و ...): ابتدا کش، سپس شبکه؛ چون این‌ها به‌ندرت تغییر می‌کنند.
-    event.respondWith(
-        caches.match(request).then(function (cachedResponse) {
-            if (cachedResponse) return cachedResponse;
-
-            return fetch(request).then(function (networkResponse) {
-                if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
-                    const responseClone = networkResponse.clone();
-                    caches.open(CACHE_NAME).then(function (cache) {
-                        cache.put(request, responseClone);
-                    });
-                }
-                return networkResponse;
-            }).catch(function (error) {
-                console.log('[PWA Builder] Network request Failed. Serving offline page ' + error);
-                return caches.open(CACHE_NAME).then(function (cache) {
-                    return cache.match('index.html').then(function (indexMatch) {
-                        if (indexMatch) return indexMatch;
-                        return cache.match('offline.html');
-                    });
-                });
-            });
-        })
-    );
+    event.respondWith(staleWhileRevalidate(request));
 });
 
-// -------------------- اعلان‌های Push --------------------
-// توجه: این برنامه سرور ندارد، پس فعلاً چیزی برای ارسال Push واقعی وجود ندارد؛
-// این بخش فقط زیرساخت را آماده می‌کند تا در آینده در صورت افزودن سرور قابل استفاده باشد.
-self.addEventListener('push', (event) => {
-    const message = event.data ? event.data.text() : 'رویداد جدیدی در سامانه آمار دوخت ثبت شد.';
-    event.waitUntil(
-        self.registration.showNotification('سامانه آمار دوخت لباس', {
-            body: message,
-            icon: './icon-192.png',
-            badge: './icon-192.png',
-            dir: 'rtl',
-            lang: 'fa'
-        })
-    );
-});
+async function networkFirstForNavigation(request) {
+    try {
+        const freshResponse = await fetch(request);
+        const cache = await caches.open(APP_SHELL_CACHE);
+        cache.put('./index.html', freshResponse.clone());
+        return freshResponse;
+    } catch (err) {
+        const cache = await caches.open(APP_SHELL_CACHE);
+        const cached = await cache.match('./index.html') || await cache.match('./');
+        if (cached) return cached;
+        return new Response(
+            '<!DOCTYPE html><html lang="fa" dir="rtl"><body style="font-family:sans-serif;text-align:center;padding:2rem;">اتصال اینترنت برقرار نیست و نسخه‌ی آفلاین هنوز در دسترس نیست. لطفاً دوباره تلاش کنید.</body></html>',
+            { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+        );
+    }
+}
 
+async function staleWhileRevalidate(request) {
+    const cache = await caches.open(RUNTIME_CACHE);
+    const cached = await cache.match(request);
+
+    const networkFetch = fetch(request)
+        .then((response) => {
+            // فقط پاسخ‌های معتبر (یا opaque برای منابع کراس‌اوریجین مثل CDN فونت/آیکون) کش می‌شوند
+            if (response && (response.ok || response.type === 'opaque')) {
+                cache.put(request, response.clone());
+            }
+            return response;
+        })
+        .catch(() => null);
+
+    return cached || (await networkFetch) || new Response('', { status: 504 });
+}
+
+/* ==================== لمس اعلان: باز کردن/فوکوس برنامه و هدایت به بخش مرتبط ==================== */
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
+
+    const tag = event.notification.tag || '';
+    let targetPath = 'index.html';
+    if (tag.indexOf('sewing-live-status-widget') === 0 ||
+        tag.indexOf('sewing-stage-') === 0 ||
+        tag.indexOf('sewing-progress-') === 0) {
+        targetPath = 'index.html?action=progress';
+    }
+
     event.waitUntil(
-        self.clients.matchAll({ type: 'window' }).then((clientList) => {
-            if (clientList.length > 0) return clientList[0].focus();
-            return self.clients.openWindow('./index.html');
+        self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientsArr) => {
+            for (const client of clientsArr) {
+                if ('focus' in client) {
+                    client.focus();
+                    if ('navigate' in client) {
+                        try { client.navigate(targetPath); } catch (e) { /* بی‌اهمیت */ }
+                    }
+                    return;
+                }
+            }
+            if (self.clients.openWindow) {
+                return self.clients.openWindow(targetPath);
+            }
         })
     );
-});
-
-// -------------------- Background Sync --------------------
-// اگر مرورگر اجازه بدهد، پس از وصل‌شدن دوباره‌ی اینترنت، کش برنامه را تازه می‌کند.
-self.addEventListener('sync', (event) => {
-    if (event.tag === 'refresh-app-cache') {
-        event.waitUntil(
-            caches.open(CACHE_NAME).then((cache) => cacheEachSafely(cache, APP_SHELL.concat(CDN_ASSETS)))
-        );
-    }
-});
-
-// -------------------- Periodic Background Sync --------------------
-// در مرورگرهایی که پشتیبانی می‌کنند (عمدتاً Chrome روی اندروید، بعد از نصب برنامه)،
-// به‌صورت دوره‌ای کش را تازه نگه می‌دارد.
-self.addEventListener('periodicsync', (event) => {
-    if (event.tag === 'refresh-app-cache') {
-        event.waitUntil(
-            caches.open(CACHE_NAME).then((cache) => cacheEachSafely(cache, APP_SHELL.concat(CDN_ASSETS)))
-        );
-    }
 });

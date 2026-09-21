@@ -25,10 +25,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- فونت‌های فارسی -->
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet" type="text/css" />
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/sahel-font@v3.4.0/dist/font-face.css" rel="stylesheet" type="text/css" />
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/samim-font@v3.0.0/dist/font-face.css" rel="stylesheet" type="text/css" />
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/shabnam-font@v4.0.1/dist/font-face.css" rel="stylesheet" type="text/css" />
     <style id="customColorStyle"></style>
     <style>
         body {
@@ -105,6 +101,10 @@
 
         .print-only {
             display: none;
+        }
+        /* iOS Safari هنگام focus روی فیلدهای کوچک‌تر از ۱۶px صفحه را زوم می‌کند */
+        @supports (-webkit-touch-callout: none) {
+            input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea { font-size: 16px !important; }
         }
         @media print {
             .print-only {
@@ -649,7 +649,7 @@
                         <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-slate-400">
                             <i class="fa-solid fa-magnifying-glass text-xs"></i>
                         </span>
-                        <input type="text" id="searchInput" oninput="renderDashboard()" placeholder="جستجو در لیست..." class="w-full pr-10 pl-3.5 py-2 border border-slate-400 dark:border-slate-500 rounded-xl text-xs bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        <input type="text" id="searchInput" oninput="debouncedRenderDashboard()" placeholder="جستجو در لیست..." class="w-full pr-10 pl-3.5 py-2 border border-slate-400 dark:border-slate-500 rounded-xl text-xs bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <button onclick="openAdvancedSearchModal()" class="no-print p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5 whitespace-nowrap bg-white dark:bg-slate-800 field-box-bg" title="جستجوی پیشرفته در کل داده‌ها">
                         <i class="fa-solid fa-filter"></i>
@@ -1205,7 +1205,7 @@
                         <i class="fa-solid fa-lock"></i> قفل ورود به برنامه
                     </h3>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                        در صورت فعال بودن، هر بار باز کردن برنامه یک رمز عبور درخواست می‌شود (مناسب برای گوشی‌های مشترک). این رمز هم به‌صورت رمزنگاری‌شده ذخیره می‌شود.
+                        در صورت فعال بودن، هر بار باز کردن برنامه یک رمز عبور درخواست می‌شود (مناسب برای گوشی‌های مشترک). این رمز به‌صورت هش (SHA-256 همراه salt) ذخیره می‌شود. توجه: این قفل فقط جلوی دید و دست‌کاری معمولی را می‌گیرد؛ خودِ داده‌ها در مرورگر رمزنگاری نمی‌شوند، رمز ۴ رقمی در برابر حمله‌ی هدفمند مقاوم نیست و فایل‌های پشتیبان بدون رمز هستند.
                     </p>
                     <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
                         <input type="checkbox" id="settingPinEnabled" onchange="togglePinFieldsVisibility()" class="w-4 h-4 rounded accent-indigo-600">
@@ -1232,7 +1232,7 @@
                         <i class="fa-solid fa-shield-halved"></i> کد امنیتی پاک کردن داده‌ها
                     </h3>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                        این کد فقط توسط خودتان تعیین می‌شود و به‌صورت رمزنگاری‌شده (هش) در حافظه مرورگر ذخیره می‌شود؛ خود کد در هیچ‌کجا به‌صورت متن ساده ذخیره یا نمایش داده نمی‌شود.
+                        این کد فقط توسط خودتان تعیین می‌شود و به‌صورت هش در حافظه مرورگر ذخیره می‌شود؛ خود کد در هیچ‌کجا به‌صورت متن ساده ذخیره یا نمایش داده نمی‌شود. توجه: این کد محافظ در برابر حذف تصادفی است، نه سد امنیتی (با «فراموشی کد» قابل بازنشانی است).
                     </p>
                     <p id="deleteCodeStatusText" class="text-xs font-semibold"></p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1473,6 +1473,8 @@
     <!-- اسکریپت‌ها -->
     <script>
         let newWorkerWaiting = null;
+        // اگر صفحه در اولین نصبِ Service Worker باز شده (کنترلر قبلی نبوده)، claim اولیه نباید reload اجباری ایجاد کند
+        const swHadControllerAtStart = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -1495,10 +1497,22 @@
 
                 let refreshingPage = false;
                 navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    if (refreshingPage) return;
+                    if (refreshingPage || !swHadControllerAtStart) return;
+                    // اگر فرمِ نیمه‌پر باز است، reload خودکار انجام نمی‌شود تا اطلاعات تایپ‌شده از بین نرود
+                    if (isRecordFormDirty()) {
+                        showFeedbackBanner('نسخه‌ی جدید برنامه نصب شد؛ بعد از ثبت یا پاک‌کردن فرم، صفحه را دوباره باز کنید.', 'info');
+                        return;
+                    }
                     refreshingPage = true;
                     window.location.reload();
                 });
+            });
+        }
+
+        function isRecordFormDirty() {
+            return ['itemCode', 'itemTitle', 'itemColor', 'receivedQuantity', 'unitPrice'].some(id => {
+                const el = document.getElementById(id);
+                return el && String(el.value || '').trim() !== '';
             });
         }
 
@@ -2397,14 +2411,26 @@
                     }
                 });
             } else if (key === 'dup_notes') {
-                const byDate = new Map();
-                dailyNotes.forEach(n => {
-                    const cur = byDate.get(n.date);
-                    if (!cur || (n.updatedAt || 0) > (cur.updatedAt || 0)) byDate.set(n.date, n);
+                // متن یادداشت‌های هم‌تاریخ ادغام می‌شود (نه حذف)؛ نسخه‌های ادغام‌شده هم به سطل بازیافت می‌روند
+                const groups = new Map();
+                dailyNotes.forEach(n => { if (!groups.has(n.date)) groups.set(n.date, []); groups.get(n.date).push(n); });
+                const prio = { holiday: 3, reminder: 2, normal: 1 };
+                const kept = [];
+                groups.forEach(list => {
+                    if (list.length === 1) { kept.push(list[0]); return; }
+                    list.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+                    const primary = list[0];
+                    const texts = [];
+                    list.forEach(n => { const t = (n.text || '').trim(); if (t && !texts.includes(t)) texts.push(t); });
+                    const merged = texts.join('\n———\n');
+                    if (merged.length > 5000) { list.forEach(n => kept.push(n)); return; } // سقف طول یادداشت؛ دست نمی‌زنیم
+                    primary.text = merged;
+                    primary.type = list.reduce((best, n) => ((prio[n.type] || 0) > (prio[best] || 0) ? n.type : best), primary.type);
+                    primary.updatedAt = Date.now();
+                    list.slice(1).forEach(n => { addTombstone('notes', n.id); moveToTrash(TRASH_NOTES_STORE, n); fixedCount++; });
+                    kept.push(primary);
                 });
-                const before = dailyNotes.length;
-                dailyNotes = [...byDate.values()];
-                fixedCount = before - dailyNotes.length;
+                dailyNotes = kept;
             } else if (key === 'missing_photo') {
                 allRecords.forEach(r => {
                     if (r.hasPhoto && !r.photo) { r.hasPhoto = false; r.updatedAt = Date.now(); fixedCount++; }
@@ -2576,20 +2602,36 @@
             }
         }
 
+        let pinFailCount = 0;
+        let pinLockedUntil = 0;
         async function attemptUnlock(event) {
             event.preventDefault();
             const input = document.getElementById('pinLockInput');
             const errorEl = document.getElementById('pinLockError');
+            if (Date.now() < pinLockedUntil) {
+                errorEl.innerText = `تلاش‌های ناموفق زیاد بود؛ ${formatNumber(Math.ceil((pinLockedUntil - Date.now()) / 1000))} ثانیه دیگر دوباره تلاش کنید.`;
+                errorEl.classList.remove('hidden');
+                input.value = '';
+                return;
+            }
             const entered = normalizeDigits(input.value.trim());
             const enteredHash = await hashAppPin(entered);
             if (enteredHash === appSettings.pinHash) {
                 document.getElementById('pinLockScreen').classList.add('hidden');
                 input.value = '';
                 errorEl.classList.add('hidden');
+                pinFailCount = 0;
                 // یادآوری پشتیبان‌گیری روزانه (در صورت لزوم) فقط بعد از باز شدن قفل نمایش داده شود،
                 // تا پشت صفحه‌ی قفل مخفی نماند و بلافاصله بعد از باز شدن قفل ناگهان ظاهر نشود.
                 checkDailyAutoBackup();
             } else {
+                pinFailCount++;
+                if (pinFailCount >= 5) {
+                    pinLockedUntil = Date.now() + Math.min(300000, 30000 * Math.pow(2, pinFailCount - 5));
+                    errorEl.innerText = `رمز اشتباه است. به‌دلیل تلاش‌های ناموفق زیاد، ${formatNumber(Math.ceil((pinLockedUntil - Date.now()) / 1000))} ثانیه صبر کنید.`;
+                } else {
+                    errorEl.innerText = 'رمز عبور اشتباه است، دوباره تلاش کنید.';
+                }
                 errorEl.classList.remove('hidden');
                 input.value = '';
                 input.focus();
@@ -3398,6 +3440,8 @@
             const params = new URLSearchParams(window.location.search);
             const action = params.get('action');
             if (!action) return;
+            // پارامتر از آدرس پاک می‌شود تا با refresh دوباره اجرا نشود
+            try { history.replaceState(null, '', window.location.pathname + window.location.hash); } catch (e) { /* بی‌اهمیت */ }
             setTimeout(() => {
                 if (action === 'add') {
                     bottomNavGoAddRecord();
@@ -3609,6 +3653,8 @@
             const card = document.getElementById('recordsTableCard');
             const icon = document.getElementById('tableFullScreenIcon');
             isTableFullScreen = !isTableFullScreen;
+            const scroller = card.querySelector('.overflow-x-auto');
+            if (scroller) scroller.style.maxHeight = isTableFullScreen ? 'calc(100vh - 10rem)' : '';
             if (isTableFullScreen) {
                 card.classList.add('fixed', 'inset-0', 'z-50', 'rounded-none', 'overflow-y-auto', 'm-0', 'p-4');
                 icon.className = "fa-solid fa-compress";
@@ -3775,7 +3821,7 @@
             document.getElementById('settingConfirmDeleteCode').value = '';
             updateDeleteCodeStatusUI();
             addLog('کد امنیتی پاک کردن داده‌ها به‌روزرسانی شد.', 'success');
-            showFeedbackBanner('کد امنیتی با موفقیت به‌صورت رمزنگاری‌شده ذخیره شد.', 'success');
+            showFeedbackBanner('کد امنیتی با موفقیت (به‌صورت هش) ذخیره شد.', 'success');
         }
 
         function closeSettingsModal() {
@@ -3810,7 +3856,8 @@
             appSettings.shopName = shopNameVal;
             appSettings.currency = currencyVal;
             appSettings.defaultStatus = defaultStatusVal;
-            appSettings.onTimeToleranceMinutes = Math.max(0, Math.min(120, parsePersianInt(document.getElementById('settingOnTimeTolerance').value)));
+            const tolInputRaw = document.getElementById('settingOnTimeTolerance').value.trim();
+            appSettings.onTimeToleranceMinutes = tolInputRaw === '' ? getOnTimeTolerance() : Math.max(0, Math.min(120, parsePersianInt(tolInputRaw)));
             appSettings.theme = themeVal;
             appSettings.fontSize = fontSizeVal;
             appSettings.numFormat = numFormatVal;
@@ -3890,6 +3937,23 @@
             if (btn) btn.title = collapsed ? 'نمایش این بخش' : 'پنهان کردن این بخش';
         }
 
+        const FONT_CSS_URLS = {
+            Vazir: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css',
+            Sahel: 'https://cdn.jsdelivr.net/gh/rastikerdar/sahel-font@v3.4.0/dist/font-face.css',
+            Samim: 'https://cdn.jsdelivr.net/gh/rastikerdar/samim-font@v3.0.0/dist/font-face.css',
+            Shabnam: 'https://cdn.jsdelivr.net/gh/rastikerdar/shabnam-font@v4.0.1/dist/font-face.css'
+        };
+        // فقط فونتی که کاربر انتخاب کرده بارگذاری می‌شود (وزیرمتن پیش‌فرض همیشه در head هست)
+        function ensureFontLoaded(family) {
+            const url = FONT_CSS_URLS[family];
+            if (!url || document.querySelector('link[data-font-family="' + family + '"]')) return;
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = url;
+            link.setAttribute('data-font-family', family);
+            document.head.appendChild(link);
+        }
+
         function applyAppSettingsToUI() {
             const currency = appSettings.currency || 'تومان';
             document.getElementById('kpiPriceLabel').innerText = `ارزش کل کارکرد (${currency})`;
@@ -3919,6 +3983,7 @@
             }
 
             const fontFamilyVal = appSettings.fontFamily || 'Vazirmatn';
+            ensureFontLoaded(fontFamilyVal);
             appBody.style.fontFamily = `'${fontFamilyVal}', 'Vazirmatn', Tahoma, sans-serif`;
 
             applyCustomColors();
@@ -3972,24 +4037,18 @@
         setInterval(updateSystemClock, 1000);
 
         function getCurrentJalaliInfo() {
+            // همان موتور تبدیلِ بقیه‌ی برنامه (jalaali) استفاده می‌شود تا «امروز» و بقیه‌ی محاسبات هیچ‌وقت ناهماهنگ نشوند
             const now = new Date();
-            const formatter = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { year: 'numeric', month: 'numeric', day: 'numeric' });
-            const parts = formatter.formatToParts(now);
-            let year = '', month = '', day = '';
-            parts.forEach(part => {
-                if (part.type === 'year') year = part.value;
-                if (part.type === 'month') month = part.value;
-                if (part.type === 'day') day = part.value;
-            });
-            const toEnglishDigits = str => str.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-            const yearEn = toEnglishDigits(year);
-            const monthNum = parseInt(toEnglishDigits(month), 10);
+            const j = gregorianToJalaali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+            const year = toPersianDigits(j.jy);
+            const month = toPersianDigits(j.jm);
+            const day = toPersianDigits(j.jd);
             return {
                 year: year,
-                yearEn: yearEn,
-                monthNum: monthNum,
-                monthName: PERSIAN_MONTHS[monthNum - 1] || 'نامشخص',
-                monthKey: `${yearEn}-${monthNum}`,
+                yearEn: String(j.jy),
+                monthNum: j.jm,
+                monthName: PERSIAN_MONTHS[j.jm - 1] || 'نامشخص',
+                monthKey: `${j.jy}-${j.jm}`,
                 fullDateStr: `${year}/${month}/${day}`
             };
         }
@@ -4176,10 +4235,13 @@
                         throw new Error('ساختار فایل پشتیبان نامعتبر است.');
                     }
 
-                    showCustomConfirm('آیا از جایگزینی داده‌ها با فایل پشتیبان اطمینان دارید؟', (confirmed) => {
+                    showCustomConfirm('آیا از جایگزینی داده‌ها با فایل پشتیبان اطمینان دارید؟ (داده‌های فعلیِ جایگزین‌شده تا ۳۰ روز در «سطل بازیافت» می‌مانند)', (confirmed) => {
                         if (confirmed) {
                             const importedRecords = parsed.records.map(sanitizeRecord).filter(Boolean);
                             const importedIds = new Set(importedRecords.map(r => r.id));
+                            // هر رکوردِ فعلی که با این بازیابی حذف یا جایگزین می‌شود، ۳۰ روز در سطل بازیافت می‌ماند
+                            const importedById = new Map(importedRecords.map(r => [r.id, r]));
+                            allRecords.forEach(r => { const imp = importedById.get(r.id); if (!imp || imp.updatedAt !== r.updatedAt) moveToTrash(TRASH_RECORDS_STORE, r); });
                             const nowTs = Date.now();
                             allRecords.forEach(r => { if (!importedIds.has(r.id)) tombstones.records[String(r.id)] = nowTs; });
                             if (parsed.tombstones) tombstones = mergeTombstones(tombstones, normalizeTombstones(parsed.tombstones));
@@ -4188,6 +4250,8 @@
                             if (Array.isArray(parsed.notes)) {
                                 const importedNotes = parsed.notes.map(sanitizeNote).filter(Boolean);
                                 const noteIds = new Set(importedNotes.map(n => n.id));
+                                const importedNoteById = new Map(importedNotes.map(n => [n.id, n]));
+                                dailyNotes.forEach(n => { const imp = importedNoteById.get(n.id); if (!imp || imp.updatedAt !== n.updatedAt) moveToTrash(TRASH_NOTES_STORE, n); });
                                 dailyNotes.forEach(n => { if (!noteIds.has(n.id)) tombstones.notes[String(n.id)] = nowTs; });
                                 noteIds.forEach(id => { delete tombstones.notes[String(id)]; });
                                 dailyNotes = importedNotes;
@@ -4248,7 +4312,7 @@
 
         function resetDeleteCode() {
             closeDeleteCodeModal();
-            showCustomConfirm('کد امنیتی به‌صورت رمزنگاری‌شده ذخیره شده و قابل بازیابی نیست. آیا می‌خواهید کد فعلی حذف شود تا بتوانید کد جدیدی تعیین کنید؟ (این کار فقط کد امنیتی را بازنشانی می‌کند و هیچ آسیبی به داده‌های شما نمی‌رساند)', (confirmed) => {
+            showCustomConfirm('کد امنیتی به‌صورت هش ذخیره شده و قابل بازیابی نیست. آیا می‌خواهید کد فعلی حذف شود تا بتوانید کد جدیدی تعیین کنید؟ (این کار فقط کد امنیتی را بازنشانی می‌کند و هیچ آسیبی به داده‌های شما نمی‌رساند)', (confirmed) => {
                 if (!confirmed) return;
                 openResetCodeConfirmModal();
             });
@@ -4810,6 +4874,7 @@
                     // همین رکورد به‌روزرسانی و وضعیت تحویلش دوباره محاسبه می‌شود.
                     applyNextCodeStartToPreviousRecord(date, time, editingId);
 
+                    saveNotifState(allRecords[targetIndex]);
                     addLog(`رکورد ${code} ویرایش شد.`, 'warn');
                     showFeedbackBanner(
                         movedToDifferentMonth
@@ -5098,7 +5163,7 @@
                             ${isToday ? '<span class="bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold px-2 py-0.5 rounded-full">امروز</span>' : ''}
                             ${meta.label ? `<span class="${meta.badge} text-[10px] font-bold px-2 py-0.5 rounded-full">${meta.label}</span>` : ''}
                         </div>
-                        <button data-action="delete-note" data-id="${Number(n.id)}" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors shrink-0" title="حذف یادداشت"><i class="fa-solid fa-trash-can"></i></button>
+                        <button data-action="delete-note" data-id="${Number(n.id)}" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors shrink-0" title="حذف یادداشت" aria-label="حذف یادداشت"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                     ${n.hidden ? '' : `<div class="px-3 pb-3 pr-9 text-slate-700 dark:text-slate-200 whitespace-pre-wrap">${escapeHTML(n.text)}</div>`}
                 </div>
@@ -5122,8 +5187,15 @@
         }
 
         // بررسی تعطیل بودن جمعه برای یک شماره‌روز ژولیَنی (JDN) مشخص
+        const fridayCache = new Map();
         function isFridayJdn(jdn) {
             if (!jdn) return false;
+            if (fridayCache.has(jdn)) return fridayCache.get(jdn);
+            const result = computeIsFridayJdn(jdn);
+            fridayCache.set(jdn, result);
+            return result;
+        }
+        function computeIsFridayJdn(jdn) {
             try {
                 const { jy, jm, jd } = d2j(jdn);
                 const g = jalaaliToGregorian(jy, jm, jd);
@@ -5368,6 +5440,37 @@
             return result;
         }
 
+        // بازه‌های کاریِ پیوسته‌ی یک روز (بین استراحت‌ها): [شروع، پایان) بر حسب دقیقه از نیمه‌شب
+        const SHIFT_SEGMENTS = (() => {
+            const segs = [];
+            let cur = SHIFT_START;
+            SHIFT_BREAKS.forEach(b => { if (b.start > cur) segs.push([cur, b.start]); cur = b.end; });
+            if (cur < SHIFT_END) segs.push([cur, SHIFT_END]);
+            return segs;
+        })();
+
+        // پیش‌رفتن به‌اندازه‌ی «target» دقیقه‌ی کاری از لحظه‌ی شروع؛ قطعه‌قطعه (نه دقیقه‌به‌دقیقه)،
+        // با همان قواعدِ پرش شیفت، استراحت‌ها و تعطیلی جمعه‌ها. خروجی: لحظه‌ی پایان (دقیقه از نیمه‌شبِ روز شروع).
+        function advanceWorkingMinutes(startTotalMinutes, target, startJdn) {
+            let p = startTotalMinutes;
+            let remaining = target;
+            let guard = 0;
+            while (remaining > 0 && guard++ < 100000) {
+                p = jumpToShiftWindow(p, startJdn);
+                const m = p % 1440;
+                const seg = SHIFT_SEGMENTS.find(([a, b]) => m >= a && m < b);
+                if (!seg) {
+                    const nxt = SHIFT_SEGMENTS.find(([a]) => a > m);
+                    p += (nxt ? nxt[0] : SHIFT_END) - m;
+                    continue;
+                }
+                const avail = seg[1] - m;
+                if (remaining <= avail) { p += remaining; remaining = 0; }
+                else { remaining -= avail; p += avail; }
+            }
+            return p;
+        }
+
         // فرمول: (تایم کاری شیفت / آمار روزانه) * تعداد دریافتی، با شبیه‌سازی دقیق استراحت‌ها، پرش شیفت و تعطیلی جمعه‌ها
         function calculateCompletionEstimate(startTimeStr, dailyStatVal, receivedQtyVal, startDateStr) {
             if (!startTimeStr || !dailyStatVal || dailyStatVal <= 0 || !receivedQtyVal || receivedQtyVal < 0) return null;
@@ -5381,14 +5484,7 @@
             if (isNaN(startHour) || isNaN(startMin)) return null;
             const startTotalMinutes = startHour * 60 + startMin;
             const startJdn = startDateStr ? parseJalaliDateToJdn(startDateStr) : null;
-            let currentTotalMinutes = startTotalMinutes;
-            let workingMinutesDone = 0;
-
-            while (workingMinutesDone < targetWorkMinutes) {
-                currentTotalMinutes = jumpToShiftWindow(currentTotalMinutes, startJdn);
-                if (!isShiftBreakMinute(currentTotalMinutes)) workingMinutesDone++;
-                currentTotalMinutes++;
-            }
+            const currentTotalMinutes = advanceWorkingMinutes(startTotalMinutes, targetWorkMinutes, startJdn);
 
             const daysPassed = Math.floor(currentTotalMinutes / 1440) - Math.floor(startTotalMinutes / 1440);
             let endHour = Math.floor(currentTotalMinutes / 60) % 24;
@@ -5750,6 +5846,30 @@
         }
 
         /* ==================== اعلان‌های هوشمند پیشرفت کار (برای جلوگیری از تاخیر) ==================== */
+        const NOTIF_STATE_KEY = 'sewing_notif_state_v1';
+        // اگر رکوردی بیش از ۳ روز کاری از موعد گذشته باشد، یادآوری‌های تکراری متوقف می‌شود (نمایش ویجت ادامه دارد)
+        const STALE_OVERDUE_MINUTES = 3 * SHIFT_MINUTES;
+        // وضعیت اعلان‌های هر رکورد در کلیدی جدا نگه‌داری می‌شود (نه داخل خودِ رکورد)، تا
+        // ۱) نسخه‌ی رکورد (updatedAt) و ادغام دستگاه‌ها را به‌هم نزند، ۲) بین تب‌ها هم‌گام باشد.
+        function loadNotifStateMap() {
+            const m = safeLoadJSON(NOTIF_STATE_KEY, {});
+            return (m && typeof m === 'object' && !Array.isArray(m)) ? m : {};
+        }
+        function loadNotifState(rec) {
+            const st = loadNotifStateMap()[String(rec.id)];
+            if (!st) return;
+            rec.notifiedStages = Array.isArray(st.s) ? st.s.map(Number).filter(Number.isFinite) : [];
+            rec.notifiedFull = !!st.f;
+            rec.lastOverdueNotifyAt = Number.isFinite(Number(st.l)) && st.l ? Number(st.l) : null;
+            rec.mutedUntil = Number.isFinite(Number(st.m)) && st.m ? Number(st.m) : null;
+        }
+        function saveNotifState(rec) {
+            const map = loadNotifStateMap();
+            map[String(rec.id)] = { s: rec.notifiedStages || [], f: !!rec.notifiedFull, l: rec.lastOverdueNotifyAt || null, m: rec.mutedUntil || null };
+            const live = new Set(allRecords.map(r => String(r.id)));
+            Object.keys(map).forEach(k => { if (!live.has(k)) delete map[k]; });
+            try { localStorage.setItem(NOTIF_STATE_KEY, JSON.stringify(map)); } catch (e) { /* بی‌اهمیت */ }
+        }
         const OVERDUE_RENOTIFY_MINUTES = 20; // فاصله‌ی یادآوری‌های مکرر بعد از گذشتن موعد تحویل
 
         // رکورد «در حال انجام» فعلی: جدیدترین رکوردی که هنوز «شروع کد بعد» برایش ثبت نشده؛
@@ -6016,8 +6136,9 @@
         function snoozeActiveNotifications() {
             const rec = getCurrentActiveRecord();
             if (!rec) return;
+            loadNotifState(rec);
             rec.mutedUntil = Date.now() + 30 * 60 * 1000;
-            saveRecords();
+            saveNotifState(rec);
             addLog(`اعلان‌های کد ${rec.itemCode || '-'} به مدت ۳۰ دقیقه بی‌صدا شد.`, 'info');
             showFeedbackBanner('اعلان‌های این کد به مدت ۳۰ دقیقه بی‌صدا شد (خودِ مهلت تحویل تغییری نکرد).', 'info');
             renderActiveProgressWidget();
@@ -6180,6 +6301,10 @@
                 finishRecordNow(rec.id);
             } else if (action === 'snooze') {
                 if (rec) snoozeActiveNotifications();
+            } else if (action === 'progress') {
+                const card = document.getElementById('activeProgressCard');
+                if (card && !card.classList.contains('hidden')) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                else window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
         if ('serviceWorker' in navigator) {
@@ -6330,6 +6455,7 @@
             if (!rec) { updateAppBadge(0); updateLiveStatusNotification(); return; }
             const progress = computeRecordProgress(rec);
             if (!progress) { updateAppBadge(0); updateLiveStatusNotification(); return; }
+            loadNotifState(rec);
             if (!rec.notifiedStages) rec.notifiedStages = [];
 
             updateAppBadge(progress.percent >= 100 ? 1 : 0);
@@ -6368,7 +6494,7 @@
                     changed = true;
                 } else {
                     const last = rec.lastOverdueNotifyAt || 0;
-                    if (isWithinWorkingTimeNow() && Date.now() - last >= OVERDUE_RENOTIFY_MINUTES * 60 * 1000) {
+                    if (isWithinWorkingTimeNow() && -progress.remainingMinutes <= STALE_OVERDUE_MINUTES && Date.now() - last >= OVERDUE_RENOTIFY_MINUTES * 60 * 1000) {
                         const overdueBy = formatMinutesDuration(progress.remainingMinutes);
                         const msg = `کد ${rec.itemCode || '-'} حدود ${overdueBy} از موعدش تاخیر دارد. لطفاً هر چه زودتر کار را تمام و ثبت کن.`;
                         notifyUser('🚨 یادآوری تاخیر', msg, 'sewing-progress-overdue-' + rec.id, true);
@@ -6381,7 +6507,7 @@
                 }
             }
 
-            if (changed) saveRecords();
+            if (changed) saveNotifState(rec);
             renderActiveProgressWidget();
         }
 
@@ -6406,7 +6532,9 @@
             const isWarn = progress.percent >= 50 && progress.percent < 90;
             const statusHex = isOverdue ? '#e11d48' : (isUrgent ? '#f97316' : (isWarn ? '#f59e0b' : '#10b981'));
             const badgeColor = isOverdue ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300' : (isUrgent ? 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300' : (isWarn ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300' : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300'));
+            loadNotifState(rec);
             const isMuted = rec.mutedUntil && Date.now() < rec.mutedUntil;
+            const isStale = isOverdue && (-progress.remainingMinutes > STALE_OVERDUE_MINUTES);
 
             // به‌روزرسانی ویجت رینگ دایره‌ای: هر چه پیشرفت بیشتر، کمانِ رنگی کامل‌تر می‌شود
             if (ring) {
@@ -6433,6 +6561,7 @@
                 <div class="text-xs">
                     <div class="font-bold text-slate-700 dark:text-slate-200 truncate">کد ${escapeHTML(rec.itemCode) || '-'} — ${escapeHTML(rec.itemTitle) || '-'}</div>
                     <div class="mt-1">${remainingText}</div>
+                    ${isStale ? '<div class="text-[10px] text-amber-600 dark:text-amber-400 mt-1">این کار بیش از ۳ روز کاری معوق است و یادآوری‌ها متوقف شده؛ اگر تمام شده، «کار تمام شد» را بزنید.</div>' : ''}
                     <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
                     <button type="button" data-action="finish-active" data-id="${Number(rec.id)}" class="no-print mt-2 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition-colors"><i class="fa-solid fa-circle-check"></i> کار تمام شد</button>
                     ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print mt-1.5 text-[10px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatDateDigits(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
@@ -6441,6 +6570,62 @@
             updateAttentionIndicators();
         }
         /* ==================== پایان اعلان‌های هوشمند پیشرفت کار ==================== */
+
+        let searchDebounceTimer = null;
+        function debouncedRenderDashboard() {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(renderDashboard, 200);
+        }
+
+        /* ---- تصویر بندانگشتی (thumbnail) برای جدول؛ عکس اصلی فقط در نمایشگر عکس باز می‌شود ---- */
+        const thumbCache = new Map(); // id -> { len, url }
+        const TRANSPARENT_PX = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        let thumbHydrating = false;
+        let thumbNeedsRerun = false;
+
+        function getThumbSrc(r) {
+            const c = thumbCache.get(r.id);
+            return (c && r.photo && c.len === r.photo.length) ? c.url : TRANSPARENT_PX;
+        }
+        function makeThumb(photo, size = 96) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onerror = () => reject(new Error('thumb'));
+                img.onload = () => {
+                    try {
+                        const side = Math.min(img.width, img.height);
+                        const canvas = document.createElement('canvas');
+                        canvas.width = size; canvas.height = size;
+                        canvas.getContext('2d').drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, size, size);
+                        resolve(canvas.toDataURL('image/jpeg', 0.6));
+                    } catch (e) { reject(e); }
+                };
+                img.src = photo;
+            });
+        }
+        async function hydrateThumbs() {
+            if (thumbHydrating) { thumbNeedsRerun = true; return; }
+            thumbHydrating = true;
+            try {
+                const imgs = [...document.querySelectorAll('img[data-thumb-id]')];
+                for (const img of imgs) {
+                    const id = Number(img.dataset.thumbId);
+                    const rec = allRecords.find(x => x.id === id);
+                    if (!rec || !rec.photo) continue;
+                    let c = thumbCache.get(id);
+                    if (!c || c.len !== rec.photo.length) {
+                        let url;
+                        try { url = await makeThumb(rec.photo); } catch (e) { url = rec.photo; }
+                        c = { len: rec.photo.length, url };
+                        thumbCache.set(id, c);
+                    }
+                    if (img.isConnected) img.src = c.url;
+                }
+            } finally {
+                thumbHydrating = false;
+                if (thumbNeedsRerun) { thumbNeedsRerun = false; hydrateThumbs(); }
+            }
+        }
 
         function renderDashboard() {
             applyAppSettingsToUI();
@@ -6500,7 +6685,7 @@
                     <td class="p-3.5 text-slate-400 text-xs">${formatNumber(index + 1)}</td>
                     <td class="p-3.5 no-print">
                         ${r.photo
-                            ? `<button type="button" data-action="photo" data-id="${Number(r.id)}" class="block w-10 h-10 rounded-xl overflow-hidden ring-2 ring-white dark:ring-slate-900 border border-slate-400 dark:border-slate-500 shadow-sm hover:scale-105 hover:opacity-90 transition-all" title="مشاهده عکس"><img src="${escapeHTML(r.photo)}" class="w-full h-full object-cover" alt="عکس رکورد"></button>`
+                            ? `<button type="button" data-action="photo" data-id="${Number(r.id)}" class="block w-10 h-10 rounded-xl overflow-hidden ring-2 ring-white dark:ring-slate-900 border border-slate-400 dark:border-slate-500 shadow-sm hover:scale-105 hover:opacity-90 transition-all" title="مشاهده عکس" aria-label="مشاهده عکس"><img src="${getThumbSrc(r)}" data-thumb-id="${Number(r.id)}" decoding="async" class="w-full h-full object-cover" alt="عکس رکورد"></button>`
                             : `<span class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-300 dark:text-slate-600"><i class="fa-solid fa-image text-xs"></i></span>`
                         }
                     </td>
@@ -6530,13 +6715,14 @@
                     <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${escapeHTML(r.date)} <span class="opacity-60">-</span> ${escapeHTML(r.time)}</td>
                     <td class="p-3.5 text-center no-print">
                         <div class="flex items-center justify-center gap-1.5 opacity-70 group-hover:opacity-100 transition-opacity">
-                            <button data-action="edit" data-id="${Number(r.id)}" class="w-8 h-8 flex items-center justify-center rounded-full text-amber-600 hover:text-amber-800 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors" title="ویرایش"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button data-action="delete" data-id="${Number(r.id)}" class="w-8 h-8 flex items-center justify-center rounded-full text-rose-500 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors" title="حذف"><i class="fa-solid fa-trash-can"></i></button>
+                            <button data-action="edit" data-id="${Number(r.id)}" class="w-8 h-8 flex items-center justify-center rounded-full text-amber-600 hover:text-amber-800 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors" title="ویرایش" aria-label="ویرایش"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button data-action="delete" data-id="${Number(r.id)}" class="w-8 h-8 flex items-center justify-center rounded-full text-rose-500 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors" title="حذف" aria-label="حذف"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </td>
                 </tr>
             `).join('');
             renderRecordsSummaryFooter(records);
+            hydrateThumbs();
         }
 
         function openOverviewModal() {
@@ -6759,6 +6945,40 @@
         if (!pinScreenEl || pinScreenEl.classList.contains('hidden')) {
             checkDailyAutoBackup();
         }
+
+        /* ---- دسترس‌پذیری: نقش دیالوگ، اتصال برچسب‌ها، aria-label و بستن با Escape ---- */
+        const MODAL_IDS = ['customConfirmModal', 'deleteCodeModal', 'advancedSearchModal', 'resetCodeConfirmModal', 'trashBinModal', 'dataHealthModal', 'settingsModal', 'overviewModal'];
+        MODAL_IDS.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); }
+        });
+        document.querySelectorAll('label:not([for])').forEach(l => {
+            if (l.querySelector('input,select,textarea')) return;
+            const parent = l.parentElement;
+            if (!parent) return;
+            const ctrls = parent.querySelectorAll('input[id],select[id],textarea[id]');
+            if (ctrls.length === 1) l.setAttribute('for', ctrls[0].id);
+        });
+        document.querySelectorAll('button[title]:not([aria-label])').forEach(b => b.setAttribute('aria-label', b.getAttribute('title')));
+
+        function isModalOpen(id) {
+            const el = document.getElementById(id);
+            return !!el && !el.classList.contains('hidden');
+        }
+        document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape') return;
+            if (isModalOpen('jalaliDatePickerPopup')) { closeDatePicker(); return; }
+            if (isModalOpen('photoViewerModal')) { closePhotoViewer(); return; }
+            if (isModalOpen('customConfirmModal')) { document.getElementById('customConfirmCancelBtn').click(); return; }
+            if (isModalOpen('deleteCodeModal')) { closeDeleteCodeModal(); return; }
+            if (isModalOpen('resetCodeConfirmModal')) { closeResetCodeConfirmModal(); return; }
+            if (isModalOpen('advancedSearchModal')) { closeAdvancedSearchModal(); return; }
+            if (isModalOpen('trashBinModal')) { closeTrashBinModal(); return; }
+            if (isModalOpen('dataHealthModal')) { closeDataHealthModal(); return; }
+            if (isModalOpen('settingsModal')) { closeSettingsModal(); return; }
+            if (isModalOpen('overviewModal')) { closeOverviewModal(); return; }
+            if (isTableFullScreen) { toggleRecordsTableFullScreen(); }
+        });
 
         addLog(`سامانه بارگذاری شد. تاریخ: ${currentJalali.fullDateStr}`, 'info');
         renderDashboard();

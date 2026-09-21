@@ -46,6 +46,11 @@
         #overviewModalTableBody tr:nth-child(even) {
             background-color: rgba(100, 116, 139, 0.07);
         }
+        /* رندر نکردن ردیف‌های خارج از دید در اسکرول، برای روان‌تر شدن جدول با رکوردهای زیاد */
+        #recordsTableBody tr {
+            content-visibility: auto;
+            contain-intrinsic-size: auto 52px;
+        }
         .dark #recordsTableBody tr:nth-child(even),
         .dark #overviewModalTableBody tr:nth-child(even) {
             background-color: rgba(148, 163, 184, 0.06);
@@ -685,21 +690,21 @@
                 <table class="w-full text-right text-sm">
                     <thead class="text-slate-600 dark:text-slate-300 text-xs">
                         <tr>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">#</th>
-                            <th class="sticky top-0 z-10 p-3.5 no-print bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عکس</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">کد</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عنوان لباس</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">رنگ</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">تعداد دریافتی</th>
-                            <th id="thUnitPrice" class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">قیمت واحد (تومان)</th>
-                            <th id="thTotalPrice" class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">مبلغ کل (تومان)</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">آمار روزانه</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">مدت زمان تحویل کار</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">تاریخ و زمان پایان</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">شروع کد بعد</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">وضعیت</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">تاریخ و ساعت</th>
-                            <th class="sticky top-0 z-10 p-3.5 text-center no-print bg-slate-100/95 dark:bg-slate-800/95 backdrop-blur-sm border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عملیات</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">#</th>
+                            <th class="sticky top-0 z-10 p-3.5 no-print bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عکس</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">کد</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عنوان لباس</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">رنگ</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">تعداد دریافتی</th>
+                            <th id="thUnitPrice" class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">قیمت واحد (تومان)</th>
+                            <th id="thTotalPrice" class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">مبلغ کل (تومان)</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">آمار روزانه</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">مدت زمان تحویل کار</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">تاریخ و زمان پایان</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">شروع کد بعد</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">وضعیت</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">تاریخ و ساعت</th>
+                            <th class="sticky top-0 z-10 p-3.5 text-center no-print bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عملیات</th>
                         </tr>
                     </thead>
                     <tbody id="recordsTableBody" class="divide-y divide-slate-300 dark:divide-slate-600">

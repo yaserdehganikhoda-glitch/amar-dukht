@@ -131,6 +131,20 @@
             background-color: rgba(99, 102, 241, 0.15);
         }
     </style>
+    <style>
+        /* نمای کارتی واکنش‌گرا برای جدول رکوردها: زیر ۶۴۰px جدول جای خود را به کارت‌ها می‌دهد */
+        @media print {
+            #recordsCardView { display: none !important; }
+            #recordsTableCard .overflow-x-auto { display: block !important; }
+        }
+        #recordsCardView .rc-card:active { background-color: rgba(100, 116, 139, 0.07); }
+        .dark #recordsCardView .rc-card:active { background-color: rgba(148, 163, 184, 0.06); }
+        /* انتخاب دستی کاربر (دکمه‌ی جدولی/کارتی) روی رفتار پیش‌فرض واکنش‌گرا اولویت دارد */
+        #recordsTableCard[data-view="table"] #recordsCardView { display: none !important; }
+        #recordsTableCard[data-view="table"] .overflow-x-auto { display: block !important; }
+        #recordsTableCard[data-view="card"] #recordsCardView { display: block !important; }
+        #recordsTableCard[data-view="card"] .overflow-x-auto { display: none !important; }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen pb-28 font-normal-size" id="appBody">
 
@@ -257,7 +271,7 @@
                                 </span>
                                 <span class="min-w-0">
                                     <span id="folderMenuBtnLabel" class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پوشه دستگاه</span>
-                                    <span class="block text-[9px] text-slate-400">همگام‌سازی</span>
+                                    <span class="block text-[9px] text-slate-400">مسیر در تنظیمات</span>
                                 </span>
                             </button>
                             <button onclick="document.getElementById('importFile').click(); closeToolsDropdown();" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -443,19 +457,19 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">کد لباس / قطعه</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemCode">کد لباس / قطعه</label>
                         <input type="text" inputmode="numeric" id="itemCode" required class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">عنوان لباس / قطعه</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemTitle">عنوان لباس / قطعه</label>
                         <input type="text" id="itemTitle" required class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-xs bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">رنگ</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemColor">رنگ</label>
                         <input type="text" id="itemColor" required class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">تعداد دریافتی</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="receivedQuantity">تعداد دریافتی</label>
                         <input type="text" inputmode="numeric" id="receivedQuantity" required oninput="runAutoDeliveryCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
@@ -470,7 +484,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">وضعیت تحویل / ثبت</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemStatus">وضعیت تحویل / ثبت</label>
                         <select id="itemStatus" required onchange="toggleDeliveryDurationField()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 transition-all">
                             <option value="به موقع">به موقع</option>
                             <option value="تاخیر">تاخیر</option>
@@ -478,7 +492,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">تاریخ ثبت</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="recordDate">تاریخ ثبت</label>
                         <div class="relative">
                             <input type="text" id="recordDate" required readonly onclick="openDatePicker('recordDate', event)" placeholder="انتخاب تاریخ" class="w-full p-3 pr-10 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all cursor-pointer">
                             <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
@@ -487,13 +501,13 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">ساعت ثبت</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="recordTime">ساعت ثبت</label>
                         <input type="time" id="recordTime" required oninput="runAutoDeliveryCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">آمار روزانه</label>
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="dailyStat">آمار روزانه</label>
                     <input type="text" inputmode="numeric" id="dailyStat" oninput="runAutoDeliveryCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                 </div>
 
@@ -501,7 +515,7 @@
                     <div>
                         <label title="محاسبه خودکار" class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-flag-checkered text-indigo-400 dark:text-indigo-500 text-[10px]"></i>
-                            تاریخ و زمان پایان
+                            <span data-field-label="recordEndDateTime">تاریخ و زمان پایان</span>
                         </label>
                         <input type="text" id="recordEndDateTime" readonly class="w-full p-2 border border-indigo-200 dark:border-slate-600 rounded-lg text-xs text-center font-semibold bg-indigo-50/60 dark:bg-slate-800/60 text-indigo-700 dark:text-slate-200 outline-none transition-all cursor-not-allowed">
                     </div>
@@ -509,7 +523,7 @@
                     <div>
                         <label title="محاسبه خودکار، جمعه‌ها تعطیل محسوب می‌شود" class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-hourglass text-indigo-400 dark:text-indigo-500 text-[10px]"></i>
-                            مدت زمان تحویل کار
+                            <span data-field-label="recordWorkDuration">مدت زمان تحویل کار</span>
                         </label>
                         <input type="text" id="recordWorkDuration" readonly class="w-full p-2 border border-indigo-200 dark:border-slate-600 rounded-lg text-xs text-center font-semibold bg-indigo-50/60 dark:bg-slate-800/60 text-indigo-700 dark:text-slate-200 outline-none transition-all cursor-not-allowed">
                     </div>
@@ -656,6 +670,10 @@
                         </span>
                         <input type="text" id="searchInput" oninput="debouncedRenderDashboard()" placeholder="جستجو در لیست..." class="w-full pr-10 pl-3.5 py-2 border border-slate-400 dark:border-slate-500 rounded-xl text-xs bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
+                    <button onclick="toggleRecordsViewMode()" id="recordsViewModeBtn" class="no-print p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5 whitespace-nowrap bg-white dark:bg-slate-800 field-box-bg" title="تغییر نمای نمایش (جدولی/کارتی)">
+                        <i id="recordsViewModeIcon" class="fa-solid fa-table-cells-large"></i>
+                        <span class="hidden md:inline" id="recordsViewModeLabel">نمای کارتی</span>
+                    </button>
                     <button onclick="openAdvancedSearchModal()" class="no-print p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5 whitespace-nowrap bg-white dark:bg-slate-800 field-box-bg" title="جستجوی پیشرفته در کل داده‌ها">
                         <i class="fa-solid fa-filter"></i>
                         <span class="hidden md:inline">جستجوی پیشرفته</span>
@@ -686,7 +704,7 @@
                 <p id="printRecordsSubtitle" class="text-xs text-slate-500 mt-1"></p>
             </div>
 
-            <div class="overflow-x-auto max-h-[60vh]">
+            <div class="overflow-x-auto max-h-[60vh] hidden sm:block">
                 <table class="w-full text-right text-sm">
                     <thead class="text-slate-600 dark:text-slate-300 text-xs">
                         <tr>
@@ -712,6 +730,8 @@
                 </table>
             </div>
             
+            <div id="recordsCardView" class="sm:hidden divide-y divide-slate-300 dark:divide-slate-600 max-h-[60vh] overflow-y-auto"></div>
+
             <div id="emptyState" class="hidden p-12 text-center text-slate-400">
                 <i class="fa-solid fa-folder-open text-4xl mb-2 opacity-50"></i>
                 <p class="text-sm">هیچ رکوردی یافت نشد.</p>
@@ -729,7 +749,7 @@
                     </div>
                     <div id="delaySummaryBody" class="mt-2">
                         <p id="totalDelaySummaryText" class="text-sm font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">—</p>
-                        <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">بر مبنای ۸ ساعت و ۱۵ دقیقه کاری در هر روز</p>
+                        <p id="workdayBasisNote" class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">بر مبنای ۸ ساعت و ۱۵ دقیقه کاری در هر روز</p>
                     </div>
                 </div>
                 <div class="bg-white dark:bg-slate-800 field-box-bg rounded-xl p-4 border border-slate-300 dark:border-slate-600">
@@ -994,6 +1014,9 @@
                 <button type="button" onclick="switchSettingsTab('profile')" data-settings-tab="profile" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
                     <i class="fa-solid fa-id-badge"></i> پروفایل
                 </button>
+                <button type="button" onclick="switchSettingsTab('work')" data-settings-tab="work" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
+                    <i class="fa-solid fa-clock"></i> ساعات کاری و فرم
+                </button>
                 <button type="button" onclick="switchSettingsTab('appearance')" data-settings-tab="appearance" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
                     <i class="fa-solid fa-palette"></i> ظاهری
                 </button>
@@ -1074,6 +1097,39 @@
                             </select>
                         </div>
                     </div>
+                </div>
+                </div>
+
+                <div id="settingsTab-work" class="settings-tab-panel hidden space-y-4">
+                <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> ساعات کاری و استراحت‌ها</h3>
+                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">«ساعت کاری مفید روزانه» (مبنای محاسبه مدت از روی آمار روزانه) مستقل از بازه‌های زیر وارد می‌شود؛ بازه‌ها فقط تعیین می‌کنند کار در چه ساعاتی جلو برود. برای حذف یک استراحت، هر دو ساعت آن را خالی بگذارید. جمعه‌ها همچنان تعطیل است. تغییر فقط روی محاسبه‌های بعدی اثر می‌گذارد؛ رکوردهای قبلی تا زمان ویرایش عوض نمی‌شوند.</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">شروع کار</label>
+                            <input type="time" id="settingShiftStart" oninput="updateShiftPreview()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">پایان کار</label>
+                            <input type="time" id="settingShiftEnd" oninput="updateShiftPreview()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                        </div>
+                    </div>
+                    <div id="workBreaksFields" class="space-y-2"></div>
+                    <div class="space-y-2">
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300">ساعت کاری مفید روزانه (مبنای محاسبه)</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="flex items-center gap-2"><input type="text" inputmode="numeric" id="settingWorkdayHours" placeholder="۸" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"><span class="text-xs text-slate-500 shrink-0">ساعت</span></div>
+                            <div class="flex items-center gap-2"><input type="text" inputmode="numeric" id="settingWorkdayMins" placeholder="۱۵" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"><span class="text-xs text-slate-500 shrink-0">دقیقه</span></div>
+                        </div>
+                        <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">مجموع بازه‌های کاری برنامه (شروع تا پایان منهای استراحت‌ها): <b id="shiftTotalPreview" class="text-indigo-600 dark:text-indigo-400">—</b> <button type="button" onclick="syncWorkdayWithSchedule()" class="underline text-purple-600 dark:text-purple-400 mr-1">هم‌سان‌سازی با آن</button></p>
+                    </div>
+                    <button type="button" onclick="resetWorkSettingsToDefaults()" class="text-xs text-slate-500 dark:text-slate-400 underline hover:text-purple-600">بازگشت به پیش‌فرض (۸ تا ۱۸، ۸ ساعت و ۱۵ دقیقه)</button>
+                </div>
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-pen-ruler"></i> نام فیلدهای فرم «ثبت کارکرد جدید»</h3>
+                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">هر فیلد را که خالی بگذارید، نام پیش‌فرض نمایش داده می‌شود. واحد پول به‌طور خودکار کنار «قیمت واحد» می‌آید.</p>
+                    <div id="formLabelsFields" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                    <button type="button" onclick="resetFormLabelsFields()" class="text-xs text-slate-500 dark:text-slate-400 underline hover:text-purple-600">پاک کردن همه‌ی نام‌های سفارشی</button>
                 </div>
                 </div>
 
@@ -1213,7 +1269,7 @@
                         در صورت فعال بودن، هر بار باز کردن برنامه یک رمز عبور درخواست می‌شود (مناسب برای گوشی‌های مشترک). این رمز به‌صورت هش (SHA-256 همراه salt) ذخیره می‌شود. توجه: این قفل فقط جلوی دید و دست‌کاری معمولی را می‌گیرد؛ خودِ داده‌ها در مرورگر رمزنگاری نمی‌شوند، رمز ۴ رقمی در برابر حمله‌ی هدفمند مقاوم نیست و فایل‌های پشتیبان بدون رمز هستند.
                     </p>
                     <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
-                        <input type="checkbox" id="settingPinEnabled" onchange="togglePinFieldsVisibility()" class="w-4 h-4 rounded accent-indigo-600">
+                        <input type="checkbox" id="settingPinEnabled" onchange="onPinCheckboxChange()" class="w-4 h-4 rounded accent-indigo-600">
                         فعال‌سازی قفل با رمز عبور
                     </label>
                     <p id="pinLockStatusText" class="text-xs font-semibold"></p>
@@ -1334,7 +1390,26 @@
 
                 <div id="settingsTab-storage" class="settings-tab-panel hidden space-y-4">
                 <div class="space-y-3">
-                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">وضعیت حافظه سامانه</h3>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">مسیرهای ذخیره‌سازی</h3>
+                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">تا پایان هر ماه فقط یک فایل ساخته و همان فایل به‌روزرسانی می‌شود. مسیرها فقط از همین‌جا تعیین یا تغییر می‌کنند؛ در صفحه‌ی اصلی هیچ‌وقت مسیری پرسیده نمی‌شود.</p>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 space-y-2.5">
+                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">پوشه پشتیبان (فایل JSON ماهانه)</span>
+                        <p id="backupFolderStatusText" class="text-xs font-semibold leading-relaxed">در حال بررسی...</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" id="backupFolderChooseBtn" onclick="chooseBackupFolder()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-medium transition-colors">انتخاب پوشه پشتیبان</button>
+                            <button type="button" id="backupFolderDisconnectBtn" onclick="disconnectBackupFolder()" class="hidden px-3 py-2 border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 rounded-xl text-xs font-medium hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors">قطع اتصال</button>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 space-y-2.5">
+                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">پوشه ذخیره داده (فایل جدا برای هر ماه)</span>
+                        <p id="dataFolderStatusText" class="text-xs font-semibold leading-relaxed">در حال بررسی...</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" id="dataFolderChooseBtn" onclick="chooseStorageFolder()" class="px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-medium transition-colors">انتخاب پوشه ذخیره داده</button>
+                            <button type="button" id="dataFolderLoadBtn" onclick="manualLoadFromFolder()" class="hidden px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-medium transition-colors flex items-center gap-1.5"><i class="fa-solid fa-rotate"></i> بارگذاری داده‌ها از پوشه</button>
+                            <button type="button" id="dataFolderDisconnectBtn" onclick="disconnectStorageFolder()" class="hidden px-3 py-2 border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 rounded-xl text-xs font-medium hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors">قطع اتصال</button>
+                        </div>
+                    </div>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider pt-2">وضعیت حافظه سامانه</h3>
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 text-xs space-y-2">
                         <div class="flex justify-between">
                             <span class="text-slate-500 dark:text-slate-400">تعداد کل رکوردهای ثبت‌شده:</span>
@@ -1831,6 +1906,30 @@
             if (typeof s.deleteCodeHash !== 'string' || !s.deleteCodeHash) delete s.deleteCodeHash;
             ['notificationsEnabled', 'voiceAlertsEnabled', 'liveWidgetEnabled'].forEach(k => { s[k] = !!s[k]; });
             s.onTimeStreak = Math.max(0, Number(s.onTimeStreak) || 0);
+            // ساعات کاری و استراحت‌ها
+            const timeRe = /^\d{1,2}:\d{2}$/;
+            const tm = t => { const [h, m] = String(t).split(':').map(Number); return h * 60 + m; };
+            let shStart = timeRe.test(String(s.shiftStart)) ? s.shiftStart : DEFAULT_SHIFT.shiftStart;
+            let shEnd = timeRe.test(String(s.shiftEnd)) ? s.shiftEnd : DEFAULT_SHIFT.shiftEnd;
+            if (tm(shEnd) - tm(shStart) < 60) { shStart = DEFAULT_SHIFT.shiftStart; shEnd = DEFAULT_SHIFT.shiftEnd; }
+            s.shiftStart = shStart; s.shiftEnd = shEnd;
+            const wmRaw = Number(s.workdayMinutes);
+            s.workdayMinutes = (Number.isFinite(wmRaw) && wmRaw >= 60 && wmRaw <= 1440) ? Math.round(wmRaw) : DEFAULT_SHIFT.workdayMinutes;
+            const srcBreaks = (s.shiftBreaks && typeof s.shiftBreaks === 'object' && !Array.isArray(s.shiftBreaks)) ? s.shiftBreaks : {};
+            s.shiftBreaks = {};
+            BREAK_KEYS.forEach(k => {
+                const b = srcBreaks[k], d = DEFAULT_SHIFT.shiftBreaks[k];
+                if (!b || typeof b !== 'object') { s.shiftBreaks[k] = { ...d }; return; }
+                if (!b.start && !b.end) { s.shiftBreaks[k] = { start: '', end: '' }; return; }
+                const ok = timeRe.test(String(b.start)) && timeRe.test(String(b.end)) && tm(b.end) > tm(b.start) && tm(b.start) >= tm(shStart) && tm(b.end) <= tm(shEnd);
+                s.shiftBreaks[k] = ok ? { start: b.start, end: b.end } : { ...d };
+            });
+            const srcLabels = (s.formLabels && typeof s.formLabels === 'object' && !Array.isArray(s.formLabels)) ? s.formLabels : {};
+            s.formLabels = {};
+            Object.keys(FORM_LABEL_DEFAULTS).forEach(k => {
+                const v = srcLabels[k];
+                if (typeof v === 'string' && v.trim()) s.formLabels[k] = v.trim().slice(0, 60);
+            });
             s.bestStreak = Math.max(0, Number(s.bestStreak) || 0);
             return s;
         }
@@ -2512,7 +2611,23 @@
         let allRecords = (() => { const raw = safeLoadJSON('sewing_statistics_records_v13', []); return Array.isArray(raw) ? raw.map(sanitizeRecord).filter(Boolean) : []; })();
         let dailyNotes = (() => { const raw = safeLoadJSON('sewing_daily_notes_v13', []); return Array.isArray(raw) ? raw.map(sanitizeNote).filter(Boolean) : []; })();
 
-        const DEFAULT_APP_SETTINGS = { 
+        const FORM_LABEL_DEFAULTS = {
+            itemCode: 'کد لباس / قطعه', itemTitle: 'عنوان لباس / قطعه', itemColor: 'رنگ', receivedQuantity: 'تعداد دریافتی',
+            unitPrice: 'قیمت واحد', itemStatus: 'وضعیت تحویل / ثبت', recordDate: 'تاریخ ثبت', recordTime: 'ساعت ثبت',
+            dailyStat: 'آمار روزانه', recordEndDateTime: 'تاریخ و زمان پایان', recordWorkDuration: 'مدت زمان تحویل کار'
+        };
+        const BREAK_META = [['breakfast', 'صبحانه'], ['tea1', 'چای اول'], ['lunch', 'ناهار'], ['tea2', 'چای دوم']];
+        const BREAK_KEYS = BREAK_META.map(x => x[0]);
+        const DEFAULT_SHIFT = {
+            workdayMinutes: 495,
+            shiftStart: '08:00', shiftEnd: '18:00',
+            shiftBreaks: {
+                breakfast: { start: '09:00', end: '09:30' }, tea1: { start: '11:45', end: '12:00' },
+                lunch: { start: '13:45', end: '14:30' }, tea2: { start: '16:15', end: '16:30' }
+            }
+        };
+        const DEFAULT_APP_SETTINGS = {
+            workdayMinutes: 495, shiftStart: '08:00', shiftEnd: '18:00', shiftBreaks: null, formLabels: {}, 
             schemaVersion: 1,
             shopName: 'سامانه آمار دوخت لباس',
             currency: 'تومان',
@@ -2657,6 +2772,14 @@
             setTimeout(() => input.focus(), 50);
         }
 
+        // برداشتن تیک قفل بلافاصله اعمال می‌شود (قبلاً فقط با دکمه‌ی «ذخیره تنظیمات قفل» ذخیره می‌شد و
+        // اگر کاربر دکمه‌ی اصلی «ذخیره تنظیمات» را می‌زد، قفل همچنان فعال می‌ماند)
+        function onPinCheckboxChange() {
+            togglePinFieldsVisibility();
+            const cb = document.getElementById('settingPinEnabled');
+            if (cb && !cb.checked && appSettings.pinEnabled) savePinLock();
+        }
+
         function togglePinFieldsVisibility() {
             const enabled = document.getElementById('settingPinEnabled').checked;
             const wrapper = document.getElementById('pinFieldsWrapper');
@@ -2742,34 +2865,39 @@
 
         /*
          * ذخیره‌ی فایل پشتیبان:
-         * در صورتی که مرورگر از انتخاب مسیر توسط کاربر (File System Access API) پشتیبانی کند،
-         * یک پنجره‌ی انتخاب مسیر واقعی به کاربر نشان داده می‌شود تا خودش محل ذخیره را تعیین کند.
-         * در غیر این صورت (یا در صورت عدم پشتیبانی مرورگر، یا هر خطا/لغو در پنجره‌ی انتخاب مسیر
-         * که در برخی مرورگرهای موبایل رخ می‌دهد)، فایل با نام مشخص و قابل‌تشخیص در پوشه‌ی دانلودهای
-         * پیش‌فرض مرورگر ذخیره می‌شود. توجه: ویژگی «download» در HTML مسیر زیرپوشه را تضمین نمی‌کند
-         * (در بعضی مرورگرها مثل فایرفاکس/سافاری نادیده گرفته می‌شود)، پس این‌جا فقط از نام فایل
-         * استفاده می‌شود تا رفتار در همه‌ی مرورگرها یکسان و قابل‌اتکا باشد.
+         * - تا پایان هر ماه شمسی فقط «یک» فایل پشتیبان وجود دارد (آمار_دوخت_پشتیبان_<ماه>_<سال>.json) و هر بار
+         *   همان فایل به‌روزرسانی (بازنویسی) می‌شود؛ با شروع ماه جدید، خودکار فایل ماه جدید ساخته می‌شود.
+         * - مسیر ذخیره فقط از «تنظیمات ← حافظه ← پوشه پشتیبان» تعیین/تغییر می‌کند. در صفحه‌ی اصلی هیچ‌وقت
+         *   پنجره‌ی انتخاب مسیر نمایش داده نمی‌شود.
+         * - اگر پوشه‌ای تعیین نشده باشد (یا مرورگر پشتیبانی نکند)، فایل با همان نام ثابت در پوشه‌ی دانلودها ذخیره می‌شود
+         *   (در این حالت مرورگر ممکن است برای دفعات بعد پسوند (۱)، (۲) اضافه کند؛ چون بازنویسی فایل بدون پوشه ممکن نیست).
          */
+        let backupDirHandle = null;
+        let backupPermissionState = 'unknown';
+
+        function getMonthlyBackupFileName() {
+            return `آمار_دوخت_پشتیبان_${currentJalali.monthName}_${currentJalali.yearEn}.json`;
+        }
+
         async function saveBackupFile(filename, jsonString, { onSuccess } = {}) {
-            if (supportsSaveFilePicker) {
+            if (backupDirHandle) {
                 try {
-                    const handle = await window.showSaveFilePicker({
-                        suggestedName: filename,
-                        types: [{ description: 'فایل پشتیبان JSON', accept: { 'application/json': ['.json'] } }]
-                    });
-                    const writable = await handle.createWritable();
-                    await writable.write(jsonString);
-                    await writable.close();
-                    if (onSuccess) onSuccess('picker');
-                    return true;
-                } catch (err) {
-                    if (err && err.name === 'AbortError') {
-                        // کاربر خودش پنجره‌ی انتخاب مسیر را بست؛ دانلود اضافیِ پنهانی انجام نمی‌شود
-                        addLog('ذخیره‌ی فایل پشتیبان توسط کاربر لغو شد.', 'warn');
-                        showFeedbackBanner('ذخیره‌ی فایل پشتیبان لغو شد.', 'warn');
-                        return false;
+                    let perm = await backupDirHandle.queryPermission({ mode: 'readwrite' });
+                    if (perm !== 'granted') perm = await backupDirHandle.requestPermission({ mode: 'readwrite' });
+                    backupPermissionState = perm;
+                    if (perm === 'granted') {
+                        const fileHandle = await backupDirHandle.getFileHandle(filename, { create: true });
+                        const writable = await fileHandle.createWritable();
+                        await writable.write(jsonString);
+                        await writable.close();
+                        updateBackupFolderStatusUI();
+                        if (onSuccess) onSuccess('backup-folder');
+                        return true;
                     }
-                    console.warn('انتخاب مسیر ذخیره امکان‌پذیر نبود یا لغو شد؛ برای اطمینان، فایل در پوشه دانلودها ذخیره می‌شود:', err);
+                    updateBackupFolderStatusUI();
+                    console.warn('اجازه‌ی دسترسی به پوشه پشتیبان داده نشد؛ فایل در پوشه دانلودها ذخیره می‌شود.');
+                } catch (err) {
+                    console.warn('ذخیره در پوشه پشتیبان ناموفق بود؛ فایل در پوشه دانلودها ذخیره می‌شود:', err);
                 }
             }
 
@@ -2781,6 +2909,89 @@
             setTimeout(() => URL.revokeObjectURL(link.href), 10000);
             if (onSuccess) onSuccess('downloads-folder');
             return true;
+        }
+
+        async function initBackupFolderConnection() {
+            if (!supportsFileSystemAccess) { updateBackupFolderStatusUI(); return; }
+            try {
+                const handle = await getDirHandleFromDB('backupDir');
+                if (handle) {
+                    backupDirHandle = handle;
+                    backupPermissionState = await handle.queryPermission({ mode: 'readwrite' });
+                }
+            } catch (err) {
+                console.warn('خطا در بازیابی پوشه پشتیبان:', err);
+            }
+            updateBackupFolderStatusUI();
+        }
+
+        async function chooseBackupFolder() {
+            if (!supportsFileSystemAccess) {
+                showFeedbackBanner('مرورگر شما از انتخاب پوشه پشتیبان پشتیبانی نمی‌کند (فقط Chrome/Edge روی رایانه یا اندروید). فایل پشتیبان در پوشه دانلودها ذخیره می‌شود.', 'warn');
+                return;
+            }
+            try {
+                const handle = await window.showDirectoryPicker({ id: 'sewing-app-backup', mode: 'readwrite' });
+                await saveDirHandleToDB(handle, 'backupDir');
+                backupDirHandle = handle;
+                backupPermissionState = 'granted';
+                updateBackupFolderStatusUI();
+                addLog(`پوشه پشتیبان «${handle.name}» تعیین شد.`, 'success');
+                showFeedbackBanner(`پوشه پشتیبان «${handle.name}» تعیین شد. از این پس فایل پشتیبان هر ماه در همین پوشه (یک فایل ثابت) به‌روزرسانی می‌شود.`, 'success');
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.error(err);
+                    showFeedbackBanner('انتخاب پوشه پشتیبان با خطا مواجه شد.', 'warn');
+                }
+            }
+        }
+
+        async function reconnectBackupFolder() {
+            if (!backupDirHandle) return;
+            try {
+                backupPermissionState = await backupDirHandle.requestPermission({ mode: 'readwrite' });
+                updateBackupFolderStatusUI();
+                if (backupPermissionState === 'granted') showFeedbackBanner('دسترسی به پوشه پشتیبان دوباره فعال شد.', 'success');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function disconnectBackupFolder() {
+            showCustomConfirm('اتصال پوشه پشتیبان قطع شود؟ (فایل‌های موجود در پوشه دست‌نخورده می‌مانند و پشتیبان‌های بعدی در پوشه دانلودها ذخیره می‌شوند.)', async (confirmed) => {
+                if (!confirmed) return;
+                backupDirHandle = null;
+                backupPermissionState = 'unknown';
+                await clearDirHandleFromDB('backupDir');
+                updateBackupFolderStatusUI();
+                addLog('اتصال پوشه پشتیبان قطع شد.', 'warn');
+            });
+        }
+
+        function updateBackupFolderStatusUI() {
+            const statusEl = document.getElementById('backupFolderStatusText');
+            const chooseBtn = document.getElementById('backupFolderChooseBtn');
+            const disconnectBtn = document.getElementById('backupFolderDisconnectBtn');
+            if (!statusEl) return;
+            if (!supportsFileSystemAccess) {
+                statusEl.innerText = 'این مرورگر از انتخاب پوشه پشتیبانی نمی‌کند؛ پشتیبان‌ها در پوشه دانلودها ذخیره می‌شوند.';
+                statusEl.className = 'text-xs font-semibold text-slate-400';
+                if (chooseBtn) chooseBtn.classList.add('hidden');
+                if (disconnectBtn) disconnectBtn.classList.add('hidden');
+                return;
+            }
+            if (chooseBtn) { chooseBtn.classList.remove('hidden'); chooseBtn.innerText = backupDirHandle ? 'تغییر پوشه پشتیبان' : 'انتخاب پوشه پشتیبان'; }
+            if (disconnectBtn) disconnectBtn.classList.toggle('hidden', !backupDirHandle);
+            if (!backupDirHandle) {
+                statusEl.innerText = 'وضعیت: پوشه‌ای تعیین نشده؛ پشتیبان‌ها در پوشه دانلودها ذخیره می‌شوند.';
+                statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
+            } else if (backupPermissionState === 'granted') {
+                statusEl.innerText = `وضعیت: فعال — پوشه «${backupDirHandle.name}» (فایل ماه جاری: ${getMonthlyBackupFileName()})`;
+                statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
+            } else {
+                statusEl.innerHTML = `پوشه «${escapeHTML(backupDirHandle.name)}» تعیین شده ولی دسترسی آن غیرفعال است. <button type="button" onclick="reconnectBackupFolder()" class="underline font-bold">فعال‌سازی دسترسی</button>`;
+                statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
+            }
         }
 
         const SETTINGS_FILE_NAME = 'تنظیمات_و_یادداشت‌ها.json';
@@ -2799,8 +3010,8 @@
                 if (!force && lastRotatingDate === todayStr) return false; // حداکثر یک بار در روز (به‌صورت خودکار)
 
                 const backupsDir = await appDirHandle.getDirectoryHandle('backups', { create: true });
-                const timeTag = todayStr.replace(/\//g, '-') + '_' + new Date().toTimeString().slice(0, 8).replace(/:/g, '');
-                const fileHandle = await backupsDir.getFileHandle(`نسخه_${timeTag}.json`, { create: true });
+                const monthTag = toEnglishDigits(currentJalali.yearEn) + '-' + String(currentJalali.monthNum).padStart(2, '0'); // یک فایل برای کل ماه؛ هر بار همان فایل به‌روزرسانی می‌شود
+                const fileHandle = await backupsDir.getFileHandle(`نسخه_${monthTag}.json`, { create: true });
                 const writable = await fileHandle.createWritable();
                 await writable.write(JSON.stringify({
                     version: "13.0", app: "sewing_statistics", timestamp: new Date().toISOString(),
@@ -2821,7 +3032,7 @@
                 }
 
                 localStorage.setItem('sewing_last_rotating_backup_date', todayStr);
-                addLog(`نسخه پشتیبان چرخشی در پوشه «backups» ذخیره شد (${formatNumber(Math.min(entries.length, ROTATING_BACKUP_KEEP_COUNT))} نسخه‌ی اخیر نگه‌داری می‌شود).`, 'success');
+                addLog(`نسخه پشتیبان ماه جاری در پوشه «backups» به‌روزرسانی شد (نسخه‌ی ${ROTATING_BACKUP_KEEP_COUNT} ماه اخیر نگه‌داری می‌شود).`, 'success');
                 return true;
             } catch (e) {
                 console.warn('خطا در ذخیره‌ی نسخه پشتیبان چرخشی:', e);
@@ -2831,7 +3042,7 @@
 
         async function manualRotatingBackupNow() {
             closeToolsDropdown();
-            if (!appDirHandle) { showFeedbackBanner('ابتدا باید از «پوشه دستگاه» یک پوشه متصل کنید.', 'warn'); return; }
+            if (!appDirHandle) { showFeedbackBanner('ابتدا از «تنظیمات ← حافظه» یک پوشه ذخیره‌سازی متصل کنید.', 'warn'); return; }
             const ok = await saveRotatingBackupToFolder(true);
             showFeedbackBanner(ok ? 'نسخه پشتیبان چرخشی جدید در زیرپوشه‌ی «backups» ذخیره شد.' : 'ذخیره‌ی نسخه پشتیبان چرخشی ناموفق بود.', ok ? 'success' : 'warn');
         }
@@ -2844,29 +3055,29 @@
                 req.onerror = () => reject(req.error);
             });
         }
-        async function saveDirHandleToDB(handle) {
+        async function saveDirHandleToDB(handle, key = 'dataDir') {
             const db = await openHandleDB();
             return new Promise((resolve, reject) => {
                 const tx = db.transaction('handles', 'readwrite');
-                tx.objectStore('handles').put(handle, 'dataDir');
+                tx.objectStore('handles').put(handle, key);
                 tx.oncomplete = () => resolve();
                 tx.onerror = () => reject(tx.error);
             });
         }
-        async function getDirHandleFromDB() {
+        async function getDirHandleFromDB(key = 'dataDir') {
             const db = await openHandleDB();
             return new Promise((resolve, reject) => {
                 const tx = db.transaction('handles', 'readonly');
-                const req = tx.objectStore('handles').get('dataDir');
+                const req = tx.objectStore('handles').get(key);
                 req.onsuccess = () => resolve(req.result || null);
                 req.onerror = () => reject(req.error);
             });
         }
-        async function clearDirHandleFromDB() {
+        async function clearDirHandleFromDB(key = 'dataDir') {
             const db = await openHandleDB();
             return new Promise((resolve, reject) => {
                 const tx = db.transaction('handles', 'readwrite');
-                tx.objectStore('handles').delete('dataDir');
+                tx.objectStore('handles').delete(key);
                 tx.oncomplete = () => resolve();
                 tx.onerror = () => reject(tx.error);
             });
@@ -3015,7 +3226,7 @@
             let hasAnyFile = false;
 
             for await (const [name, handle] of appDirHandle.entries()) {
-                if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json')) continue;
+                if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name.startsWith('آمار_دوخت_پشتیبان_')) continue;
                 try {
                     const file = await handle.getFile();
                     const parsed = JSON.parse(await file.text());
@@ -3131,7 +3342,7 @@
             if (!appDirHandle) {
                 const handle = await getDirHandleFromDB();
                 if (!handle) {
-                    showFeedbackBanner('هنوز هیچ پوشه‌ای انتخاب نشده. ابتدا از «اتصال پوشه ذخیره‌سازی دستگاه» یک پوشه انتخاب کنید.', 'warn');
+                    showFeedbackBanner('هنوز هیچ پوشه‌ای انتخاب نشده. ابتدا از «تنظیمات ← حافظه» یک پوشه ذخیره‌سازی انتخاب کنید.', 'warn');
                     return;
                 }
                 appDirHandle = handle;
@@ -3193,18 +3404,46 @@
 
         function handleFolderMenuButtonClick() {
             closeToolsDropdown();
-            if (appDirHandle && dirHandlePermissionState === 'granted') {
-                showCustomConfirm('در حال حاضر به یک پوشه متصل هستید. آیا می‌خواهید پوشه ذخیره‌سازی دیگری انتخاب کنید؟', (confirmed) => {
-                    if (confirmed) chooseStorageFolder();
-                });
-            } else if (appDirHandle) {
+            // در صفحه‌ی اصلی هیچ مسیری انتخاب نمی‌شود؛ فقط اگر پوشه‌ی متصل نیاز به تایید دسترسی دارد همان انجام می‌شود،
+            // در غیر این صورت کاربر به تنظیمات (بخش حافظه) هدایت می‌شود.
+            if (appDirHandle && dirHandlePermissionState !== 'granted') {
                 reconnectStorageFolder();
+                return;
+            }
+            openSettingsModal();
+            switchSettingsTab('storage');
+        }
+
+        function updateDataFolderSettingsUI() {
+            const statusEl = document.getElementById('dataFolderStatusText');
+            const chooseBtn = document.getElementById('dataFolderChooseBtn');
+            const disconnectBtn = document.getElementById('dataFolderDisconnectBtn');
+            const loadBtn = document.getElementById('dataFolderLoadBtn');
+            if (loadBtn) loadBtn.classList.toggle('hidden', !appDirHandle || !supportsFileSystemAccess);
+            if (!statusEl) return;
+            if (!supportsFileSystemAccess) {
+                statusEl.innerText = 'این مرورگر از انتخاب پوشه پشتیبانی نمی‌کند؛ فقط ذخیره‌ی مرورگر فعال است.';
+                statusEl.className = 'text-xs font-semibold text-slate-400';
+                if (chooseBtn) chooseBtn.classList.add('hidden');
+                if (disconnectBtn) disconnectBtn.classList.add('hidden');
+                return;
+            }
+            if (chooseBtn) { chooseBtn.classList.remove('hidden'); chooseBtn.innerText = appDirHandle ? 'تغییر پوشه ذخیره داده' : 'انتخاب پوشه ذخیره داده'; }
+            if (disconnectBtn) disconnectBtn.classList.toggle('hidden', !appDirHandle);
+            if (!appDirHandle) {
+                statusEl.innerText = 'وضعیت: پوشه‌ای متصل نیست؛ داده‌ها فقط در حافظه مرورگر ذخیره می‌شوند.';
+                statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
+            } else if (dirHandlePermissionState === 'granted') {
+                statusEl.innerText = `وضعیت: فعال — پوشه «${appDirHandle.name}» (یک فایل برای هر ماه، به‌روزرسانی در همان فایل)`;
+                statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
             } else {
-                chooseStorageFolder();
+                statusEl.innerHTML = `پوشه «${escapeHTML(appDirHandle.name)}» متصل است ولی دسترسی آن غیرفعال است. <button type="button" onclick="reconnectStorageFolder()" class="underline font-bold">فعال‌سازی دسترسی</button>`;
+                statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
             }
         }
 
         function updateStorageFolderStatusUI() {
+            updateDataFolderSettingsUI();
             const line = document.getElementById('folderStatusLine');
             const menuLabel = document.getElementById('folderMenuBtnLabel');
             const menuIcon = document.getElementById('folderMenuBtnIcon');
@@ -3223,7 +3462,7 @@
                 line.className = "inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-900";
                 line.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ذخیره خودکار در پوشه «${escapeHTML(appDirHandle.name)}» فعال است`;
                 line.onclick = null;
-                if (menuLabel) menuLabel.innerText = 'تغییر پوشه ذخیره‌سازی دستگاه';
+                if (menuLabel) menuLabel.innerText = 'تنظیمات پوشه دستگاه';
                 if (menuIcon) menuIcon.className = 'fa-solid fa-folder-open text-teal-600 dark:text-teal-400 text-xs';
                 if (disconnectBtn) disconnectBtn.classList.remove('hidden');
             } else if (appDirHandle) {
@@ -3236,7 +3475,7 @@
             } else {
                 line.classList.add('hidden');
                 line.onclick = null;
-                if (menuLabel) menuLabel.innerText = 'اتصال پوشه ذخیره‌سازی دستگاه';
+                if (menuLabel) menuLabel.innerText = 'تنظیم پوشه دستگاه';
                 if (menuIcon) menuIcon.className = 'fa-solid fa-folder-plus text-teal-600 dark:text-teal-400 text-xs';
                 if (disconnectBtn) disconnectBtn.classList.add('hidden');
                 return;
@@ -3660,6 +3899,8 @@
             isTableFullScreen = !isTableFullScreen;
             const scroller = card.querySelector('.overflow-x-auto');
             if (scroller) scroller.style.maxHeight = isTableFullScreen ? 'calc(100vh - 10rem)' : '';
+            const cardViewEl = document.getElementById('recordsCardView');
+            if (cardViewEl) cardViewEl.style.maxHeight = isTableFullScreen ? 'calc(100vh - 10rem)' : '';
             if (isTableFullScreen) {
                 card.classList.add('fixed', 'inset-0', 'z-50', 'rounded-none', 'overflow-y-auto', 'm-0', 'p-4');
                 icon.className = "fa-solid fa-compress";
@@ -3670,6 +3911,51 @@
                 document.body.style.overflow = 'auto';
             }
         }
+
+        /* ==================== شیفت دستی بین نمای جدولی و کارتیِ لیست کارکردها ==================== */
+        // مقدار ذخیره‌شده در localStorage: 'table' یا 'card' برای انتخاب دستیِ کاربر؛ 'null' یعنی
+        // حالت خودکار (واکنش‌گرا بر اساس عرض صفحه) که پیش‌فرض برنامه است.
+        function getRecordsViewMode() {
+            const v = localStorage.getItem('sewing_records_view_mode');
+            return (v === 'table' || v === 'card') ? v : null;
+        }
+
+        function getEffectiveRecordsViewMode() {
+            return getRecordsViewMode() || (window.innerWidth < 640 ? 'card' : 'table');
+        }
+
+        function applyRecordsViewModeUI() {
+            const card = document.getElementById('recordsTableCard');
+            const icon = document.getElementById('recordsViewModeIcon');
+            const label = document.getElementById('recordsViewModeLabel');
+            if (!card) return;
+            const mode = getRecordsViewMode();
+            if (mode) card.setAttribute('data-view', mode);
+            else card.removeAttribute('data-view');
+
+            // آیکون/برچسب دکمه، حالتی را نشان می‌دهد که با کلیک به آن سوییچ می‌شود (عکسِ حالت فعلی)
+            const effective = getEffectiveRecordsViewMode();
+            if (effective === 'table') {
+                if (icon) icon.className = 'fa-solid fa-grip';
+                if (label) label.innerText = 'نمای کارتی';
+            } else {
+                if (icon) icon.className = 'fa-solid fa-table-list';
+                if (label) label.innerText = 'نمای جدولی';
+            }
+        }
+
+        function toggleRecordsViewMode() {
+            const next = getEffectiveRecordsViewMode() === 'table' ? 'card' : 'table';
+            localStorage.setItem('sewing_records_view_mode', next);
+            applyRecordsViewModeUI();
+            addLog(`نمای لیست کارکردها به «${next === 'table' ? 'جدولی' : 'کارتی'}» تغییر یافت.`, 'info');
+        }
+
+        window.addEventListener('resize', () => {
+            // فقط وقتی کاربر انتخاب دستی نکرده، با تغییر عرض صفحه برچسب/آیکونِ دکمه به‌روز شود
+            if (!getRecordsViewMode()) applyRecordsViewModeUI();
+        });
+        /* ==================== پایان شیفت دستی نمای لیست ==================== */
 
         // بررسی فضای مصرفی مرورگر (localStorage + IndexedDB + همه‌چیز) و هشدار در آستانه‌ی ۸۰٪
         let quotaWarningShown = false;
@@ -3706,6 +3992,123 @@
                 label.innerText = 'خطا در بررسی';
             }
         }
+
+        /* ============ نام فیلدهای فرم و ساعات کاری (تنظیمات) ============ */
+        function getFormLabel(key) {
+            const c = (appSettings.formLabels || {})[key];
+            return (typeof c === 'string' && c.trim()) ? c.trim() : FORM_LABEL_DEFAULTS[key];
+        }
+        function applyFormLabels() {
+            document.querySelectorAll('[data-field-label]').forEach(el => {
+                const t = getFormLabel(el.dataset.fieldLabel);
+                if (el.textContent !== t) el.textContent = t;
+            });
+        }
+
+        function collectShiftFormValues() {
+            const val = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+            return {
+                start: val('settingShiftStart'), end: val('settingShiftEnd'),
+                pairs: BREAK_META.map(([k]) => [val(`settingBreak_${k}_start`), val(`settingBreak_${k}_end`)])
+            };
+        }
+
+        function updateShiftPreview() {
+            const el = document.getElementById('shiftTotalPreview');
+            if (!el) return;
+            const v = collectShiftFormValues();
+            const c = buildShiftConfig(v.start, v.end, v.pairs);
+            el.innerText = c.minutes > 0 ? `${formatMinutesDuration(c.minutes)} (${formatNumber(c.minutes)} دقیقه)` : 'نامعتبر';
+        }
+
+        function fillWorkSettingsForm(shiftStart, shiftEnd, shiftBreaks, labels, workdayMinutes) {
+            const wdm = Number(workdayMinutes) || DEFAULT_SHIFT.workdayMinutes;
+            document.getElementById('settingWorkdayHours').value = formatNumber(Math.floor(wdm / 60)).replace(/,/g, '');
+            document.getElementById('settingWorkdayMins').value = formatNumber(wdm % 60).replace(/,/g, '');
+            document.getElementById('settingShiftStart').value = shiftStart;
+            document.getElementById('settingShiftEnd').value = shiftEnd;
+            const cls = 'flex-1 min-w-0 p-2 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 outline-none focus:border-purple-500';
+            document.getElementById('workBreaksFields').innerHTML = BREAK_META.map(([k, name]) => {
+                const b = shiftBreaks[k] || { start: '', end: '' };
+                return `<div class="flex items-center gap-2">
+                    <span class="w-14 shrink-0 text-xs font-medium text-slate-600 dark:text-slate-300">${name}</span>
+                    <input type="time" id="settingBreak_${k}_start" value="${escapeHTML(b.start)}" oninput="updateShiftPreview()" class="${cls}">
+                    <span class="text-xs text-slate-400">تا</span>
+                    <input type="time" id="settingBreak_${k}_end" value="${escapeHTML(b.end)}" oninput="updateShiftPreview()" class="${cls}">
+                </div>`;
+            }).join('');
+            document.getElementById('formLabelsFields').innerHTML = Object.keys(FORM_LABEL_DEFAULTS).map(k => `
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">${escapeHTML(FORM_LABEL_DEFAULTS[k])}</label>
+                    <input type="text" id="settingLabel_${k}" maxlength="60" value="${escapeHTML(labels[k] || '')}" placeholder="${escapeHTML(FORM_LABEL_DEFAULTS[k])}" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                </div>`).join('');
+            updateShiftPreview();
+        }
+
+        function loadWorkSettingsIntoForm() {
+            fillWorkSettingsForm(appSettings.shiftStart, appSettings.shiftEnd, appSettings.shiftBreaks || {}, appSettings.formLabels || {}, appSettings.workdayMinutes);
+        }
+
+        function resetWorkSettingsToDefaults() {
+            const labels = {};
+            Object.keys(FORM_LABEL_DEFAULTS).forEach(k => {
+                const el = document.getElementById('settingLabel_' + k);
+                if (el && el.value.trim()) labels[k] = el.value.trim();
+            });
+            fillWorkSettingsForm(DEFAULT_SHIFT.shiftStart, DEFAULT_SHIFT.shiftEnd, DEFAULT_SHIFT.shiftBreaks, labels, DEFAULT_SHIFT.workdayMinutes);
+        }
+
+        function syncWorkdayWithSchedule() {
+            const v = collectShiftFormValues();
+            const c = buildShiftConfig(v.start, v.end, v.pairs);
+            if (c.minutes <= 0) { showFeedbackBanner('ابتدا ساعات کاری و استراحت‌ها را درست وارد کنید.', 'warn'); return; }
+            document.getElementById('settingWorkdayHours').value = formatNumber(Math.floor(c.minutes / 60)).replace(/,/g, '');
+            document.getElementById('settingWorkdayMins').value = formatNumber(c.minutes % 60).replace(/,/g, '');
+        }
+
+        function resetFormLabelsFields() {
+            Object.keys(FORM_LABEL_DEFAULTS).forEach(k => {
+                const el = document.getElementById('settingLabel_' + k);
+                if (el) el.value = '';
+            });
+        }
+
+        function readWorkSettingsFromForm() {
+            const v = collectShiftFormValues();
+            const timeRe = /^\d{1,2}:\d{2}$/;
+            if (!timeRe.test(v.start) || !timeRe.test(v.end)) return { error: 'ساعت شروع و پایان کار را وارد کنید.' };
+            const start = parseTimeToMinutes(v.start), end = parseTimeToMinutes(v.end);
+            if (end - start < 60) return { error: 'ساعت پایان کار باید حداقل یک ساعت بعد از شروع باشد.' };
+            const breaks = {}, used = [];
+            for (let i = 0; i < BREAK_META.length; i++) {
+                const [k, name] = BREAK_META[i];
+                const [bsStr, beStr] = v.pairs[i];
+                if (!bsStr && !beStr) { breaks[k] = { start: '', end: '' }; continue; }
+                if (!bsStr || !beStr) return { error: `برای «${name}» هم شروع و هم پایان را وارد کنید (یا هر دو را خالی بگذارید).` };
+                const bs = parseTimeToMinutes(bsStr), be = parseTimeToMinutes(beStr);
+                if (be <= bs) return { error: `پایان «${name}» باید بعد از شروع آن باشد.` };
+                if (bs < start || be > end) return { error: `«${name}» باید داخل ساعات کاری باشد.` };
+                used.push({ name, bs, be });
+                breaks[k] = { start: bsStr, end: beStr };
+            }
+            used.sort((a, b) => a.bs - b.bs);
+            for (let i = 1; i < used.length; i++) {
+                if (used[i].bs < used[i - 1].be) return { error: `«${used[i - 1].name}» و «${used[i].name}» هم‌پوشانی دارند.` };
+            }
+            if (buildShiftConfig(v.start, v.end, v.pairs).minutes < 60) return { error: 'مجموع بازه‌های کاری برنامه باید حداقل یک ساعت باشد.' };
+            const wh = document.getElementById('settingWorkdayHours').value.trim();
+            const wmn = document.getElementById('settingWorkdayMins').value.trim();
+            const workdayMinutes = (wh === '' ? 0 : parsePersianInt(wh)) * 60 + (wmn === '' ? 0 : parsePersianInt(wmn));
+            if (workdayMinutes < 60 || workdayMinutes > 1440) return { error: 'ساعت کاری مفید روزانه باید بین ۱ تا ۲۴ ساعت باشد.' };
+            const labels = {};
+            Object.keys(FORM_LABEL_DEFAULTS).forEach(k => {
+                const el = document.getElementById('settingLabel_' + k);
+                const val = el ? el.value.trim() : '';
+                if (val && val !== FORM_LABEL_DEFAULTS[k]) labels[k] = val.slice(0, 60);
+            });
+            return { data: { workdayMinutes, shiftStart: v.start, shiftEnd: v.end, shiftBreaks: breaks, formLabels: labels } };
+        }
+        /* ============ پایان نام فیلدها و ساعات کاری ============ */
 
         function openSettingsModal() {
             document.getElementById('settingOwnerName').value = appSettings.ownerName || '';
@@ -3766,6 +4169,9 @@
 
             updateSettingsProfilePreview();
             switchSettingsTab('profile');
+            updateBackupFolderStatusUI();
+            updateDataFolderSettingsUI();
+            loadWorkSettingsIntoForm();
             document.getElementById('settingsModal').classList.remove('hidden');
         }
 
@@ -3835,6 +4241,12 @@
 
         function saveAppSettings(event) {
             event.preventDefault();
+            const workRes = readWorkSettingsFromForm();
+            if (workRes.error) {
+                showFeedbackBanner(workRes.error, 'warn');
+                switchSettingsTab('work');
+                return;
+            }
             const ownerNameVal = document.getElementById('settingOwnerName').value.trim();
             const ownerPhoneVal = document.getElementById('settingOwnerPhone').value.trim();
             const ownerAddressVal = document.getElementById('settingOwnerAddress').value.trim();
@@ -3874,6 +4286,8 @@
             appSettings.voiceAlertsEnabled = voiceAlertsEnabledVal;
             appSettings.liveWidgetEnabled = liveWidgetEnabledVal;
             appSettings.liveWidgetStyle = document.getElementById('settingLiveWidgetStyle').value === 'card' ? 'card' : 'text';
+            Object.assign(appSettings, workRes.data);
+            applyShiftSettings();
             if ((liveWidgetEnabledVal || notificationsEnabledVal) && 'Notification' in window && Notification.permission === 'default') {
                 Notification.requestPermission().then(() => {
                     updateNotificationPermissionStatusUI();
@@ -3885,9 +4299,14 @@
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
             if (appDirHandle) saveAllMonthFilesToDirectory(); // تا فایل تنظیمات در پوشه‌ی متصل هم بلافاصله به‌روز شود
             applyAppSettingsToUI();
+            runAutoDeliveryCalculation(true);
             renderDashboard();
             checkDeliveryProgressNotifications();
             addLog('تنظیمات برنامه به‌روزرسانی شد.', 'success');
+            // وضعیت قفل ورود هم با دکمه‌ی اصلی ذخیره همگام شود
+            const pinCb = document.getElementById('settingPinEnabled');
+            const pinTyped = document.getElementById('settingNewPin').value.trim() || document.getElementById('settingConfirmPin').value.trim();
+            if (pinCb && (pinCb.checked !== !!appSettings.pinEnabled || pinTyped)) savePinLock();
             closeSettingsModal();
             showFeedbackBanner('تنظیمات جدید با موفقیت ذخیره و اعمال شد.', 'success');
         }
@@ -3960,9 +4379,13 @@
         }
 
         function applyAppSettingsToUI() {
+            applyShiftSettings();
             const currency = appSettings.currency || 'تومان';
             document.getElementById('kpiPriceLabel').innerText = `ارزش کل کارکرد (${currency})`;
-            document.getElementById('unitPriceLabel').innerText = `قیمت واحد (${currency})`;
+            document.getElementById('unitPriceLabel').innerText = `${getFormLabel('unitPrice')} (${currency})`;
+            applyFormLabels();
+            const basisNote = document.getElementById('workdayBasisNote');
+            if (basisNote) basisNote.innerText = `بر مبنای ${formatMinutesDuration(SHIFT_MINUTES)} کاری در هر روز`;
             document.getElementById('thUnitPrice').innerText = `قیمت واحد (${currency})`;
             document.getElementById('thTotalPrice').innerText = `مبلغ کل (${currency})`;
             const htmlRoot = document.getElementById('htmlRoot');
@@ -4087,43 +4510,54 @@
             renderDashboard();
         }
 
-        function checkDailyAutoBackup() {
+        function buildBackupPayload() {
+            return {
+                version: "13.0",
+                app: "sewing_statistics",
+                timestamp: new Date().toISOString(),
+                settings: appSettings,
+                records: allRecords,
+                notes: dailyNotes,
+                installSalt: getOrCreateInstallSalt(),
+                tombstones: tombstones
+            };
+        }
+
+        async function runDailyAutoBackup() {
+            const filename = getMonthlyBackupFileName();
+            return await saveBackupFile(filename, JSON.stringify(buildBackupPayload(), null, 2), {
+                onSuccess: (method) => {
+                    addLog('پشتیبان‌گیری خودکار روزانه انجام شد.', 'success');
+                    showFeedbackBanner(
+                        method === 'backup-folder'
+                            ? `پشتیبان‌گیری خودکار انجام شد و فایل ماه جاری (${filename}) به‌روزرسانی شد.`
+                            : 'پشتیبان‌گیری خودکار انجام شد و فایل در پوشه دانلودها ذخیره شد. برای به‌روزرسانی یک فایل ثابت، از «تنظیمات ← حافظه» پوشه پشتیبان را تعیین کنید.',
+                        'success'
+                    );
+                }
+            });
+        }
+
+        async function checkDailyAutoBackup() {
             if (allRecords.length === 0 && dailyNotes.length === 0) return;
-            const lastBackupDate = localStorage.getItem('sewing_last_auto_backup_date');
             const todayStr = currentJalali.fullDateStr;
+            if (localStorage.getItem('sewing_last_auto_backup_date') === todayStr) return;
 
-            if (lastBackupDate !== todayStr) {
-                showCustomConfirm('آیا مایلید یک نسخه پشتیبان خودکار از اطلاعات امروز دانلود شود؟', async (confirmed) => {
-                    localStorage.setItem('sewing_last_auto_backup_date', todayStr);
-                    if (!confirmed) return;
-
-                    const backupData = {
-                        version: "13.0",
-                        app: "sewing_statistics",
-                        timestamp: new Date().toISOString(),
-                        settings: appSettings,
-                        records: allRecords,
-                        notes: dailyNotes,
-                        installSalt: getOrCreateInstallSalt(),
-                        tombstones: tombstones
-                    };
-                    const jsonString = JSON.stringify(backupData, null, 2);
-                    const timeTag = todayStr.replace(/\//g, '');
-                    const filename = `آمار_دوخت_پشتیبان_خودکار_${timeTag}.json`;
-
-                    await saveBackupFile(filename, jsonString, {
-                        onSuccess: (method) => {
-                            addLog('پشتیبان‌گیری خودکار روزانه انجام شد.', 'success');
-                            showFeedbackBanner(
-                                method === 'picker'
-                                    ? 'پشتیبان‌گیری خودکار روزانه انجام شد و در مسیر انتخابی شما ذخیره شد.'
-                                    : 'پشتیبان‌گیری خودکار روزانه انجام شد و فایل آن در پوشه دانلودهای مرورگر ذخیره شد.',
-                                'success'
-                            );
-                        }
-                    });
-                });
+            // اگر پوشه پشتیبان تعیین شده و دسترسی‌اش فعال است، بدون هیچ پرسشی فایل ماه جاری به‌روزرسانی می‌شود
+            if (backupDirHandle) {
+                try {
+                    if (await backupDirHandle.queryPermission({ mode: 'readwrite' }) === 'granted') {
+                        if (await runDailyAutoBackup()) localStorage.setItem('sewing_last_auto_backup_date', todayStr);
+                        return;
+                    }
+                } catch (e) { /* به مسیر پرسش‌دار می‌رود */ }
             }
+
+            showCustomConfirm('آیا مایلید فایل پشتیبان ماه جاری از اطلاعات امروز به‌روزرسانی شود؟', async (confirmed) => {
+                localStorage.setItem('sewing_last_auto_backup_date', todayStr);
+                if (!confirmed) return;
+                await runDailyAutoBackup();
+            });
         }
 
         function saveRecords() {
@@ -4212,16 +4646,15 @@
                 tombstones: tombstones
             };
             const jsonString = JSON.stringify(backupData, null, 2);
-            const timeTag = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-            const filename = `آمار_دوخت_پشتیبان_${timeTag}.json`;
+            const filename = getMonthlyBackupFileName(); // فایل ثابت ماه جاری؛ هر بار همان فایل به‌روزرسانی می‌شود
 
             return await saveBackupFile(filename, jsonString, {
                 onSuccess: (method) => {
                     addLog('فایل پشتیبان استخراج شد.', 'success');
                     showFeedbackBanner(
-                        method === 'picker'
-                            ? 'فایل پشتیبان (JSON) با موفقیت در مسیر انتخابی شما ذخیره شد.'
-                            : 'فایل پشتیبان (JSON) با موفقیت در پوشه دانلودهای مرورگر ذخیره شد.',
+                        method === 'backup-folder'
+                            ? `فایل پشتیبان ماه جاری (${filename}) در پوشه پشتیبان به‌روزرسانی شد.`
+                            : 'فایل پشتیبان در پوشه دانلودها ذخیره شد. برای به‌روزرسانی یک فایل ثابت، از «تنظیمات ← حافظه» پوشه پشتیبان را تعیین کنید.',
                         'success'
                     );
                 }
@@ -5403,18 +5836,43 @@
         }
 
         /* ============ محاسبه خودکار زمان اتمام کار بر اساس آمار روزانه و تعداد دریافتی ============ */
-        // تایم کاری کل شیفت (کار مفید): ۸ ساعت و ۱۵ دقیقه = ۴۹۵ دقیقه
-        const SHIFT_MINUTES = 495;
-        // ساعت شروع و پایان رسمی کار (بر حسب دقیقه از نیمه‌شب): ۰۸:۰۰ تا ۱۸:۰۰
-        const SHIFT_START = 8 * 60;
-        const SHIFT_END = 18 * 60;
-        // تعریف دقیق تایم‌های استراحت (بر حسب دقیقه از نیمه‌شب)
-        const SHIFT_BREAKS = [
-            { start: 540, end: 570 }, // صبحانه ۰۹:۰۰ - ۰۹:۳۰
-            { start: 705, end: 720 }, // چای اول ۱۱:۴۵ - ۱۲:۰۰
-            { start: 825, end: 870 }, // ناهار ۱۳:۴۵ - ۱۴:۳۰
-            { start: 975, end: 990 }  // چای دوم ۱۶:۱۵ - ۱۶:۳۰
-        ];
+        // ساعات کاری، استراحت‌ها و «تایم کاری مفید» از تنظیمات کاربر خوانده می‌شوند (پیش‌فرض: ۰۸:۰۰ تا ۱۸:۰۰ = ۴۹۵ دقیقه)
+        let SHIFT_MINUTES = 495;          // ساعت کاری مفید روزانه (مستقل، توسط کاربر): مبنای محاسبه مدت از روی آمار روزانه
+        let SHIFT_WINDOW_MINUTES = 495;   // مجموع بازه‌های کاریِ برنامه (شروع تا پایان منهای استراحت‌ها)
+        let SHIFT_START = 8 * 60;
+        let SHIFT_END = 18 * 60;
+        let SHIFT_BREAKS = [];
+        // بازه‌های کاریِ پیوسته‌ی یک روز (بین استراحت‌ها): [شروع، پایان) بر حسب دقیقه از نیمه‌شب
+        let SHIFT_SEGMENTS = [];
+
+        function buildShiftConfig(startStr, endStr, breakPairs) {
+            const start = startStr ? parseTimeToMinutes(startStr) : 0;
+            const end = endStr ? parseTimeToMinutes(endStr) : 0;
+            const breaks = [];
+            breakPairs.forEach(([bsStr, beStr]) => {
+                if (!bsStr || !beStr) return;
+                const bs = Math.max(parseTimeToMinutes(bsStr), start);
+                const be = Math.min(parseTimeToMinutes(beStr), end);
+                if (be > bs) breaks.push({ start: bs, end: be });
+            });
+            breaks.sort((a, b) => a.start - b.start);
+            const segments = [];
+            let cur = start;
+            breaks.forEach(b => { if (b.start > cur) segments.push([cur, b.start]); cur = Math.max(cur, b.end); });
+            if (cur < end) segments.push([cur, end]);
+            const minutes = segments.reduce((sum, [a, b]) => sum + (b - a), 0);
+            return { start, end, breaks, segments, minutes };
+        }
+
+        function applyShiftSettings() {
+            const sb = appSettings.shiftBreaks || {};
+            const c = buildShiftConfig(appSettings.shiftStart, appSettings.shiftEnd, BREAK_KEYS.map(k => [(sb[k] || {}).start || '', (sb[k] || {}).end || '']));
+            if (c.minutes < 60) return;
+            SHIFT_START = c.start; SHIFT_END = c.end; SHIFT_BREAKS = c.breaks; SHIFT_SEGMENTS = c.segments; SHIFT_WINDOW_MINUTES = c.minutes;
+            const wm = Number(appSettings.workdayMinutes);
+            SHIFT_MINUTES = (Number.isFinite(wm) && wm >= 60) ? wm : c.minutes;
+        }
+        applyShiftSettings();
 
         function isShiftBreakMinute(minuteOfDay) {
             const m = minuteOfDay % 1440;
@@ -5445,14 +5903,6 @@
             return result;
         }
 
-        // بازه‌های کاریِ پیوسته‌ی یک روز (بین استراحت‌ها): [شروع، پایان) بر حسب دقیقه از نیمه‌شب
-        const SHIFT_SEGMENTS = (() => {
-            const segs = [];
-            let cur = SHIFT_START;
-            SHIFT_BREAKS.forEach(b => { if (b.start > cur) segs.push([cur, b.start]); cur = b.end; });
-            if (cur < SHIFT_END) segs.push([cur, SHIFT_END]);
-            return segs;
-        })();
 
         // پیش‌رفتن به‌اندازه‌ی «target» دقیقه‌ی کاری از لحظه‌ی شروع؛ قطعه‌قطعه (نه دقیقه‌به‌دقیقه)،
         // با همان قواعدِ پرش شیفت، استراحت‌ها و تعطیلی جمعه‌ها. خروجی: لحظه‌ی پایان (دقیقه از نیمه‌شبِ روز شروع).
@@ -5545,7 +5995,7 @@
 
             if (!isFridayJdn(startJdn)) total += workingMinutesInDayInterval(startMinute, 1440);
             for (let d = startJdn + 1; d < endJdn; d++) {
-                if (!isFridayJdn(d)) total += SHIFT_MINUTES;
+                if (!isFridayJdn(d)) total += SHIFT_WINDOW_MINUTES;
             }
             if (!isFridayJdn(endJdn)) total += workingMinutesInDayInterval(0, endMinute);
 
@@ -5853,7 +6303,7 @@
         /* ==================== اعلان‌های هوشمند پیشرفت کار (برای جلوگیری از تاخیر) ==================== */
         const NOTIF_STATE_KEY = 'sewing_notif_state_v1';
         // اگر رکوردی بیش از ۳ روز کاری از موعد گذشته باشد، یادآوری‌های تکراری متوقف می‌شود (نمایش ویجت ادامه دارد)
-        const STALE_OVERDUE_MINUTES = 3 * SHIFT_MINUTES;
+        function getStaleOverdueMinutes() { return 3 * SHIFT_MINUTES; }
         // وضعیت اعلان‌های هر رکورد در کلیدی جدا نگه‌داری می‌شود (نه داخل خودِ رکورد)، تا
         // ۱) نسخه‌ی رکورد (updatedAt) و ادغام دستگاه‌ها را به‌هم نزند، ۲) بین تب‌ها هم‌گام باشد.
         function loadNotifStateMap() {
@@ -6499,7 +6949,7 @@
                     changed = true;
                 } else {
                     const last = rec.lastOverdueNotifyAt || 0;
-                    if (isWithinWorkingTimeNow() && -progress.remainingMinutes <= STALE_OVERDUE_MINUTES && Date.now() - last >= OVERDUE_RENOTIFY_MINUTES * 60 * 1000) {
+                    if (isWithinWorkingTimeNow() && -progress.remainingMinutes <= getStaleOverdueMinutes() && Date.now() - last >= OVERDUE_RENOTIFY_MINUTES * 60 * 1000) {
                         const overdueBy = formatMinutesDuration(progress.remainingMinutes);
                         const msg = `کد ${rec.itemCode || '-'} حدود ${overdueBy} از موعدش تاخیر دارد. لطفاً هر چه زودتر کار را تمام و ثبت کن.`;
                         notifyUser('🚨 یادآوری تاخیر', msg, 'sewing-progress-overdue-' + rec.id, true);
@@ -6539,7 +6989,7 @@
             const badgeColor = isOverdue ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300' : (isUrgent ? 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300' : (isWarn ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300' : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300'));
             loadNotifState(rec);
             const isMuted = rec.mutedUntil && Date.now() < rec.mutedUntil;
-            const isStale = isOverdue && (-progress.remainingMinutes > STALE_OVERDUE_MINUTES);
+            const isStale = isOverdue && (-progress.remainingMinutes > getStaleOverdueMinutes());
 
             // به‌روزرسانی ویجت رینگ دایره‌ای: هر چه پیشرفت بیشتر، کمانِ رنگی کامل‌تر می‌شود
             if (ring) {
@@ -6632,6 +7082,73 @@
             }
         }
 
+                // نمای کارتیِ رکوردها برای صفحه‌نمایش‌های کوچک (زیر ۶۴۰px)؛ همان اطلاعاتِ جدول، در قالب کارت
+        function buildRecordCardHTML(r, index) {
+            const currency = appSettings.currency || 'تومان';
+            const photoHTML = r.photo
+                ? `<button type="button" data-action="photo" data-id="${Number(r.id)}" class="shrink-0 block w-12 h-12 rounded-xl overflow-hidden ring-2 ring-white dark:ring-slate-900 border border-slate-400 dark:border-slate-500 shadow-sm active:scale-95 transition-all" title="مشاهده عکس" aria-label="مشاهده عکس"><img src="${getThumbSrc(r)}" data-thumb-id="${Number(r.id)}" decoding="async" class="w-full h-full object-cover" alt="عکس رکورد"></button>`
+                : `<span class="shrink-0 w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-300 dark:text-slate-600"><i class="fa-solid fa-image text-sm"></i></span>`;
+
+            const nextCodeHTML = r.nextCodeStartDate
+                ? (escapeHTML(r.nextCodeStartDate) + (r.nextCodeStartTime ? ' <span class="opacity-60">-</span> ' + escapeHTML(r.nextCodeStartTime) : ''))
+                : (r.finishedDate
+                    ? '<span class="text-emerald-600 dark:text-emerald-400" title="پایان کار ثبت‌شده">✔ ' + escapeHTML(r.finishedDate) + (r.finishedTime ? ' - ' + escapeHTML(r.finishedTime) : '') + ' <button type="button" data-action="unfinish" data-id="' + Number(r.id) + '" class="no-print opacity-60 hover:opacity-100" title="لغو ثبت پایان"><i class="fa-solid fa-rotate-left"></i></button></span>'
+                    : '—');
+
+            return `
+                <div class="rc-card p-4" style="box-shadow: inset 3px 0 0 ${getStatusAccentColor(getDisplayStatus(r))};">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            ${photoHTML}
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-mono text-[11px] text-slate-600 dark:text-slate-300 font-semibold bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 whitespace-nowrap">${escapeHTML(r.itemCode) || '-'}</span>
+                                    <span class="font-semibold text-slate-800 dark:text-slate-100 text-sm truncate">${escapeHTML(r.itemTitle)}</span>
+                                </div>
+                                <div class="mt-1 flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                                    ${renderColorSwatchDot(r.itemColor)}
+                                    <span>${escapeHTML(r.itemColor) || '-'}</span>
+                                    <span class="opacity-40">•</span>
+                                    <span>#${formatNumber(index + 1)}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0 no-print">
+                            <button data-action="edit" data-id="${Number(r.id)}" class="w-8 h-8 flex items-center justify-center rounded-full text-amber-600 hover:text-amber-800 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors" title="ویرایش" aria-label="ویرایش"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button data-action="delete" data-id="${Number(r.id)}" class="w-8 h-8 flex items-center justify-center rounded-full text-rose-500 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors" title="حذف" aria-label="حذف"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs pt-3 border-t border-dashed border-slate-300 dark:border-slate-600">
+                        <div class="text-slate-500 dark:text-slate-400">تعداد دریافتی: <b class="text-slate-700 dark:text-slate-200 tabular-nums">${formatNumber(r.quantity)}</b></div>
+                        <div class="text-slate-500 dark:text-slate-400">آمار روزانه: <b class="text-slate-700 dark:text-slate-200 tabular-nums">${(r.dailyStat === null || r.dailyStat === undefined) ? '-' : formatNumber(r.dailyStat)}</b></div>
+                        <div class="text-slate-500 dark:text-slate-400">قیمت واحد: <b class="text-slate-700 dark:text-slate-200 tabular-nums">${formatPriceValue(r.unitPrice)}</b></div>
+                        <div class="text-slate-500 dark:text-slate-400">مبلغ کل: <b class="tabular-nums ${r.totalPrice === null || r.totalPrice === undefined ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}">${formatPriceValue(r.totalPrice)} ${escapeHTML(currency)}</b></div>
+                    </div>
+
+                    <div class="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                        <div>مدت تحویل: <span class="text-slate-700 dark:text-slate-200">${r.workDuration ? escapeHTML(r.workDuration) : '-'}</span></div>
+                        <div>پایان تخمینی: <span class="text-slate-700 dark:text-slate-200">${r.endDateTime ? escapeHTML(r.endDateTime) : '-'}</span></div>
+                        <div class="col-span-2">شروع کد بعد: <span class="text-slate-700 dark:text-slate-200">${nextCodeHTML}</span></div>
+                    </div>
+
+                    <div class="mt-3 flex items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">${escapeHTML(r.date)} <span class="opacity-60">-</span> ${escapeHTML(r.time)}</span>
+                        <span class="text-[11px] px-2.5 py-1 rounded-full border font-medium whitespace-nowrap inline-flex items-center gap-1.5 ${getStatusBadgeClass(getDisplayStatus(r))}">
+                            <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background-color:${getStatusAccentColor(getDisplayStatus(r))}"></span>
+                            ${formatStatusWithDuration(getDisplayStatus(r), r.durationTime)}
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRecordsCardView(records) {
+            const container = document.getElementById('recordsCardView');
+            if (!container) return;
+            container.innerHTML = records.map((r, index) => buildRecordCardHTML(r, index)).join('');
+        }
+
         function renderDashboard() {
             applyAppSettingsToUI();
             renderMonthSelector();
@@ -6679,6 +7196,7 @@
 
             if (records.length === 0) {
                 tableBody.innerHTML = '';
+                document.getElementById('recordsCardView').innerHTML = '';
                 emptyState.classList.remove('hidden');
                 renderRecordsSummaryFooter(records);
                 return;
@@ -6727,6 +7245,7 @@
                 </tr>
             `).join('');
             renderRecordsSummaryFooter(records);
+            renderRecordsCardView(records);
             hydrateThumbs();
         }
 
@@ -6947,9 +7466,9 @@
         // اگر صفحه‌ی قفل ورود در حال نمایش است، یادآوری پشتیبان‌گیری روزانه نمایش داده نمی‌شود
         // (چون پشت آن مخفی می‌ماند)؛ در این حالت خودِ attemptUnlock بعد از باز شدن قفل صدايش می‌زند.
         const pinScreenEl = document.getElementById('pinLockScreen');
-        if (!pinScreenEl || pinScreenEl.classList.contains('hidden')) {
-            checkDailyAutoBackup();
-        }
+        initBackupFolderConnection().finally(() => {
+            if (!pinScreenEl || pinScreenEl.classList.contains('hidden')) checkDailyAutoBackup();
+        });
 
         /* ---- دسترس‌پذیری: نقش دیالوگ، اتصال برچسب‌ها، aria-label و بستن با Escape ---- */
         const MODAL_IDS = ['customConfirmModal', 'deleteCodeModal', 'advancedSearchModal', 'resetCodeConfirmModal', 'trashBinModal', 'dataHealthModal', 'settingsModal', 'overviewModal'];
@@ -6985,6 +7504,7 @@
             if (isTableFullScreen) { toggleRecordsTableFullScreen(); }
         });
 
+        applyRecordsViewModeUI();
         addLog(`سامانه بارگذاری شد. تاریخ: ${currentJalali.fullDateStr}`, 'info');
         renderDashboard();
         initPhotoStore();

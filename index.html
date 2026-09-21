@@ -264,6 +264,33 @@
                                     <span class="block text-[9px] text-slate-400">وارد کردن JSON</span>
                                 </span>
                             </button>
+                            <button onclick="openTrashBinModal()" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                <span class="w-9 h-9 shrink-0 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                                    <i class="fa-solid fa-trash-can-arrow-up text-xs"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">سطل بازیافت</span>
+                                    <span class="block text-[9px] text-slate-400">بازگردانی حذف‌شده‌ها</span>
+                                </span>
+                            </button>
+                            <button onclick="openDataHealthModal()" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                <span class="w-9 h-9 shrink-0 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                                    <i class="fa-solid fa-stethoscope text-xs"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بررسی سلامت داده</span>
+                                    <span class="block text-[9px] text-slate-400">پیدا کردن نواقص</span>
+                                </span>
+                            </button>
+                            <button onclick="manualRotatingBackupNow()" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                    <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پشتیبان چرخشی الان</span>
+                                    <span class="block text-[9px] text-slate-400">در پوشه دستگاه</span>
+                                </span>
+                            </button>
                             <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="hidden items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right flex">
                                 <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
                                     <i class="fa-solid fa-mobile-screen-button text-xs"></i>
@@ -757,7 +784,7 @@
     </div>
 
     <!-- مدال سفارشی تایید -->
-    <div id="customConfirmModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="customConfirmModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-4 text-center transition-all">
             <div id="customConfirmIcon" class="inline-flex items-center justify-center w-12 h-12 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-2xl mb-1 shadow-inner">
                 <i class="fa-solid fa-circle-question text-xl"></i>
@@ -816,7 +843,8 @@
                     <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">وضعیت تحویل</label>
                     <select id="advSearchStatus" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                         <option value="all">همه وضعیت‌ها</option>
-                        <option value="به موقع">به موقع</option>
+                        <option value="در انتظار">در انتظار</option>
+                        <option value="به موقع">به موقع (قطعی)</option>
                         <option value="تاخیر">تاخیر</option>
                         <option value="زودتر از موعد">زودتر از موعد</option>
                     </select>
@@ -888,6 +916,47 @@
             <div class="flex gap-3 pt-2">
                 <button type="button" onclick="closeResetCodeConfirmModal()" class="flex-1 py-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium transition-colors">انصراف</button>
                 <button type="button" onclick="confirmResetDeleteCode()" class="flex-1 py-2.5 bg-amber-600 text-white rounded-xl text-sm hover:bg-amber-700 font-medium transition-colors shadow-sm">بازنشانی کد</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مدال سطل بازیافت (رکوردها/یادداشت‌های اخیراً حذف‌شده، تا ۳۰ روز قابل بازگردانی) -->
+    <div id="trashBinModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto no-print">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-4 my-8 transition-all">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-300 dark:border-slate-600">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-trash-can-arrow-up text-rose-600 dark:text-rose-400"></i>
+                    سطل بازیافت
+                </h2>
+                <button onclick="closeTrashBinModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed -mt-2">رکورد یا یادداشتی که حذف می‌کنید تا ۳۰ روز اینجا باقی می‌ماند و قابل بازگردانی است؛ پس از آن به‌طور خودکار برای همیشه پاک می‌شود.</p>
+            <div id="trashBinListBody" class="space-y-2 max-h-[50vh] overflow-y-auto"></div>
+            <div class="flex justify-between items-center gap-2 pt-3 border-t border-slate-300 dark:border-slate-600">
+                <button onclick="emptyTrashBin()" class="px-4 py-2 border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 rounded-xl text-sm hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors">خالی کردن سطل بازیافت</button>
+                <button onclick="closeTrashBinModal()" class="px-4 py-2 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">بستن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مدال بررسی سلامت داده -->
+    <div id="dataHealthModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto no-print">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-4 my-8 transition-all">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-300 dark:border-slate-600">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-stethoscope text-indigo-600 dark:text-indigo-400"></i>
+                    بررسی سلامت داده
+                </h2>
+                <button onclick="closeDataHealthModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed -mt-2">این ابزار داده‌های ذخیره‌شده را از نظر شناسه‌ی تکراری، تاریخ/ماه نامعتبر، اشاره‌گرهای قدیمی و موارد مشابه بررسی می‌کند.</p>
+            <div id="dataHealthResultsBody" class="space-y-2 max-h-[55vh] overflow-y-auto"></div>
+            <div class="flex justify-end pt-3 border-t border-slate-300 dark:border-slate-600">
+                <button onclick="closeDataHealthModal()" class="px-4 py-2 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">بستن</button>
             </div>
         </div>
     </div>
@@ -1267,16 +1336,23 @@
                             <span id="storageTotalRecordsCount" class="font-bold text-slate-800 dark:text-slate-200">۰</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-slate-500 dark:text-slate-400">فضای مصرفی حافظه مرورگر:</span>
+                            <span class="text-slate-500 dark:text-slate-400">فضای مصرفی حافظه محلی (localStorage):</span>
                             <span id="storageUsageSize" class="font-bold text-emerald-600 dark:text-emerald-400">۰ کیلوبایت</span>
                         </div>
-                        <div class="flex justify-between gap-2">
-                            <span class="text-slate-500 dark:text-slate-400 shrink-0">نسخه‌ی اجرا‌شده:</span>
-                            <span id="appBuildInfo" dir="ltr" class="font-bold text-slate-700 dark:text-slate-200 text-left">—</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 text-xs space-y-2">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-slate-500 dark:text-slate-400">فضای کل مصرفی مرورگر (همه‌ی حافظه‌ها)</span>
+                            <span id="storageQuotaLabel" class="font-bold text-slate-700 dark:text-slate-200">در حال بررسی...</span>
                         </div>
-                        <button type="button" onclick="forceRefreshApp()" class="w-full mt-1 py-2 border border-teal-200 dark:border-teal-900/50 text-teal-700 dark:text-teal-300 rounded-xl text-xs hover:bg-teal-50 dark:hover:bg-teal-950/30 font-medium transition-colors flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-arrows-rotate"></i> به‌روزرسانی اجباری برنامه (داده‌ها پاک نمی‌شوند)
-                        </button>
+                        <div class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div id="storageQuotaBar" class="h-full rounded-full bg-emerald-500 transition-all" style="width:0%"></div>
+                        </div>
+                        <p class="text-[11px] leading-relaxed text-slate-400 dark:text-slate-500 mt-2">اگر این مقدار به بیش از ۸۰٪ برسد، هشدار نمایش داده می‌شود؛ در آن صورت از «پشتیبان‌گیری» یا «اتصال پوشه دستگاه» استفاده کنید.</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600">
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">ذخیره‌سازی تکمیلی در IndexedDB (بدون محدودیت حجم حافظه محلی)</span>
+                        <p id="storageIdbStatus" class="text-xs font-semibold">در حال بررسی...</p>
                     </div>
                 </div>
                 </div>
@@ -1320,7 +1396,14 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 my-6">
+                    <div class="p-4 rounded-2xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600">
+                        <p class="text-xs text-slate-600 dark:text-slate-300 font-medium">در انتظار تعیین وضعیت</p>
+                        <div class="flex justify-between items-baseline mt-2">
+                            <span id="overviewPendingCount" class="text-2xl font-bold text-slate-800 dark:text-slate-100">۰</span>
+                            <span id="overviewPendingPercent" class="text-xs font-semibold text-slate-500 dark:text-slate-400">۰٪</span>
+                        </div>
+                    </div>
                     <div class="p-4 rounded-2xl bg-blue-50/50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50">
                         <p class="text-xs text-blue-700 dark:text-blue-300 font-medium">به موقع</p>
                         <div class="flex justify-between items-baseline mt-2">
@@ -1591,8 +1674,6 @@
         /* ==================== پایان توابع تبدیل تقویم ==================== */
 
                 /* ==================== [اصلاحیه ۱–۳] لایه‌ی ایمن بارگذاری، اعتبارسنجی، همگام‌سازی و ذخیره‌ی عکس ==================== */
-        // شناسه‌ی نسخه‌ی این فایل؛ در تنظیمات (تب حافظه) نشان داده می‌شود تا معلوم باشد کدام نسخه اجرا شده است
-        const APP_BUILD = 'r4';
         const SALT_KEY = 'sewing_install_salt_v1';
         const TOMBSTONE_KEY = 'sewing_tombstones_v1';
         const TOMBSTONE_TTL_MS = 180 * 24 * 3600 * 1000; // ۱۸۰ روز
@@ -1617,6 +1698,19 @@
                 }, 800);
                 return fallback;
             }
+        }
+
+        // یکسان‌سازی رقم فارسی/عربی/انگلیسی و حروف ی/ک عربی، برای کد لباس و جستجو
+        function normalizeCodeValue(v) {
+            return toEnglishDigits(String(v == null ? '' : v)).replace(/\u064A/g, '\u06CC').replace(/\u0643/g, '\u06A9').trim();
+        }
+        function normalizeSearchText(v) {
+            return normalizeCodeValue(v).replace(/\u200c/g, ' ').replace(/\s+/g, ' ').toLowerCase();
+        }
+        // مقایسه‌ی «تاریخ+ساعت» بدون حساسیت به نوع رقم (فارسی/انگلیسی)
+        function sameDT(d1, t1, d2, t2) {
+            return toEnglishDigits(String(d1 || '')).trim() === toEnglishDigits(String(d2 || '')).trim() &&
+                   toEnglishDigits(String(t1 || '')).trim() === toEnglishDigits(String(t2 || '')).trim();
         }
 
         function isSafeImageDataUrl(v) {
@@ -1658,7 +1752,7 @@
 
             return {
                 id,
-                itemCode: str(r.itemCode, 60), itemTitle: str(r.itemTitle, 200), itemColor: str(r.itemColor, 60),
+                itemCode: normalizeCodeValue(str(r.itemCode, 60)), itemTitle: str(r.itemTitle, 200), itemColor: str(r.itemColor, 60),
                 quantity, unitPrice, totalPrice,
                 status: STATUS_LIST.includes(r.status) ? r.status : 'به موقع',
                 date, time: str(r.time, 10), durationTime,
@@ -1667,7 +1761,7 @@
                 nextCodeStartDate: optStr(r.nextCodeStartDate, 20), nextCodeStartTime: optStr(r.nextCodeStartTime, 10),
                 finishedDate: optStr(r.finishedDate, 20), finishedTime: optStr(r.finishedTime, 10),
                 photo: isSafeImageDataUrl(r.photo) ? r.photo : null,
-                hasPhoto: !!r.hasPhoto,
+                hasPhoto: !!r.hasPhoto || isSafeImageDataUrl(r.photo),
                 monthKey, monthName, year,
                 notifiedStages: Array.isArray(r.notifiedStages) ? r.notifiedStages.map(Number).filter(Number.isFinite) : [],
                 notifiedFull: !!r.notifiedFull,
@@ -1697,6 +1791,7 @@
         function sanitizeSettings(src) {
             const base = (src && typeof src === 'object' && !Array.isArray(src)) ? src : {};
             const s = { ...DEFAULT_APP_SETTINGS, ...base };
+            s.schemaVersion = Number.isFinite(Number(s.schemaVersion)) ? Number(s.schemaVersion) : 1;
             const pick = (v, allowed, def) => allowed.includes(v) ? v : def;
             s.currency = pick(s.currency, ['تومان', 'ریال'], 'تومان');
             s.defaultStatus = pick(s.defaultStatus, STATUS_LIST, 'به موقع');
@@ -1841,7 +1936,7 @@
             allRecords.forEach(r => {
                 live.add(r.id);
                 if (r.photo) { if (photoSynced.get(r.id) !== r.photo) puts.push([r.id, r.photo]); }
-                else if (photoSynced.has(r.id)) deletes.push(r.id);
+                else if (photoSynced.has(r.id) && !r.hasPhoto) deletes.push(r.id);
             });
             photoSynced.forEach((_, id) => { if (!live.has(id)) deletes.push(id); });
             if (puts.length || deletes.length) {
@@ -1853,7 +1948,7 @@
         }
         function stripPhotoForStorage(r) {
             const { photo, ...rest } = r;
-            return { ...rest, hasPhoto: !!photo };
+            return { ...rest, hasPhoto: !!photo || !!r.hasPhoto };
         }
         async function initPhotoStore() {
             try {
@@ -1875,6 +1970,494 @@
             if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
         }
 
+        /* ==================== [بهبود ذخیره‌سازی ۱] رکوردها و یادداشت‌ها در IndexedDB ====================
+         * هدف: رفع محدودیت سقفِ ~۵ مگابایتیِ localStorage. از این پس تاریخچه‌ی کامل در IndexedDB
+         * نگه‌داری می‌شود (بدون سقف عملی) و فقط چند ماه اخیر برای بارگذاری فوری/آفلاین در
+         * localStorage می‌ماند؛ اگر IndexedDB در دسترس نباشد، رفتار قبلی (همه‌چیز در localStorage)
+         * بدون تغییر ادامه می‌یابد. */
+        const DATA_DB_NAME = 'sewing_app_data_db';
+        const RECORDS_STORE = 'records';
+        const NOTES_STORE = 'notes';
+        const TRASH_RECORDS_STORE = 'trash_records';
+        const TRASH_NOTES_STORE = 'trash_notes';
+        const TRASH_TTL_MS = 30 * 24 * 3600 * 1000; // ۳۰ روز نگه‌داری در سطل بازیافت
+        let dataIdbOk = false;
+        let dataDbPromise = null;
+        const recordsSynced = new Map(); // id -> updatedAtِ آخرین نسخه‌ی نوشته‌شده در IndexedDB
+        const notesSynced = new Map();
+
+        function getDataDB() {
+            if (!dataDbPromise) {
+                dataDbPromise = new Promise((resolve, reject) => {
+                    if (!window.indexedDB) return reject(new Error('IndexedDB در دسترس نیست'));
+                    const req = indexedDB.open(DATA_DB_NAME, 1);
+                    req.onupgradeneeded = () => {
+                        const db = req.result;
+                        if (!db.objectStoreNames.contains(RECORDS_STORE)) db.createObjectStore(RECORDS_STORE, { keyPath: 'id' });
+                        if (!db.objectStoreNames.contains(NOTES_STORE)) db.createObjectStore(NOTES_STORE, { keyPath: 'id' });
+                        if (!db.objectStoreNames.contains(TRASH_RECORDS_STORE)) db.createObjectStore(TRASH_RECORDS_STORE, { keyPath: 'id' });
+                        if (!db.objectStoreNames.contains(TRASH_NOTES_STORE)) db.createObjectStore(TRASH_NOTES_STORE, { keyPath: 'id' });
+                    };
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+            }
+            return dataDbPromise;
+        }
+        async function idbReadAllStore(storeName) {
+            const db = await getDataDB();
+            return new Promise((resolve, reject) => {
+                const out = [];
+                const req = db.transaction(storeName, 'readonly').objectStore(storeName).openCursor();
+                req.onsuccess = () => {
+                    const c = req.result;
+                    if (c) { out.push(c.value); c.continue(); } else resolve(out);
+                };
+                req.onerror = () => reject(req.error);
+            });
+        }
+        async function idbApplyStoreChanges(storeName, puts, deleteIds) {
+            const db = await getDataDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(storeName, 'readwrite');
+                const st = tx.objectStore(storeName);
+                puts.forEach(item => st.put(item));
+                (deleteIds || []).forEach(id => st.delete(id));
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+                tx.onabort = () => reject(tx.error);
+            });
+        }
+        // فقط موارد واقعاً تغییریافته را می‌نویسد (نه کل لیست را هر بار)
+        async function persistDataToIndexedDB() {
+            if (!dataIdbOk) return false;
+            await photoStoreReady; // تا بدانیم عکس‌ها در ذخیره‌گاه جدا نگه‌داری می‌شوند یا نه
+            const recPuts = [], recDeletes = [], recLive = new Set();
+            allRecords.forEach(r => {
+                recLive.add(r.id);
+                if (recordsSynced.get(r.id) !== r.updatedAt) recPuts.push(photoIdbOk ? stripPhotoForStorage(r) : r);
+            });
+            recordsSynced.forEach((_, id) => { if (!recLive.has(id)) recDeletes.push(id); });
+
+            const notePuts = [], noteDeletes = [], noteLive = new Set();
+            dailyNotes.forEach(n => {
+                noteLive.add(n.id);
+                if (notesSynced.get(n.id) !== n.updatedAt) notePuts.push(n);
+            });
+            notesSynced.forEach((_, id) => { if (!noteLive.has(id)) noteDeletes.push(id); });
+
+            if (recPuts.length || recDeletes.length) {
+                await idbApplyStoreChanges(RECORDS_STORE, recPuts, recDeletes);
+                recPuts.forEach(r => recordsSynced.set(r.id, r.updatedAt));
+                recDeletes.forEach(id => recordsSynced.delete(id));
+            }
+            if (notePuts.length || noteDeletes.length) {
+                await idbApplyStoreChanges(NOTES_STORE, notePuts, noteDeletes);
+                notePuts.forEach(n => notesSynced.set(n.id, n.updatedAt));
+                noteDeletes.forEach(id => notesSynced.delete(id));
+            }
+            return true;
+        }
+
+        /* ==================== [بهبود ذخیره‌سازی ۳] سطل بازیافت (حذف قابل بازگشت تا ۳۰ روز) ==================== */
+        async function moveToTrash(storeName, item) {
+            if (!dataIdbOk || !item) return false;
+            try {
+                const db = await getDataDB();
+                return await new Promise((resolve, reject) => {
+                    const tx = db.transaction(storeName, 'readwrite');
+                    tx.objectStore(storeName).put({ id: item.id, deletedAt: Date.now(), data: item });
+                    tx.oncomplete = () => resolve(true);
+                    tx.onerror = () => reject(tx.error);
+                });
+            } catch (e) { console.warn('خطا در انتقال به سطل بازیافت:', e); return false; }
+        }
+        async function removeFromTrash(storeName, id) {
+            if (!dataIdbOk) return;
+            try {
+                const db = await getDataDB();
+                await new Promise((resolve, reject) => {
+                    const tx = db.transaction(storeName, 'readwrite');
+                    tx.objectStore(storeName).delete(id);
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => reject(tx.error);
+                });
+            } catch (e) { /* بی‌اهمیت */ }
+        }
+        async function readTrashStore(storeName) {
+            if (!dataIdbOk) return [];
+            try {
+                const db = await getDataDB();
+                return await new Promise((resolve, reject) => {
+                    const out = [];
+                    const req = db.transaction(storeName, 'readonly').objectStore(storeName).openCursor();
+                    req.onsuccess = () => {
+                        const c = req.result;
+                        if (c) { out.push(c.value); c.continue(); } else resolve(out);
+                    };
+                    req.onerror = () => reject(req.error);
+                });
+            } catch (e) { return []; }
+        }
+        async function purgeExpiredTrash() {
+            if (!dataIdbOk) return;
+            const now = Date.now();
+            for (const storeName of [TRASH_RECORDS_STORE, TRASH_NOTES_STORE]) {
+                const items = await readTrashStore(storeName);
+                const expired = items.filter(it => now - it.deletedAt > TRASH_TTL_MS);
+                if (expired.length) {
+                    try {
+                        const db = await getDataDB();
+                        await new Promise((resolve, reject) => {
+                            const tx = db.transaction(storeName, 'readwrite');
+                            const st = tx.objectStore(storeName);
+                            expired.forEach(it => st.delete(it.id));
+                            tx.oncomplete = () => resolve();
+                            tx.onerror = () => reject(tx.error);
+                        });
+                    } catch (e) { /* بی‌اهمیت */ }
+                }
+            }
+        }
+
+        async function restoreFromTrash(kind, id) {
+            const storeName = kind === 'note' ? TRASH_NOTES_STORE : TRASH_RECORDS_STORE;
+            try {
+                const db = await getDataDB();
+                const item = await new Promise((resolve, reject) => {
+                    const req = db.transaction(storeName, 'readonly').objectStore(storeName).get(id);
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+                if (!item || !item.data) { showFeedbackBanner('این مورد در سطل بازیافت پیدا نشد.', 'warn'); return; }
+
+                if (kind === 'note') {
+                    const restored = sanitizeNote(item.data);
+                    restored.updatedAt = Date.now();
+                    delete tombstones.notes[String(id)];
+                    dailyNotes = dailyNotes.filter(n => n.id !== id);
+                    dailyNotes.unshift(restored);
+                } else {
+                    const restored = sanitizeRecord(item.data);
+                    restored.updatedAt = Date.now();
+                    delete tombstones.records[String(id)];
+                    allRecords = allRecords.filter(r => r.id !== id);
+                    allRecords.unshift(restored);
+                    recomputeAllLinks();
+                }
+                await removeFromTrash(storeName, id);
+                saveRecords();
+                renderDashboard();
+                showFeedbackBanner('مورد مورد نظر با موفقیت بازگردانی شد.', 'success');
+                openTrashBinModal();
+            } catch (e) {
+                console.error(e);
+                showFeedbackBanner('خطا در بازگردانی از سطل بازیافت.', 'warn');
+            }
+        }
+
+        function permanentlyDeleteFromTrash(kind, id) {
+            showCustomConfirm('این مورد برای همیشه از سطل بازیافت حذف شود؟ این عملیات غیرقابل بازگشت است.', async (confirmed) => {
+                if (!confirmed) return;
+                const storeName = kind === 'note' ? TRASH_NOTES_STORE : TRASH_RECORDS_STORE;
+                await removeFromTrash(storeName, id);
+                showFeedbackBanner('مورد مورد نظر برای همیشه حذف شد.', 'warn');
+                openTrashBinModal();
+            });
+        }
+
+        function emptyTrashBin() {
+            showCustomConfirm('همه‌ی موارد سطل بازیافت (رکوردها و یادداشت‌های حذف‌شده) برای همیشه پاک شوند؟', async (confirmed) => {
+                if (!confirmed) return;
+                try {
+                    const db = await getDataDB();
+                    for (const storeName of [TRASH_RECORDS_STORE, TRASH_NOTES_STORE]) {
+                        await new Promise((resolve, reject) => {
+                            const tx = db.transaction(storeName, 'readwrite');
+                            tx.objectStore(storeName).clear();
+                            tx.oncomplete = () => resolve();
+                            tx.onerror = () => reject(tx.error);
+                        });
+                    }
+                    showFeedbackBanner('سطل بازیافت خالی شد.', 'warn');
+                } catch (e) {
+                    console.error(e);
+                    showFeedbackBanner('خطا در خالی کردن سطل بازیافت.', 'warn');
+                }
+                openTrashBinModal();
+            });
+        }
+
+        async function openTrashBinModal() {
+            closeToolsDropdown();
+            document.getElementById('trashBinModal').classList.remove('hidden');
+            const body = document.getElementById('trashBinListBody');
+            body.innerHTML = '<p class="text-xs text-slate-400 text-center py-6">در حال بارگذاری...</p>';
+            if (!dataIdbOk) {
+                body.innerHTML = '<p class="text-xs text-rose-500 text-center py-6">سطل بازیافت در این مرورگر در دسترس نیست (IndexedDB غیرفعال است).</p>';
+                return;
+            }
+            await purgeExpiredTrash();
+            const [trashedRecords, trashedNotes] = await Promise.all([readTrashStore(TRASH_RECORDS_STORE), readTrashStore(TRASH_NOTES_STORE)]);
+            const combined = [
+                ...trashedRecords.map(t => ({ ...t, kind: 'record' })),
+                ...trashedNotes.map(t => ({ ...t, kind: 'note' }))
+            ].sort((a, b) => b.deletedAt - a.deletedAt);
+
+            if (combined.length === 0) {
+                body.innerHTML = '<p class="text-xs text-slate-400 text-center py-6">سطل بازیافت خالی است.</p>';
+                return;
+            }
+
+            body.innerHTML = combined.map(t => {
+                const daysLeft = Math.max(0, Math.ceil((TRASH_TTL_MS - (Date.now() - t.deletedAt)) / (24 * 3600 * 1000)));
+                const label = t.kind === 'note'
+                    ? `یادداشت — ${escapeHTML(t.data.date || '')}`
+                    : `کد ${escapeHTML(t.data.itemCode || '-')} — ${escapeHTML(t.data.itemTitle || '')}`;
+                return `
+                <div class="flex items-center justify-between gap-2 p-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/60">
+                    <div class="min-w-0">
+                        <p class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">${label}</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">تا ${formatNumber(daysLeft)} روز دیگر برای همیشه پاک می‌شود</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button data-action="restore-trash" data-kind="${t.kind}" data-id="${Number(t.id)}" class="text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1"><i class="fa-solid fa-rotate-left"></i> بازگردانی</button>
+                        <button data-action="delete-trash-permanent" data-kind="${t.kind}" data-id="${Number(t.id)}" class="text-[11px] font-bold w-8 h-8 flex items-center justify-center rounded-lg border border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+        function closeTrashBinModal() { document.getElementById('trashBinModal').classList.add('hidden'); }
+        /* ==================== پایان [بهبود ذخیره‌سازی ۳] سطل بازیافت ==================== */
+
+        // حداقل تعداد ماهِ اخیر که در localStorage (برای بارگذاری فوری/آفلاین) نگه داشته می‌شود؛
+        // بقیه‌ی تاریخچه فقط در IndexedDB می‌ماند و هنگام بارگذاری برنامه از همان‌جا خوانده می‌شود.
+        const RECENT_MONTHS_IN_LOCALSTORAGE = 6;
+        function getRecentMonthKeysSet(n) {
+            const keys = [...new Set(allRecords.map(r => r.monthKey))];
+            keys.push(currentJalali.monthKey);
+            const uniq = [...new Set(keys)];
+            uniq.sort((a, b) => {
+                const [ay, am] = String(a).split('-').map(Number);
+                const [by, bm] = String(b).split('-').map(Number);
+                return (by * 100 + bm) - (ay * 100 + am);
+            });
+            return new Set(uniq.slice(0, n));
+        }
+
+        function pruneRecordsForLocalStorage() {
+            // اگر IndexedDB در دسترس نباشد، هیچ‌چیز کم نمی‌شود تا داده‌ای از دست نرود
+            if (!dataIdbOk) return allRecords;
+            const recentKeys = getRecentMonthKeysSet(RECENT_MONTHS_IN_LOCALSTORAGE);
+            return allRecords.filter(r => recentKeys.has(r.monthKey));
+        }
+
+        async function initDataStore() {
+            try {
+                const [storedRecordsRaw, storedNotesRaw] = await Promise.all([idbReadAllStore(RECORDS_STORE), idbReadAllStore(NOTES_STORE)]);
+                dataIdbOk = true;
+                const storedRecords = storedRecordsRaw.map(sanitizeRecord).filter(Boolean);
+                const storedNotes = storedNotesRaw.map(sanitizeNote).filter(Boolean);
+                // ادغام با آنچه از localStorage بارگذاری شده (که ممکن است فقط شامل ماه‌های اخیر باشد)؛
+                // نسخه‌ی جدیدتر (updatedAt بالاتر) برنده است، دقیقاً مثل ادغام با پوشه‌ی دستگاه.
+                allRecords = mergeById(allRecords, storedRecords, 'records', null);
+                dailyNotes = mergeById(dailyNotes, storedNotes, 'notes', null);
+                allRecords.forEach(r => recordsSynced.set(r.id, r.updatedAt));
+                dailyNotes.forEach(n => notesSynced.set(n.id, n.updatedAt));
+
+                // عکس رکوردهای ماه‌های قدیمی فقط در ذخیره‌گاه جدای عکس‌هاست؛ بعد از ادغام دوباره وصلشان می‌کنیم
+                // (وگرنه در ذخیره‌ی بعدی به‌اشتباه «بدون عکس» تلقی و از IndexedDB پاک می‌شدند).
+                await photoStoreReady;
+                allRecords.forEach(r => {
+                    const stored = photoSynced.get(r.id);
+                    if (!r.photo && stored && isSafeImageDataUrl(stored)) r.photo = stored;
+                });
+                // پاک‌سازی نسخه‌ی تکراری عکس از ذخیره‌گاه رکوردها (فقط اگر عکس در ذخیره‌گاه جدا امن است)
+                if (photoIdbOk) {
+                    storedRecordsRaw.forEach(raw => {
+                        if (!raw || !raw.photo) return;
+                        const id = Number(raw.id);
+                        if (photoSynced.get(id)) recordsSynced.set(id, -1);
+                    });
+                }
+            } catch (e) {
+                dataIdbOk = false;
+                console.warn('IndexedDB برای رکوردها/یادداشت‌ها در دسترس نیست؛ فقط از حافظه محلی (localStorage) استفاده می‌شود.', e);
+            } finally {
+                renderDashboard();
+                updateStorageQuotaUI();
+                // مهاجرت خودکار داده‌های موجود به IndexedDB (برای رفع محدودیت حجم localStorage)
+                if (dataIdbOk) {
+                    persistPhotos().catch(() => {}).then(() => persistDataToIndexedDB()).catch(() => {});
+                }
+            }
+        }
+        /* ==================== پایان [بهبود ذخیره‌سازی ۱] ==================== */
+
+        /* ==================== [بهبود ذخیره‌سازی ۲] هم‌گام‌سازی بین تب‌های باز مرورگر ==================== */
+        const crossTabChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('sewing_app_sync_v13') : null;
+        let isApplyingRemoteTabUpdate = false;
+
+        function broadcastLocalDataChange() {
+            if (!crossTabChannel) return;
+            try { crossTabChannel.postMessage({ type: 'data-changed', at: Date.now() }); } catch (e) { /* بی‌اهمیت */ }
+        }
+
+        async function reloadFromLocalAndIndexedDB() {
+            if (isApplyingRemoteTabUpdate) return;
+            isApplyingRemoteTabUpdate = true;
+            try {
+                const rawRecords = safeLoadJSON('sewing_statistics_records_v13', []);
+                const rawNotes = safeLoadJSON('sewing_daily_notes_v13', []);
+                const localRecords = Array.isArray(rawRecords) ? rawRecords.map(sanitizeRecord).filter(Boolean) : [];
+                const localNotes = Array.isArray(rawNotes) ? rawNotes.map(sanitizeNote).filter(Boolean) : [];
+                tombstones = normalizeTombstones(safeLoadJSON(TOMBSTONE_KEY, null));
+                allRecords = mergeById(allRecords, localRecords, 'records', null);
+                dailyNotes = mergeById(dailyNotes, localNotes, 'notes', null);
+                if (dataIdbOk) {
+                    const [idbRecords, idbNotes] = await Promise.all([idbReadAllStore(RECORDS_STORE), idbReadAllStore(NOTES_STORE)]);
+                    allRecords = mergeById(allRecords, idbRecords.map(sanitizeRecord).filter(Boolean), 'records', null);
+                    dailyNotes = mergeById(dailyNotes, idbNotes.map(sanitizeNote).filter(Boolean), 'notes', null);
+                }
+                allRecords.forEach(r => { if (!r.photo && photoSynced.get(r.id)) r.photo = photoSynced.get(r.id); });
+                renderDashboard();
+                checkDeliveryProgressNotifications();
+                addLog('تغییرات ثبت‌شده در یک تب دیگر همین برنامه، در این تب هم اعمال شد.', 'info');
+            } catch (e) {
+                console.warn('خطا در همگام‌سازی بین تب‌ها:', e);
+            } finally {
+                isApplyingRemoteTabUpdate = false;
+            }
+        }
+
+        if (crossTabChannel) {
+            crossTabChannel.onmessage = (e) => { if (e.data && e.data.type === 'data-changed') reloadFromLocalAndIndexedDB(); };
+        } else {
+            // جایگزین برای مرورگرهای بدون پشتیبانی از BroadcastChannel
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'sewing_statistics_records_v13' || e.key === 'sewing_daily_notes_v13') reloadFromLocalAndIndexedDB();
+            });
+        }
+        /* ==================== پایان [بهبود ذخیره‌سازی ۲] ==================== */
+
+        /* ==================== [بهبود ذخیره‌سازی ۴] ابزار بررسی سلامت داده ==================== */
+        async function runDataHealthCheck() {
+            const issues = [];
+
+            const idCounts = new Map();
+            allRecords.forEach(r => idCounts.set(r.id, (idCounts.get(r.id) || 0) + 1));
+            const dupIdCount = [...idCounts.values()].filter(c => c > 1).length;
+            if (dupIdCount) issues.push({ key: 'dup_ids', severity: 'error', text: `${formatNumber(dupIdCount)} شناسه‌ی رکورد تکراری یافت شد.`, fixable: true });
+
+            const badMonthCount = allRecords.filter(r => !/^\d{4}-\d{1,2}$/.test(String(r.monthKey))).length;
+            if (badMonthCount) issues.push({ key: 'bad_month', severity: 'warn', text: `${formatNumber(badMonthCount)} رکورد با کلید ماهِ نامعتبر (احتمالاً از فایل خراب وارد شده).`, fixable: true });
+
+            const staleLinksCount = allRecords.filter(r => r.nextCodeStartDate && !allRecords.some(o => o.id !== r.id && sameDT(o.date, o.time, r.nextCodeStartDate, r.nextCodeStartTime))).length;
+            if (staleLinksCount) issues.push({ key: 'stale_links', severity: 'warn', text: `${formatNumber(staleLinksCount)} رکورد با اشاره‌گر «شروع کد بعد» نامعتبر/قدیمی.`, fixable: true });
+
+            const noteDateCounts = new Map();
+            dailyNotes.forEach(n => noteDateCounts.set(n.date, (noteDateCounts.get(n.date) || 0) + 1));
+            const dupNoteCount = [...noteDateCounts.values()].filter(c => c > 1).length;
+            if (dupNoteCount) issues.push({ key: 'dup_notes', severity: 'warn', text: `${formatNumber(dupNoteCount)} تاریخ دارای بیش از یک یادداشت.`, fixable: true });
+
+            const missingPhotoCount = allRecords.filter(r => r.hasPhoto && !r.photo).length;
+            if (missingPhotoCount) issues.push({ key: 'missing_photo', severity: 'info', text: `${formatNumber(missingPhotoCount)} رکورد به عکسی اشاره می‌کند که پیدا نشد.`, fixable: true });
+
+            const invalidCoreCount = allRecords.filter(r => !r.itemCode || !(r.quantity > 0)).length;
+            if (invalidCoreCount) issues.push({ key: 'invalid_core', severity: 'error', text: `${formatNumber(invalidCoreCount)} رکورد فاقد کد لباس یا با تعداد نامعتبر.`, fixable: false });
+
+            return issues;
+        }
+
+        function fixDataHealthIssue(key) {
+            let fixedCount = 0;
+            if (key === 'dup_ids') {
+                const seen = new Map();
+                allRecords.forEach(r => {
+                    const cur = seen.get(r.id);
+                    if (!cur || (r.updatedAt || 0) > (cur.updatedAt || 0)) seen.set(r.id, r);
+                });
+                const before = allRecords.length;
+                allRecords = [...seen.values()];
+                fixedCount = before - allRecords.length;
+            } else if (key === 'bad_month') {
+                allRecords.forEach(r => {
+                    if (!/^\d{4}-\d{1,2}$/.test(String(r.monthKey))) {
+                        const info = getMonthInfoFromDateStr(r.date) || getCurrentJalaliInfo();
+                        r.monthKey = info.monthKey; r.monthName = info.monthName; r.year = info.year;
+                        r.updatedAt = Date.now();
+                        fixedCount++;
+                    }
+                });
+            } else if (key === 'stale_links') {
+                allRecords.forEach(r => {
+                    if (r.nextCodeStartDate && !allRecords.some(o => o.id !== r.id && sameDT(o.date, o.time, r.nextCodeStartDate, r.nextCodeStartTime))) {
+                        syncNextCodeStartLink(r);
+                        fixedCount++;
+                    }
+                });
+            } else if (key === 'dup_notes') {
+                const byDate = new Map();
+                dailyNotes.forEach(n => {
+                    const cur = byDate.get(n.date);
+                    if (!cur || (n.updatedAt || 0) > (cur.updatedAt || 0)) byDate.set(n.date, n);
+                });
+                const before = dailyNotes.length;
+                dailyNotes = [...byDate.values()];
+                fixedCount = before - dailyNotes.length;
+            } else if (key === 'missing_photo') {
+                allRecords.forEach(r => {
+                    if (r.hasPhoto && !r.photo) { r.hasPhoto = false; r.updatedAt = Date.now(); fixedCount++; }
+                });
+            }
+            if (fixedCount > 0) { saveRecords(); renderDashboard(); }
+            return fixedCount;
+        }
+
+        const HEALTH_SEVERITY_META = {
+            error: { badge: 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300', icon: 'fa-circle-exclamation' },
+            warn: { badge: 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300', icon: 'fa-triangle-exclamation' },
+            info: { badge: 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300', icon: 'fa-circle-info' }
+        };
+
+        function renderDataHealthResults(issues) {
+            const body = document.getElementById('dataHealthResultsBody');
+            if (!body) return;
+            if (!issues.length) {
+                body.innerHTML = `<div class="text-center py-8 text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-circle-check text-3xl mb-2"></i><p class="text-sm font-bold">هیچ مشکلی یافت نشد؛ داده‌ها سالم هستند.</p></div>`;
+                return;
+            }
+            body.innerHTML = issues.map(issue => {
+                const meta = HEALTH_SEVERITY_META[issue.severity] || HEALTH_SEVERITY_META.info;
+                return `
+                <div class="flex items-center justify-between gap-3 p-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/60">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${meta.badge}"><i class="fa-solid ${meta.icon} text-xs"></i></span>
+                        <span class="text-xs text-slate-700 dark:text-slate-200">${escapeHTML(issue.text)}</span>
+                    </div>
+                    ${issue.fixable ? `<button onclick="handleFixHealthIssue('${issue.key}')" class="shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white whitespace-nowrap">ترمیم خودکار</button>` : `<span class="shrink-0 text-[10px] text-slate-400">نیاز به بررسی دستی</span>`}
+                </div>`;
+            }).join('');
+        }
+
+        async function openDataHealthModal() {
+            closeToolsDropdown();
+            document.getElementById('dataHealthModal').classList.remove('hidden');
+            const body = document.getElementById('dataHealthResultsBody');
+            if (body) body.innerHTML = '<p class="text-xs text-slate-400 text-center py-6">در حال بررسی...</p>';
+            const issues = await runDataHealthCheck();
+            renderDataHealthResults(issues);
+        }
+        function closeDataHealthModal() { document.getElementById('dataHealthModal').classList.add('hidden'); }
+
+        async function handleFixHealthIssue(key) {
+            const fixed = fixDataHealthIssue(key);
+            showFeedbackBanner(fixed > 0 ? `${formatNumber(fixed)} مورد ترمیم شد.` : 'موردی برای ترمیم پیدا نشد.', fixed > 0 ? 'success' : 'info');
+            const issues = await runDataHealthCheck();
+            renderDataHealthResults(issues);
+        }
+        /* ==================== پایان [بهبود ذخیره‌سازی ۴] ==================== */
+
         /* ---- event delegation به‌جای onclick با id درون رشته‌ی HTML ---- */
         document.addEventListener('click', function (e) {
             const el = e.target.closest ? e.target.closest('[data-action]') : null;
@@ -1889,13 +2472,17 @@
                 case 'delete-note': deleteDailyNote(id); break;
                 case 'finish-active': finishRecordNow(id); break;
                 case 'unfinish': unfinishRecord(id); break;
+                case 'restore-trash': restoreFromTrash(el.dataset.kind, id); break;
+                case 'delete-trash-permanent': permanentlyDeleteFromTrash(el.dataset.kind, id); break;
             }
         });
         /* ==================== پایان لایه‌ی اصلاحیه ==================== */
 
         let allRecords = (() => { const raw = safeLoadJSON('sewing_statistics_records_v13', []); return Array.isArray(raw) ? raw.map(sanitizeRecord).filter(Boolean) : []; })();
         let dailyNotes = (() => { const raw = safeLoadJSON('sewing_daily_notes_v13', []); return Array.isArray(raw) ? raw.map(sanitizeNote).filter(Boolean) : []; })();
+
         const DEFAULT_APP_SETTINGS = { 
+            schemaVersion: 1,
             shopName: 'سامانه آمار دوخت لباس',
             currency: 'تومان',
             defaultStatus: 'به موقع',
@@ -1923,6 +2510,21 @@
         let appSettings = sanitizeSettings(safeLoadJSON('sewing_app_settings_v13', null));
         let saveTimeout = null;
         let hasPendingSave = false;
+
+        // موتور مهاجرت نسخه‌ی داده (schema migration)؛ اگر در نسخه‌های بعدیِ برنامه ساختار داده تغییر
+        // کند، منطق تبدیلِ نسخه‌ی قدیمی به جدید اینجا اضافه می‌شود تا داده‌ی کاربران قدیمی از بین نرود.
+        const CURRENT_SCHEMA_VERSION = 1;
+        function runDataMigrations() {
+            const fromVersion = Number(appSettings.schemaVersion) || 1;
+            if (fromVersion >= CURRENT_SCHEMA_VERSION) return;
+            // نمونه‌ی ساختار برای نسخه‌های بعدی، مثلاً:
+            // if (fromVersion < 2) { /* تبدیل داده‌ی نسخه ۱ به ۲ */ }
+            appSettings.schemaVersion = CURRENT_SCHEMA_VERSION;
+            appSettings.updatedAt = new Date().toISOString();
+            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+            addLog(`داده‌ها از نسخه ${fromVersion} به نسخه ${CURRENT_SCHEMA_VERSION} به‌روزرسانی شدند.`, 'info');
+        }
+        runDataMigrations();
 
         // یک salt تصادفی مخصوص همین دستگاه/مرورگر، یک‌بار ساخته و در حافظه محلی ذخیره می‌شود؛
         // به این ترتیب هش رمز عبور/کد امنیتی به یک مقدار ثابت و یکسان در همه‌ی نصب‌ها وابسته نیست.
@@ -2112,8 +2714,14 @@
                     await writable.write(jsonString);
                     await writable.close();
                     if (onSuccess) onSuccess('picker');
-                    return;
+                    return true;
                 } catch (err) {
+                    if (err && err.name === 'AbortError') {
+                        // کاربر خودش پنجره‌ی انتخاب مسیر را بست؛ دانلود اضافیِ پنهانی انجام نمی‌شود
+                        addLog('ذخیره‌ی فایل پشتیبان توسط کاربر لغو شد.', 'warn');
+                        showFeedbackBanner('ذخیره‌ی فایل پشتیبان لغو شد.', 'warn');
+                        return false;
+                    }
                     console.warn('انتخاب مسیر ذخیره امکان‌پذیر نبود یا لغو شد؛ برای اطمینان، فایل در پوشه دانلودها ذخیره می‌شود:', err);
                 }
             }
@@ -2123,10 +2731,63 @@
             link.href = URL.createObjectURL(blob);
             link.download = filename;
             link.click();
+            setTimeout(() => URL.revokeObjectURL(link.href), 10000);
             if (onSuccess) onSuccess('downloads-folder');
+            return true;
         }
 
         const SETTINGS_FILE_NAME = 'تنظیمات_و_یادداشت‌ها.json';
+        const ROTATING_BACKUP_KEEP_COUNT = 5;
+
+        // پشتیبان‌گیری چرخشی: علاوه بر فایل‌های زنده‌ی هر ماه، حداکثر یک‌بار در روز یک نسخه‌ی کامل و
+        // جدا (snapshot) در زیرپوشه‌ی «backups» ذخیره می‌شود و فقط N نسخه‌ی اخیر نگه داشته می‌شود؛
+        // این یعنی حتی اگر داده‌ی زنده خراب/حذف شود، چند روز اخیر همیشه قابل بازیابی است.
+        async function saveRotatingBackupToFolder(force) {
+            if (!appDirHandle) return false;
+            try {
+                const perm = await appDirHandle.queryPermission({ mode: 'readwrite' });
+                if (perm !== 'granted') return false;
+                const todayStr = currentJalali.fullDateStr;
+                const lastRotatingDate = localStorage.getItem('sewing_last_rotating_backup_date');
+                if (!force && lastRotatingDate === todayStr) return false; // حداکثر یک بار در روز (به‌صورت خودکار)
+
+                const backupsDir = await appDirHandle.getDirectoryHandle('backups', { create: true });
+                const timeTag = todayStr.replace(/\//g, '-') + '_' + new Date().toTimeString().slice(0, 8).replace(/:/g, '');
+                const fileHandle = await backupsDir.getFileHandle(`نسخه_${timeTag}.json`, { create: true });
+                const writable = await fileHandle.createWritable();
+                await writable.write(JSON.stringify({
+                    version: "13.0", app: "sewing_statistics", timestamp: new Date().toISOString(),
+                    settings: appSettings, records: allRecords, notes: dailyNotes,
+                    installSalt: getOrCreateInstallSalt(), tombstones: tombstones
+                }, null, 2));
+                await writable.close();
+
+                // نگه‌داشتن فقط N نسخه‌ی اخیر؛ نام فایل‌ها با تاریخ/ساعت شروع می‌شوند پس مرتب‌سازی رشته‌ای کافی است
+                const entries = [];
+                for await (const [name, handle] of backupsDir.entries()) {
+                    if (handle.kind === 'file' && name.startsWith('نسخه_') && name.endsWith('.json')) entries.push(name);
+                }
+                entries.sort();
+                const toDelete = entries.slice(0, Math.max(0, entries.length - ROTATING_BACKUP_KEEP_COUNT));
+                for (const name of toDelete) {
+                    try { await backupsDir.removeEntry(name); } catch (e) { /* بی‌اهمیت */ }
+                }
+
+                localStorage.setItem('sewing_last_rotating_backup_date', todayStr);
+                addLog(`نسخه پشتیبان چرخشی در پوشه «backups» ذخیره شد (${formatNumber(Math.min(entries.length, ROTATING_BACKUP_KEEP_COUNT))} نسخه‌ی اخیر نگه‌داری می‌شود).`, 'success');
+                return true;
+            } catch (e) {
+                console.warn('خطا در ذخیره‌ی نسخه پشتیبان چرخشی:', e);
+                return false;
+            }
+        }
+
+        async function manualRotatingBackupNow() {
+            closeToolsDropdown();
+            if (!appDirHandle) { showFeedbackBanner('ابتدا باید از «پوشه دستگاه» یک پوشه متصل کنید.', 'warn'); return; }
+            const ok = await saveRotatingBackupToFolder(true);
+            showFeedbackBanner(ok ? 'نسخه پشتیبان چرخشی جدید در زیرپوشه‌ی «backups» ذخیره شد.' : 'ذخیره‌ی نسخه پشتیبان چرخشی ناموفق بود.', ok ? 'success' : 'warn');
+        }
 
         function openHandleDB() {
             return new Promise((resolve, reject) => {
@@ -2171,7 +2832,48 @@
             return `آمار_${monthName}_${year}.json`;
         }
 
-        async function saveAllMonthFilesToDirectory() {
+        // ذخیره‌ی پوشه: ترتیبی (بدون هم‌زمانی) و فقط برای ماه‌های واقعاً تغییرکرده
+        const folderWrittenSig = new Map(); // monthKey -> امضای آخرین محتوای نوشته‌شده
+        let folderSettingsSig = null;
+        let folderStaleScanDone = false;
+        let folderSaveRunning = false;
+        let folderSaveQueued = false;
+        let folderSavePromise = null;
+
+        function resetFolderWriteCache() {
+            folderWrittenSig.clear();
+            folderSettingsSig = null;
+            folderStaleScanDone = false;
+        }
+
+        function monthRecordsSignature(list) {
+            return list.map(r => {
+                const { photo, ...rest } = r;
+                return JSON.stringify(rest) + '|' + (photo ? photo.length : 0);
+            }).join('\n');
+        }
+
+        function saveAllMonthFilesToDirectory() {
+            if (!appDirHandle) return Promise.resolve();
+            if (folderSaveRunning) {
+                folderSaveQueued = true;
+                return folderSavePromise;
+            }
+            folderSaveRunning = true;
+            folderSavePromise = (async () => {
+                try {
+                    do {
+                        folderSaveQueued = false;
+                        await saveAllMonthFilesToDirectoryImpl();
+                    } while (folderSaveQueued);
+                } finally {
+                    folderSaveRunning = false;
+                }
+            })();
+            return folderSavePromise;
+        }
+
+        async function saveAllMonthFilesToDirectoryImpl() {
             if (!appDirHandle) return;
             try {
                 const perm = await appDirHandle.queryPermission({ mode: 'readwrite' });
@@ -2181,29 +2883,39 @@
                     return;
                 }
 
-                const monthKeys = new Set(allRecords.map(r => r.monthKey));
+                const recordsSnapshot = allRecords.slice();
+                const notesSnapshot = dailyNotes.slice();
+                const monthKeys = new Set(recordsSnapshot.map(r => r.monthKey));
                 monthKeys.add(currentJalali.monthKey); // با شروع هر ماه، فایل آن ماه (حتی خالی) ساخته می‌شود
 
-                // شناسایی فایل‌های ماهی که از قبل در پوشه هستند ولی دیگر هیچ رکوردی در برنامه به آن‌ها
-                // اشاره نمی‌کند (چون همه‌ی رکوردهای آن ماه حذف شده‌اند یا با ویرایشِ تاریخ به ماه دیگری
-                // منتقل شده‌اند). بدون این مرحله، فایل قدیمیِ آن ماه دست‌نخورده باقی می‌ماند و در اتصال
-                // بعدی به همین پوشه، رکوردهای حذف/جابه‌جاشده دوباره وارد برنامه می‌شوند.
+                // ماه‌هایی که پیش‌تر نوشته شده‌اند ولی دیگر رکوردی ندارند (حذف یا جابه‌جایی به ماه دیگر)
+                // باید با فایل خالی بازنویسی شوند، وگرنه در اتصال بعدی دوباره زنده می‌شوند.
                 const staleMonthKeys = new Set();
-                for await (const [name, handle] of appDirHandle.entries()) {
-                    if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name === SETTINGS_FILE_NAME) continue;
-                    try {
-                        const file = await handle.getFile();
-                        const parsed = JSON.parse(await file.text());
-                        if (parsed && parsed.app === 'sewing_statistics' && parsed.monthKey &&
-                            !monthKeys.has(parsed.monthKey) && Array.isArray(parsed.records) && parsed.records.length > 0) {
-                            staleMonthKeys.add(parsed.monthKey);
+                folderWrittenSig.forEach((_, mk) => { if (!monthKeys.has(mk)) staleMonthKeys.add(mk); });
+
+                // فقط یک‌بار بعد از هر اتصال، کل پوشه برای یافتن فایل‌های قدیمیِ ماه‌های بدون رکورد اسکن می‌شود
+                // (قبلاً با هر ذخیره‌سازی همه‌ی فایل‌ها خوانده و parse می‌شدند).
+                if (!folderStaleScanDone) {
+                    for await (const [name, handle] of appDirHandle.entries()) {
+                        if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name === SETTINGS_FILE_NAME) continue;
+                        try {
+                            const file = await handle.getFile();
+                            const parsed = JSON.parse(await file.text());
+                            if (parsed && parsed.app === 'sewing_statistics' && parsed.monthKey &&
+                                !monthKeys.has(parsed.monthKey) && Array.isArray(parsed.records) && parsed.records.length > 0) {
+                                staleMonthKeys.add(parsed.monthKey);
+                            }
+                        } catch (e) {
+                            // فایل نامعتبر یا غیرمرتبط؛ نادیده گرفته می‌شود
                         }
-                    } catch (e) {
-                        // فایل نامعتبر یا غیرمرتبط؛ نادیده گرفته می‌شود
                     }
+                    folderStaleScanDone = true;
                 }
 
                 for (const monthKey of new Set([...monthKeys, ...staleMonthKeys])) {
+                    const monthRecords = recordsSnapshot.filter(r => r.monthKey === monthKey);
+                    const sig = monthRecordsSignature(monthRecords);
+                    if (folderWrittenSig.get(monthKey) === sig) continue; // بدون تغییر؛ نوشتن لازم نیست
                     const [year, monthNumStr] = String(monthKey).split('-');
                     const monthNum = parseInt(monthNumStr, 10);
                     const monthName = PERSIAN_MONTHS[monthNum - 1] || 'نامشخص';
@@ -2213,25 +2925,34 @@
                         app: 'sewing_statistics',
                         monthKey, monthName, year,
                         updatedAt: new Date().toISOString(),
-                        records: allRecords.filter(r => r.monthKey === monthKey)
+                        records: monthRecords
                     }, null, 2));
                     await writable.close();
+                    folderWrittenSig.set(monthKey, sig);
                 }
 
-                const settingsHandle = await appDirHandle.getFileHandle(SETTINGS_FILE_NAME, { create: true });
-                const settingsWritable = await settingsHandle.createWritable();
-                await settingsWritable.write(JSON.stringify({
-                    app: 'sewing_statistics',
-                    updatedAt: new Date().toISOString(),
-                    notes: dailyNotes,
+                const settingsPayload = {
+                    notes: notesSnapshot,
                     settings: appSettings,
                     installSalt: getOrCreateInstallSalt(),
                     tombstones: tombstones
-                }, null, 2));
-                await settingsWritable.close();
+                };
+                const settingsSig = JSON.stringify(settingsPayload);
+                if (settingsSig !== folderSettingsSig) {
+                    const settingsHandle = await appDirHandle.getFileHandle(SETTINGS_FILE_NAME, { create: true });
+                    const settingsWritable = await settingsHandle.createWritable();
+                    await settingsWritable.write(JSON.stringify({
+                        app: 'sewing_statistics',
+                        updatedAt: new Date().toISOString(),
+                        ...settingsPayload
+                    }, null, 2));
+                    await settingsWritable.close();
+                    folderSettingsSig = settingsSig;
+                }
 
                 dirHandlePermissionState = 'granted';
                 updateStorageFolderStatusUI();
+                saveRotatingBackupToFolder();
             } catch (err) {
                 console.error('خطا در ذخیره فایل‌های پوشه:', err);
                 addLog('خطا در ذخیره‌سازی خودکار در پوشه دستگاه.', 'warn');
@@ -2274,6 +2995,7 @@
 
         async function connectToDirHandle(handle, isFreshSelection) {
             appDirHandle = handle;
+            resetFolderWriteCache();
             const perm = await handle.queryPermission({ mode: 'readwrite' });
             dirHandlePermissionState = perm;
             if (perm !== 'granted') {
@@ -2413,6 +3135,7 @@
             showCustomConfirm('آیا مطمئن هستید؟ پس از قطع اتصال، ذخیره‌سازی خودکار فقط در حافظه مرورگر انجام می‌شود (داده‌های موجود در پوشه دستگاه دست‌نخورده باقی می‌مانند).', async (confirmed) => {
                 if (!confirmed) return;
                 appDirHandle = null;
+                resetFolderWriteCache();
                 dirHandlePermissionState = 'unknown';
                 await clearDirHandleFromDB();
                 updateStorageFolderStatusUI();
@@ -2535,7 +3258,11 @@
             // منتظر می‌مانیم پشتیبان‌گیری واقعاً کامل شود (از جمله در صورت نمایش پنجره‌ی انتخاب مسیر ذخیره)
             // قبل از این‌که appHasExited=true شود و کاربر بتواند بدون هشدار تب را ببندد؛
             // قبلاً این دو کار هم‌زمان انجام می‌شد و ممکن بود ذخیره‌سازی هنوز کامل نشده باشد.
-            await exportSmartBackup();
+            const backupResult = await exportSmartBackup();
+            if (backupResult === false) {
+                showFeedbackBanner('خروج انجام نشد، چون فایل پشتیبان ذخیره نشد.', 'warn');
+                return;
+            }
             appHasExited = true;
             addLog('کاربر از برنامه خارج شد و نسخه پشتیبان به‌صورت خودکار ذخیره شد.', 'warn');
             document.getElementById('exitAppScreen').classList.remove('hidden');
@@ -2710,8 +3437,28 @@
             }
         }
 
-        function printOverviewReport() {
+        // چاپ همیشه در تم روشن انجام می‌شود؛ در حالت تاریک متن روشن روی کاغذ سفید دیده نمی‌شد.
+        function printWithLightTheme() {
+            const root = document.getElementById('htmlRoot');
+            const wasDark = root.classList.contains('dark');
+            let restored = false;
+            const restore = () => {
+                if (restored) return;
+                restored = true;
+                if (wasDark) root.classList.add('dark');
+                window.removeEventListener('afterprint', restore);
+            };
+            if (wasDark) {
+                root.classList.remove('dark');
+                window.addEventListener('afterprint', restore);
+                setTimeout(restore, 60000);
+            }
             window.print();
+            if (wasDark && !/Android|iPhone|iPad/i.test(navigator.userAgent)) restore();
+        }
+
+        function printOverviewReport() {
+            printWithLightTheme();
         }
 
         function printRecordsTable() {
@@ -2739,7 +3486,7 @@
             document.getElementById('printRecordsSubtitle').innerText =
                 `${ownerLine ? ownerLine + '  |  ' : ''}دوره: ${periodLabel}  |  تعداد رکورد: ${formatNumber(records.length)}  |  مجموع مبلغ: ${formatNumber(totalAmountSum)} ${currency}${unknownPriceCount > 0 ? '  |  ' + formatNumber(unknownPriceCount) + ' رکورد با قیمت نامعلوم' : ''}  |  تاریخ چاپ: ${formatDateDigits(currentJalali.fullDateStr)}`;
 
-            window.print();
+            printWithLightTheme();
         }
 
         /* ===================== منطق تقویم شمسی تعبیه‌شده ===================== */
@@ -2841,7 +3588,7 @@
             const input = document.getElementById(targetId);
             if (input) {
                 input.value = formatJalaliDate(jy, jm, day);
-                if (targetId === 'recordDate') runAutoDeliveryCalculation();
+                if (targetId === 'recordDate') { recordDateTouched = true; runAutoDeliveryCalculation(); }
             }
             closeDatePicker();
         }
@@ -2851,7 +3598,7 @@
             const input = document.getElementById(targetId);
             if (input) {
                 input.value = currentJalali.fullDateStr;
-                if (targetId === 'recordDate') runAutoDeliveryCalculation();
+                if (targetId === 'recordDate') { recordDateTouched = true; runAutoDeliveryCalculation(); }
             }
             closeDatePicker();
         }
@@ -2870,6 +3617,42 @@
                 card.classList.remove('fixed', 'inset-0', 'z-50', 'rounded-none', 'overflow-y-auto', 'm-0', 'p-4');
                 icon.className = "fa-solid fa-expand";
                 document.body.style.overflow = 'auto';
+            }
+        }
+
+        // بررسی فضای مصرفی مرورگر (localStorage + IndexedDB + همه‌چیز) و هشدار در آستانه‌ی ۸۰٪
+        let quotaWarningShown = false;
+        async function updateStorageQuotaUI() {
+            const idbStatusEl = document.getElementById('storageIdbStatus');
+            if (idbStatusEl) {
+                idbStatusEl.innerText = dataIdbOk
+                    ? 'فعال — تاریخچه کامل رکوردها/یادداشت‌ها در IndexedDB (بدون محدودیت ~۵ مگابایتیِ حافظه محلی) نگه‌داری می‌شود.'
+                    : 'غیرفعال — این مرورگر از IndexedDB پشتیبانی نمی‌کند یا دسترسی ممکن نبود؛ همه‌چیز فقط در حافظه محلی (محدود) نگه‌داری می‌شود.';
+                idbStatusEl.className = dataIdbOk ? 'text-xs font-semibold text-emerald-600 dark:text-emerald-400' : 'text-xs font-semibold text-amber-600 dark:text-amber-400';
+            }
+            const bar = document.getElementById('storageQuotaBar');
+            const label = document.getElementById('storageQuotaLabel');
+            if (!bar || !label) return;
+            if (!navigator.storage || !navigator.storage.estimate) {
+                label.innerText = 'در این مرورگر پشتیبانی نمی‌شود';
+                return;
+            }
+            try {
+                const { usage, quota } = await navigator.storage.estimate();
+                if (!quota) { label.innerText = 'نامشخص'; return; }
+                const percent = Math.min(100, Math.round((usage / quota) * 100));
+                bar.style.width = `${percent}%`;
+                bar.className = `h-full rounded-full transition-all ${percent >= 80 ? 'bg-rose-500' : (percent >= 60 ? 'bg-amber-500' : 'bg-emerald-500')}`;
+                const usageMB = (usage / (1024 * 1024)).toFixed(1);
+                const quotaMB = (quota / (1024 * 1024)).toFixed(0);
+                label.innerText = `${formatNumber(usageMB)} از ${formatNumber(quotaMB)} مگابایت (${formatNumber(percent)}٪)`;
+                if (percent >= 80 && !quotaWarningShown) {
+                    quotaWarningShown = true;
+                    showFeedbackBanner('فضای ذخیره‌سازی مرورگر رو به اتمام است (بیش از ۸۰٪ پر شده). توصیه می‌شود از «پشتیبان‌گیری» یا «اتصال پوشه دستگاه» استفاده کنید.', 'warn');
+                }
+            } catch (e) {
+                console.warn('خطا در تخمین فضای ذخیره‌سازی:', e);
+                label.innerText = 'خطا در بررسی';
             }
         }
 
@@ -2920,17 +3703,15 @@
 
             const totalRecords = allRecords.length;
             document.getElementById('storageTotalRecordsCount').innerText = formatNumber(totalRecords);
-            
-            const dataString = JSON.stringify(allRecords) + JSON.stringify(dailyNotes) + JSON.stringify(appSettings);
-            const sizeInBytes = new Blob([dataString]).size;
+
+            // اندازه‌ی واقعیِ فعلیِ localStorage (که با هرس ماه‌های قدیمی به IndexedDB کوچک نگه داشته می‌شود)
+            const actualLocalRecords = localStorage.getItem('sewing_statistics_records_v13') || '';
+            const actualLocalNotes = localStorage.getItem('sewing_daily_notes_v13') || '';
+            const actualLocalSettings = localStorage.getItem('sewing_app_settings_v13') || '';
+            const sizeInBytes = new Blob([actualLocalRecords + actualLocalNotes + actualLocalSettings]).size;
             const sizeInKB = (sizeInBytes / 1024).toFixed(2);
             document.getElementById('storageUsageSize').innerText = `${formatNumber(sizeInKB)} کیلوبایت`;
-            (async () => {
-                let cacheInfo = '—';
-                try { cacheInfo = (await caches.keys()).filter(k => k.startsWith('sewing-stats-')).join(', ') || '—'; } catch (e) { /* بی‌اهمیت */ }
-                const el = document.getElementById('appBuildInfo');
-                if (el) el.innerText = `${APP_BUILD} | ${cacheInfo}`;
-            })();
+            updateStorageQuotaUI();
 
             updateSettingsProfilePreview();
             switchSettingsTab('profile');
@@ -3294,13 +4075,21 @@
 
             saveTimeout = setTimeout(async () => {
                 try {
+                    // گورستان حذف‌ها (کوچک است) پیش از هر چیز نوشته می‌شود؛ اگر ذخیره‌ی بقیه نیمه‌کاره بماند،
+                    // رکورد حذف‌شده در بارگذاری بعدی دوباره زنده نمی‌شود.
+                    try { localStorage.setItem(TOMBSTONE_KEY, JSON.stringify(tombstones)); } catch (tbErr) { console.warn('ذخیره‌ی tombstone ناموفق بود:', tbErr); }
                     let photosPersisted = false;
                     try { photosPersisted = await persistPhotos(); } catch (photoErr) { console.warn('ذخیره‌ی عکس در IndexedDB ناموفق بود؛ عکس‌ها در localStorage نگه داشته می‌شوند.', photoErr); }
-                    localStorage.setItem('sewing_statistics_records_v13', JSON.stringify(photosPersisted ? allRecords.map(stripPhotoForStorage) : allRecords));
+                    let dataPersisted = false;
+                    try { dataPersisted = await persistDataToIndexedDB(); } catch (dataErr) { console.warn('ذخیره‌ی رکوردها/یادداشت‌ها در IndexedDB ناموفق بود؛ فقط در localStorage نگه داشته می‌شوند.', dataErr); }
+                    const recordsForLocalStorage = pruneRecordsForLocalStorage();
+                    localStorage.setItem('sewing_statistics_records_v13', JSON.stringify(photosPersisted ? recordsForLocalStorage.map(stripPhotoForStorage) : recordsForLocalStorage));
                     localStorage.setItem(TOMBSTONE_KEY, JSON.stringify(tombstones));
                     localStorage.setItem('sewing_daily_notes_v13', JSON.stringify(dailyNotes));
-                    addLog('تغییرات در حافظه محلی ذخیره شد.', 'success');
+                    addLog(dataPersisted ? 'تغییرات در حافظه محلی و IndexedDB ذخیره شد.' : 'تغییرات در حافظه محلی ذخیره شد.', 'success');
                     hasPendingSave = false;
+                    broadcastLocalDataChange();
+                    updateStorageQuotaUI();
 
                     if (appDirHandle) {
                         saveAllMonthFilesToDirectory();
@@ -3323,6 +4112,26 @@
             }, 400);
         }
 
+        // ذخیره‌ی فوری و هم‌زمان (sync) هنگام رفتن صفحه به پس‌زمینه/بسته‌شدن؛ در موبایل، تایمر ۴۰۰ میلی‌ثانیه‌ای
+        // ممکن است هرگز اجرا نشود و آخرین تغییر از بین برود.
+        function flushPendingSaveNow() {
+            if (!hasPendingSave) return;
+            try {
+                try { localStorage.setItem(TOMBSTONE_KEY, JSON.stringify(tombstones)); } catch (e) { /* بی‌اهمیت */ }
+                const recent = pruneRecordsForLocalStorage();
+                const needFullPhotos = !photoIdbOk || allRecords.some(r => r.photo && photoSynced.get(r.id) !== r.photo);
+                localStorage.setItem('sewing_statistics_records_v13', JSON.stringify(needFullPhotos ? recent : recent.map(stripPhotoForStorage)));
+                localStorage.setItem('sewing_daily_notes_v13', JSON.stringify(dailyNotes));
+                broadcastLocalDataChange();
+            } catch (e) {
+                console.warn('ذخیره‌ی فوری ناموفق بود:', e);
+            }
+            // ذخیره‌ی IndexedDB (ناهم‌زمان) هم شروع می‌شود؛ اگر صفحه بسته شد، نسخه‌ی localStorage باقی است
+            persistPhotos().catch(() => {}).then(() => persistDataToIndexedDB()).catch(() => {});
+        }
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushPendingSaveNow(); });
+        window.addEventListener('pagehide', flushPendingSaveNow);
+
         async function exportSmartBackup() {
             if (allRecords.length === 0 && dailyNotes.length === 0) {
                 showFeedbackBanner('داده‌ای برای گرفتن پشتیبان وجود ندارد.', 'warn');
@@ -3342,7 +4151,7 @@
             const timeTag = new Date().toISOString().slice(0, 10).replace(/-/g, '');
             const filename = `آمار_دوخت_پشتیبان_${timeTag}.json`;
 
-            await saveBackupFile(filename, jsonString, {
+            return await saveBackupFile(filename, jsonString, {
                 onSuccess: (method) => {
                     addLog('فایل پشتیبان استخراج شد.', 'success');
                     showFeedbackBanner(
@@ -3494,14 +4303,14 @@
                 return;
             }
 
-            allRecords.forEach(r => addTombstone('records', r.id));
-            dailyNotes.forEach(n => addTombstone('notes', n.id));
+            allRecords.forEach(r => { addTombstone('records', r.id); moveToTrash(TRASH_RECORDS_STORE, r); });
+            dailyNotes.forEach(n => { addTombstone('notes', n.id); moveToTrash(TRASH_NOTES_STORE, n); });
             allRecords = [];
             dailyNotes = [];
             saveRecords();
             renderDashboard();
             addLog('تمام اطلاعات سامانه پاک شدند.', 'warn');
-            showFeedbackBanner('تمام اطلاعات با موفقیت حذف شدند.', 'warn');
+            showFeedbackBanner('تمام اطلاعات با موفقیت حذف شدند (تا ۳۰ روز از «سطل بازیافت» قابل بازگردانی است).', 'warn');
             closeDeleteCodeModal();
         }
 
@@ -3820,6 +4629,35 @@
             });
         }
 
+        // همگام‌سازیِ کاملِ «شروع کد بعد» و وضعیتِ همه‌ی رکوردها بر اساس ترتیب واقعی زمانی؛
+        // بعد از بازگردانی از سطل بازیافت (یا هر تغییری که ممکن است همسایه‌ها را ناهماهنگ کند) اجرا می‌شود.
+        function recomputeAllLinks() {
+            const list = allRecords
+                .filter(r => r.date && r.time)
+                .map(r => ({ r, key: parseJalaliDateToJdn(r.date) * 1440 + parseTimeToMinutes(r.time) }))
+                .sort((a, b) => a.key - b.key);
+            let changed = 0;
+            for (let i = 0; i < list.length; i++) {
+                const rec = list[i].r;
+                if (rec.finishedDate) continue;
+                let next = null;
+                for (let j = i + 1; j < list.length; j++) {
+                    if (list[j].key > list[i].key) { next = list[j].r; break; }
+                }
+                const hasPointer = !!rec.nextCodeStartDate;
+                if (next) {
+                    if (!hasPointer || !sameDT(rec.nextCodeStartDate, rec.nextCodeStartTime, next.date, next.time)) {
+                        computeAndSetDeliveryStatus(rec, next.date, next.time);
+                        changed++;
+                    }
+                } else if (hasPointer) {
+                    revertRecordToEstimatedStatus(rec);
+                    changed++;
+                }
+            }
+            return changed;
+        }
+
         // وقتی رکوردی دیگر هیچ «رکورد بعدیِ واقعی»ای نداشته باشد (مثلاً چون رکوردی که قبلاً به آن
         // اشاره می‌کرد ویرایش/جابه‌جا شده)، وضعیت آن به همان تخمین اولیه‌ی بر اساس آمار روزانه و
         // تعداد دریافتی بازمی‌گردد؛ دقیقاً همان منطقی که در runAutoDeliveryCalculation اجرا می‌شود.
@@ -3890,10 +4728,11 @@
 
         function handleFormSubmit(event) {
             event.preventDefault();
+            refreshFormDateTimeIfUntouched();
             const info = getCurrentJalaliInfo();
             const editingIdRaw = document.getElementById('editingRecordId').value;
             const editingId = editingIdRaw ? Number(editingIdRaw) : '';
-            const code = document.getElementById('itemCode').value.trim();
+            const code = normalizeCodeValue(document.getElementById('itemCode').value);
             const title = document.getElementById('itemTitle').value.trim();
             const color = document.getElementById('itemColor').value.trim();
             const qty = parsePersianInt(document.getElementById('receivedQuantity').value);
@@ -3946,7 +4785,7 @@
                         status: status, date: date, time: time, durationTime: durationTime,
                         dailyStat: dailyStat, receivedQuantity: receivedQuantity, endDateTime: endDateTime,
                         workDuration: workDuration,
-                        photo: currentPhotoData,
+                        photo: currentPhotoData, hasPhoto: !!currentPhotoData,
                         monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year,
                         notifiedStages: [], notifiedFull: false, lastOverdueNotifyAt: null, mutedUntil: null, updatedAt: Date.now()
                     };
@@ -3956,7 +4795,7 @@
                     // هم‌خوانی نداشته باشد؛ آن رکورد پیدا و دوباره با رکورد بعدیِ واقعی‌اش همگام می‌شود.
                     if (oldDate !== date || oldTime !== time) {
                         const staleOwner = allRecords.find(r =>
-                            r.id !== editingId && r.nextCodeStartDate === oldDate && r.nextCodeStartTime === oldTime
+                            r.id !== editingId && sameDT(r.nextCodeStartDate, r.nextCodeStartTime, oldDate, oldTime)
                         );
                         if (staleOwner) syncNextCodeStartLink(staleOwner);
                     }
@@ -3986,7 +4825,7 @@
                     status: status, date: date, time: time, durationTime: durationTime,
                     dailyStat: dailyStat, receivedQuantity: receivedQuantity, endDateTime: endDateTime,
                     workDuration: workDuration,
-                    photo: currentPhotoData,
+                    photo: currentPhotoData, hasPhoto: !!currentPhotoData,
                     monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year
                 };
                 // پیش از افزودن رکورد جدید، اگر رکورد قبلی (از نظر زمانی) هنوز «تاریخ/ساعت شروع کد بعد»
@@ -4075,6 +4914,8 @@
             document.getElementById('stitchingForm').reset();
             document.getElementById('editingRecordId').value = '';
             document.getElementById('recordDate').value = info.fullDateStr;
+            recordTimeTouched = false;
+            recordDateTouched = false;
             document.getElementById('itemStatus').value = appSettings.defaultStatus || 'به موقع';
             toggleDeliveryDurationField();
             togglePriceUnknown();
@@ -4092,14 +4933,15 @@
         }
 
         function deleteRecord(id) {
-            showCustomConfirm('آیا از حذف این رکورد اطمینان دارید؟', (confirmed) => {
+            showCustomConfirm('آیا از حذف این رکورد اطمینان دارید؟ (تا ۳۰ روز از سطل بازیافت قابل بازگردانی است)', (confirmed) => {
                 if (confirmed) {
                     addTombstone('records', id);
                     const removedRec = allRecords.find(r => r.id === id);
+                    if (removedRec) moveToTrash(TRASH_RECORDS_STORE, removedRec);
                     allRecords = allRecords.filter(r => r.id !== id);
                     if (removedRec) {
                         // رکوردی که «شروع کد بعد»ش به رکورد حذف‌شده اشاره می‌کرد، دوباره با رکورد بعدیِ واقعی همگام می‌شود
-                        const owner = allRecords.find(r => r.nextCodeStartDate === removedRec.date && r.nextCodeStartTime === removedRec.time);
+                        const owner = allRecords.find(r => sameDT(r.nextCodeStartDate, r.nextCodeStartTime, removedRec.date, removedRec.time));
                         if (owner) syncNextCodeStartLink(owner);
                     }
                     saveRecords();
@@ -4194,9 +5036,11 @@
         }
 
         function deleteDailyNote(id) {
-            showCustomConfirm('آیا از حذف این یادداشت اطمینان دارید؟', (confirmed) => {
+            showCustomConfirm('آیا از حذف این یادداشت اطمینان دارید؟ (تا ۳۰ روز از سطل بازیافت قابل بازگردانی است)', (confirmed) => {
                 if (confirmed) {
                     addTombstone('notes', id);
+                    const removedNote = dailyNotes.find(n => n.id === id);
+                    if (removedNote) moveToTrash(TRASH_NOTES_STORE, removedNote);
                     dailyNotes = dailyNotes.filter(n => n.id !== id);
                     saveRecords();
                     renderDailyNotes();
@@ -4302,12 +5146,16 @@
 
         function matchesAdvancedSearch(r, f) {
             if (f.text) {
-                const hit = (r.itemCode || '').toLowerCase().includes(f.text) ||
-                            (r.itemTitle || '').toLowerCase().includes(f.text) ||
-                            (r.itemColor || '').toLowerCase().includes(f.text);
+                const hit = normalizeSearchText(r.itemCode).includes(f.text) ||
+                            normalizeSearchText(r.itemTitle).includes(f.text) ||
+                            normalizeSearchText(r.itemColor).includes(f.text);
                 if (!hit) return false;
             }
-            if (f.status && f.status !== 'all' && (r.status || 'به موقع') !== f.status) return false;
+            if (f.status === 'در انتظار') { if (!isRecordPending(r)) return false; }
+            else if (f.status && f.status !== 'all') {
+                if ((r.status || 'به موقع') !== f.status) return false;
+                if (f.status === 'به موقع' && isRecordPending(r)) return false;
+            }
 
             if (f.dateFromVal !== null) {
                 const rv = jalaliDateToComparable(r.date);
@@ -4367,7 +5215,7 @@
             }
 
             advancedSearchFilters = {
-                text: rawText.toLowerCase(), rawText,
+                text: normalizeSearchText(rawText), rawText,
                 status: statusVal,
                 dateFrom: dateFromRaw, dateTo: dateToRaw, dateFromVal, dateToVal,
                 qtyMin, qtyMax, qtyMinRaw, qtyMaxRaw,
@@ -4461,7 +5309,7 @@
         /* ==================== پایان منطق ترتیب نمایش ==================== */
 
         function getFilteredRecords() {
-            const searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+            const searchQuery = normalizeSearchText(document.getElementById('searchInput').value);
 
             if (advancedSearchFilters) {
                 return sortRecords(allRecords.filter(r => matchesAdvancedSearch(r, advancedSearchFilters)));
@@ -4470,9 +5318,9 @@
             const filtered = allRecords.filter(r => {
                 if (r.monthKey !== selectedMonthFilter) return false;
                 if (!searchQuery) return true;
-                return (r.itemCode || '').toLowerCase().includes(searchQuery) ||
-                       (r.itemTitle || '').toLowerCase().includes(searchQuery) ||
-                       (r.itemColor || '').toLowerCase().includes(searchQuery);
+                return normalizeSearchText(r.itemCode).includes(searchQuery) ||
+                       normalizeSearchText(r.itemTitle).includes(searchQuery) ||
+                       normalizeSearchText(r.itemColor).includes(searchQuery);
             });
             return sortRecords(filtered);
         }
@@ -4709,6 +5557,15 @@
             }
         }
 
+        // رکورد «در انتظار»: مدت هدف دارد ولی هنوز نه کد بعدی ثبت شده و نه «کار تمام شد» زده شده؛
+        // یعنی وضعیت واقعی تحویلش هنوز مشخص نیست و نباید جزو «به موقع» شمرده شود.
+        function isRecordPending(r) {
+            return (r.status || 'به موقع') === 'به موقع' && !r.nextCodeStartDate && !r.finishedDate && !!r.workDuration;
+        }
+        function getDisplayStatus(r) {
+            return isRecordPending(r) ? 'در انتظار' : (r.status || 'به موقع');
+        }
+
         function formatStatusWithDuration(status, durationTime) {
             const safeStatus = escapeHTML(status) || 'به موقع';
             if (!durationTime || status === 'به موقع' || !status) return safeStatus;
@@ -4719,6 +5576,7 @@
             switch(status) {
                 case 'زودتر از موعد': return 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60';
                 case 'تاخیر': return 'bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60';
+                case 'در انتظار': return 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600';
                 default: return 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60';
             }
         }
@@ -4727,6 +5585,7 @@
             switch (status) {
                 case 'زودتر از موعد': return '#10b981';
                 case 'تاخیر': return '#f43f5e';
+                case 'در انتظار': return '#94a3b8';
                 default: return '#3b82f6';
             }
         }
@@ -4766,6 +5625,8 @@
             if (!selector) return;
             const existingKeys = [...new Set(allRecords.map(r => r.monthKey))];
             if (!existingKeys.includes(currentJalali.monthKey)) existingKeys.unshift(currentJalali.monthKey);
+            // ماهِ در حال نمایش همیشه باید در منو باشد (مثلاً بعد از حذف آخرین رکوردِ یک ماه آرشیوی)
+            if (!existingKeys.includes(selectedMonthFilter)) existingKeys.push(selectedMonthFilter);
             // مرتب‌سازی عددی (نه رشته‌ای) تا ماه‌های دو رقمی (۱۰،۱۱،۱۲) در جای درست خودشان قرار بگیرند
             existingKeys.sort((a, b) => {
                 const [ay, am] = a.split('-').map(Number);
@@ -4838,7 +5699,7 @@
         function calculateDuplicateCodes(records) {
             const groups = new Map();
             records.forEach(r => {
-                const code = (r.itemCode || '').trim();
+                const code = normalizeCodeValue(r.itemCode);
                 if (!code) return;
                 if (!groups.has(code)) groups.set(code, []);
                 groups.get(code).push(r);
@@ -4944,6 +5805,7 @@
                 g.gain.setValueAtTime(0.001, ctx.currentTime);
                 g.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
                 g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (urgent ? 0.5 : 0.3));
+                o.onended = () => { try { ctx.close(); } catch (e) { /* بی‌اهمیت */ } };
                 o.start();
                 o.stop(ctx.currentTime + (urgent ? 0.55 : 0.35));
                 if (urgent) setTimeout(() => playAlertSound(false), 350);
@@ -4959,7 +5821,7 @@
             const options = {
                 body,
                 icon: 'icon-192.png',
-                badge: 'badge-96.png',
+                badge: 'icon-192.png',
                 tag,
                 renotify: true,
                 requireInteraction: true, // مثل پیامک/یادآوری‌های گوشی، تا لمس نشود از نوار اعلان‌ها پاک نشود
@@ -5213,45 +6075,6 @@
             return sameDay ? `موعد ${time}` : `موعد ${dateStr} ${time}`;
         }
 
-        // آیکون بزرگ اعلان: حلقه‌ی پیشرفت رنگیِ وضعیت با عددِ درصد (فونت وزیرمتن) — طرح متنی را بدون تصویر بزرگ زیبا می‌کند
-        async function drawProgressRingIcon(percent) {
-            try {
-                try {
-                    if (document.fonts && document.fonts.load) {
-                        await Promise.race([document.fonts.load('700 48px Vazirmatn'), new Promise(r => setTimeout(r, 1200))]);
-                    }
-                } catch (e) { /* فونت جایگزین */ }
-                const S = 192, k = 2;
-                const canvas = document.createElement('canvas');
-                canvas.width = S * k; canvas.height = S * k;
-                const ctx = canvas.getContext('2d');
-                ctx.scale(k, k);
-                const st = getWidgetState(percent);
-                // پس‌زمینه‌ی تیره‌ی گرد تا در هر دو حالت روشن/تاریک نوار اعلان خوانا باشد
-                ctx.fillStyle = '#0f172a';
-                ctx.beginPath();
-                ctx.arc(S / 2, S / 2, S / 2, 0, Math.PI * 2);
-                ctx.fill();
-                const cx = S / 2, cy = S / 2, r = 68;
-                ctx.lineWidth = 16;
-                ctx.lineCap = 'round';
-                ctx.strokeStyle = '#1e293b';
-                ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
-                const ratio = Math.max(0.02, Math.min(1, percent / 100));
-                ctx.strokeStyle = st.color;
-                ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * ratio); ctx.stroke();
-                const txt = formatNumber(Math.min(999, percent));
-                ctx.fillStyle = '#f1f5f9';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.font = `700 ${txt.length >= 3 ? 40 : 52}px 'Vazirmatn', Tahoma, sans-serif`;
-                ctx.fillText(txt, cx, cy + 2);
-                return canvas.toDataURL('image/png');
-            } catch (e) {
-                return null;
-            }
-        }
-
         async function drawProgressWidgetImage(rec, progress) {
             try {
                 try {
@@ -5467,7 +6290,7 @@
             const options = {
                 body: cardStyle ? infoLine : `${RLM}${widgetBar(progress.percent)}  ${pctText}\n${infoLine}`,
                 icon: 'icon-192.png',
-                badge: 'badge-96.png',
+                badge: 'icon-192.png',
                 tag: LIVE_WIDGET_TAG,
                 renotify: false, // فقط محتوا آپدیت می‌شود، بدون صدا/لرزش دوباره — رفتار «ویجت»، نه «هشدار»
                 requireInteraction: true,
@@ -5479,15 +6302,11 @@
                     { action: 'finish', title: '✔ کار تمام شد' },
                     { action: 'snooze', title: '🔕 ۳۰ دقیقه بی‌صدا' }
                 ],
-                data: { live: true, build: APP_BUILD }
+                data: { live: true }
             };
             if (cardStyle) {
                 const image = await drawProgressWidgetImage(rec, progress);
                 if (image) options.image = image;
-            }
-            else {
-                const ringIcon = await drawProgressRingIcon(progress.percent);
-                if (ringIcon) options.icon = ringIcon;
             }
 
             try {
@@ -5504,29 +6323,6 @@
                 addLog('نمایش ویجت وضعیت زنده ناموفق بود (اعلان توسط مرورگر رد شد).', 'warn');
                 return false;
             }
-        }
-
-        // پاک کردن کش برنامه و سرویس‌ورکر و بارگذاری دوباره؛ رکوردها/یادداشت‌ها/تنظیمات (localStorage و IndexedDB) دست‌نخورده می‌مانند
-        function forceRefreshApp() {
-            if (!navigator.onLine) {
-                showFeedbackBanner('برای به‌روزرسانی اجباری به اینترنت نیاز است.', 'warn');
-                return;
-            }
-            showCustomConfirm('کش برنامه پاک و صفحه از نو بارگذاری شود؟ رکوردها، یادداشت‌ها و تنظیمات شما دست‌نخورده می‌ماند.', async (confirmed) => {
-                if (!confirmed) return;
-                try {
-                    if (hasPendingSave) await new Promise(r => setTimeout(r, 900));
-                    if ('serviceWorker' in navigator) {
-                        const regs = await navigator.serviceWorker.getRegistrations();
-                        await Promise.all(regs.map(r => r.unregister()));
-                    }
-                    if (window.caches) {
-                        const keys = await caches.keys();
-                        await Promise.all(keys.map(k => caches.delete(k)));
-                    }
-                } catch (e) { console.warn(e); }
-                window.location.reload();
-            });
         }
 
         function checkDeliveryProgressNotifications() {
@@ -5639,7 +6435,7 @@
                     <div class="mt-1">${remainingText}</div>
                     <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
                     <button type="button" data-action="finish-active" data-id="${Number(rec.id)}" class="no-print mt-2 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition-colors"><i class="fa-solid fa-circle-check"></i> کار تمام شد</button>
-                    ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print mt-1.5 text-[10px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatNumber(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
+                    ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print mt-1.5 text-[10px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatDateDigits(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
                 </div>
             `;
             updateAttentionIndicators();
@@ -5700,7 +6496,7 @@
 
             emptyState.classList.add('hidden');
             tableBody.innerHTML = records.map((r, index) => `
-                <tr class="group hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors" style="box-shadow: inset 3px 0 0 ${getStatusAccentColor(r.status)};">
+                <tr class="group hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors" style="box-shadow: inset 3px 0 0 ${getStatusAccentColor(getDisplayStatus(r))};">
                     <td class="p-3.5 text-slate-400 text-xs">${formatNumber(index + 1)}</td>
                     <td class="p-3.5 no-print">
                         ${r.photo
@@ -5726,9 +6522,9 @@
                     <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${r.endDateTime ? escapeHTML(r.endDateTime) : '-'}</td>
                     <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${r.nextCodeStartDate ? (escapeHTML(r.nextCodeStartDate) + (r.nextCodeStartTime ? ' <span class="opacity-60">-</span> ' + escapeHTML(r.nextCodeStartTime) : '')) : (r.finishedDate ? '<span class="text-emerald-600 dark:text-emerald-400" title="پایان کار ثبت‌شده">✔ ' + escapeHTML(r.finishedDate) + (r.finishedTime ? ' - ' + escapeHTML(r.finishedTime) : '') + ' <button type="button" data-action="unfinish" data-id="' + Number(r.id) + '" class="no-print opacity-60 hover:opacity-100" title="لغو ثبت پایان"><i class="fa-solid fa-rotate-left"></i></button></span>' : '-')}</td>
                     <td class="p-3.5">
-                        <span class="text-xs px-3 py-1 rounded-full border font-medium whitespace-nowrap inline-flex items-center gap-1.5 ${getStatusBadgeClass(r.status)}">
-                            <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background-color:${getStatusAccentColor(r.status)}"></span>
-                            ${formatStatusWithDuration(r.status, r.durationTime)}
+                        <span class="text-xs px-3 py-1 rounded-full border font-medium whitespace-nowrap inline-flex items-center gap-1.5 ${getStatusBadgeClass(getDisplayStatus(r))}">
+                            <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background-color:${getStatusAccentColor(getDisplayStatus(r))}"></span>
+                            ${formatStatusWithDuration(getDisplayStatus(r), r.durationTime)}
                         </span>
                     </td>
                     <td class="p-3.5 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">${escapeHTML(r.date)} <span class="opacity-60">-</span> ${escapeHTML(r.time)}</td>
@@ -5760,7 +6556,8 @@
             document.getElementById('modalPeriodSub').innerText = `خلاصه گزارش ${periodLabel}${getOwnerInfoLineText() ? '  |  ' + getOwnerInfoLineText() : ''}`;
 
             const totalCount = records.length;
-            const onTimeCount = records.filter(r => (r.status || 'به موقع') === 'به موقع').length;
+            const pendingCount = records.filter(r => isRecordPending(r)).length;
+            const onTimeCount = records.filter(r => (r.status || 'به موقع') === 'به موقع' && !isRecordPending(r)).length;
             const earlyCount = records.filter(r => r.status === 'زودتر از موعد').length;
             const delayedCount = records.filter(r => r.status === 'تاخیر').length;
             const totalQtySum = records.reduce((sum, r) => sum + r.quantity, 0);
@@ -5768,6 +6565,8 @@
             const unknownPriceCount = countUnknownPriceRecords(records);
             const calcPercent = (count) => totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
 
+            document.getElementById('overviewPendingCount').innerText = formatNumber(pendingCount);
+            document.getElementById('overviewPendingPercent').innerText = `${formatNumber(calcPercent(pendingCount))}٪`;
             document.getElementById('overviewOnTimeCount').innerText = formatNumber(onTimeCount);
             document.getElementById('overviewOnTimePercent').innerText = `${formatNumber(calcPercent(onTimeCount))}٪`;
             document.getElementById('overviewEarlyCount').innerText = formatNumber(earlyCount);
@@ -5789,7 +6588,7 @@
                         <td class="p-3">${formatNumber(r.quantity)}</td>
                         <td class="p-3">${formatPriceValue(r.unitPrice)}</td>
                         <td class="p-3 font-bold ${r.totalPrice === null || r.totalPrice === undefined ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}">${formatPriceValue(r.totalPrice)}</td>
-                        <td class="p-3"><span class="text-[11px] px-2.5 py-1 rounded-lg border inline-block ${getStatusBadgeClass(r.status)}">${formatStatusWithDuration(r.status, r.durationTime)}</span></td>
+                        <td class="p-3"><span class="text-[11px] px-2.5 py-1 rounded-lg border inline-block ${getStatusBadgeClass(getDisplayStatus(r))}">${formatStatusWithDuration(getDisplayStatus(r), r.durationTime)}</span></td>
                         <td class="p-3 text-slate-500 dark:text-slate-400">${escapeHTML(r.date)}</td>
                     </tr>
                 `).join('');
@@ -5865,7 +6664,7 @@
             <td>${(r.unitPrice === null || r.unitPrice === undefined) ? 'نامعلوم' : r.unitPrice.toLocaleString('en-US')}</td>
             <td><b>${(r.totalPrice === null || r.totalPrice === undefined) ? 'نامعلوم' : r.totalPrice.toLocaleString('en-US')}</b></td>
             <td>${r.nextCodeStartDate ? escapeHTML(r.nextCodeStartDate) + (r.nextCodeStartTime ? ' - ' + escapeHTML(r.nextCodeStartTime) : '') : '-'}</td>
-            <td>${escapeHTML(r.status) || 'به موقع'}${r.durationTime && r.status !== 'به موقع' ? ' (' + escapeHTML(r.durationTime) + ')' : ''}</td>
+            <td>${escapeHTML(getDisplayStatus(r))}${r.durationTime && r.status !== 'به موقع' ? ' (' + escapeHTML(r.durationTime) + ')' : ''}</td>
             <td>${escapeHTML(r.date)}</td>
         </tr>`).join('') +
         `</table>
@@ -5890,6 +6689,45 @@
             const now = new Date();
             document.getElementById('recordTime').value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
         }
+
+        // تاریخ/ساعت فرم فقط وقتی خودکار تازه می‌شوند که کاربر خودش دستشان نزده باشد؛
+        // قبلاً اگر برنامه ساعت‌ها باز می‌ماند، ساعت شروعِ کهنه ثبت می‌شد و وضعیت تحویل را خراب می‌کرد.
+        let recordTimeTouched = false;
+        let recordDateTouched = false;
+
+        function refreshCurrentJalaliIfChanged() {
+            const fresh = getCurrentJalaliInfo();
+            if (fresh.fullDateStr === currentJalali.fullDateStr) return false;
+            const wasOnCurrentMonth = selectedMonthFilter === currentJalali.monthKey;
+            currentJalali = fresh;
+            if (wasOnCurrentMonth) selectedMonthFilter = fresh.monthKey;
+            return true;
+        }
+
+        function refreshFormDateTimeIfUntouched() {
+            const dayChanged = refreshCurrentJalaliIfChanged();
+            if (!document.getElementById('editingRecordId').value) {
+                let changed = false;
+                const dateEl = document.getElementById('recordDate');
+                if (!recordDateTouched && dateEl.value !== currentJalali.fullDateStr) {
+                    dateEl.value = currentJalali.fullDateStr;
+                    changed = true;
+                }
+                if (!recordTimeTouched) {
+                    const now = new Date();
+                    const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                    const timeEl = document.getElementById('recordTime');
+                    if (timeEl.value !== hhmm) { timeEl.value = hhmm; changed = true; }
+                }
+                if (changed) runAutoDeliveryCalculation();
+            }
+            if (dayChanged) renderDashboard();
+        }
+
+        document.getElementById('recordTime').addEventListener('input', () => { recordTimeTouched = true; });
+        document.getElementById('recordFormCard').addEventListener('focusin', refreshFormDateTimeIfUntouched);
+        setInterval(refreshFormDateTimeIfUntouched, 30 * 1000);
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshFormDateTimeIfUntouched(); });
 
         document.getElementById('recordDate').value = currentJalali.fullDateStr;
         document.getElementById('noteDateInput').value = currentJalali.fullDateStr;
@@ -5925,6 +6763,8 @@
         addLog(`سامانه بارگذاری شد. تاریخ: ${currentJalali.fullDateStr}`, 'info');
         renderDashboard();
         initPhotoStore();
+        initDataStore();
+        updateStorageQuotaUI();
         initStorageFolderConnection();
         handleStartupShortcutAction();
 

@@ -207,11 +207,21 @@
                     </button>
 
                     <!-- محتوای منوی کشویی -->
-                    <div id="toolsDropdownMenu" class="hidden absolute left-0 mt-2 w-[19rem] bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-300 dark:border-slate-600 z-50 p-3.5 text-right max-h-[80vh] overflow-y-auto">
+                    <div id="toolsDropdownMenu" class="hidden absolute left-0 mt-2 w-[19rem] bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-300 dark:border-slate-600 z-50 text-right max-h-[80vh] overflow-y-auto flex flex-col">
 
-                        <!-- پرکاربردها -->
-                        <div class="px-1 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">پرکاربردها</div>
-                        <div class="grid grid-cols-3 gap-1.5 mb-3">
+                        <!-- نوار زبانه‌های منوی ابزار -->
+                        <div class="flex items-center gap-1 px-2.5 pt-2.5 border-b border-slate-200 dark:border-slate-800 shrink-0 sticky top-0 bg-white dark:bg-slate-900 z-10">
+                            <button type="button" onclick="switchToolsMenuTab('common')" data-tools-tab="common" class="tools-tab-btn flex-1 flex items-center justify-center gap-1.5 py-2 rounded-t-xl text-[11px] font-bold transition-colors">
+                                <i class="fa-solid fa-star text-[10px]"></i> پرکاربردها
+                            </button>
+                            <button type="button" onclick="switchToolsMenuTab('all')" data-tools-tab="all" class="tools-tab-btn flex-1 flex items-center justify-center gap-1.5 py-2 rounded-t-xl text-[11px] font-bold transition-colors">
+                                <i class="fa-solid fa-toolbox text-[10px]"></i> همه ابزارها
+                            </button>
+                        </div>
+
+                        <div class="p-3.5">
+                        <div id="toolsTabPanel-common" class="tools-tab-panel">
+                        <div class="grid grid-cols-3 gap-1.5 mb-1">
                             <button onclick="exportSmartBackup(); closeToolsDropdown();" class="flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                 <span class="w-11 h-11 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                                     <i class="fa-solid fa-download text-base"></i>
@@ -234,9 +244,9 @@
                                 <span class="text-[9px] text-slate-400 leading-tight">ظاهر و رمز</span>
                             </button>
                         </div>
+                        </div>
 
-                        <!-- همه ابزارها -->
-                        <div class="px-1 pb-2 pt-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-t border-slate-100 dark:border-slate-800">همه ابزارها</div>
+                        <div id="toolsTabPanel-all" class="tools-tab-panel hidden">
                         <div class="grid grid-cols-2 gap-1.5 mb-2">
                             <button onclick="toggleLogBox(); closeToolsDropdown();" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
                                 <span class="w-9 h-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center">
@@ -330,11 +340,13 @@
                                 <i class="fa-solid fa-rotate"></i> بارگذاری دستی از پوشه
                             </button>
                         </div>
+                        </div>
 
-                        <!-- پاک کردن داده‌ها -->
+                        <!-- پاک کردن داده‌ها؛ مستقل از زبانه، همیشه در دسترس -->
                         <button onclick="openTwoStepDeleteModal(); closeToolsDropdown();" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors">
                             <i class="fa-solid fa-triangle-exclamation"></i> پاک کردن داده‌ها
                         </button>
+                        </div>
                     </div>
                 </div>
 
@@ -3626,12 +3638,32 @@
         function toggleToolsDropdown(event) {
             event.stopPropagation();
             const menu = document.getElementById('toolsDropdownMenu');
+            const wasHidden = menu.classList.contains('hidden');
             menu.classList.toggle('hidden');
+            if (wasHidden) switchToolsMenuTab('common');
         }
 
         function closeToolsDropdown() {
             const menu = document.getElementById('toolsDropdownMenu');
             if (menu) menu.classList.add('hidden');
+        }
+
+        // جابه‌جایی بین زبانه‌های «پرکاربردها» و «همه ابزارها» در منوی کشویی ابزار
+        function switchToolsMenuTab(tabName) {
+            document.querySelectorAll('.tools-tab-panel').forEach(panel => {
+                panel.classList.toggle('hidden', panel.id !== `toolsTabPanel-${tabName}`);
+            });
+            document.querySelectorAll('.tools-tab-btn').forEach(btn => {
+                const isActive = btn.getAttribute('data-tools-tab') === tabName;
+                btn.classList.toggle('bg-indigo-50', isActive);
+                btn.classList.toggle('dark:bg-indigo-950/40', isActive);
+                btn.classList.toggle('text-indigo-700', isActive);
+                btn.classList.toggle('dark:text-indigo-300', isActive);
+                btn.classList.toggle('border-b-2', isActive);
+                btn.classList.toggle('border-indigo-600', isActive);
+                btn.classList.toggle('text-slate-400', !isActive);
+                btn.classList.toggle('dark:text-slate-500', !isActive);
+            });
         }
 
         window.addEventListener('click', function() {

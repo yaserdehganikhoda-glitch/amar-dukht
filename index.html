@@ -33,9 +33,40 @@
         }
         .tactile-btn {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
         .tactile-btn:active {
             transform: scale(0.97);
+        }
+        .tactile-btn:hover {
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.12);
+        }
+        /* میکرو-اینترکشن سراسری: همه‌ی دکمه‌های برنامه هنگام لمس/کلیک کمی جمع می‌شوند */
+        button:not(:disabled) {
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease, background-color 0.2s ease, opacity 0.2s ease;
+        }
+        button:not(:disabled):active {
+            transform: scale(0.95);
+        }
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.55);
+            transform: scale(0);
+            animation: rippleAnim 0.55s ease-out;
+            pointer-events: none;
+        }
+        .dark .ripple-effect { background: rgba(255, 255, 255, 0.18); }
+        @keyframes rippleAnim {
+            to { transform: scale(3); opacity: 0; }
+        }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #actionFeedbackBanner:not(.hidden), .rc-card, #recordsTableBody tr {
+            animation: fadeSlideIn 0.3s ease-out;
         }
         body.font-small-size { font-size: 0.875rem; }
         body.font-normal-size { font-size: 1rem; }
@@ -206,146 +237,153 @@
                         <i class="fa-solid fa-chevron-down text-[10px] mr-1"></i>
                     </button>
 
-                    <!-- محتوای منوی کشویی -->
-                    <div id="toolsDropdownMenu" class="hidden absolute left-0 mt-2 w-[19rem] bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-300 dark:border-slate-600 z-50 text-right max-h-[80vh] overflow-y-auto flex flex-col">
+                    <!-- محتوای منوی کشویی (تب‌بندی‌شده) -->
+                    <div id="toolsDropdownMenu" class="hidden absolute left-0 mt-2 w-[19rem] bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-300 dark:border-slate-600 z-50 text-right max-h-[80vh] overflow-y-auto flex flex-col" onclick="event.stopPropagation()">
 
-                        <!-- نوار زبانه‌های منوی ابزار -->
-                        <div class="flex items-center gap-1 px-2.5 pt-2.5 border-b border-slate-200 dark:border-slate-800 shrink-0 sticky top-0 bg-white dark:bg-slate-900 z-10">
-                            <button type="button" onclick="switchToolsMenuTab('common')" data-tools-tab="common" class="tools-tab-btn flex-1 flex items-center justify-center gap-1.5 py-2 rounded-t-xl text-[11px] font-bold transition-colors">
-                                <i class="fa-solid fa-star text-[10px]"></i> پرکاربردها
+                        <!-- تب‌های منوی ابزار -->
+                        <div class="flex items-center gap-1 px-2.5 pt-2.5 overflow-x-auto border-b border-slate-200 dark:border-slate-700 shrink-0 sticky top-0 bg-white dark:bg-slate-900 z-10">
+                            <button type="button" onclick="switchToolsTab('main', event)" data-tools-tab="main" class="tools-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-t-xl text-[11px] font-bold transition-colors" title="اصلی">
+                                <i class="fa-solid fa-star"></i> اصلی
                             </button>
-                            <button type="button" onclick="switchToolsMenuTab('all')" data-tools-tab="all" class="tools-tab-btn flex-1 flex items-center justify-center gap-1.5 py-2 rounded-t-xl text-[11px] font-bold transition-colors">
-                                <i class="fa-solid fa-toolbox text-[10px]"></i> همه ابزارها
+                            <button type="button" onclick="switchToolsTab('data', event)" data-tools-tab="data" class="tools-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-t-xl text-[11px] font-bold transition-colors" title="داده‌ها">
+                                <i class="fa-solid fa-database"></i> داده‌ها
+                            </button>
+                            <button type="button" onclick="switchToolsTab('device', event)" data-tools-tab="device" class="tools-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-t-xl text-[11px] font-bold transition-colors" title="دستگاه">
+                                <i class="fa-solid fa-folder-open"></i> دستگاه
                             </button>
                         </div>
 
                         <div class="p-3.5">
-                        <div id="toolsTabPanel-common" class="tools-tab-panel">
-                        <div class="grid grid-cols-3 gap-1.5 mb-1">
-                            <button onclick="exportSmartBackup(); closeToolsDropdown();" class="flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                <span class="w-11 h-11 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-download text-base"></i>
-                                </span>
-                                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">پشتیبان‌گیری</span>
-                                <span class="text-[9px] text-slate-400 leading-tight">فایل JSON</span>
-                            </button>
-                            <button onclick="openOverviewModal(); closeToolsDropdown();" class="flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                <span class="w-11 h-11 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-chart-pie text-base"></i>
-                                </span>
-                                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">گزارش کلی</span>
-                                <span class="text-[9px] text-slate-400 leading-tight">خلاصه آمار</span>
-                            </button>
-                            <button onclick="openSettingsModal(); closeToolsDropdown();" class="flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                <span class="w-11 h-11 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-gear text-base"></i>
-                                </span>
-                                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">تنظیمات</span>
-                                <span class="text-[9px] text-slate-400 leading-tight">ظاهر و رمز</span>
-                            </button>
-                        </div>
-                        </div>
-
-                        <div id="toolsTabPanel-all" class="tools-tab-panel hidden">
-                        <div class="grid grid-cols-2 gap-1.5 mb-2">
-                            <button onclick="toggleLogBox(); closeToolsDropdown();" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                <span class="w-9 h-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center">
-                                    <i class="fa-solid fa-terminal text-xs"></i>
-                                </span>
-                                <span class="min-w-0">
-                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">رویدادها</span>
-                                    <span class="block text-[9px] text-slate-400">لاگ سیستم</span>
-                                </span>
-                            </button>
-                            <button onclick="lockAppNow()" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                <span class="w-9 h-9 shrink-0 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-lock text-xs"></i>
-                                </span>
-                                <span class="min-w-0">
-                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">قفل برنامه</span>
-                                    <span class="block text-[9px] text-slate-400">خروج سریع</span>
-                                </span>
-                            </button>
-                            <button onclick="exportToHtmlReport(); closeToolsDropdown();" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                <span class="w-9 h-9 shrink-0 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-file-arrow-down text-xs"></i>
-                                </span>
-                                <span class="min-w-0">
-                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">خروجی HTML</span>
-                                    <span class="block text-[9px] text-slate-400">چاپ گزارش</span>
-                                </span>
-                            </button>
-                            <button onclick="handleFolderMenuButtonClick()" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
-                                    <i id="folderMenuBtnIcon" class="fa-solid fa-folder-plus text-xs"></i>
-                                </span>
-                                <span class="min-w-0">
-                                    <span id="folderMenuBtnLabel" class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پوشه دستگاه</span>
-                                    <span class="block text-[9px] text-slate-400">مسیر در تنظیمات</span>
-                                </span>
-                            </button>
-                            <button onclick="document.getElementById('importFile').click(); closeToolsDropdown();" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                <span class="w-9 h-9 shrink-0 rounded-full bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-upload text-xs"></i>
-                                </span>
-                                <span class="min-w-0">
-                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بارگذاری پشتیبان</span>
-                                    <span class="block text-[9px] text-slate-400">وارد کردن JSON</span>
-                                </span>
-                            </button>
-                            <button onclick="openTrashBinModal()" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                <span class="w-9 h-9 shrink-0 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-trash-can-arrow-up text-xs"></i>
-                                </span>
-                                <span class="min-w-0">
-                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">سطل بازیافت</span>
-                                    <span class="block text-[9px] text-slate-400">بازگردانی حذف‌شده‌ها</span>
-                                </span>
-                            </button>
-                            <button onclick="openDataHealthModal()" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                <span class="w-9 h-9 shrink-0 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-stethoscope text-xs"></i>
-                                </span>
-                                <span class="min-w-0">
-                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بررسی سلامت داده</span>
-                                    <span class="block text-[9px] text-slate-400">پیدا کردن نواقص</span>
-                                </span>
-                            </button>
-                            <button onclick="manualRotatingBackupNow()" class="flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-clock-rotate-left text-xs"></i>
-                                </span>
-                                <span class="min-w-0">
-                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پشتیبان چرخشی الان</span>
-                                    <span class="block text-[9px] text-slate-400">در پوشه دستگاه</span>
-                                </span>
-                            </button>
-                            <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="hidden items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right flex">
-                                <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-mobile-screen-button text-xs"></i>
-                                </span>
-                                <span class="min-w-0">
-                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نصب برنامه</span>
-                                    <span class="block text-[9px] text-slate-400">روی دستگاه</span>
-                                </span>
-                            </button>
+                        <!-- تب اصلی -->
+                        <div id="toolsTab-main" class="tools-tab-panel">
+                            <div class="grid grid-cols-3 gap-1.5 mb-3">
+                                <button onclick="exportSmartBackup(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                    <span class="w-11 h-11 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-download text-base"></i>
+                                    </span>
+                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">پشتیبان‌گیری</span>
+                                    <span class="text-[9px] text-slate-400 leading-tight">فایل JSON</span>
+                                </button>
+                                <button onclick="openOverviewModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                    <span class="w-11 h-11 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-chart-pie text-base"></i>
+                                    </span>
+                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">گزارش کلی</span>
+                                    <span class="text-[9px] text-slate-400 leading-tight">خلاصه آمار</span>
+                                </button>
+                                <button onclick="openSettingsModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                    <span class="w-11 h-11 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-gear text-base"></i>
+                                    </span>
+                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">تنظیمات</span>
+                                    <span class="text-[9px] text-slate-400 leading-tight">ظاهر و رمز</span>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <button onclick="toggleLogBox(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center">
+                                        <i class="fa-solid fa-terminal text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">رویدادها</span>
+                                        <span class="block text-[9px] text-slate-400">لاگ سیستم</span>
+                                    </span>
+                                </button>
+                                <button onclick="lockAppNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-lock text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">قفل برنامه</span>
+                                        <span class="block text-[9px] text-slate-400">خروج سریع</span>
+                                    </span>
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- اقدامات فرعی پوشه دستگاه -->
-                        <div class="flex items-center justify-between gap-2 px-1.5 mb-3 pt-1">
-                            <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[10px] text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors">
-                                <i class="fa-solid fa-link-slash"></i> قطع اتصال پوشه
-                            </button>
-                            <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1 transition-colors mr-auto">
-                                <i class="fa-solid fa-rotate"></i> بارگذاری دستی از پوشه
-                            </button>
-                        </div>
+                        <!-- تب داده‌ها -->
+                        <div id="toolsTab-data" class="tools-tab-panel hidden">
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <button onclick="exportToHtmlReport(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-file-arrow-down text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">خروجی HTML</span>
+                                        <span class="block text-[9px] text-slate-400">چاپ گزارش</span>
+                                    </span>
+                                </button>
+                                <button onclick="document.getElementById('importFile').click(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-upload text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بارگذاری پشتیبان</span>
+                                        <span class="block text-[9px] text-slate-400">وارد کردن JSON</span>
+                                    </span>
+                                </button>
+                                <button onclick="openTrashBinModal()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-trash-can-arrow-up text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">سطل بازیافت</span>
+                                        <span class="block text-[9px] text-slate-400">بازگردانی حذف‌شده‌ها</span>
+                                    </span>
+                                </button>
+                                <button onclick="openDataHealthModal()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-stethoscope text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بررسی سلامت داده</span>
+                                        <span class="block text-[9px] text-slate-400">پیدا کردن نواقص</span>
+                                    </span>
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- پاک کردن داده‌ها؛ مستقل از زبانه، همیشه در دسترس -->
-                        <button onclick="openTwoStepDeleteModal(); closeToolsDropdown();" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors">
-                            <i class="fa-solid fa-triangle-exclamation"></i> پاک کردن داده‌ها
-                        </button>
+                        <!-- تب دستگاه -->
+                        <div id="toolsTab-device" class="tools-tab-panel hidden">
+                            <div class="grid grid-cols-2 gap-1.5 mb-2">
+                                <button onclick="handleFolderMenuButtonClick()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                                        <i id="folderMenuBtnIcon" class="fa-solid fa-folder-plus text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span id="folderMenuBtnLabel" class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پوشه دستگاه</span>
+                                        <span class="block text-[9px] text-slate-400">مسیر در تنظیمات</span>
+                                    </span>
+                                </button>
+                                <button onclick="manualRotatingBackupNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پشتیبان چرخشی الان</span>
+                                        <span class="block text-[9px] text-slate-400">در پوشه دستگاه</span>
+                                    </span>
+                                </button>
+                                <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="tactile-btn hidden items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right flex">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-mobile-screen-button text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نصب برنامه</span>
+                                        <span class="block text-[9px] text-slate-400">روی دستگاه</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <!-- اقدامات فرعی پوشه دستگاه -->
+                            <div class="flex items-center justify-between gap-2 px-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
+                                <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[10px] text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors">
+                                    <i class="fa-solid fa-link-slash"></i> قطع اتصال پوشه
+                                </button>
+                                <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1 transition-colors mr-auto">
+                                    <i class="fa-solid fa-rotate"></i> بارگذاری دستی از پوشه
+                                </button>
+                            </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -361,6 +399,7 @@
             </h1>
             <p id="mainAppSubtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-normal">سیستم هوشمند آمار و مدیریت دوخت</p>
             <p id="ownerInfoLine" class="hidden text-xs text-slate-400 dark:text-slate-500 mt-1"></p>
+            <div id="todayDateBar" class="mt-3"></div>
             <div class="mt-3 flex justify-center">
                 <span id="streakBadgeText" class="hidden"></span>
             </div>
@@ -814,24 +853,6 @@
         </div>
     </div>
 
-    <!-- مدال تایید نهایی حذف با کد ۴ رقمی -->
-    <div id="deleteCodeModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-rose-100 dark:border-rose-900/50 space-y-4 text-center transition-all">
-            <div class="inline-flex items-center justify-center w-12 h-12 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-2xl mb-1 shadow-inner">
-                <i class="fa-solid fa-shield-halved text-xl"></i>
-            </div>
-            <h3 class="text-base font-bold text-slate-800 dark:text-white">تایید نهایی حذف اطلاعات</h3>
-            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">این عملیات غیرقابل بازگشت است. برای تایید، کد امنیتی ۴ رقمی خودتان را وارد کنید:</p>
-            <input type="password" id="deleteCodeInput" inputmode="numeric" maxlength="4" placeholder="کد امنیتی ۴ رقمی" onkeydown="if(event.key==='Enter'){confirmDeleteCode();}" class="w-full p-3 text-center text-xl tracking-[0.4em] border border-slate-400 dark:border-slate-500 rounded-xl bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 outline-none transition-all">
-            <p id="deleteCodeError" class="hidden text-xs text-rose-600 dark:text-rose-400 font-medium">کد وارد شده صحیح نیست، دوباره تلاش کنید.</p>
-            <button type="button" onclick="resetDeleteCode()" class="text-xs text-slate-500 dark:text-slate-400 underline hover:text-rose-600 dark:hover:text-rose-400 transition-colors">کد امنیتی را فراموش کرده‌اید؟</button>
-            <div class="flex gap-3 pt-2">
-                <button type="button" onclick="closeDeleteCodeModal()" class="flex-1 py-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium transition-colors">انصراف</button>
-                <button type="button" onclick="confirmDeleteCode()" class="flex-1 py-2.5 bg-rose-600 text-white rounded-xl text-sm hover:bg-rose-700 font-medium transition-colors shadow-sm">حذف قطعی</button>
-            </div>
-        </div>
-    </div>
-
     <!-- مدال جستجوی پیشرفته در کل داده‌ها -->
     <div id="advancedSearchModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-5 my-8 transition-all">
@@ -912,26 +933,6 @@
                     <button onclick="closeAdvancedSearchModal()" class="px-4 py-2 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">انصراف</button>
                     <button onclick="applyAdvancedSearch()" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm hover:bg-indigo-700 transition-colors shadow-sm">اعمال جستجو</button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- مدال تایید دو مرحله‌ای بازنشانی کد امنیتی -->
-    <div id="resetCodeConfirmModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-amber-100 dark:border-amber-900/50 space-y-4 text-center transition-all">
-            <div class="inline-flex items-center justify-center w-12 h-12 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-2xl mb-1 shadow-inner">
-                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
-            </div>
-            <h3 class="text-base font-bold text-slate-800 dark:text-white">تایید نهایی بازنشانی کد امنیتی</h3>
-            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                برای جلوگیری از بازنشانی تصادفی یا غیرمجاز، عبارت زیر را دقیقاً در کادر پایین تایپ کنید:
-            </p>
-            <div class="text-sm font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 rounded-xl py-2.5 border border-amber-100 dark:border-amber-900">بازنشانی کد</div>
-            <input type="text" id="resetCodePhraseInput" placeholder="عبارت را اینجا تایپ کنید" onkeydown="if(event.key==='Enter'){confirmResetDeleteCode();}" class="w-full p-3 text-center text-sm border border-slate-400 dark:border-slate-500 rounded-xl bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 outline-none transition-all">
-            <p id="resetCodePhraseError" class="hidden text-xs text-rose-600 dark:text-rose-400 font-medium">عبارت وارد شده مطابقت ندارد، دوباره تلاش کنید.</p>
-            <div class="flex gap-3 pt-2">
-                <button type="button" onclick="closeResetCodeConfirmModal()" class="flex-1 py-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium transition-colors">انصراف</button>
-                <button type="button" onclick="confirmResetDeleteCode()" class="flex-1 py-2.5 bg-amber-600 text-white rounded-xl text-sm hover:bg-amber-700 font-medium transition-colors shadow-sm">بازنشانی کد</button>
             </div>
         </div>
     </div>
@@ -1019,6 +1020,9 @@
                 </button>
                 <button type="button" onclick="switchSettingsTab('storage')" data-settings-tab="storage" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
                     <i class="fa-solid fa-database"></i> حافظه
+                </button>
+                <button type="button" onclick="switchSettingsTab('about')" data-settings-tab="about" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
+                    <i class="fa-solid fa-circle-info"></i> درباره برنامه
                 </button>
             </div>
 
@@ -1286,29 +1290,6 @@
                         <i class="fa-solid fa-key"></i> ذخیره تنظیمات قفل
                     </button>
                 </div>
-
-                <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-shield-halved"></i> کد امنیتی پاک کردن داده‌ها
-                    </h3>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                        این کد فقط توسط خودتان تعیین می‌شود و به‌صورت هش در حافظه مرورگر ذخیره می‌شود؛ خود کد در هیچ‌کجا به‌صورت متن ساده ذخیره یا نمایش داده نمی‌شود. توجه: این کد محافظ در برابر حذف تصادفی است، نه سد امنیتی (با «فراموشی کد» قابل بازنشانی است).
-                    </p>
-                    <p id="deleteCodeStatusText" class="text-xs font-semibold"></p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">کد امنیتی جدید (۴ رقم)</label>
-                            <input type="password" id="settingNewDeleteCode" inputmode="numeric" maxlength="4" placeholder="مثلاً ۱۳۷۹" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-center tracking-[0.3em] bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">تکرار کد امنیتی</label>
-                            <input type="password" id="settingConfirmDeleteCode" inputmode="numeric" maxlength="4" placeholder="تکرار کد" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-center tracking-[0.3em] bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all">
-                        </div>
-                    </div>
-                    <button type="button" onclick="saveDeleteCode()" class="w-full py-2.5 bg-rose-600 text-white rounded-xl text-sm hover:bg-rose-700 font-medium transition-colors shadow-sm flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-key"></i> ذخیره کد امنیتی
-                    </button>
-                </div>
                 </div>
 
                 <div id="settingsTab-notifications" class="settings-tab-panel hidden space-y-4">
@@ -1338,31 +1319,6 @@
                     <button type="button" onclick="sendTestNotification()" class="w-full py-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium transition-colors flex items-center justify-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i> ارسال اعلان آزمایشی (برای بررسی نمایش روی صفحه)
                     </button>
-
-                    <div class="space-y-2.5 pt-3 mt-1 border-t border-dashed border-slate-300 dark:border-slate-600">
-                        <h4 class="text-[11px] font-bold text-teal-700 dark:text-teal-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-table-cells"></i> ویجت وضعیت زنده (صفحه اصلی گوشی)
-                        </h4>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                            گوشی‌ها (اندروید/iOS) به یک وب‌سایت اجازه‌ی نصب ویجت واقعی روی صفحه اصلی را نمی‌دهند — این محدودیتِ خودِ سیستم‌عامل است، نه چیزی که کد این برنامه بتواند دورش بزند. نزدیک‌ترین جایگزینِ واقعی: یک اعلانِ دائمی و بی‌صدا در نوار اعلان‌ها که مثل یک ویجت، کد در حال دوخت، درصد پیشرفت و زمان باقی‌مانده را نشان می‌دهد و تا وقتی برنامه در پس‌زمینه‌ی گوشی زنده است هر دقیقه به‌روز می‌شود (اگر مرورگر برنامه را ببندد یا بخواباند، متن آخرین وضعیت و «موعد» باقی می‌ماند و با بازکردن برنامه تازه می‌شود) — بدون اینکه هر بار صدا یا لرزش بدهد.
-                        </p>
-                        <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
-                            <input type="checkbox" id="settingLiveWidgetEnabled" class="w-4 h-4 rounded accent-teal-600">
-                            فعال‌سازی ویجت وضعیت زنده در نوار اعلان‌ها
-                        </label>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">سبک نمایش ویجت</label>
-                            <select id="settingLiveWidgetStyle" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all">
-                                <option value="text">متنی سبک با نوار ▰▱ (پیش‌فرض؛ فونت خودِ گوشی)</option>
-                                <option value="card">کارت تصویری با فونت وزیرمتن (سنگین‌تر)</option>
-                            </select>
-                            <p class="text-[11px] leading-relaxed text-slate-400 dark:text-slate-500 mt-1">فونت متن اعلان را خودِ اندروید تعیین می‌کند؛ فقط در «کارت تصویری» فونت وزیرمتن دیده می‌شود. در هر دو سبک، رنگ وضعیت (🟢🟡🟠🔴) و دکمه‌های «کار تمام شد» و «۳۰ دقیقه بی‌صدا» فعال است.</p>
-                        </div>
-                        <button type="button" onclick="testLiveWidget()" class="w-full py-2 border border-teal-200 dark:border-teal-900/50 text-teal-700 dark:text-teal-300 rounded-xl text-xs hover:bg-teal-50 dark:hover:bg-teal-950/30 font-medium transition-colors flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-stethoscope"></i> بررسی و آزمایش ویجت (تشخیص مشکل)
-                        </button>
-                        <p id="liveWidgetDiagText" class="text-[11px] leading-relaxed text-slate-500"></p>
-                    </div>
 
                     <div class="rounded-xl border border-amber-200 dark:border-amber-900/50 overflow-hidden">
                         <button type="button" onclick="toggleXiaomiGuide()" class="w-full flex items-center justify-between px-3 py-2.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-xs font-bold transition-colors">
@@ -1433,6 +1389,31 @@
                         <span class="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">ذخیره‌سازی تکمیلی در IndexedDB (بدون محدودیت حجم حافظه محلی)</span>
                         <p id="storageIdbStatus" class="text-xs font-semibold">در حال بررسی...</p>
                     </div>
+                </div>
+                </div>
+
+                <div id="settingsTab-about" class="settings-tab-panel hidden space-y-4">
+                <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> درباره سامانه آمار دوخت لباس</h3>
+                    <p class="text-[12px] leading-relaxed text-slate-600 dark:text-slate-300">این سامانه یک ابزار آفلاین (PWA) برای ثبت و مدیریت کارکرد روزانه‌ی کارگاه خیاطی است: هر قطعه با کد، رنگ، تعداد و قیمت ثبت می‌شود، مدت‌زمان تحویل به‌صورت خودکار از روی آمار روزانه محاسبه می‌شود و وضعیت «به‌موقع / تاخیر / زودتر از موعد» خودکار تعیین می‌گردد.</p>
+                </div>
+                <div class="space-y-2 pb-4 border-b border-slate-300 dark:border-slate-600">
+                    <h4 class="text-[11px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">امکانات کلیدی</h4>
+                    <ul class="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed space-y-1.5">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>محاسبه‌ی خودکار زمان تحویل با احتساب ساعات کاری، استراحت‌ها و تعطیلی جمعه‌ها</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>اعلان‌های هوشمند پلکانی (۲۵٪ تا ۹۰٪) برای پیشرفت کار جاری</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>پشتیبان‌گیری خودکار JSON، اتصال به پوشه دستگاه و پشتیبان چرخشی</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>سطل بازیافت (۳۰ روزه)، بررسی سلامت داده، جستجوی پیشرفته و گزارش‌گیری چاپی</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>قفل ورود با رمز عبور، کد امنیتی حذف داده‌ها و ذخیره‌سازی کاملاً محلی و آفلاین</span></li>
+                    </ul>
+                </div>
+                <div class="text-center pt-2">
+                    <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-2 shadow-inner">
+                        <i class="fa-solid fa-scissors text-xl"></i>
+                    </div>
+                    <p class="text-sm font-bold text-slate-800 dark:text-white">سامانه آمار دوخت لباس</p>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">نسخه ۱۳.۰</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">طراحی و توسعه توسط تیم <span class="font-bold text-indigo-600 dark:text-indigo-400">Phoenix.Yaser</span></p>
                 </div>
                 </div>
             </div>
@@ -1656,6 +1637,48 @@
             "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
         ];
         const PERSIAN_WEEKDAYS_SHORT = ["ش", "ی", "د", "س", "چ", "پ", "ج"];
+        const GREGORIAN_MONTHS_FA = ["ژانویه", "فوریه", "مارس", "آوریل", "مه", "ژوئن", "ژوئیه", "اوت", "سپتامبر", "اکتبر", "نوامبر", "دسامبر"];
+        // مناسبت‌های ثابتِ تقویم شمسی (خورشیدی)؛ مناسبت‌های قمری (اعیاد، عاشورا و...) چون هر سال جابه‌جا می‌شوند در این جدول نیستند.
+        const JALALI_OCCASIONS = {
+            '1-1': 'جشن نوروز', '1-2': 'عید نوروز', '1-3': 'عید نوروز', '1-4': 'عید نوروز',
+            '1-12': 'روز جمهوری اسلامی ایران', '1-13': 'روز طبیعت (سیزده‌بدر)',
+            '2-6': 'روز بزرگداشت خواجه نصیرالدین طوسی (روز معلم)', '2-25': 'بزرگداشت فردوسی',
+            '3-14': 'سالروز رحلت امام خمینی (ره)', '3-15': 'قیام ۱۵ خرداد',
+            '4-14': 'روز قلم و اصحاب رسانه',
+            '6-31': 'آغاز سال تحصیلی',
+            '7-13': 'روز بزرگداشت مولانا',
+            '8-13': 'روز دانش‌آموز', '8-16': 'روز کتاب و کتاب‌خوانی',
+            '9-1': 'آغاز هفته پژوهش', '9-16': 'روز دانشجو',
+            '10-9': 'روز بصیرت', '10-21': 'اولین روز زمستان (یلدا نزدیک به این روزهاست)',
+            '11-22': 'پیروزی انقلاب اسلامی',
+            '12-29': 'روز ملی شدن صنعت نفت'
+        };
+        function getTodayOccasion(monthNum, day) {
+            return JALALI_OCCASIONS[`${monthNum}-${day}`] || null;
+        }
+        // نوار تاریخ شمسی + میلادی + مناسبت روز، بالای صفحه
+        function renderTodayDateBar() {
+            const el = document.getElementById('todayDateBar');
+            if (!el) return;
+            const now = new Date();
+            const jm = currentJalali.monthNum;
+            const jdParts = toEnglishDigits(currentJalali.fullDateStr).split('/');
+            const jd = parseInt(jdParts[2], 10) || 1;
+            const weekday = PERSIAN_WEEKDAYS_FULL[(now.getDay() + 1) % 7];
+            const jalaliText = `${weekday}، ${formatDateDigits(String(jd))} ${PERSIAN_MONTHS[jm - 1]} ${formatYearDigits(currentJalali.yearEn)}`;
+            const gregText = `${now.getDate()} ${GREGORIAN_MONTHS_FA[now.getMonth()]} ${now.getFullYear()}`;
+            const occasion = getTodayOccasion(jm, jd);
+            el.innerHTML = `
+                <div class="flex flex-wrap items-center justify-center gap-2 text-xs">
+                    <span class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-full font-medium">
+                        <i class="fa-solid fa-calendar-day text-indigo-500"></i> ${escapeHTML(jalaliText)}
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1.5 rounded-full">
+                        <i class="fa-solid fa-globe text-sky-500"></i> ${escapeHTML(gregText)}
+                    </span>
+                    ${occasion ? `<span class="inline-flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 px-3 py-1.5 rounded-full font-bold border border-amber-100 dark:border-amber-900"><i class="fa-solid fa-star"></i> ${escapeHTML(occasion)}</span>` : ''}
+                </div>`;
+        }
 
         /* ===================== توابع تبدیل تقویم شمسی/میلادی ===================== */
         function jdiv(a, b) { return ~~(a / b); }
@@ -1893,7 +1916,6 @@
             s.numFormat = pick(s.numFormat, ['persian', 'english'], 'persian');
             const tolRaw = Number(s.onTimeToleranceMinutes);
             s.onTimeToleranceMinutes = Number.isFinite(tolRaw) ? Math.max(0, Math.min(120, Math.floor(tolRaw))) : 5;
-            s.liveWidgetStyle = pick(s.liveWidgetStyle, ['text', 'card'], 'text');
             s.fontFamily = pick(s.fontFamily, ['Vazirmatn', 'Vazir', 'Sahel', 'Samim', 'Shabnam'], 'Vazirmatn');
             const colorOk = c => c === 'default' || (typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c));
             ['bgColor', 'cardColor', 'fieldColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
@@ -1902,8 +1924,8 @@
             s.ownerPhoto = isSafeImageDataUrl(s.ownerPhoto) ? s.ownerPhoto : null;
             s.pinHash = (typeof s.pinHash === 'string' && s.pinHash) ? s.pinHash : null;
             s.pinEnabled = !!s.pinEnabled && !!s.pinHash;
-            if (typeof s.deleteCodeHash !== 'string' || !s.deleteCodeHash) delete s.deleteCodeHash;
-            ['notificationsEnabled', 'voiceAlertsEnabled', 'liveWidgetEnabled'].forEach(k => { s[k] = !!s[k]; });
+            delete s.deleteCodeHash; // ویژگی «پاک کردن کلی داده‌ها» حذف شده است
+            ['notificationsEnabled', 'voiceAlertsEnabled'].forEach(k => { s[k] = !!s[k]; });
             s.onTimeStreak = Math.max(0, Number(s.onTimeStreak) || 0);
             // ساعات کاری و استراحت‌ها
             const timeRe = /^\d{1,2}:\d{2}$/;
@@ -2632,7 +2654,6 @@
             currency: 'تومان',
             defaultStatus: 'به موقع',
             onTimeToleranceMinutes: 5,
-            liveWidgetStyle: 'text',
             theme: 'light',
             fontSize: 'normal',
             numFormat: 'persian',
@@ -2644,7 +2665,6 @@
             fieldColor: 'default',
             notificationsEnabled: false,
             voiceAlertsEnabled: false,
-            liveWidgetEnabled: false,
             onTimeStreak: 0,
             bestStreak: 0,
             ownerName: '',
@@ -3638,9 +3658,9 @@
         function toggleToolsDropdown(event) {
             event.stopPropagation();
             const menu = document.getElementById('toolsDropdownMenu');
-            const wasHidden = menu.classList.contains('hidden');
+            const opening = menu.classList.contains('hidden');
             menu.classList.toggle('hidden');
-            if (wasHidden) switchToolsMenuTab('common');
+            if (opening) switchToolsTab('main');
         }
 
         function closeToolsDropdown() {
@@ -3648,10 +3668,11 @@
             if (menu) menu.classList.add('hidden');
         }
 
-        // جابه‌جایی بین زبانه‌های «پرکاربردها» و «همه ابزارها» در منوی کشویی ابزار
-        function switchToolsMenuTab(tabName) {
+        // جابه‌جایی بین تب‌های منوی ابزار (اصلی، داده‌ها، دستگاه، خطرناک)
+        function switchToolsTab(tabName, event) {
+            if (event) event.stopPropagation();
             document.querySelectorAll('.tools-tab-panel').forEach(panel => {
-                panel.classList.toggle('hidden', panel.id !== `toolsTabPanel-${tabName}`);
+                panel.classList.toggle('hidden', panel.id !== `toolsTab-${tabName}`);
             });
             document.querySelectorAll('.tools-tab-btn').forEach(btn => {
                 const isActive = btn.getAttribute('data-tools-tab') === tabName;
@@ -3665,6 +3686,23 @@
                 btn.classList.toggle('dark:text-slate-500', !isActive);
             });
         }
+
+        // میکرو-اینترکشن: افکت ریپل روی هر دکمه‌ی دارای کلاس tactile-btn هنگام کلیک/لمس
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('.tactile-btn') : null;
+            if (!btn) return;
+            try {
+                const rect = btn.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple-effect';
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = ((e.clientX || rect.left + rect.width / 2) - rect.left - size / 2) + 'px';
+                ripple.style.top = ((e.clientY || rect.top + rect.height / 2) - rect.top - size / 2) + 'px';
+                btn.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 550);
+            } catch (err) { /* بی‌اهمیت */ }
+        });
 
         window.addEventListener('click', function() {
             closeToolsDropdown();
@@ -4160,17 +4198,12 @@
             document.getElementById('settingBgColor').value = appSettings.bgColor || 'default';
             document.getElementById('settingCardColor').value = appSettings.cardColor || 'default';
             document.getElementById('settingFieldColor').value = appSettings.fieldColor || 'default';
-            document.getElementById('settingNewDeleteCode').value = '';
-            document.getElementById('settingConfirmDeleteCode').value = '';
-            updateDeleteCodeStatusUI();
             document.getElementById('settingNewPin').value = '';
             document.getElementById('settingConfirmPin').value = '';
             updatePinLockStatusUI();
 
             document.getElementById('settingNotificationsEnabled').checked = !!appSettings.notificationsEnabled;
             document.getElementById('settingVoiceAlertsEnabled').checked = !!appSettings.voiceAlertsEnabled;
-            document.getElementById('settingLiveWidgetEnabled').checked = !!appSettings.liveWidgetEnabled;
-            document.getElementById('settingLiveWidgetStyle').value = appSettings.liveWidgetStyle === 'card' ? 'card' : 'text';
             document.getElementById('settingCurrentStreakVal').innerText = formatNumber(appSettings.onTimeStreak || 0);
             document.getElementById('settingBestStreakVal').innerText = formatNumber(appSettings.bestStreak || 0);
             updateNotificationPermissionStatusUI();
@@ -4193,66 +4226,6 @@
             updateDataFolderSettingsUI();
             loadWorkSettingsIntoForm();
             document.getElementById('settingsModal').classList.remove('hidden');
-        }
-
-        function updateDeleteCodeStatusUI() {
-            const statusEl = document.getElementById('deleteCodeStatusText');
-            if (!statusEl) return;
-            if (appSettings.deleteCodeHash) {
-                statusEl.innerText = 'وضعیت: کد امنیتی تنظیم شده است. (برای تغییر، کد جدید را وارد کنید)';
-                statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
-            } else {
-                statusEl.innerText = 'وضعیت: هنوز کد امنیتی تعیین نشده است.';
-                statusEl.className = 'text-xs font-semibold text-rose-600 dark:text-rose-400';
-            }
-        }
-
-        async function hashDeleteCode(code) {
-            const input = 'delcode:' + getOrCreateInstallSalt() + ':' + code;
-            if (window.crypto && window.crypto.subtle) {
-                try {
-                    const enc = new TextEncoder();
-                    const data = enc.encode(input);
-                    const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
-                    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-                } catch (err) {
-                    console.error('خطا در رمزنگاری کد امنیتی:', err);
-                }
-            }
-            // روش جایگزین در صورت عدم پشتیبانی مرورگر از Web Crypto API
-            let hash = 0;
-            for (let i = 0; i < input.length; i++) {
-                hash = ((hash << 5) - hash + input.charCodeAt(i)) | 0;
-            }
-            return 'fb_' + Math.abs(hash).toString(16);
-        }
-
-        async function saveDeleteCode() {
-            const codeVal = normalizeDigits(document.getElementById('settingNewDeleteCode').value);
-            const confirmVal = normalizeDigits(document.getElementById('settingConfirmDeleteCode').value);
-
-            if (!codeVal && !confirmVal) {
-                showFeedbackBanner('برای ذخیره، ابتدا کد امنیتی ۴ رقمی را وارد کنید.', 'warn');
-                return;
-            }
-            if (codeVal.length !== 4) {
-                showFeedbackBanner('کد امنیتی باید دقیقاً ۴ رقم باشد.', 'warn');
-                return;
-            }
-            if (codeVal !== confirmVal) {
-                showFeedbackBanner('کد امنیتی و تکرار آن یکسان نیستند.', 'warn');
-                return;
-            }
-
-            appSettings.deleteCodeHash = await hashDeleteCode(codeVal);
-            appSettings.updatedAt = new Date().toISOString();
-            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-            if (appDirHandle) saveAllMonthFilesToDirectory(); // تا فایل تنظیمات در پوشه‌ی متصل هم بلافاصله به‌روز شود
-            document.getElementById('settingNewDeleteCode').value = '';
-            document.getElementById('settingConfirmDeleteCode').value = '';
-            updateDeleteCodeStatusUI();
-            addLog('کد امنیتی پاک کردن داده‌ها به‌روزرسانی شد.', 'success');
-            showFeedbackBanner('کد امنیتی با موفقیت (به‌صورت هش) ذخیره شد.', 'success');
         }
 
         function closeSettingsModal() {
@@ -4284,7 +4257,6 @@
             const fieldColorVal = document.getElementById('settingFieldColor').value;
             const notificationsEnabledVal = document.getElementById('settingNotificationsEnabled').checked;
             const voiceAlertsEnabledVal = document.getElementById('settingVoiceAlertsEnabled').checked;
-            const liveWidgetEnabledVal = document.getElementById('settingLiveWidgetEnabled').checked;
 
             appSettings.ownerName = ownerNameVal;
             appSettings.ownerPhone = ownerPhoneVal;
@@ -4304,11 +4276,9 @@
             appSettings.fieldColor = fieldColorVal;
             appSettings.notificationsEnabled = notificationsEnabledVal;
             appSettings.voiceAlertsEnabled = voiceAlertsEnabledVal;
-            appSettings.liveWidgetEnabled = liveWidgetEnabledVal;
-            appSettings.liveWidgetStyle = document.getElementById('settingLiveWidgetStyle').value === 'card' ? 'card' : 'text';
             Object.assign(appSettings, workRes.data);
             applyShiftSettings();
-            if ((liveWidgetEnabledVal || notificationsEnabledVal) && 'Notification' in window && Notification.permission === 'default') {
+            if (notificationsEnabledVal && 'Notification' in window && Notification.permission === 'default') {
                 Notification.requestPermission().then(() => {
                     updateNotificationPermissionStatusUI();
                     checkDeliveryProgressNotifications();
@@ -4738,102 +4708,6 @@
             return toEnglishDigits(String(str).trim()).replace(/[^0-9]/g, '');
         }
 
-        function openTwoStepDeleteModal() {
-            if (allRecords.length === 0 && dailyNotes.length === 0) {
-                showFeedbackBanner('داده‌ای برای حذف وجود ندارد.', 'warn');
-                return;
-            }
-
-            if (!appSettings.deleteCodeHash) {
-                showFeedbackBanner('پیش از پاک کردن داده‌ها، ابتدا یک کد امنیتی ۴ رقمی در «تنظیمات و ظاهر برنامه» تعیین کنید.', 'warn');
-                openSettingsModal();
-                return;
-            }
-
-            showCustomConfirm('⚠️ هشدار: آیا از حذف کلی تمام اطلاعات سامانه اطمینان دارید؟', (confirmed) => {
-                if (!confirmed) return;
-
-                const input = document.getElementById('deleteCodeInput');
-                input.value = '';
-                document.getElementById('deleteCodeError').classList.add('hidden');
-                document.getElementById('deleteCodeModal').classList.remove('hidden');
-                setTimeout(() => input.focus(), 150);
-            });
-        }
-
-        function closeDeleteCodeModal() {
-            document.getElementById('deleteCodeModal').classList.add('hidden');
-            document.getElementById('deleteCodeInput').value = '';
-        }
-
-        function resetDeleteCode() {
-            closeDeleteCodeModal();
-            showCustomConfirm('کد امنیتی به‌صورت هش ذخیره شده و قابل بازیابی نیست. آیا می‌خواهید کد فعلی حذف شود تا بتوانید کد جدیدی تعیین کنید؟ (این کار فقط کد امنیتی را بازنشانی می‌کند و هیچ آسیبی به داده‌های شما نمی‌رساند)', (confirmed) => {
-                if (!confirmed) return;
-                openResetCodeConfirmModal();
-            });
-        }
-
-        function openResetCodeConfirmModal() {
-            const input = document.getElementById('resetCodePhraseInput');
-            input.value = '';
-            document.getElementById('resetCodePhraseError').classList.add('hidden');
-            document.getElementById('resetCodeConfirmModal').classList.remove('hidden');
-            setTimeout(() => input.focus(), 150);
-        }
-
-        function closeResetCodeConfirmModal() {
-            document.getElementById('resetCodeConfirmModal').classList.add('hidden');
-            document.getElementById('resetCodePhraseInput').value = '';
-        }
-
-        function confirmResetDeleteCode() {
-            const input = document.getElementById('resetCodePhraseInput');
-            if (input.value.trim() !== 'بازنشانی کد') {
-                document.getElementById('resetCodePhraseError').classList.remove('hidden');
-                input.focus();
-                return;
-            }
-
-            delete appSettings.deleteCodeHash;
-            appSettings.updatedAt = new Date().toISOString();
-            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-            if (appDirHandle) saveAllMonthFilesToDirectory(); // تا فایل تنظیمات در پوشه‌ی متصل هم بلافاصله به‌روز شود
-            addLog('کد امنیتی پاک کردن داده‌ها بازنشانی شد.', 'warn');
-            showFeedbackBanner('کد امنیتی بازنشانی شد. لطفاً از بخش تنظیمات یک کد جدید تعیین کنید.', 'success');
-            closeResetCodeConfirmModal();
-            openSettingsModal();
-        }
-
-        async function confirmDeleteCode() {
-            const input = document.getElementById('deleteCodeInput');
-            const entered = normalizeDigits(input.value);
-
-            if (entered.length !== 4) {
-                document.getElementById('deleteCodeError').classList.remove('hidden');
-                input.focus();
-                return;
-            }
-
-            const enteredHash = await hashDeleteCode(entered);
-            if (enteredHash !== appSettings.deleteCodeHash) {
-                document.getElementById('deleteCodeError').classList.remove('hidden');
-                input.value = '';
-                input.focus();
-                return;
-            }
-
-            allRecords.forEach(r => { addTombstone('records', r.id); moveToTrash(TRASH_RECORDS_STORE, r); });
-            dailyNotes.forEach(n => { addTombstone('notes', n.id); moveToTrash(TRASH_NOTES_STORE, n); });
-            allRecords = [];
-            dailyNotes = [];
-            saveRecords();
-            renderDashboard();
-            addLog('تمام اطلاعات سامانه پاک شدند.', 'warn');
-            showFeedbackBanner('تمام اطلاعات با موفقیت حذف شدند (تا ۳۰ روز از «سطل بازیافت» قابل بازگردانی است).', 'warn');
-            closeDeleteCodeModal();
-        }
-
         // متن «مسئول: نام | تماس: شماره» برای استفاده در هدر برنامه و گزارش‌های رسمی چاپی/خروجی
         function getOwnerInfoLineText() {
             const parts = [];
@@ -4843,6 +4717,7 @@
         }
 
         function updateAppHeader() {
+            renderTodayDateBar();
             const titleElement = document.getElementById('mainAppTitle');
             if (titleElement) {
                 const customShopName = appSettings.shopName || 'سامانه آمار دوخت لباس';
@@ -6670,124 +6545,6 @@
 
         // بررسی دوره‌ای پیشرفتِ رکورد جاری و ارسال اعلانِ پلکانی در چند نقطه‌ی کلیدی:
         // ۲۵٪ / ۵۰٪ / ۷۵٪ / ۹۰٪ از زمان مجاز، و رسیدن/گذشتن از خودِ موعد تحویل (با یادآوری‌های مکرر هر ۲۰ دقیقه)
-        // ترسیم یک تصویر کوچک از نوار پیشرفت (شبیه ویجت) برای نمایش داخل بدنه‌ی اعلانِ دائمی
-        // رنگ و شکلک وضعیت ویجت بر اساس درصد پیشرفت: سبز → زرد → نارنجی → قرمز (تاخیر)
-        function getWidgetState(p) {
-            if (p >= 100) return { emoji: '🔴', color: '#f43f5e', text: '#fda4af' };
-            if (p >= 90) return { emoji: '🟠', color: '#f97316', text: '#fdba74' };
-            if (p >= 50) return { emoji: '🟡', color: '#f59e0b', text: '#fcd34d' };
-            return { emoji: '🟢', color: '#10b981', text: '#6ee7b7' };
-        }
-        function widgetBar(p) {
-            const n = Math.max(0, Math.min(10, Math.round(p / 10)));
-            return '▰'.repeat(n) + '▱'.repeat(10 - n);
-        }
-        // «موعد ۱۴:۳۰» (اگر موعد امروز نباشد، تاریخ هم می‌آید)
-        function widgetDeadlineLabel(rec) {
-            if (!rec.endDateTime) return '';
-            const parts = String(rec.endDateTime).split(' - ');
-            const time = (parts.length > 1 ? parts[1] : parts[0]).trim();
-            const dateStr = parts.length > 1 ? parts[0].trim() : '';
-            const sameDay = !dateStr || toEnglishDigits(dateStr) === toEnglishDigits(getCurrentJalaliInfo().fullDateStr);
-            return sameDay ? `موعد ${time}` : `موعد ${dateStr} ${time}`;
-        }
-
-        async function drawProgressWidgetImage(rec, progress) {
-            try {
-                try {
-                    if (document.fonts && document.fonts.load) {
-                        await Promise.race([
-                            Promise.all([document.fonts.load('700 40px Vazirmatn'), document.fonts.load('400 30px Vazirmatn')]),
-                            new Promise(r => setTimeout(r, 1500))
-                        ]);
-                    }
-                } catch (e) { /* فونت نیامد؛ فونت جایگزین استفاده می‌شود */ }
-
-                const W = 800, H = 400, k = 2;
-                const canvas = document.createElement('canvas');
-                canvas.width = W * k; canvas.height = H * k;
-                const ctx = canvas.getContext('2d');
-                ctx.scale(k, k);
-                const F = "'Vazirmatn', Tahoma, sans-serif";
-                const p = progress.percent;
-                const st = getWidgetState(p);
-                const overdue = p >= 100;
-                const rr = (x, y, w, h, r) => {
-                    ctx.beginPath();
-                    ctx.moveTo(x + r, y);
-                    ctx.arcTo(x + w, y, x + w, y + h, r);
-                    ctx.arcTo(x + w, y + h, x, y + h, r);
-                    ctx.arcTo(x, y + h, x, y, r);
-                    ctx.arcTo(x, y, x + w, y, r);
-                    ctx.closePath();
-                };
-
-                ctx.fillStyle = '#0f172a';
-                ctx.fillRect(0, 0, W, H);
-                ctx.direction = 'rtl';
-                ctx.textBaseline = 'alphabetic';
-
-                let head = `کد ${rec.itemCode || '-'} • ${rec.itemTitle || '-'}`;
-                if (head.length > 34) head = head.slice(0, 33) + '…';
-                ctx.textAlign = 'right';
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = `400 28px ${F}`;
-                ctx.fillText(head, W - 40, 62);
-
-                ctx.textAlign = 'left';
-                ctx.fillStyle = '#f1f5f9';
-                ctx.font = `700 104px ${F}`;
-                ctx.fillText(`${formatNumber(Math.min(999, p))}٪`, 40, 172);
-
-                // ده پله؛ از راست به چپ پر می‌شوند (جهت خواندن فارسی)
-                const gap = 8, sw = (720 - 9 * gap) / 10;
-                for (let i = 0; i < 10; i++) {
-                    const xr = 760 - (i + 1) * sw - i * gap;
-                    ctx.fillStyle = '#1e293b';
-                    rr(xr, 214, sw, 62, 12); ctx.fill();
-                    const f = Math.max(0, Math.min(1, Math.min(p, 100) / 10 - i));
-                    if (f > 0) {
-                        ctx.fillStyle = st.color;
-                        rr(xr + sw * (1 - f), 214, sw * f, 62, 12); ctx.fill();
-                    }
-                }
-
-                const remain = overdue
-                    ? `${formatMinutesDuration(progress.remainingMinutes)} تاخیر`
-                    : `${formatMinutesDuration(progress.remainingMinutes)} مانده`;
-                ctx.textAlign = 'right';
-                ctx.fillStyle = st.text;
-                ctx.font = `700 32px ${F}`;
-                ctx.fillText(remain, W - 40, 350);
-                const dl = widgetDeadlineLabel(rec);
-                if (dl) {
-                    ctx.textAlign = 'left';
-                    ctx.fillStyle = '#64748b';
-                    ctx.font = `400 26px ${F}`;
-                    ctx.fillText(dl, 40, 350);
-                }
-                return canvas.toDataURL('image/png');
-            } catch (e) {
-                return null;
-            }
-        }
-
-        // ویجت وضعیت زنده: یک اعلان دائمی و بی‌صدا در نوار اعلان‌های گوشی که مثل یک ویجت صفحه اصلی
-        // همیشه کد در حال دوخت و درصد پیشرفت را نشان می‌دهد و خودش هر یک دقیقه به‌روزرسانی می‌شود،
-        // بدون اینکه هر بار صدا/لرزش بدهد (چون صرفاً برای دیدن سریع وضعیت است، نه هشدار).
-        const LIVE_WIDGET_TAG = 'sewing-live-status-widget';
-        // گرفتن رجیستریِ Service Worker با مهلت؛ اگر sw.js ثبت نشده باشد، `ready` برای همیشه معلق می‌ماند
-        async function getSwRegistrationSafe(timeoutMs) {
-            if (!navigator.serviceWorker) return null;
-            try {
-                return await Promise.race([
-                    navigator.serviceWorker.ready,
-                    new Promise(resolve => setTimeout(() => resolve(null), timeoutMs || 4000))
-                ]);
-            } catch (e) { return null; }
-        }
-
-        // بررسی دلایل احتمالیِ کار نکردنِ ویجت؛ خروجی: لیست مشکلات (خالی = همه چیز درست است)
         // دکمه‌های اعلان (از sw.js می‌رسند): پایان کار / بی‌صدا
         function handleNotificationAction(action) {
             const rec = getCurrentActiveRecord();
@@ -6809,153 +6566,15 @@
             });
         }
 
-        async function diagnoseLiveWidget() {
-            const env = [];   // پیش‌نیازهای دستگاه/مرورگر (بدون آن‌ها هیچ اعلانی نمایش داده نمی‌شود)
-            const data = [];  // وضعیت داده‌ها و تنظیمات برنامه
-            if (!window.isSecureContext) env.push('صفحه روی HTTPS (یا localhost) باز نشده؛ اعلان و Service Worker کار نمی‌کند.');
-            if (!('Notification' in window)) {
-                env.push('این مرورگر از اعلان پشتیبانی نمی‌کند (در آیفون فقط بعد از «Add to Home Screen» و iOS 16.4 به بالا).');
-            } else if (Notification.permission === 'denied') {
-                env.push('اجازه‌ی اعلان برای این سایت مسدود شده؛ از تنظیمات مرورگر/گوشی باید باز شود.');
-            } else if (Notification.permission !== 'granted') {
-                env.push('هنوز اجازه‌ی اعلان داده نشده؛ دکمه‌ی «درخواست اجازه اعلان مرورگر» را بزنید.');
-            }
-            if (!('serviceWorker' in navigator)) {
-                env.push('Service Worker در این مرورگر پشتیبانی نمی‌شود.');
-            } else {
-                let reg = await getSwRegistrationSafe(2500);
-                if (!reg) {
-                    // یک‌بار ثبت مستقیم تا خطای واقعی (مثلاً 404 بودن sw.js) مشخص شود
-                    try {
-                        await navigator.serviceWorker.register('sw.js');
-                        reg = await getSwRegistrationSafe(4000);
-                    } catch (e) {
-                        env.push('ثبت sw.js ناموفق بود: ' + ((e && e.message) ? e.message : e) + ' — فایل sw.js باید دقیقاً کنار index.html و روی همان سرور آپلود شده باشد.');
-                    }
-                    if (!reg && !env.some(x => x.startsWith('ثبت sw.js'))) env.push('Service Worker فعال نشد؛ صفحه را یک‌بار کامل ببندید و دوباره باز کنید.');
-                }
-            }
-            if (!appSettings.liveWidgetEnabled) data.push('گزینه‌ی «فعال‌سازی ویجت وضعیت زنده» روشن و ذخیره نشده است (بعد از زدن تیک، «ذخیره تنظیمات» را بزنید).');
-            if (!getCurrentActiveRecord()) {
-                data.push('کار جاری‌ای وجود ندارد. ویجت فقط برای آخرین رکوردی نمایش داده می‌شود که «آمار روزانه» دارد (تا مدت هدف محاسبه شود) و هنوز کد بعدی برایش ثبت نشده یا «کار تمام شد» زده نشده است.');
-            }
-            return { env, data };
-        }
-
-        async function testLiveWidget() {
-            const out = document.getElementById('liveWidgetDiagText');
-            if (out) { out.className = 'text-[11px] leading-relaxed text-slate-500'; out.innerText = 'در حال بررسی...'; }
-            const { env, data } = await diagnoseLiveWidget();
-            const lines = [];
-            let tone = 'ok';
-            if (env.length > 0) {
-                tone = 'bad';
-                lines.push('<b>مشکل در پیش‌نیازهای دستگاه/مرورگر:</b>');
-                env.forEach(p => lines.push('• ' + escapeHTML(p)));
-            } else {
-                // اعلان آزمایشی با داده‌ی نمونه: مشخص می‌کند خودِ دستگاه توانایی نمایش ویجت را دارد یا نه
-                const shown = await updateLiveStatusNotification({ demo: true });
-                if (shown) {
-                    lines.push('✅ اعلان آزمایشی فرستاده شد؛ نوار اعلان‌های گوشی را کامل پایین بکشید. (اعلان بی‌صدا است و در اندروید ممکن است زیر بخش «Silent / بی‌صدا» یا جمع‌شده باشد.)');
-                } else {
-                    tone = 'bad';
-                    lines.push('❌ پیش‌نیازها درست است ولی مرورگر/گوشی اعلان را نمایش نداد؛ جزئیات در «رویدادها» (لاگ سیستم) ثبت شد. تنظیمات اعلانِ Chrome و بخش راهنمای شیائومی را بررسی کنید.');
-                }
-            }
-            if (data.length > 0) {
-                if (tone === 'ok') tone = 'warn';
-                lines.push('<b>وضعیت داده‌ها/تنظیمات (دلیل نبودن ویجت واقعی):</b>');
-                data.forEach(p => lines.push('• ' + escapeHTML(p)));
-                if (env.length === 0) lines.push('اعلان آزمایشی، اگر ویجت فعال یا کار جاری نباشد، حداکثر تا یک دقیقه بعد خودکار بسته می‌شود.');
-            } else if (env.length === 0) {
-                lines.push('✅ تنظیمات و کار جاری درست است؛ ویجت واقعی هم باید هر دقیقه به‌روز شود.');
-            }
-            if (out) {
-                out.className = 'text-[11px] leading-relaxed ' + (tone === 'bad' ? 'text-rose-600 dark:text-rose-400' : (tone === 'warn' ? 'text-amber-700 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'));
-                out.innerHTML = lines.join('<br>');
-            }
-        }
-
-        // opts.demo = true: نمایش اعلان با داده‌ی نمونه، مستقل از کار جاری و تیک تنظیمات (فقط برای آزمایش)
-        async function updateLiveStatusNotification(opts) {
-            const demo = !!(opts && opts.demo);
-            if (!('Notification' in window) || Notification.permission !== 'granted') return false;
-            const reg = await getSwRegistrationSafe(4000);
-            if (!reg) return false;
-
-            const closeAll = async () => {
-                try { (await reg.getNotifications({ tag: LIVE_WIDGET_TAG })).forEach(n => n.close()); } catch (e) { /* بی‌اهمیت */ }
-            };
-            let rec, progress;
-            if (demo) {
-                rec = { itemCode: '۱۲۳', itemTitle: 'نمونه آزمایشی', endDateTime: getCurrentJalaliInfo().fullDateStr + ' - ۱۴:۳۰' };
-                progress = { percent: 42, remainingMinutes: 95 };
-            } else {
-                if (!appSettings.liveWidgetEnabled) { await closeAll(); return false; }
-                rec = getCurrentActiveRecord();
-                progress = rec ? computeRecordProgress(rec) : null;
-                if (!rec || !progress) { await closeAll(); return false; }
-            }
-
-            const st = getWidgetState(progress.percent);
-            const isOverdue = progress.percent >= 100;
-            const RLM = '\u200f'; // جهت راست‌به‌چپ برای هر خط تا نوار از راست پر شود
-            const pctText = `${formatNumber(Math.min(999, progress.percent))}٪`;
-            const remainText = isOverdue
-                ? `${formatMinutesDuration(progress.remainingMinutes)} تاخیر`
-                : `${formatMinutesDuration(progress.remainingMinutes)} مانده`;
-            const deadlineLabel = widgetDeadlineLabel(rec);
-            const infoLine = `${RLM}${isOverdue ? '⚠ ' : ''}${remainText}${deadlineLabel ? ' • ' + deadlineLabel : ''}`;
-            const cardStyle = appSettings.liveWidgetStyle === 'card';
-            const title = `${st.emoji} کد ${rec.itemCode || '-'} • ${rec.itemTitle || '-'}${demo ? ' (آزمایشی)' : ''}`;
-            const options = {
-                body: cardStyle ? infoLine : `${RLM}${widgetBar(progress.percent)}  ${pctText}\n${infoLine}`,
-                icon: 'icon-192.png',
-                badge: 'icon-192.png',
-                tag: LIVE_WIDGET_TAG,
-                renotify: false, // فقط محتوا آپدیت می‌شود، بدون صدا/لرزش دوباره — رفتار «ویجت»، نه «هشدار»
-                requireInteraction: true,
-                silent: true,
-                dir: 'rtl',
-                lang: 'fa',
-                timestamp: Date.now(),
-                actions: [
-                    { action: 'finish', title: '✔ کار تمام شد' },
-                    { action: 'snooze', title: '🔕 ۳۰ دقیقه بی‌صدا' }
-                ],
-                data: { live: true }
-            };
-            if (cardStyle) {
-                const image = await drawProgressWidgetImage(rec, progress);
-                if (image) options.image = image;
-            }
-
-            try {
-                await reg.showNotification(title, options);
-                return true;
-            } catch (e) {
-                console.warn('نمایش ویجت با تصویر ناموفق بود:', e);
-                if (options.image) {
-                    delete options.image; // برخی مرورگرها/گوشی‌ها تصویر بزرگ در اعلان را نمی‌پذیرند
-                    try { await reg.showNotification(title, options); return true; } catch (e2) { console.warn(e2); }
-                }
-                delete options.actions;
-                try { await reg.showNotification(title, options); return true; } catch (e3) { console.warn(e3); }
-                addLog('نمایش ویجت وضعیت زنده ناموفق بود (اعلان توسط مرورگر رد شد).', 'warn');
-                return false;
-            }
-        }
-
         function checkDeliveryProgressNotifications() {
             const rec = getCurrentActiveRecord();
-            if (!rec) { updateAppBadge(0); updateLiveStatusNotification(); return; }
+            if (!rec) { updateAppBadge(0); return; }
             const progress = computeRecordProgress(rec);
-            if (!progress) { updateAppBadge(0); updateLiveStatusNotification(); return; }
+            if (!progress) { updateAppBadge(0); return; }
             loadNotifState(rec);
             if (!rec.notifiedStages) rec.notifiedStages = [];
 
             updateAppBadge(progress.percent >= 100 ? 1 : 0);
-            updateLiveStatusNotification();
 
             if (!appSettings.notificationsEnabled) { renderActiveProgressWidget(); return; }
 
@@ -7510,7 +7129,7 @@
         });
 
         /* ---- دسترس‌پذیری: نقش دیالوگ، اتصال برچسب‌ها، aria-label و بستن با Escape ---- */
-        const MODAL_IDS = ['customConfirmModal', 'deleteCodeModal', 'advancedSearchModal', 'resetCodeConfirmModal', 'trashBinModal', 'dataHealthModal', 'settingsModal', 'overviewModal'];
+        const MODAL_IDS = ['customConfirmModal', 'advancedSearchModal', 'trashBinModal', 'dataHealthModal', 'settingsModal', 'overviewModal'];
         MODAL_IDS.forEach(id => {
             const el = document.getElementById(id);
             if (el) { el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); }
@@ -7533,8 +7152,6 @@
             if (isModalOpen('jalaliDatePickerPopup')) { closeDatePicker(); return; }
             if (isModalOpen('photoViewerModal')) { closePhotoViewer(); return; }
             if (isModalOpen('customConfirmModal')) { document.getElementById('customConfirmCancelBtn').click(); return; }
-            if (isModalOpen('deleteCodeModal')) { closeDeleteCodeModal(); return; }
-            if (isModalOpen('resetCodeConfirmModal')) { closeResetCodeConfirmModal(); return; }
             if (isModalOpen('advancedSearchModal')) { closeAdvancedSearchModal(); return; }
             if (isModalOpen('trashBinModal')) { closeTrashBinModal(); return; }
             if (isModalOpen('dataHealthModal')) { closeDataHealthModal(); return; }

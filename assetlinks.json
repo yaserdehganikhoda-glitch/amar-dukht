@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "io.github.yaserdehganikhoda_glitch.twa",
-        "sha256_cert_fingerprints": ["D7:9F:B3:8A:1B:27:50:6E:57:5E:24:7A:48:FF:EB:6A:F8:51:39:EB:4C:8F:E7:11:EA:46:40:A8:FF:EC:68:C4"]
-      }
-    }]

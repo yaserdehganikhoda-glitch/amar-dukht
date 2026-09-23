@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" id="htmlRoot">
+<html lang="fa" dir="rtl" id="htmlRoot" class="font-normal-size">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -68,9 +68,12 @@
         #actionFeedbackBanner:not(.hidden), .rc-card, #recordsTableBody tr {
             animation: fadeSlideIn 0.3s ease-out;
         }
-        body.font-small-size { font-size: 0.875rem; }
-        body.font-normal-size { font-size: 1rem; }
-        body.font-large-size { font-size: 1.15rem; }
+        /* این کلاس‌ها روی <html> اعمال می‌شوند نه <body>، چون واحد rem همیشه نسبت به فونت ریشه (html)
+           محاسبه می‌شود؛ با اعمال روی body، اکثر کلاس‌های Tailwind (text-xs/sm/base و ...) که rem-محور
+           هستند اصلاً بزرگ/کوچک نمی‌شدند. */
+        html.font-small-size { font-size: 87.5%; }
+        html.font-normal-size { font-size: 100%; }
+        html.font-large-size { font-size: 115%; }
 
         /* قاب‌بندی بهتر ردیف‌های لیست کارکردها: نوارهای زبرا برای تفکیک بصری بهتر هر رکورد */
         #recordsTableBody tr:nth-child(even),
@@ -86,7 +89,47 @@
         .dark #overviewModalTableBody tr:nth-child(even) {
             background-color: rgba(148, 163, 184, 0.06);
         }
-        body.font-xlarge-size { font-size: 1.3rem; }
+        html.font-xlarge-size { font-size: 130%; }
+
+        /* تضمین اعمال کامل: چون بخش زیادی از عناصر برنامه از کلاس‌های اندازه‌ی ثابت پیکسلی
+           (مثل text-[11px]) یا کلاس‌های آماده‌ی Tailwind استفاده می‌کنند که ممکن است زودتر/دیرتر
+           از این استایل بارگذاری شوند، هر کدام اینجا با !important صراحتاً override می‌شوند
+           تا تغییر اندازه فونت در تنظیمات، در سراسر برنامه بدون استثنا و به‌طور قابل مشاهده اعمال شود. */
+        html.font-small-size .text-xs { font-size: 10.5px !important; }
+        html.font-small-size .text-sm { font-size: 12.25px !important; }
+        html.font-small-size .text-base { font-size: 14px !important; }
+        html.font-small-size .text-lg { font-size: 15.75px !important; }
+        html.font-small-size .text-xl { font-size: 17.5px !important; }
+        html.font-small-size .text-2xl { font-size: 21px !important; }
+        html.font-small-size .text-3xl { font-size: 26.25px !important; }
+        html.font-small-size .text-4xl { font-size: 31.5px !important; }
+        html.font-small-size .text-\[10px\] { font-size: 8.75px !important; }
+        html.font-small-size .text-\[11px\] { font-size: 9.6px !important; }
+        html.font-small-size .text-\[12px\] { font-size: 10.5px !important; }
+
+        html.font-large-size .text-xs { font-size: 13.8px !important; }
+        html.font-large-size .text-sm { font-size: 16.1px !important; }
+        html.font-large-size .text-base { font-size: 18.4px !important; }
+        html.font-large-size .text-lg { font-size: 20.7px !important; }
+        html.font-large-size .text-xl { font-size: 23px !important; }
+        html.font-large-size .text-2xl { font-size: 27.6px !important; }
+        html.font-large-size .text-3xl { font-size: 34.5px !important; }
+        html.font-large-size .text-4xl { font-size: 41.4px !important; }
+        html.font-large-size .text-\[10px\] { font-size: 11.5px !important; }
+        html.font-large-size .text-\[11px\] { font-size: 12.65px !important; }
+        html.font-large-size .text-\[12px\] { font-size: 13.8px !important; }
+
+        html.font-xlarge-size .text-xs { font-size: 15.6px !important; }
+        html.font-xlarge-size .text-sm { font-size: 18.2px !important; }
+        html.font-xlarge-size .text-base { font-size: 20.8px !important; }
+        html.font-xlarge-size .text-lg { font-size: 23.4px !important; }
+        html.font-xlarge-size .text-xl { font-size: 26px !important; }
+        html.font-xlarge-size .text-2xl { font-size: 31.2px !important; }
+        html.font-xlarge-size .text-3xl { font-size: 39px !important; }
+        html.font-xlarge-size .text-4xl { font-size: 46.8px !important; }
+        html.font-xlarge-size .text-\[10px\] { font-size: 13px !important; }
+        html.font-xlarge-size .text-\[11px\] { font-size: 14.3px !important; }
+        html.font-xlarge-size .text-\[12px\] { font-size: 15.6px !important; }
 
         @media print {
             body * {
@@ -177,7 +220,7 @@
         #recordsTableCard[data-view="card"] .overflow-x-auto { display: none !important; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen pb-28 font-normal-size" id="appBody">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen pb-28" id="appBody">
 
     <!-- صفحه قفل ورود به برنامه -->
     <div id="pinLockScreen" class="hidden fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
@@ -200,25 +243,25 @@
         <div class="max-w-5xl mx-auto px-4 flex items-end justify-around pt-2" style="padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));">
             <button type="button" onclick="bottomNavGoHome()" class="flex flex-col items-center gap-1 text-indigo-600 dark:text-indigo-400 py-1 px-2">
                 <i class="fa-solid fa-house text-base"></i>
-                <span class="text-[10px] font-medium">خانه</span>
+                <span class="text-[11px] font-medium">خانه</span>
             </button>
             <button type="button" onclick="bottomNavGoNotes()" class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
                 <i class="fa-solid fa-note-sticky text-base"></i>
-                <span class="text-[10px] font-medium">یادداشت‌ها</span>
+                <span class="text-[11px] font-medium">یادداشت‌ها</span>
             </button>
             <button type="button" onclick="bottomNavGoAddRecord()" class="flex flex-col items-center -mt-5">
                 <span class="w-12 h-12 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center shadow-md transition-colors">
                     <i class="fa-solid fa-plus text-lg"></i>
                 </span>
-                <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 mt-1">ثبت</span>
+                <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500 mt-1">ثبت</span>
             </button>
             <button type="button" onclick="bottomNavGoRecords()" class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
                 <i class="fa-solid fa-table-list text-base"></i>
-                <span class="text-[10px] font-medium">رکوردها</span>
+                <span class="text-[11px] font-medium">رکوردها</span>
             </button>
             <button type="button" onclick="bottomNavOpenMore(event)" class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
                 <i class="fa-solid fa-ellipsis text-base"></i>
-                <span class="text-[10px] font-medium">بیشتر</span>
+                <span class="text-[11px] font-medium">بیشتر</span>
             </button>
         </div>
     </div>
@@ -234,7 +277,7 @@
                     <button onclick="toggleToolsDropdown(event)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all shadow-sm hover:shadow">
                         <i class="fa-solid fa-bars-staggered"></i>
                         <span class="hidden sm:inline">منوی ابزار</span>
-                        <i class="fa-solid fa-chevron-down text-[10px] mr-1"></i>
+                        <i class="fa-solid fa-chevron-down text-[11px] mr-1"></i>
                     </button>
 
                     <!-- محتوای منوی کشویی (تب‌بندی‌شده) -->
@@ -262,21 +305,21 @@
                                         <i class="fa-solid fa-download text-base"></i>
                                     </span>
                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">پشتیبان‌گیری</span>
-                                    <span class="text-[9px] text-slate-400 leading-tight">فایل JSON</span>
+                                    <span class="text-[10px] text-slate-400 leading-tight">فایل JSON</span>
                                 </button>
                                 <button onclick="openOverviewModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                     <span class="w-11 h-11 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                                         <i class="fa-solid fa-chart-pie text-base"></i>
                                     </span>
                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">گزارش کلی</span>
-                                    <span class="text-[9px] text-slate-400 leading-tight">خلاصه آمار</span>
+                                    <span class="text-[10px] text-slate-400 leading-tight">خلاصه آمار</span>
                                 </button>
                                 <button onclick="openSettingsModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                     <span class="w-11 h-11 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                                         <i class="fa-solid fa-gear text-base"></i>
                                     </span>
                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">تنظیمات</span>
-                                    <span class="text-[9px] text-slate-400 leading-tight">ظاهر و رمز</span>
+                                    <span class="text-[10px] text-slate-400 leading-tight">ظاهر و رمز</span>
                                 </button>
                             </div>
                             <div class="grid grid-cols-2 gap-1.5">
@@ -286,7 +329,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">رویدادها</span>
-                                        <span class="block text-[9px] text-slate-400">لاگ سیستم</span>
+                                        <span class="block text-[10px] text-slate-400">لاگ سیستم</span>
                                     </span>
                                 </button>
                                 <button onclick="lockAppNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -295,7 +338,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">قفل برنامه</span>
-                                        <span class="block text-[9px] text-slate-400">خروج سریع</span>
+                                        <span class="block text-[10px] text-slate-400">خروج سریع</span>
                                     </span>
                                 </button>
                             </div>
@@ -310,7 +353,16 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">خروجی HTML</span>
-                                        <span class="block text-[9px] text-slate-400">چاپ گزارش</span>
+                                        <span class="block text-[10px] text-slate-400">چاپ گزارش</span>
+                                    </span>
+                                </button>
+                                <button onclick="exportToCsvReport(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-file-csv text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">خروجی CSV</span>
+                                        <span class="block text-[10px] text-slate-400">برای اکسل</span>
                                     </span>
                                 </button>
                                 <button onclick="document.getElementById('importFile').click(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -319,7 +371,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بارگذاری پشتیبان</span>
-                                        <span class="block text-[9px] text-slate-400">وارد کردن JSON</span>
+                                        <span class="block text-[10px] text-slate-400">وارد کردن JSON</span>
                                     </span>
                                 </button>
                                 <button onclick="openTrashBinModal()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -328,7 +380,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">سطل بازیافت</span>
-                                        <span class="block text-[9px] text-slate-400">بازگردانی حذف‌شده‌ها</span>
+                                        <span class="block text-[10px] text-slate-400">بازگردانی حذف‌شده‌ها</span>
                                     </span>
                                 </button>
                                 <button onclick="openDataHealthModal()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -337,7 +389,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بررسی سلامت داده</span>
-                                        <span class="block text-[9px] text-slate-400">پیدا کردن نواقص</span>
+                                        <span class="block text-[10px] text-slate-400">پیدا کردن نواقص</span>
                                     </span>
                                 </button>
                             </div>
@@ -352,7 +404,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span id="folderMenuBtnLabel" class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پوشه دستگاه</span>
-                                        <span class="block text-[9px] text-slate-400">مسیر در تنظیمات</span>
+                                        <span class="block text-[10px] text-slate-400">مسیر در تنظیمات</span>
                                     </span>
                                 </button>
                                 <button onclick="manualRotatingBackupNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -361,7 +413,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پشتیبان چرخشی الان</span>
-                                        <span class="block text-[9px] text-slate-400">در پوشه دستگاه</span>
+                                        <span class="block text-[10px] text-slate-400">در پوشه دستگاه</span>
                                     </span>
                                 </button>
                                 <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="tactile-btn hidden items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right flex">
@@ -370,16 +422,16 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نصب برنامه</span>
-                                        <span class="block text-[9px] text-slate-400">روی دستگاه</span>
+                                        <span class="block text-[10px] text-slate-400">روی دستگاه</span>
                                     </span>
                                 </button>
                             </div>
                             <!-- اقدامات فرعی پوشه دستگاه -->
                             <div class="flex items-center justify-between gap-2 px-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
-                                <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[10px] text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors">
+                                <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[11px] text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors">
                                     <i class="fa-solid fa-link-slash"></i> قطع اتصال پوشه
                                 </button>
-                                <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1 transition-colors mr-auto">
+                                <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[11px] text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1 transition-colors mr-auto">
                                     <i class="fa-solid fa-rotate"></i> بارگذاری دستی از پوشه
                                 </button>
                             </div>
@@ -435,7 +487,7 @@
                     <div class="flex items-center gap-1.5">
                         <p id="kpiPriceLabel" class="text-xs text-slate-400 dark:text-slate-400 font-medium">ارزش کل کارکرد (تومان)</p>
                         <button type="button" onclick="toggleKpiPriceVisibility()" id="kpiPriceToggleBtn" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 p-1 -m-1 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition-colors" title="جمع/باز کردن مبلغ">
-                            <i id="kpiPriceToggleIcon" class="fa-solid fa-chevron-up text-[10px] transition-transform"></i>
+                            <i id="kpiPriceToggleIcon" class="fa-solid fa-chevron-up text-[11px] transition-transform"></i>
                         </button>
                     </div>
                     <div id="kpiPriceValueWrap">
@@ -466,7 +518,7 @@
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center">
                         <span id="progressRingPercentText" class="text-base font-extrabold text-slate-700 dark:text-slate-100">۰٪</span>
-                        <i id="progressRingStatusIcon" class="fa-solid fa-scissors text-[10px] text-slate-400 dark:text-slate-500 mt-0.5"></i>
+                        <i id="progressRingStatusIcon" class="fa-solid fa-scissors text-[11px] text-slate-400 dark:text-slate-500 mt-0.5"></i>
                     </div>
                 </div>
                 <div id="activeProgressList" class="flex-1 min-w-0"></div>
@@ -547,7 +599,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label title="محاسبه خودکار" class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-flag-checkered text-indigo-400 dark:text-indigo-500 text-[10px]"></i>
+                            <i class="fa-solid fa-flag-checkered text-indigo-400 dark:text-indigo-500 text-[11px]"></i>
                             <span data-field-label="recordEndDateTime">تاریخ و زمان پایان</span>
                         </label>
                         <input type="text" id="recordEndDateTime" readonly class="w-full p-2 border border-indigo-200 dark:border-slate-600 rounded-lg text-xs text-center font-semibold bg-indigo-50/60 dark:bg-slate-800/60 text-indigo-700 dark:text-slate-200 outline-none transition-all cursor-not-allowed">
@@ -555,7 +607,7 @@
 
                     <div>
                         <label title="محاسبه خودکار، جمعه‌ها تعطیل محسوب می‌شود" class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-hourglass text-indigo-400 dark:text-indigo-500 text-[10px]"></i>
+                            <i class="fa-solid fa-hourglass text-indigo-400 dark:text-indigo-500 text-[11px]"></i>
                             <span data-field-label="recordWorkDuration">مدت زمان تحویل کار</span>
                         </label>
                         <input type="text" id="recordWorkDuration" readonly class="w-full p-2 border border-indigo-200 dark:border-slate-600 rounded-lg text-xs text-center font-semibold bg-indigo-50/60 dark:bg-slate-800/60 text-indigo-700 dark:text-slate-200 outline-none transition-all cursor-not-allowed">
@@ -603,7 +655,7 @@
                         <input type="file" id="itemPhotoInput" accept="image/*" capture="environment" onchange="handlePhotoSelect(event)" class="hidden">
                         <div id="photoPreviewWrap" class="hidden relative">
                             <img id="photoPreviewImg" class="w-14 h-14 object-cover rounded-xl border border-slate-400 dark:border-slate-500" src="" alt="پیش‌نمایش عکس">
-                            <button type="button" onclick="removeSelectedPhoto()" class="absolute -top-2 -left-2 w-5 h-5 bg-rose-600 text-white rounded-full text-[10px] flex items-center justify-center shadow" title="حذف عکس"><i class="fa-solid fa-xmark"></i></button>
+                            <button type="button" onclick="removeSelectedPhoto()" class="absolute -top-2 -left-2 w-5 h-5 bg-rose-600 text-white rounded-full text-[11px] flex items-center justify-center shadow" title="حذف عکس"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                         <span id="photoStatusText" class="text-[11px] text-slate-400"></span>
                         <button type="button" onclick="toggleDailyNotesSection()" id="dailyNotesToggleBtn" class="tactile-btn cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-400 dark:border-slate-500">
@@ -799,7 +851,7 @@
                         <i class="fa-solid fa-hourglass-half"></i> جمع مدت زمان تاخیر
                     </h4>
                     <p id="totalDelaySummaryText" class="text-sm font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">—</p>
-                    <p id="workdayBasisNote" class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">بر مبنای ۸ ساعت و ۱۵ دقیقه کاری در هر روز</p>
+                    <p id="workdayBasisNote" class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">بر مبنای ۸ ساعت و ۱۵ دقیقه کاری در هر روز</p>
                 </div>
             </div>
 
@@ -1061,7 +1113,7 @@
                                 <img id="settingOwnerPhotoPreview" src="" class="hidden w-full h-full object-cover" alt="عکس پروفایل">
                                 <i id="settingOwnerPhotoIcon" class="fa-solid fa-user text-2xl text-slate-300 dark:text-slate-600"></i>
                             </div>
-                            <button type="button" onclick="document.getElementById('settingOwnerPhotoInput').click()" class="absolute -bottom-1 -left-1 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-[10px] shadow" title="تغییر عکس پروفایل">
+                            <button type="button" onclick="document.getElementById('settingOwnerPhotoInput').click()" class="absolute -bottom-1 -left-1 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-xs shadow" title="تغییر عکس پروفایل">
                                 <i class="fa-solid fa-camera"></i>
                             </button>
                             <input type="file" id="settingOwnerPhotoInput" accept="image/*" class="hidden" onchange="handleOwnerPhotoSelect(event)">
@@ -1338,7 +1390,7 @@
                     <div class="rounded-xl border border-amber-200 dark:border-amber-900/50 overflow-hidden">
                         <button type="button" onclick="toggleXiaomiGuide()" class="w-full flex items-center justify-between px-3 py-2.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-xs font-bold transition-colors">
                             <span><i class="fa-solid fa-mobile-screen-button"></i> راهنمای اختصاصی گوشی‌های شیائومی (HyperOS / MIUI)</span>
-                            <i id="xiaomiGuideToggleIcon" class="fa-solid fa-chevron-down text-[10px] transition-transform"></i>
+                            <i id="xiaomiGuideToggleIcon" class="fa-solid fa-chevron-down text-[11px] transition-transform"></i>
                         </button>
                         <div id="xiaomiGuideBody" class="hidden p-3 text-[11px] leading-relaxed text-slate-600 dark:text-slate-300 space-y-2 bg-white dark:bg-slate-900">
                             <p>گوشی‌های شیائومی به‌طور پیش‌فرض اعلان‌های اپ‌های تحت مرورگر را فقط در «نوار اعلان‌ها» نشان می‌دهند، نه به‌صورت بنر روی صفحه یا قفل صفحه. برای تغییر این رفتار، این چهار مورد را در گوشی خودتان بررسی کنید:</p>
@@ -2372,7 +2424,7 @@
                 <div class="flex items-center justify-between gap-2 p-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/60">
                     <div class="min-w-0">
                         <p class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">${label}</p>
-                        <p class="text-[10px] text-slate-400 mt-0.5">تا ${formatNumber(daysLeft)} روز دیگر برای همیشه پاک می‌شود</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">تا ${formatNumber(daysLeft)} روز دیگر برای همیشه پاک می‌شود</p>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
                         <button data-action="restore-trash" data-kind="${t.kind}" data-id="${Number(t.id)}" class="text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1"><i class="fa-solid fa-rotate-left"></i> بازگردانی</button>
@@ -2601,7 +2653,7 @@
                         <span class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${meta.badge}"><i class="fa-solid ${meta.icon} text-xs"></i></span>
                         <span class="text-xs text-slate-700 dark:text-slate-200">${escapeHTML(issue.text)}</span>
                     </div>
-                    ${issue.fixable ? `<button onclick="handleFixHealthIssue('${issue.key}')" class="shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white whitespace-nowrap">ترمیم خودکار</button>` : `<span class="shrink-0 text-[10px] text-slate-400">نیاز به بررسی دستی</span>`}
+                    ${issue.fixable ? `<button onclick="handleFixHealthIssue('${issue.key}')" class="shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white whitespace-nowrap">ترمیم خودکار</button>` : `<span class="shrink-0 text-[11px] text-slate-400">نیاز به بررسی دستی</span>`}
                 </div>`;
             }).join('');
         }
@@ -4427,17 +4479,17 @@
             }
 
             if (appSettings.fontSize === 'small') {
-                appBody.classList.remove('font-normal-size', 'font-large-size', 'font-xlarge-size');
-                appBody.classList.add('font-small-size');
+                htmlRoot.classList.remove('font-normal-size', 'font-large-size', 'font-xlarge-size');
+                htmlRoot.classList.add('font-small-size');
             } else if (appSettings.fontSize === 'large') {
-                appBody.classList.remove('font-small-size', 'font-normal-size', 'font-xlarge-size');
-                appBody.classList.add('font-large-size');
+                htmlRoot.classList.remove('font-small-size', 'font-normal-size', 'font-xlarge-size');
+                htmlRoot.classList.add('font-large-size');
             } else if (appSettings.fontSize === 'xlarge') {
-                appBody.classList.remove('font-small-size', 'font-normal-size', 'font-large-size');
-                appBody.classList.add('font-xlarge-size');
+                htmlRoot.classList.remove('font-small-size', 'font-normal-size', 'font-large-size');
+                htmlRoot.classList.add('font-xlarge-size');
             } else {
-                appBody.classList.remove('font-small-size', 'font-large-size', 'font-xlarge-size');
-                appBody.classList.add('font-normal-size');
+                htmlRoot.classList.remove('font-small-size', 'font-large-size', 'font-xlarge-size');
+                htmlRoot.classList.add('font-normal-size');
             }
 
             const fontFamilyVal = appSettings.fontFamily || 'Vazirmatn';
@@ -5334,7 +5386,7 @@
                 removeSelectedPhoto();
             }
 
-            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-600"></i> ویرایش رکورد کد ${record.itemCode || '-'}`;
+            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-600"></i> ویرایش رکورد کد ${escapeHTML(record.itemCode || '-')}`;
             document.getElementById('submitBtn').className = "tactile-btn w-full bg-amber-600 text-white py-3.5 rounded-xl font-medium text-sm hover:bg-amber-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow";
             document.getElementById('submitBtn').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>ذخیره تغییرات</span>`;
             document.getElementById('cancelEditBtn').classList.remove('flex');
@@ -5510,10 +5562,10 @@
                 <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-300 dark:border-slate-600 ${meta.border} text-xs overflow-hidden">
                     <div class="flex items-center justify-between p-3 cursor-pointer" data-action="toggle-note" data-id="${Number(n.id)}">
                         <div class="flex items-center gap-2 min-w-0 flex-wrap">
-                            <i class="fa-solid fa-chevron-${n.hidden ? 'left' : 'down'} text-slate-400 text-[10px] transition-transform shrink-0"></i>
+                            <i class="fa-solid fa-chevron-${n.hidden ? 'left' : 'down'} text-slate-400 text-[11px] transition-transform shrink-0"></i>
                             <span class="font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">${weekday ? escapeHTML(weekday) + '، ' : ''}${escapeHTML(n.date)}</span>
-                            ${isToday ? '<span class="bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold px-2 py-0.5 rounded-full">امروز</span>' : ''}
-                            ${meta.label ? `<span class="${meta.badge} text-[10px] font-bold px-2 py-0.5 rounded-full">${meta.label}</span>` : ''}
+                            ${isToday ? '<span class="bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-[11px] font-bold px-2 py-0.5 rounded-full">امروز</span>' : ''}
+                            ${meta.label ? `<span class="${meta.badge} text-[11px] font-bold px-2 py-0.5 rounded-full">${meta.label}</span>` : ''}
                         </div>
                         <button data-action="delete-note" data-id="${Number(n.id)}" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors shrink-0" title="حذف یادداشت" aria-label="حذف یادداشت"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
@@ -6247,7 +6299,7 @@
                         </span>
                         <span class="text-slate-500 dark:text-slate-400 whitespace-nowrap">${formatNumber(r.quantity)} عدد &nbsp;|&nbsp; ${formatPriceValue(r.totalPrice)} ${escapeHTML(currency)}</span>
                         <span class="text-slate-400 dark:text-slate-500 whitespace-nowrap">${escapeHTML(r.date)} <span class="opacity-60">-</span> ${escapeHTML(r.time)}</span>
-                        <span class="text-[10px] px-2 py-0.5 rounded-full border whitespace-nowrap ${getStatusBadgeClass(getDisplayStatus(r))}">${formatStatusWithDuration(getDisplayStatus(r), r.durationTime)}</span>
+                        <span class="text-[11px] px-2 py-0.5 rounded-full border whitespace-nowrap ${getStatusBadgeClass(getDisplayStatus(r))}">${formatStatusWithDuration(getDisplayStatus(r), r.durationTime)}</span>
                     </div>
                 `).join('');
 
@@ -6730,7 +6782,7 @@
                 ring.classList.toggle('animate-pulse', isOverdue);
             }
             if (ringText) ringText.innerText = `${formatNumber(Math.min(999, progress.percent))}٪`;
-            if (ringIcon) ringIcon.className = `fa-solid ${isOverdue ? 'fa-triangle-exclamation' : 'fa-scissors'} text-[10px] mt-0.5 ${isOverdue ? 'text-rose-500' : 'text-slate-400 dark:text-slate-500'}`;
+            if (ringIcon) ringIcon.className = `fa-solid ${isOverdue ? 'fa-triangle-exclamation' : 'fa-scissors'} text-[11px] mt-0.5 ${isOverdue ? 'text-rose-500' : 'text-slate-400 dark:text-slate-500'}`;
 
             if (badge) {
                 badge.className = `text-xs font-bold px-2.5 py-1 rounded-full ${badgeColor}`;
@@ -6745,10 +6797,10 @@
                 <div class="text-xs">
                     <div class="font-bold text-slate-700 dark:text-slate-200 truncate">کد ${escapeHTML(rec.itemCode) || '-'} — ${escapeHTML(rec.itemTitle) || '-'}</div>
                     <div class="mt-1">${remainingText}</div>
-                    ${isStale ? '<div class="text-[10px] text-amber-600 dark:text-amber-400 mt-1">این کار بیش از ۳ روز کاری معوق است و یادآوری‌ها متوقف شده؛ اگر تمام شده، «کار تمام شد» را بزنید.</div>' : ''}
-                    <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
+                    ${isStale ? '<div class="text-[11px] text-amber-600 dark:text-amber-400 mt-1">این کار بیش از ۳ روز کاری معوق است و یادآوری‌ها متوقف شده؛ اگر تمام شده، «کار تمام شد» را بزنید.</div>' : ''}
+                    <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
                     <button type="button" data-action="finish-active" data-id="${Number(rec.id)}" class="no-print mt-2 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition-colors"><i class="fa-solid fa-circle-check"></i> کار تمام شد</button>
-                    ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print mt-1.5 text-[10px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatDateDigits(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
+                    ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print mt-1.5 text-[11px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatDateDigits(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
                 </div>
             `;
             updateAttentionIndicators();
@@ -7123,6 +7175,61 @@
             
             addLog('گزارش HTML استخراج شد.', 'success');
             showFeedbackBanner(`فایل گزارش HTML (${periodLabel}) استخراج و ذخیره شد.`, 'success');
+        }
+
+        function exportToCsvReport() {
+            const records = getFilteredRecords();
+            if (records.length === 0) {
+                showFeedbackBanner('رکوردی برای خروجی گرفتن وجود ندارد.', 'warn');
+                return;
+            }
+            const periodLabel = advancedSearchFilters
+                ? 'نتیجه جستجوی پیشرفته'
+                : (() => {
+                    const [year, monthNum] = selectedMonthFilter.split('-');
+                    const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
+                    return `${monthName} ${formatYearDigits(year)}`;
+                })();
+            const currency = appSettings.currency || 'تومان';
+
+            // اکسل رشته‌های حاوی کاما/کوتیشن/خط‌جدید را بدون quote کردن به‌هم می‌ریزد
+            const csvEscape = (val) => {
+                const s = (val === null || val === undefined) ? '' : String(val);
+                return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+            };
+
+            const headers = ['ردیف', 'کد لباس', 'عنوان لباس', 'رنگ', 'تعداد دریافتی', `قیمت واحد (${currency})`, `مبلغ کل (${currency})`, 'شروع کد بعد', 'وضعیت', 'تاریخ ثبت'];
+            const rows = records.map((r, i) => [
+                i + 1,
+                r.itemCode || '-',
+                r.itemTitle,
+                r.itemColor || '-',
+                r.quantity,
+                (r.unitPrice === null || r.unitPrice === undefined) ? 'نامعلوم' : r.unitPrice,
+                (r.totalPrice === null || r.totalPrice === undefined) ? 'نامعلوم' : r.totalPrice,
+                r.nextCodeStartDate ? (r.nextCodeStartDate + (r.nextCodeStartTime ? ' - ' + r.nextCodeStartTime : '')) : '-',
+                getDisplayStatus(r) + (r.durationTime && r.status !== 'به موقع' ? ' (' + r.durationTime + ')' : ''),
+                r.date
+            ]);
+
+            const totalQtySum = records.reduce((sum, r) => sum + r.quantity, 0);
+            const totalAmountSum = sumTotalPrice(records);
+
+            let csvContent = headers.map(csvEscape).join(',') + '\r\n';
+            csvContent += rows.map(row => row.map(csvEscape).join(',')).join('\r\n') + '\r\n';
+            csvContent += '\r\n';
+            csvContent += [csvEscape('مجموع کل تعداد'), csvEscape(totalQtySum)].join(',') + '\r\n';
+            csvContent += [csvEscape(`مجموع کل کارکرد (${currency})`), csvEscape(totalAmountSum)].join(',') + '\r\n';
+
+            // پیشوند BOM برای نمایش صحیح حروف فارسی هنگام باز شدن در اکسل
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `آمار_دوخت_${periodLabel.replace(/\s+/g, '_')}.csv`;
+            link.click();
+
+            addLog('گزارش CSV استخراج شد.', 'success');
+            showFeedbackBanner(`فایل CSV (${periodLabel}) استخراج و ذخیره شد.`, 'success');
         }
 
         function setCurrentTimeInInput() {

@@ -768,6 +768,21 @@
                 <p class="text-sm">هیچ رکوردی یافت نشد.</p>
             </div>
 
+            <!-- یادداشت‌های این دوره؛ تلفیق‌شده داخل همین کارت لیست کارکردها، برای نمایش ورودی یادداشت‌های همین ماه/جستجو -->
+            <div id="recordsInlineNotesSection" class="no-print border-t border-slate-300 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-900/50">
+                <div class="flex items-center justify-between gap-3 px-4 pt-4">
+                    <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-note-sticky text-amber-500"></i>
+                        یادداشت‌های این دوره
+                    </h4>
+                    <span id="recordsBottomNotesCount" class="text-[11px] bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 px-2.5 py-1 rounded-full font-medium whitespace-nowrap border border-amber-100 dark:border-amber-900/40">۰ یادداشت</span>
+                </div>
+                <div id="recordsBottomNotesList" class="p-4 space-y-2 max-h-72 overflow-y-auto"></div>
+                <div id="recordsBottomNotesEmpty" class="hidden px-4 pb-4 text-center text-slate-400 text-xs">
+                    <p>یادداشتی برای این دوره ثبت نشده است.</p>
+                </div>
+            </div>
+
             <!-- دکمه‌های نمایش/پنهان‌سازی جمع تاخیر و کدهای تکراری، زیر لیست کارکردها -->
             <div id="recordsSummaryButtonsBar" class="hidden no-print flex flex-wrap items-center gap-2 p-4 border-t border-slate-300 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-900/50">
                 <button type="button" onclick="toggleDelaySummaryVisibility()" id="delaySummaryToggleBtn" class="tactile-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium bg-white dark:bg-slate-800 field-box-bg text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors border border-slate-400 dark:border-slate-500">
@@ -1346,7 +1361,7 @@
                 <div id="settingsTab-storage" class="settings-tab-panel hidden space-y-4">
                 <div class="space-y-3">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">مسیرهای ذخیره‌سازی</h3>
-                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">تا پایان هر ماه فقط یک فایل ساخته و همان فایل به‌روزرسانی می‌شود. مسیرها فقط از همین‌جا تعیین یا تغییر می‌کنند؛ در صفحه‌ی اصلی هیچ‌وقت مسیری پرسیده نمی‌شود.</p>
+                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">برای هر ماه یک زیرپوشه‌ی جدا (مثلاً «مهر_1404») ساخته می‌شود و تا پایان همان ماه فقط یک فایل داخل آن به‌روزرسانی می‌شود. مسیرها فقط از همین‌جا تعیین یا تغییر می‌کنند؛ در صفحه‌ی اصلی هیچ‌وقت مسیری پرسیده نمی‌شود.</p>
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 space-y-2.5">
                         <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">پوشه پشتیبان (فایل JSON ماهانه)</span>
                         <p id="backupFolderStatusText" class="text-xs font-semibold leading-relaxed">در حال بررسی...</p>
@@ -1356,7 +1371,7 @@
                         </div>
                     </div>
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 space-y-2.5">
-                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">پوشه ذخیره داده (فایل جدا برای هر ماه)</span>
+                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">پوشه ذخیره داده (زیرپوشه و فایل جدا برای هر ماه)</span>
                         <p id="dataFolderStatusText" class="text-xs font-semibold leading-relaxed">در حال بررسی...</p>
                         <div class="flex flex-wrap gap-2">
                             <button type="button" id="dataFolderChooseBtn" onclick="chooseStorageFolder()" class="px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-medium transition-colors">انتخاب پوشه ذخیره داده</button>
@@ -3109,6 +3124,30 @@
             return `آمار_${monthName}_${year}.json`;
         }
 
+        // هر ماه در زیرپوشه‌ی جداگانه‌ی خودش (مثلاً «مهر_1404») داخل پوشه‌ی انتخابی ذخیره می‌شود
+        function getMonthFolderName(monthKey) {
+            const [year, monthNumStr] = String(monthKey).split('-');
+            const monthNum = parseInt(monthNumStr, 10);
+            const monthName = PERSIAN_MONTHS[monthNum - 1] || 'نامشخص';
+            return `${monthName}_${year}`;
+        }
+
+        // پیمایش همه‌ی فایل‌های json داخل پوشه‌ی متصل: هم فایل‌های ریشه (سازگاری با نسخه‌های قدیمی)
+        // و هم فایل‌های داخل زیرپوشه‌های ماهانه؛ زیرپوشه‌ی «backups» (نسخه پشتیبان چرخشی) رد می‌شود.
+        async function* walkAppDirJsonFiles() {
+            for await (const [name, handle] of appDirHandle.entries()) {
+                if (handle.kind === 'file') {
+                    if (name.toLowerCase().endsWith('.json')) yield { name, handle, folder: null };
+                } else if (handle.kind === 'directory' && name !== 'backups') {
+                    for await (const [subName, subHandle] of handle.entries()) {
+                        if (subHandle.kind === 'file' && subName.toLowerCase().endsWith('.json')) {
+                            yield { name: subName, handle: subHandle, folder: name };
+                        }
+                    }
+                }
+            }
+        }
+
         // ذخیره‌ی پوشه: ترتیبی (بدون هم‌زمانی) و فقط برای ماه‌های واقعاً تغییرکرده
         const folderWrittenSig = new Map(); // monthKey -> امضای آخرین محتوای نوشته‌شده
         let folderSettingsSig = null;
@@ -3173,8 +3212,8 @@
                 // فقط یک‌بار بعد از هر اتصال، کل پوشه برای یافتن فایل‌های قدیمیِ ماه‌های بدون رکورد اسکن می‌شود
                 // (قبلاً با هر ذخیره‌سازی همه‌ی فایل‌ها خوانده و parse می‌شدند).
                 if (!folderStaleScanDone) {
-                    for await (const [name, handle] of appDirHandle.entries()) {
-                        if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name === SETTINGS_FILE_NAME) continue;
+                    for await (const { name, handle, folder } of walkAppDirJsonFiles()) {
+                        if (!folder && name === SETTINGS_FILE_NAME) continue;
                         try {
                             const file = await handle.getFile();
                             const parsed = JSON.parse(await file.text());
@@ -3196,7 +3235,8 @@
                     const [year, monthNumStr] = String(monthKey).split('-');
                     const monthNum = parseInt(monthNumStr, 10);
                     const monthName = PERSIAN_MONTHS[monthNum - 1] || 'نامشخص';
-                    const fileHandle = await appDirHandle.getFileHandle(getMonthFileName(monthKey), { create: true });
+                    const monthFolderHandle = await appDirHandle.getDirectoryHandle(getMonthFolderName(monthKey), { create: true });
+                    const fileHandle = await monthFolderHandle.getFileHandle(getMonthFileName(monthKey), { create: true });
                     const writable = await fileHandle.createWritable();
                     await writable.write(JSON.stringify({
                         app: 'sewing_statistics',
@@ -3206,6 +3246,8 @@
                     }, null, 2));
                     await writable.close();
                     folderWrittenSig.set(monthKey, sig);
+                    // مهاجرت: اگر از نسخه‌ی قدیمی‌تر فایل همین ماه در ریشه‌ی پوشه باقی مانده، حذف می‌شود
+                    try { await appDirHandle.removeEntry(getMonthFileName(monthKey)); } catch (e) { /* وجود نداشت؛ بی‌اهمیت */ }
                 }
 
                 const settingsPayload = {
@@ -3244,8 +3286,8 @@
             let collectedTombstones = null;
             let hasAnyFile = false;
 
-            for await (const [name, handle] of appDirHandle.entries()) {
-                if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name.startsWith('آمار_دوخت_پشتیبان_')) continue;
+            for await (const { name, handle } of walkAppDirJsonFiles()) {
+                if (name.startsWith('آمار_دوخت_پشتیبان_')) continue;
                 try {
                     const file = await handle.getFile();
                     const parsed = JSON.parse(await file.text());
@@ -3305,7 +3347,7 @@
 
             if (isFreshSelection) {
                 addLog(`پوشه ذخیره‌سازی «${handle.name}» با موفقیت متصل شد.`, 'success');
-                showFeedbackBanner(`از این پس داده‌ها به‌طور خودکار در پوشه «${handle.name}» نیز ذخیره می‌شوند (یک فایل جدا برای هر ماه).`, 'success');
+                showFeedbackBanner(`از این پس داده‌ها به‌طور خودکار در پوشه «${handle.name}» نیز ذخیره می‌شوند (یک زیرپوشه و فایل جدا برای هر ماه).`, 'success');
             }
         }
 
@@ -3453,7 +3495,7 @@
                 statusEl.innerText = 'وضعیت: پوشه‌ای متصل نیست؛ داده‌ها فقط در حافظه مرورگر ذخیره می‌شوند.';
                 statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
             } else if (dirHandlePermissionState === 'granted') {
-                statusEl.innerText = `وضعیت: فعال — پوشه «${appDirHandle.name}» (یک فایل برای هر ماه، به‌روزرسانی در همان فایل)`;
+                statusEl.innerText = `وضعیت: فعال — پوشه «${appDirHandle.name}» (یک زیرپوشه و فایل برای هر ماه، به‌روزرسانی در همان فایل)`;
                 statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
             } else {
                 statusEl.innerHTML = `پوشه «${escapeHTML(appDirHandle.name)}» متصل است ولی دسترسی آن غیرفعال است. <button type="button" onclick="reconnectStorageFolder()" class="underline font-bold">فعال‌سازی دسترسی</button>`;
@@ -5424,47 +5466,47 @@
             });
         }
 
-        function renderDailyNotes() {
-            const container = document.getElementById('notesContainer');
-            if (!container) return;
+        // یادداشت‌های دوره/ماهِ در حال نمایش (یا بازه‌ی جستجوی پیشرفته)؛ توسط چند بخش نمایشی استفاده می‌شود
+        const NOTE_TYPE_META = {
+            reminder: {
+                label: 'یادآوری',
+                border: 'border-r-4 border-r-amber-500',
+                badge: 'bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300'
+            },
+            holiday: {
+                label: 'تعطیلی',
+                border: 'border-r-4 border-r-orange-600',
+                badge: 'bg-orange-100 dark:bg-orange-950/50 text-orange-800 dark:text-orange-300'
+            },
+            normal: {
+                label: null,
+                border: 'border-r-4 border-r-slate-300 dark:border-r-slate-600',
+                badge: ''
+            }
+        };
 
-            // یادداشت‌ها هم مثل جدول کارکردها باید فقط برای دوره/ماهِ در حال نمایش فیلتر شوند؛
-            // قبلاً همیشه یادداشت‌های همه‌ی ماه‌ها با هم نشان داده می‌شدند.
-            const periodNotes = dailyNotes.filter(n => {
+        function getPeriodNotesList() {
+            if (advancedSearchFilters) {
+                const f = advancedSearchFilters;
+                return dailyNotes.filter(n => {
+                    const v = jalaliDateToComparable(n.date);
+                    if (f.dateFromVal !== null && (v === null || v < f.dateFromVal)) return false;
+                    if (f.dateToVal !== null && (v === null || v > f.dateToVal)) return false;
+                    return true;
+                });
+            }
+            return dailyNotes.filter(n => {
                 const info = getMonthInfoFromDateStr(n.date);
                 return info ? info.monthKey === selectedMonthFilter : true;
             });
+        }
 
-            if (periodNotes.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">هیچ یادداشتی برای این دوره ثبت نشده است.</p>`;
-                return;
-            }
-
-            const NOTE_TYPE_META = {
-                reminder: {
-                    label: 'یادآوری',
-                    border: 'border-r-4 border-r-amber-500',
-                    badge: 'bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300'
-                },
-                holiday: {
-                    label: 'تعطیلی',
-                    border: 'border-r-4 border-r-orange-600',
-                    badge: 'bg-orange-100 dark:bg-orange-950/50 text-orange-800 dark:text-orange-300'
-                },
-                normal: {
-                    label: null,
-                    border: 'border-r-4 border-r-slate-300 dark:border-r-slate-600',
-                    badge: ''
-                }
-            };
-
+        function buildNoteItemHTML(n) {
+            const meta = NOTE_TYPE_META[n.type] || NOTE_TYPE_META.normal;
             const todayStr = (typeof currentJalali !== 'undefined' && currentJalali.fullDateStr) || '';
-
-            container.innerHTML = periodNotes.map(n => {
-                const meta = NOTE_TYPE_META[n.type] || NOTE_TYPE_META.normal;
-                const isToday = n.date === todayStr;
-                const weekday = getWeekdayLabelForJalaliDate(n.date);
-                return `
+            const isToday = n.date === todayStr;
+            const weekday = getWeekdayLabelForJalaliDate(n.date);
+            return `
                 <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-300 dark:border-slate-600 ${meta.border} text-xs overflow-hidden">
                     <div class="flex items-center justify-between p-3 cursor-pointer" data-action="toggle-note" data-id="${Number(n.id)}">
                         <div class="flex items-center gap-2 min-w-0 flex-wrap">
@@ -5478,7 +5520,34 @@
                     ${n.hidden ? '' : `<div class="px-3 pb-3 pr-9 text-slate-700 dark:text-slate-200 whitespace-pre-wrap">${escapeHTML(n.text)}</div>`}
                 </div>
             `;
-            }).join('');
+        }
+
+        function renderDailyNotes() {
+            const container = document.getElementById('notesContainer');
+            if (!container) return;
+            const periodNotes = getPeriodNotesList();
+            container.innerHTML = periodNotes.length === 0
+                ? `<p class="text-xs text-slate-400 text-center py-2">هیچ یادداشتی برای این دوره ثبت نشده است.</p>`
+                : periodNotes.map(buildNoteItemHTML).join('');
+        }
+
+        // بخش نمایشیِ یادداشت‌ها زیرِ لیست کارکردها؛ همان یادداشت‌های دوره/جستجوی جاری را نشان می‌دهد
+        function renderRecordsBottomNotes() {
+            const list = document.getElementById('recordsBottomNotesList');
+            const empty = document.getElementById('recordsBottomNotesEmpty');
+            const countEl = document.getElementById('recordsBottomNotesCount');
+            if (!list || !empty || !countEl) return;
+            const periodNotes = getPeriodNotesList();
+            countEl.innerText = `${formatNumber(periodNotes.length)} یادداشت`;
+            if (periodNotes.length === 0) {
+                list.classList.add('hidden');
+                empty.classList.remove('hidden');
+                list.innerHTML = '';
+                return;
+            }
+            empty.classList.add('hidden');
+            list.classList.remove('hidden');
+            list.innerHTML = periodNotes.map(buildNoteItemHTML).join('');
         }
 
         const PERSIAN_WEEKDAYS_FULL = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
@@ -6813,6 +6882,7 @@
             applyAppSettingsToUI();
             renderMonthSelector();
             renderDailyNotes();
+            renderRecordsBottomNotes();
             renderActiveProgressWidget();
             renderStreakBadge();
             const sortSelect = document.getElementById('sortOptionSelect');

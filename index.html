@@ -761,15 +761,15 @@
                         <tr>
                             <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">#</th>
                             <th class="sticky top-0 z-10 p-3.5 no-print bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عکس</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">کد</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عنوان لباس</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">رنگ</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">تعداد دریافتی</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="itemCode">کد</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="itemTitle">عنوان لباس</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="itemColor">رنگ</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="receivedQuantity">تعداد دریافتی</th>
                             <th id="thUnitPrice" class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">قیمت واحد (تومان)</th>
                             <th id="thTotalPrice" class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">مبلغ کل (تومان)</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">آمار روزانه</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">مدت زمان تحویل کار</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">تاریخ و زمان پایان</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="dailyStat">آمار روزانه</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="recordWorkDuration">مدت زمان تحویل کار</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="recordEndDateTime">تاریخ و زمان پایان</th>
                             <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">شروع کد بعد</th>
                             <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">وضعیت</th>
                             <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">تاریخ و ساعت</th>
@@ -1530,14 +1530,14 @@
                         <thead class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-b-2 border-slate-400 dark:border-slate-500">
                             <tr>
                                 <th class="p-3">#</th>
-                                <th class="p-3">کد</th>
-                                <th class="p-3">عنوان</th>
-                                <th class="p-3">رنگ</th>
-                                <th class="p-3">تعداد دریافتی</th>
-                                <th class="p-3">قیمت واحد</th>
+                                <th class="p-3" data-field-label="itemCode">کد</th>
+                                <th class="p-3" data-field-label="itemTitle">عنوان</th>
+                                <th class="p-3" data-field-label="itemColor">رنگ</th>
+                                <th class="p-3" data-field-label="receivedQuantity">تعداد دریافتی</th>
+                                <th class="p-3" data-field-label="unitPrice">قیمت واحد</th>
                                 <th class="p-3">مبلغ کل</th>
                                 <th class="p-3">وضعیت</th>
-                                <th class="p-3">تاریخ ثبت</th>
+                                <th class="p-3" data-field-label="recordDate">تاریخ ثبت</th>
                             </tr>
                         </thead>
                         <tbody id="overviewModalTableBody" class="divide-y divide-slate-300 dark:divide-slate-600">
@@ -4454,7 +4454,7 @@
             applyFormLabels();
             const basisNote = document.getElementById('workdayBasisNote');
             if (basisNote) basisNote.innerText = `بر مبنای ${formatMinutesDuration(SHIFT_MINUTES)} کاری در هر روز`;
-            document.getElementById('thUnitPrice').innerText = `قیمت واحد (${currency})`;
+            document.getElementById('thUnitPrice').innerText = `${getFormLabel('unitPrice')} (${currency})`;
             document.getElementById('thTotalPrice').innerText = `مبلغ کل (${currency})`;
             const htmlRoot = document.getElementById('htmlRoot');
             const appBody = document.getElementById('appBody');
@@ -5201,6 +5201,30 @@
         }
         /* ============ پایان ثبت/به‌روزرسانی خودکار «شروع کد بعد» ============ */
 
+        // اگر چند رکورد یک کدِ مشترک داشته باشند و «اولین» آن‌ها (قدیمی‌ترین بر اساس زمان ثبت) عکس داشته باشد،
+        // همان عکس به‌صورت خودکار برای بقیه‌ی رکوردهای هم‌کدی که هنوز عکس ندارند هم کپی می‌شود.
+        function syncPhotoAcrossSameCodeRecords(code) {
+            const normCode = normalizeCodeValue(code);
+            if (!normCode) return;
+            const group = allRecords.filter(r => normalizeCodeValue(r.itemCode) === normCode);
+            if (group.length < 2) return;
+            const withPhoto = group.filter(r => r.photo).sort((a, b) => a.id - b.id);
+            if (!withPhoto.length) return;
+            const sourcePhoto = withPhoto[0].photo;
+            let copiedCount = 0;
+            group.forEach(r => {
+                if (!r.photo) {
+                    r.photo = sourcePhoto;
+                    r.hasPhoto = true;
+                    r.updatedAt = Date.now();
+                    copiedCount++;
+                }
+            });
+            if (copiedCount > 0) {
+                addLog(`عکس رکورد اولِ کد ${code} به ${formatNumber(copiedCount)} رکورد هم‌کدِ بدون‌عکس دیگر کپی شد.`, 'info');
+            }
+        }
+
         function handleFormSubmit(event) {
             event.preventDefault();
             refreshFormDateTimeIfUntouched();
@@ -5239,10 +5263,12 @@
                 return;
             }
 
-            // ماه/سال رکورد همیشه باید از روی خودِ تاریخ انتخاب‌شده در فرم محاسبه شود،
-            // نه از تاریخ امروز سیستم؛ در غیر این صورت رکوردهای عقب‌افتاده/جلوافتاده
-            // زیر ماه اشتباهی فیلتر می‌شدند.
-            const dateInfo = getMonthInfoFromDateStr(date) || info;
+            // ماه/سال رکورد معمولاً از روی خودِ تاریخ انتخاب‌شده در فرم محاسبه می‌شود، نه از تاریخ
+            // امروز سیستم؛ در غیر این صورت رکوردهای عقب‌افتاده/جلوافتاده زیر ماه اشتباهی فیلتر می‌شدند.
+            // استثنا: وقتی «تاریخ ثبت» عمداً به ماه قبل برده شده (حالت ثبت دستیِ تاریخ/ساعت پایان)،
+            // خواسته‌ی کاربر این است که رکورد همچنان زیر «ماه جاری» ذخیره و نمایش داده شود؛
+            // در این حالت به‌جای ماهِ خودِ تاریخ، از ماه جاری سیستم استفاده می‌شود.
+            const dateInfo = isRecordDateInPastMonth(date) ? info : (getMonthInfoFromDateStr(date) || info);
 
             if (editingId) {
                 const targetIndex = allRecords.findIndex(r => r.id === editingId);
@@ -5317,6 +5343,7 @@
                 selectedMonthFilter = dateInfo.monthKey;
             }
 
+            syncPhotoAcrossSameCodeRecords(code);
             saveRecords();
             resetFormState();
             renderDashboard();
@@ -6966,15 +6993,15 @@
                     </div>
 
                     <div class="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs pt-3 border-t border-dashed border-slate-300 dark:border-slate-600">
-                        <div class="text-slate-500 dark:text-slate-400">تعداد دریافتی: <b class="text-slate-700 dark:text-slate-200 tabular-nums">${formatNumber(r.quantity)}</b></div>
-                        <div class="text-slate-500 dark:text-slate-400">آمار روزانه: <b class="text-slate-700 dark:text-slate-200 tabular-nums">${(r.dailyStat === null || r.dailyStat === undefined) ? '-' : formatNumber(r.dailyStat)}</b></div>
-                        <div class="text-slate-500 dark:text-slate-400">قیمت واحد: <b class="text-slate-700 dark:text-slate-200 tabular-nums">${formatPriceValue(r.unitPrice)}</b></div>
+                        <div class="text-slate-500 dark:text-slate-400">${getFormLabel('receivedQuantity')}: <b class="text-slate-700 dark:text-slate-200 tabular-nums">${formatNumber(r.quantity)}</b></div>
+                        <div class="text-slate-500 dark:text-slate-400">${getFormLabel('dailyStat')}: <b class="text-slate-700 dark:text-slate-200 tabular-nums">${(r.dailyStat === null || r.dailyStat === undefined) ? '-' : formatNumber(r.dailyStat)}</b></div>
+                        <div class="text-slate-500 dark:text-slate-400">${getFormLabel('unitPrice')}: <b class="text-slate-700 dark:text-slate-200 tabular-nums">${formatPriceValue(r.unitPrice)}</b></div>
                         <div class="text-slate-500 dark:text-slate-400">مبلغ کل: <b class="tabular-nums ${r.totalPrice === null || r.totalPrice === undefined ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}">${formatPriceValue(r.totalPrice)} ${escapeHTML(currency)}</b></div>
                     </div>
 
                     <div class="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[11px] text-slate-500 dark:text-slate-400">
-                        <div>مدت تحویل: <span class="text-slate-700 dark:text-slate-200">${r.workDuration ? escapeHTML(r.workDuration) : '-'}</span></div>
-                        <div>پایان تخمینی: <span class="text-slate-700 dark:text-slate-200">${r.endDateTime ? escapeHTML(r.endDateTime) : '-'}</span></div>
+                        <div>${getFormLabel('recordWorkDuration')}: <span class="text-slate-700 dark:text-slate-200">${r.workDuration ? escapeHTML(r.workDuration) : '-'}</span></div>
+                        <div>${getFormLabel('recordEndDateTime')}: <span class="text-slate-700 dark:text-slate-200">${r.endDateTime ? escapeHTML(r.endDateTime) : '-'}</span></div>
                         <div class="col-span-2">شروع کد بعد: <span class="text-slate-700 dark:text-slate-200">${nextCodeHTML}</span></div>
                     </div>
 
@@ -7200,15 +7227,15 @@
     <table>
         <tr>
             <th>ردیف</th>
-            <th>کد لباس</th>
-            <th>عنوان لباس</th>
-            <th>رنگ</th>
-            <th>تعداد دریافتی</th>
-            <th>قیمت واحد (${currency})</th>
+            <th>${getFormLabel('itemCode')}</th>
+            <th>${getFormLabel('itemTitle')}</th>
+            <th>${getFormLabel('itemColor')}</th>
+            <th>${getFormLabel('receivedQuantity')}</th>
+            <th>${getFormLabel('unitPrice')} (${currency})</th>
             <th>مبلغ کل (${currency})</th>
             <th>شروع کد بعد</th>
             <th>وضعیت</th>
-            <th>تاریخ ثبت</th>
+            <th>${getFormLabel('recordDate')}</th>
         </tr>` +
         records.map((r, i) => `
         <tr>

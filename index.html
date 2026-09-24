@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" id="htmlRoot" class="font-normal-size">
+<html lang="fa" dir="rtl" id="htmlRoot">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -68,12 +68,9 @@
         #actionFeedbackBanner:not(.hidden), .rc-card, #recordsTableBody tr {
             animation: fadeSlideIn 0.3s ease-out;
         }
-        /* این کلاس‌ها روی <html> اعمال می‌شوند نه <body>، چون واحد rem همیشه نسبت به فونت ریشه (html)
-           محاسبه می‌شود؛ با اعمال روی body، اکثر کلاس‌های Tailwind (text-xs/sm/base و ...) که rem-محور
-           هستند اصلاً بزرگ/کوچک نمی‌شدند. */
-        html.font-small-size { font-size: 87.5%; }
-        html.font-normal-size { font-size: 100%; }
-        html.font-large-size { font-size: 115%; }
+        body.font-small-size { font-size: 0.875rem; }
+        body.font-normal-size { font-size: 1rem; }
+        body.font-large-size { font-size: 1.15rem; }
 
         /* قاب‌بندی بهتر ردیف‌های لیست کارکردها: نوارهای زبرا برای تفکیک بصری بهتر هر رکورد */
         #recordsTableBody tr:nth-child(even),
@@ -89,47 +86,7 @@
         .dark #overviewModalTableBody tr:nth-child(even) {
             background-color: rgba(148, 163, 184, 0.06);
         }
-        html.font-xlarge-size { font-size: 130%; }
-
-        /* تضمین اعمال کامل: چون بخش زیادی از عناصر برنامه از کلاس‌های اندازه‌ی ثابت پیکسلی
-           (مثل text-[11px]) یا کلاس‌های آماده‌ی Tailwind استفاده می‌کنند که ممکن است زودتر/دیرتر
-           از این استایل بارگذاری شوند، هر کدام اینجا با !important صراحتاً override می‌شوند
-           تا تغییر اندازه فونت در تنظیمات، در سراسر برنامه بدون استثنا و به‌طور قابل مشاهده اعمال شود. */
-        html.font-small-size .text-xs { font-size: 10.5px !important; }
-        html.font-small-size .text-sm { font-size: 12.25px !important; }
-        html.font-small-size .text-base { font-size: 14px !important; }
-        html.font-small-size .text-lg { font-size: 15.75px !important; }
-        html.font-small-size .text-xl { font-size: 17.5px !important; }
-        html.font-small-size .text-2xl { font-size: 21px !important; }
-        html.font-small-size .text-3xl { font-size: 26.25px !important; }
-        html.font-small-size .text-4xl { font-size: 31.5px !important; }
-        html.font-small-size .text-\[10px\] { font-size: 8.75px !important; }
-        html.font-small-size .text-\[11px\] { font-size: 9.6px !important; }
-        html.font-small-size .text-\[12px\] { font-size: 10.5px !important; }
-
-        html.font-large-size .text-xs { font-size: 13.8px !important; }
-        html.font-large-size .text-sm { font-size: 16.1px !important; }
-        html.font-large-size .text-base { font-size: 18.4px !important; }
-        html.font-large-size .text-lg { font-size: 20.7px !important; }
-        html.font-large-size .text-xl { font-size: 23px !important; }
-        html.font-large-size .text-2xl { font-size: 27.6px !important; }
-        html.font-large-size .text-3xl { font-size: 34.5px !important; }
-        html.font-large-size .text-4xl { font-size: 41.4px !important; }
-        html.font-large-size .text-\[10px\] { font-size: 11.5px !important; }
-        html.font-large-size .text-\[11px\] { font-size: 12.65px !important; }
-        html.font-large-size .text-\[12px\] { font-size: 13.8px !important; }
-
-        html.font-xlarge-size .text-xs { font-size: 15.6px !important; }
-        html.font-xlarge-size .text-sm { font-size: 18.2px !important; }
-        html.font-xlarge-size .text-base { font-size: 20.8px !important; }
-        html.font-xlarge-size .text-lg { font-size: 23.4px !important; }
-        html.font-xlarge-size .text-xl { font-size: 26px !important; }
-        html.font-xlarge-size .text-2xl { font-size: 31.2px !important; }
-        html.font-xlarge-size .text-3xl { font-size: 39px !important; }
-        html.font-xlarge-size .text-4xl { font-size: 46.8px !important; }
-        html.font-xlarge-size .text-\[10px\] { font-size: 13px !important; }
-        html.font-xlarge-size .text-\[11px\] { font-size: 14.3px !important; }
-        html.font-xlarge-size .text-\[12px\] { font-size: 15.6px !important; }
+        body.font-xlarge-size { font-size: 1.3rem; }
 
         @media print {
             body * {
@@ -220,7 +177,7 @@
         #recordsTableCard[data-view="card"] .overflow-x-auto { display: none !important; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen pb-28" id="appBody">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen pb-28 font-normal-size" id="appBody">
 
     <!-- صفحه قفل ورود به برنامه -->
     <div id="pinLockScreen" class="hidden fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
@@ -243,25 +200,25 @@
         <div class="max-w-5xl mx-auto px-4 flex items-end justify-around pt-2" style="padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));">
             <button type="button" onclick="bottomNavGoHome()" class="flex flex-col items-center gap-1 text-indigo-600 dark:text-indigo-400 py-1 px-2">
                 <i class="fa-solid fa-house text-base"></i>
-                <span class="text-[11px] font-medium">خانه</span>
+                <span class="text-[10px] font-medium">خانه</span>
             </button>
             <button type="button" onclick="bottomNavGoNotes()" class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
                 <i class="fa-solid fa-note-sticky text-base"></i>
-                <span class="text-[11px] font-medium">یادداشت‌ها</span>
+                <span class="text-[10px] font-medium">یادداشت‌ها</span>
             </button>
             <button type="button" onclick="bottomNavGoAddRecord()" class="flex flex-col items-center -mt-5">
                 <span class="w-12 h-12 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center shadow-md transition-colors">
                     <i class="fa-solid fa-plus text-lg"></i>
                 </span>
-                <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500 mt-1">ثبت</span>
+                <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 mt-1">ثبت</span>
             </button>
             <button type="button" onclick="bottomNavGoRecords()" class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
                 <i class="fa-solid fa-table-list text-base"></i>
-                <span class="text-[11px] font-medium">رکوردها</span>
+                <span class="text-[10px] font-medium">رکوردها</span>
             </button>
             <button type="button" onclick="bottomNavOpenMore(event)" class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
                 <i class="fa-solid fa-ellipsis text-base"></i>
-                <span class="text-[11px] font-medium">بیشتر</span>
+                <span class="text-[10px] font-medium">بیشتر</span>
             </button>
         </div>
     </div>
@@ -277,7 +234,7 @@
                     <button onclick="toggleToolsDropdown(event)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all shadow-sm hover:shadow">
                         <i class="fa-solid fa-bars-staggered"></i>
                         <span class="hidden sm:inline">منوی ابزار</span>
-                        <i class="fa-solid fa-chevron-down text-[11px] mr-1"></i>
+                        <i class="fa-solid fa-chevron-down text-[10px] mr-1"></i>
                     </button>
 
                     <!-- محتوای منوی کشویی (تب‌بندی‌شده) -->
@@ -300,26 +257,26 @@
                         <!-- تب اصلی -->
                         <div id="toolsTab-main" class="tools-tab-panel">
                             <div class="grid grid-cols-3 gap-1.5 mb-3">
-                                <button onclick="exportSmartBackup(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                <button onclick="runIfPremium('پشتیبان‌گیری دستی هوشمند', exportSmartBackup); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                     <span class="w-11 h-11 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                                         <i class="fa-solid fa-download text-base"></i>
                                     </span>
                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">پشتیبان‌گیری</span>
-                                    <span class="text-[10px] text-slate-400 leading-tight">فایل JSON</span>
+                                    <span class="text-[9px] text-slate-400 leading-tight">فایل JSON</span>
                                 </button>
                                 <button onclick="openOverviewModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                     <span class="w-11 h-11 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                                         <i class="fa-solid fa-chart-pie text-base"></i>
                                     </span>
                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">گزارش کلی</span>
-                                    <span class="text-[10px] text-slate-400 leading-tight">خلاصه آمار</span>
+                                    <span class="text-[9px] text-slate-400 leading-tight">خلاصه آمار</span>
                                 </button>
                                 <button onclick="openSettingsModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                     <span class="w-11 h-11 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                                         <i class="fa-solid fa-gear text-base"></i>
                                     </span>
                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">تنظیمات</span>
-                                    <span class="text-[10px] text-slate-400 leading-tight">ظاهر و رمز</span>
+                                    <span class="text-[9px] text-slate-400 leading-tight">ظاهر و رمز</span>
                                 </button>
                             </div>
                             <div class="grid grid-cols-2 gap-1.5">
@@ -329,7 +286,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">رویدادها</span>
-                                        <span class="block text-[10px] text-slate-400">لاگ سیستم</span>
+                                        <span class="block text-[9px] text-slate-400">لاگ سیستم</span>
                                     </span>
                                 </button>
                                 <button onclick="lockAppNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -338,7 +295,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">قفل برنامه</span>
-                                        <span class="block text-[10px] text-slate-400">خروج سریع</span>
+                                        <span class="block text-[9px] text-slate-400">خروج سریع</span>
                                     </span>
                                 </button>
                             </div>
@@ -347,22 +304,13 @@
                         <!-- تب داده‌ها -->
                         <div id="toolsTab-data" class="tools-tab-panel hidden">
                             <div class="grid grid-cols-2 gap-1.5">
-                                <button onclick="exportToHtmlReport(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                <button onclick="runIfPremium('خروجی گزارش رسمی', exportToHtmlReport); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
                                     <span class="w-9 h-9 shrink-0 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                                         <i class="fa-solid fa-file-arrow-down text-xs"></i>
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">خروجی HTML</span>
-                                        <span class="block text-[10px] text-slate-400">چاپ گزارش</span>
-                                    </span>
-                                </button>
-                                <button onclick="exportToCsvReport(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-file-csv text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">خروجی CSV</span>
-                                        <span class="block text-[10px] text-slate-400">برای اکسل</span>
+                                        <span class="block text-[9px] text-slate-400">چاپ گزارش</span>
                                     </span>
                                 </button>
                                 <button onclick="document.getElementById('importFile').click(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -371,7 +319,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بارگذاری پشتیبان</span>
-                                        <span class="block text-[10px] text-slate-400">وارد کردن JSON</span>
+                                        <span class="block text-[9px] text-slate-400">وارد کردن JSON</span>
                                     </span>
                                 </button>
                                 <button onclick="openTrashBinModal()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -380,7 +328,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">سطل بازیافت</span>
-                                        <span class="block text-[10px] text-slate-400">بازگردانی حذف‌شده‌ها</span>
+                                        <span class="block text-[9px] text-slate-400">بازگردانی حذف‌شده‌ها</span>
                                     </span>
                                 </button>
                                 <button onclick="openDataHealthModal()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -389,7 +337,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بررسی سلامت داده</span>
-                                        <span class="block text-[10px] text-slate-400">پیدا کردن نواقص</span>
+                                        <span class="block text-[9px] text-slate-400">پیدا کردن نواقص</span>
                                     </span>
                                 </button>
                             </div>
@@ -404,7 +352,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span id="folderMenuBtnLabel" class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پوشه دستگاه</span>
-                                        <span class="block text-[10px] text-slate-400">مسیر در تنظیمات</span>
+                                        <span class="block text-[9px] text-slate-400">مسیر در تنظیمات</span>
                                     </span>
                                 </button>
                                 <button onclick="manualRotatingBackupNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -413,7 +361,7 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پشتیبان چرخشی الان</span>
-                                        <span class="block text-[10px] text-slate-400">در پوشه دستگاه</span>
+                                        <span class="block text-[9px] text-slate-400">در پوشه دستگاه</span>
                                     </span>
                                 </button>
                                 <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="tactile-btn hidden items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right flex">
@@ -422,16 +370,16 @@
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نصب برنامه</span>
-                                        <span class="block text-[10px] text-slate-400">روی دستگاه</span>
+                                        <span class="block text-[9px] text-slate-400">روی دستگاه</span>
                                     </span>
                                 </button>
                             </div>
                             <!-- اقدامات فرعی پوشه دستگاه -->
                             <div class="flex items-center justify-between gap-2 px-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
-                                <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[11px] text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors">
+                                <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[10px] text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors">
                                     <i class="fa-solid fa-link-slash"></i> قطع اتصال پوشه
                                 </button>
-                                <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[11px] text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1 transition-colors mr-auto">
+                                <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1 transition-colors mr-auto">
                                     <i class="fa-solid fa-rotate"></i> بارگذاری دستی از پوشه
                                 </button>
                             </div>
@@ -443,8 +391,8 @@
                 <input type="file" id="importFile" accept=".json" class="hidden" onchange="importSmartBackup(event)">
             </div>
 
-            <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-3 shadow-inner">
-                <i class="fa-solid fa-scissors text-xl"></i>
+            <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-3 shadow-inner overflow-hidden">
+                <img src="icon-192.png" alt="لوگوی سامانه" class="w-10 h-10 object-contain rounded-lg">
             </div>
             <h1 id="mainAppTitle" class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
                 سامانه آمار دوخت لباس
@@ -487,7 +435,7 @@
                     <div class="flex items-center gap-1.5">
                         <p id="kpiPriceLabel" class="text-xs text-slate-400 dark:text-slate-400 font-medium">ارزش کل کارکرد (تومان)</p>
                         <button type="button" onclick="toggleKpiPriceVisibility()" id="kpiPriceToggleBtn" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 p-1 -m-1 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition-colors" title="جمع/باز کردن مبلغ">
-                            <i id="kpiPriceToggleIcon" class="fa-solid fa-chevron-up text-[11px] transition-transform"></i>
+                            <i id="kpiPriceToggleIcon" class="fa-solid fa-chevron-up text-[10px] transition-transform"></i>
                         </button>
                     </div>
                     <div id="kpiPriceValueWrap">
@@ -518,7 +466,7 @@
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center">
                         <span id="progressRingPercentText" class="text-base font-extrabold text-slate-700 dark:text-slate-100">۰٪</span>
-                        <i id="progressRingStatusIcon" class="fa-solid fa-scissors text-[11px] text-slate-400 dark:text-slate-500 mt-0.5"></i>
+                        <i id="progressRingStatusIcon" class="fa-solid fa-stopwatch text-[10px] text-slate-400 dark:text-slate-500 mt-0.5"></i>
                     </div>
                 </div>
                 <div id="activeProgressList" class="flex-1 min-w-0"></div>
@@ -599,7 +547,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label title="محاسبه خودکار" class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-flag-checkered text-indigo-400 dark:text-indigo-500 text-[11px]"></i>
+                            <i class="fa-solid fa-flag-checkered text-indigo-400 dark:text-indigo-500 text-[10px]"></i>
                             <span data-field-label="recordEndDateTime">تاریخ و زمان پایان</span>
                         </label>
                         <input type="text" id="recordEndDateTime" readonly class="w-full p-2 border border-indigo-200 dark:border-slate-600 rounded-lg text-xs text-center font-semibold bg-indigo-50/60 dark:bg-slate-800/60 text-indigo-700 dark:text-slate-200 outline-none transition-all cursor-not-allowed">
@@ -607,7 +555,7 @@
 
                     <div>
                         <label title="محاسبه خودکار، جمعه‌ها تعطیل محسوب می‌شود" class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-hourglass text-indigo-400 dark:text-indigo-500 text-[11px]"></i>
+                            <i class="fa-solid fa-hourglass text-indigo-400 dark:text-indigo-500 text-[10px]"></i>
                             <span data-field-label="recordWorkDuration">مدت زمان تحویل کار</span>
                         </label>
                         <input type="text" id="recordWorkDuration" readonly class="w-full p-2 border border-indigo-200 dark:border-slate-600 rounded-lg text-xs text-center font-semibold bg-indigo-50/60 dark:bg-slate-800/60 text-indigo-700 dark:text-slate-200 outline-none transition-all cursor-not-allowed">
@@ -617,6 +565,26 @@
                 <div id="autoCalcInfoBox" class="hidden bg-indigo-50/70 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 rounded-xl p-3 text-[11px] leading-relaxed text-indigo-700 dark:text-indigo-300 flex items-start gap-1.5">
                     <i class="fa-solid fa-wand-magic-sparkles mt-0.5"></i>
                     <span id="autoCalcInfoText"></span>
+                </div>
+
+                <div id="manualEndDateTimeWrap" class="hidden bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 rounded-xl p-3">
+                    <p class="text-[11px] leading-relaxed text-amber-700 dark:text-amber-400 mb-2.5 flex items-start gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+                        <span>تاریخ ثبت مربوط به ماه گذشته است؛ محاسبه‌ی خودکار غیرفعال شد. تاریخ و ساعت پایان را به‌صورت دستی انتخاب کنید.</span>
+                    </p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-medium text-amber-700/80 dark:text-amber-400/80 mb-1">تاریخ پایان</label>
+                            <div class="relative">
+                                <input type="text" id="manualEndDate" required readonly onclick="openDatePicker('manualEndDate', event)" placeholder="انتخاب تاریخ" class="w-full p-2.5 pr-9 border border-amber-300 dark:border-amber-800 rounded-lg text-xs bg-white dark:bg-slate-800 dark:text-slate-100 cursor-pointer outline-none focus:ring-2 focus:ring-amber-500/20">
+                                <span class="absolute inset-y-0 right-2.5 flex items-center pointer-events-none text-amber-400 text-xs"><i class="fa-solid fa-calendar-days"></i></span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-amber-700/80 dark:text-amber-400/80 mb-1">ساعت پایان</label>
+                            <input type="time" id="manualEndTime" required oninput="syncManualEndDateTime()" class="w-full p-2.5 border border-amber-300 dark:border-amber-800 rounded-lg text-xs bg-white dark:bg-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-amber-500/20">
+                        </div>
+                    </div>
                 </div>
 
                 <div id="deliveryDurationWrapper" class="hidden bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 rounded-xl p-4 transition-all">
@@ -655,7 +623,7 @@
                         <input type="file" id="itemPhotoInput" accept="image/*" capture="environment" onchange="handlePhotoSelect(event)" class="hidden">
                         <div id="photoPreviewWrap" class="hidden relative">
                             <img id="photoPreviewImg" class="w-14 h-14 object-cover rounded-xl border border-slate-400 dark:border-slate-500" src="" alt="پیش‌نمایش عکس">
-                            <button type="button" onclick="removeSelectedPhoto()" class="absolute -top-2 -left-2 w-5 h-5 bg-rose-600 text-white rounded-full text-[11px] flex items-center justify-center shadow" title="حذف عکس"><i class="fa-solid fa-xmark"></i></button>
+                            <button type="button" onclick="removeSelectedPhoto()" class="absolute -top-2 -left-2 w-5 h-5 bg-rose-600 text-white rounded-full text-[10px] flex items-center justify-center shadow" title="حذف عکس"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                         <span id="photoStatusText" class="text-[11px] text-slate-400"></span>
                         <button type="button" onclick="toggleDailyNotesSection()" id="dailyNotesToggleBtn" class="tactile-btn cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-400 dark:border-slate-500">
@@ -820,21 +788,6 @@
                 <p class="text-sm">هیچ رکوردی یافت نشد.</p>
             </div>
 
-            <!-- یادداشت‌های این دوره؛ تلفیق‌شده داخل همین کارت لیست کارکردها، برای نمایش ورودی یادداشت‌های همین ماه/جستجو -->
-            <div id="recordsInlineNotesSection" class="no-print border-t border-slate-300 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-900/50">
-                <div class="flex items-center justify-between gap-3 px-4 pt-4">
-                    <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xs flex items-center gap-2">
-                        <i class="fa-solid fa-note-sticky text-amber-500"></i>
-                        یادداشت‌های این دوره
-                    </h4>
-                    <span id="recordsBottomNotesCount" class="text-[11px] bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 px-2.5 py-1 rounded-full font-medium whitespace-nowrap border border-amber-100 dark:border-amber-900/40">۰ یادداشت</span>
-                </div>
-                <div id="recordsBottomNotesList" class="p-4 space-y-2 max-h-72 overflow-y-auto"></div>
-                <div id="recordsBottomNotesEmpty" class="hidden px-4 pb-4 text-center text-slate-400 text-xs">
-                    <p>یادداشتی برای این دوره ثبت نشده است.</p>
-                </div>
-            </div>
-
             <!-- دکمه‌های نمایش/پنهان‌سازی جمع تاخیر و کدهای تکراری، زیر لیست کارکردها -->
             <div id="recordsSummaryButtonsBar" class="hidden no-print flex flex-wrap items-center gap-2 p-4 border-t border-slate-300 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-900/50">
                 <button type="button" onclick="toggleDelaySummaryVisibility()" id="delaySummaryToggleBtn" class="tactile-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium bg-white dark:bg-slate-800 field-box-bg text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors border border-slate-400 dark:border-slate-500">
@@ -851,7 +804,7 @@
                         <i class="fa-solid fa-hourglass-half"></i> جمع مدت زمان تاخیر
                     </h4>
                     <p id="totalDelaySummaryText" class="text-sm font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">—</p>
-                    <p id="workdayBasisNote" class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">بر مبنای ۸ ساعت و ۱۵ دقیقه کاری در هر روز</p>
+                    <p id="workdayBasisNote" class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">بر مبنای ۸ ساعت و ۱۵ دقیقه کاری در هر روز</p>
                 </div>
             </div>
 
@@ -1113,7 +1066,7 @@
                                 <img id="settingOwnerPhotoPreview" src="" class="hidden w-full h-full object-cover" alt="عکس پروفایل">
                                 <i id="settingOwnerPhotoIcon" class="fa-solid fa-user text-2xl text-slate-300 dark:text-slate-600"></i>
                             </div>
-                            <button type="button" onclick="document.getElementById('settingOwnerPhotoInput').click()" class="absolute -bottom-1 -left-1 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-xs shadow" title="تغییر عکس پروفایل">
+                            <button type="button" onclick="document.getElementById('settingOwnerPhotoInput').click()" class="absolute -bottom-1 -left-1 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-[10px] shadow" title="تغییر عکس پروفایل">
                                 <i class="fa-solid fa-camera"></i>
                             </button>
                             <input type="file" id="settingOwnerPhotoInput" accept="image/*" class="hidden" onchange="handleOwnerPhotoSelect(event)">
@@ -1390,7 +1343,7 @@
                     <div class="rounded-xl border border-amber-200 dark:border-amber-900/50 overflow-hidden">
                         <button type="button" onclick="toggleXiaomiGuide()" class="w-full flex items-center justify-between px-3 py-2.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-xs font-bold transition-colors">
                             <span><i class="fa-solid fa-mobile-screen-button"></i> راهنمای اختصاصی گوشی‌های شیائومی (HyperOS / MIUI)</span>
-                            <i id="xiaomiGuideToggleIcon" class="fa-solid fa-chevron-down text-[11px] transition-transform"></i>
+                            <i id="xiaomiGuideToggleIcon" class="fa-solid fa-chevron-down text-[10px] transition-transform"></i>
                         </button>
                         <div id="xiaomiGuideBody" class="hidden p-3 text-[11px] leading-relaxed text-slate-600 dark:text-slate-300 space-y-2 bg-white dark:bg-slate-900">
                             <p>گوشی‌های شیائومی به‌طور پیش‌فرض اعلان‌های اپ‌های تحت مرورگر را فقط در «نوار اعلان‌ها» نشان می‌دهند، نه به‌صورت بنر روی صفحه یا قفل صفحه. برای تغییر این رفتار، این چهار مورد را در گوشی خودتان بررسی کنید:</p>
@@ -1413,7 +1366,7 @@
                 <div id="settingsTab-storage" class="settings-tab-panel hidden space-y-4">
                 <div class="space-y-3">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">مسیرهای ذخیره‌سازی</h3>
-                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">برای هر ماه یک زیرپوشه‌ی جدا (مثلاً «مهر_1404») ساخته می‌شود و تا پایان همان ماه فقط یک فایل داخل آن به‌روزرسانی می‌شود. مسیرها فقط از همین‌جا تعیین یا تغییر می‌کنند؛ در صفحه‌ی اصلی هیچ‌وقت مسیری پرسیده نمی‌شود.</p>
+                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">تا پایان هر ماه فقط یک فایل ساخته و همان فایل به‌روزرسانی می‌شود. مسیرها فقط از همین‌جا تعیین یا تغییر می‌کنند؛ در صفحه‌ی اصلی هیچ‌وقت مسیری پرسیده نمی‌شود.</p>
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 space-y-2.5">
                         <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">پوشه پشتیبان (فایل JSON ماهانه)</span>
                         <p id="backupFolderStatusText" class="text-xs font-semibold leading-relaxed">در حال بررسی...</p>
@@ -1423,7 +1376,7 @@
                         </div>
                     </div>
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 space-y-2.5">
-                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">پوشه ذخیره داده (زیرپوشه و فایل جدا برای هر ماه)</span>
+                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">پوشه ذخیره داده (فایل جدا برای هر ماه)</span>
                         <p id="dataFolderStatusText" class="text-xs font-semibold leading-relaxed">در حال بررسی...</p>
                         <div class="flex flex-wrap gap-2">
                             <button type="button" id="dataFolderChooseBtn" onclick="chooseStorageFolder()" class="px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-medium transition-colors">انتخاب پوشه ذخیره داده</button>
@@ -1460,6 +1413,13 @@
                 </div>
 
                 <div id="settingsTab-about" class="settings-tab-panel hidden space-y-4">
+                <div id="premiumStatusCard" class="rounded-xl p-3 border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50 dark:bg-indigo-950/30 flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5"><i class="fa-solid fa-crown"></i> نسخه ویژه</p>
+                        <p id="premiumStatusText" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">در حال بررسی وضعیت...</p>
+                    </div>
+                    <button id="premiumUpgradeBtn" onclick="runIfPremium('نسخه ویژه', () => showFeedbackBanner('نسخه ویژه از قبل فعال است.', 'success'))" class="shrink-0 text-xs font-bold px-3 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">فعال‌سازی</button>
+                </div>
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> درباره سامانه آمار دوخت لباس</h3>
                     <p class="text-[12px] leading-relaxed text-slate-600 dark:text-slate-300">این سامانه یک ابزار آفلاین (PWA) برای ثبت و مدیریت کارکرد روزانه‌ی کارگاه خیاطی است: هر قطعه با کد، رنگ، تعداد و قیمت ثبت می‌شود، مدت‌زمان تحویل به‌صورت خودکار از روی آمار روزانه محاسبه می‌شود و وضعیت «به‌موقع / تاخیر / زودتر از موعد» خودکار تعیین می‌گردد.</p>
@@ -1475,8 +1435,8 @@
                     </ul>
                 </div>
                 <div class="text-center pt-2">
-                    <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-2 shadow-inner">
-                        <i class="fa-solid fa-scissors text-xl"></i>
+                    <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-2 shadow-inner overflow-hidden">
+                        <img src="icon-192.png" alt="لوگوی سامانه" class="w-10 h-10 object-contain rounded-lg">
                     </div>
                     <p class="text-sm font-bold text-slate-800 dark:text-white">سامانه آمار دوخت لباس</p>
                     <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">نسخه ۱۳.۰</p>
@@ -1599,7 +1559,57 @@
 
     <!-- اسکریپت‌ها -->
     <script>
-        let newWorkerWaiting = null;
+        /* ==================== نسخه ویژه (Premium) — قابلیت‌های قفل‌شده ====================
+         * این قابلیت‌ها فقط داخل اپ نصب‌شده از کافه بازار قفل هستند؛ در نسخه وب/PWA
+         * (چون امکان خرید در آنجا وجود ندارد) همیشه آزاد باقی می‌مانند تا کاربران قبلی مشکلی پیدا نکنند.
+         */
+        function isPremiumUnlocked() {
+            const native = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+            if (!native || !window.SewingPremium) return true;
+            return window.SewingPremium.isUnlocked();
+        }
+
+        function updatePremiumStatusUI() {
+            const textEl = document.getElementById('premiumStatusText');
+            const btnEl = document.getElementById('premiumUpgradeBtn');
+            if (!textEl || !btnEl) return;
+            const native = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+            if (!native) {
+                textEl.innerText = 'نسخه ویژه فقط در اپ نصب‌شده از کافه بازار قابل خرید است.';
+                btnEl.classList.add('hidden');
+                return;
+            }
+            if (isPremiumUnlocked()) {
+                textEl.innerText = 'نسخه ویژه فعال است ✅';
+                btnEl.innerText = 'فعال شده';
+                btnEl.disabled = true;
+                btnEl.classList.add('opacity-50', 'cursor-default');
+            } else {
+                textEl.innerText = 'خروجی گزارش رسمی، پشتیبان‌گیری دستی و بازگردانی از سطل بازیافت با نسخه ویژه باز می‌شود.';
+                btnEl.innerText = 'فعال‌سازی';
+                btnEl.disabled = false;
+                btnEl.classList.remove('opacity-50', 'cursor-default');
+            }
+        }
+
+        async function promptPremiumUpgrade(featureLabel) {
+            showCustomConfirm(`«${featureLabel}» جزو قابلیت‌های نسخه ویژه است. آیا می‌خواهید همین حالا نسخه ویژه را فعال کنید؟`, async (confirmed) => {
+                if (!confirmed || !window.SewingPremium) return;
+                const ok = await window.SewingPremium.purchase();
+                if (ok) {
+                    showFeedbackBanner('نسخه ویژه با موفقیت فعال شد. حالا دوباره تلاش کنید.', 'success');
+                    updatePremiumStatusUI();
+                }
+            });
+        }
+
+        function runIfPremium(featureLabel, action) {
+            if (isPremiumUnlocked()) { action(); return; }
+            promptPremiumUpgrade(featureLabel);
+        }
+        /* ==================== پایان نسخه ویژه ==================== */
+
+
         // اگر صفحه در اولین نصبِ Service Worker باز شده (کنترلر قبلی نبوده)، claim اولیه نباید reload اجباری ایجاد کند
         const swHadControllerAtStart = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
 
@@ -2327,6 +2337,7 @@
         }
 
         async function restoreFromTrash(kind, id) {
+            if (!isPremiumUnlocked()) { promptPremiumUpgrade('بازگردانی از سطل بازیافت'); return; }
             const storeName = kind === 'note' ? TRASH_NOTES_STORE : TRASH_RECORDS_STORE;
             try {
                 const db = await getDataDB();
@@ -2424,7 +2435,7 @@
                 <div class="flex items-center justify-between gap-2 p-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/60">
                     <div class="min-w-0">
                         <p class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">${label}</p>
-                        <p class="text-[11px] text-slate-400 mt-0.5">تا ${formatNumber(daysLeft)} روز دیگر برای همیشه پاک می‌شود</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">تا ${formatNumber(daysLeft)} روز دیگر برای همیشه پاک می‌شود</p>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
                         <button data-action="restore-trash" data-kind="${t.kind}" data-id="${Number(t.id)}" class="text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1"><i class="fa-solid fa-rotate-left"></i> بازگردانی</button>
@@ -2547,6 +2558,40 @@
         /* ==================== پایان [بهبود ذخیره‌سازی ۲] ==================== */
 
         /* ==================== [بهبود ذخیره‌سازی ۴] ابزار بررسی سلامت داده ==================== */
+        // گروه‌بندی رکوردها بر اساس کد (نرمال‌شده) و مرتب‌سازی هر گروه بر اساس تاریخ/ساعت
+        // (و در صورت یکسان بودن، شناسه‌ی رکورد) تا رکورد «اول» هر کد مشخص شود.
+        function groupRecordsByCodeOrdered() {
+            const groups = new Map();
+            allRecords.forEach(r => {
+                const code = normalizeCodeValue(r.itemCode);
+                if (!code) return;
+                if (!groups.has(code)) groups.set(code, []);
+                groups.get(code).push(r);
+            });
+            groups.forEach(list => {
+                list.sort((a, b) =>
+                    (parseJalaliDateToJdn(a.date) - parseJalaliDateToJdn(b.date)) ||
+                    (parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time)) ||
+                    ((a.id || 0) - (b.id || 0))
+                );
+            });
+            return groups;
+        }
+
+        // تعداد رکوردهایی که در یک گروه هم‌کد، عکسشان با عکس رکورد اولِ همان کد یکی نیست
+        function countCodePhotoMismatches() {
+            let count = 0;
+            groupRecordsByCodeOrdered().forEach(list => {
+                if (list.length < 2) return;
+                const first = list[0];
+                if (!isSafeImageDataUrl(first.photo)) return;
+                for (let i = 1; i < list.length; i++) {
+                    if (list[i].photo !== first.photo) count++;
+                }
+            });
+            return count;
+        }
+
         async function runDataHealthCheck() {
             const issues = [];
 
@@ -2568,6 +2613,9 @@
 
             const missingPhotoCount = allRecords.filter(r => r.hasPhoto && !r.photo).length;
             if (missingPhotoCount) issues.push({ key: 'missing_photo', severity: 'info', text: `${formatNumber(missingPhotoCount)} رکورد به عکسی اشاره می‌کند که پیدا نشد.`, fixable: true });
+
+            const codePhotoMismatchCount = countCodePhotoMismatches();
+            if (codePhotoMismatchCount) issues.push({ key: 'code_photo_sync', severity: 'info', text: `${formatNumber(codePhotoMismatchCount)} رکورد هم‌کد، عکسِ متفاوت از رکورد اولِ همان کد دارد.`, fixable: true });
 
             const invalidCoreCount = allRecords.filter(r => !r.itemCode || !(r.quantity > 0)).length;
             if (invalidCoreCount) issues.push({ key: 'invalid_core', severity: 'error', text: `${formatNumber(invalidCoreCount)} رکورد فاقد کد لباس یا با تعداد نامعتبر.`, fixable: false });
@@ -2627,6 +2675,21 @@
                 allRecords.forEach(r => {
                     if (r.hasPhoto && !r.photo) { r.hasPhoto = false; r.updatedAt = Date.now(); fixedCount++; }
                 });
+            } else if (key === 'code_photo_sync') {
+                groupRecordsByCodeOrdered().forEach(list => {
+                    if (list.length < 2) return;
+                    const first = list[0];
+                    if (!isSafeImageDataUrl(first.photo)) return;
+                    for (let i = 1; i < list.length; i++) {
+                        const r = list[i];
+                        if (r.photo !== first.photo) {
+                            r.photo = first.photo;
+                            r.hasPhoto = true;
+                            r.updatedAt = Date.now();
+                            fixedCount++;
+                        }
+                    }
+                });
             }
             if (fixedCount > 0) { saveRecords(); renderDashboard(); }
             return fixedCount;
@@ -2653,7 +2716,7 @@
                         <span class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${meta.badge}"><i class="fa-solid ${meta.icon} text-xs"></i></span>
                         <span class="text-xs text-slate-700 dark:text-slate-200">${escapeHTML(issue.text)}</span>
                     </div>
-                    ${issue.fixable ? `<button onclick="handleFixHealthIssue('${issue.key}')" class="shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white whitespace-nowrap">ترمیم خودکار</button>` : `<span class="shrink-0 text-[11px] text-slate-400">نیاز به بررسی دستی</span>`}
+                    ${issue.fixable ? `<button onclick="handleFixHealthIssue('${issue.key}')" class="shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white whitespace-nowrap">ترمیم خودکار</button>` : `<span class="shrink-0 text-[10px] text-slate-400">نیاز به بررسی دستی</span>`}
                 </div>`;
             }).join('');
         }
@@ -3176,30 +3239,6 @@
             return `آمار_${monthName}_${year}.json`;
         }
 
-        // هر ماه در زیرپوشه‌ی جداگانه‌ی خودش (مثلاً «مهر_1404») داخل پوشه‌ی انتخابی ذخیره می‌شود
-        function getMonthFolderName(monthKey) {
-            const [year, monthNumStr] = String(monthKey).split('-');
-            const monthNum = parseInt(monthNumStr, 10);
-            const monthName = PERSIAN_MONTHS[monthNum - 1] || 'نامشخص';
-            return `${monthName}_${year}`;
-        }
-
-        // پیمایش همه‌ی فایل‌های json داخل پوشه‌ی متصل: هم فایل‌های ریشه (سازگاری با نسخه‌های قدیمی)
-        // و هم فایل‌های داخل زیرپوشه‌های ماهانه؛ زیرپوشه‌ی «backups» (نسخه پشتیبان چرخشی) رد می‌شود.
-        async function* walkAppDirJsonFiles() {
-            for await (const [name, handle] of appDirHandle.entries()) {
-                if (handle.kind === 'file') {
-                    if (name.toLowerCase().endsWith('.json')) yield { name, handle, folder: null };
-                } else if (handle.kind === 'directory' && name !== 'backups') {
-                    for await (const [subName, subHandle] of handle.entries()) {
-                        if (subHandle.kind === 'file' && subName.toLowerCase().endsWith('.json')) {
-                            yield { name: subName, handle: subHandle, folder: name };
-                        }
-                    }
-                }
-            }
-        }
-
         // ذخیره‌ی پوشه: ترتیبی (بدون هم‌زمانی) و فقط برای ماه‌های واقعاً تغییرکرده
         const folderWrittenSig = new Map(); // monthKey -> امضای آخرین محتوای نوشته‌شده
         let folderSettingsSig = null;
@@ -3264,8 +3303,8 @@
                 // فقط یک‌بار بعد از هر اتصال، کل پوشه برای یافتن فایل‌های قدیمیِ ماه‌های بدون رکورد اسکن می‌شود
                 // (قبلاً با هر ذخیره‌سازی همه‌ی فایل‌ها خوانده و parse می‌شدند).
                 if (!folderStaleScanDone) {
-                    for await (const { name, handle, folder } of walkAppDirJsonFiles()) {
-                        if (!folder && name === SETTINGS_FILE_NAME) continue;
+                    for await (const [name, handle] of appDirHandle.entries()) {
+                        if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name === SETTINGS_FILE_NAME) continue;
                         try {
                             const file = await handle.getFile();
                             const parsed = JSON.parse(await file.text());
@@ -3287,8 +3326,7 @@
                     const [year, monthNumStr] = String(monthKey).split('-');
                     const monthNum = parseInt(monthNumStr, 10);
                     const monthName = PERSIAN_MONTHS[monthNum - 1] || 'نامشخص';
-                    const monthFolderHandle = await appDirHandle.getDirectoryHandle(getMonthFolderName(monthKey), { create: true });
-                    const fileHandle = await monthFolderHandle.getFileHandle(getMonthFileName(monthKey), { create: true });
+                    const fileHandle = await appDirHandle.getFileHandle(getMonthFileName(monthKey), { create: true });
                     const writable = await fileHandle.createWritable();
                     await writable.write(JSON.stringify({
                         app: 'sewing_statistics',
@@ -3298,8 +3336,6 @@
                     }, null, 2));
                     await writable.close();
                     folderWrittenSig.set(monthKey, sig);
-                    // مهاجرت: اگر از نسخه‌ی قدیمی‌تر فایل همین ماه در ریشه‌ی پوشه باقی مانده، حذف می‌شود
-                    try { await appDirHandle.removeEntry(getMonthFileName(monthKey)); } catch (e) { /* وجود نداشت؛ بی‌اهمیت */ }
                 }
 
                 const settingsPayload = {
@@ -3338,8 +3374,8 @@
             let collectedTombstones = null;
             let hasAnyFile = false;
 
-            for await (const { name, handle } of walkAppDirJsonFiles()) {
-                if (name.startsWith('آمار_دوخت_پشتیبان_')) continue;
+            for await (const [name, handle] of appDirHandle.entries()) {
+                if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name.startsWith('آمار_دوخت_پشتیبان_')) continue;
                 try {
                     const file = await handle.getFile();
                     const parsed = JSON.parse(await file.text());
@@ -3399,7 +3435,7 @@
 
             if (isFreshSelection) {
                 addLog(`پوشه ذخیره‌سازی «${handle.name}» با موفقیت متصل شد.`, 'success');
-                showFeedbackBanner(`از این پس داده‌ها به‌طور خودکار در پوشه «${handle.name}» نیز ذخیره می‌شوند (یک زیرپوشه و فایل جدا برای هر ماه).`, 'success');
+                showFeedbackBanner(`از این پس داده‌ها به‌طور خودکار در پوشه «${handle.name}» نیز ذخیره می‌شوند (یک فایل جدا برای هر ماه).`, 'success');
             }
         }
 
@@ -3547,7 +3583,7 @@
                 statusEl.innerText = 'وضعیت: پوشه‌ای متصل نیست؛ داده‌ها فقط در حافظه مرورگر ذخیره می‌شوند.';
                 statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
             } else if (dirHandlePermissionState === 'granted') {
-                statusEl.innerText = `وضعیت: فعال — پوشه «${appDirHandle.name}» (یک زیرپوشه و فایل برای هر ماه، به‌روزرسانی در همان فایل)`;
+                statusEl.innerText = `وضعیت: فعال — پوشه «${appDirHandle.name}» (یک فایل برای هر ماه، به‌روزرسانی در همان فایل)`;
                 statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
             } else {
                 statusEl.innerHTML = `پوشه «${escapeHTML(appDirHandle.name)}» متصل است ولی دسترسی آن غیرفعال است. <button type="button" onclick="reconnectStorageFolder()" class="underline font-bold">فعال‌سازی دسترسی</button>`;
@@ -4029,6 +4065,7 @@
             if (input) {
                 input.value = formatJalaliDate(jy, jm, day);
                 if (targetId === 'recordDate') { recordDateTouched = true; runAutoDeliveryCalculation(); }
+                if (targetId === 'manualEndDate') { syncManualEndDateTime(); }
             }
             closeDatePicker();
         }
@@ -4039,6 +4076,7 @@
             if (input) {
                 input.value = currentJalali.fullDateStr;
                 if (targetId === 'recordDate') { recordDateTouched = true; runAutoDeliveryCalculation(); }
+                if (targetId === 'manualEndDate') { syncManualEndDateTime(); }
             }
             closeDatePicker();
         }
@@ -4479,17 +4517,17 @@
             }
 
             if (appSettings.fontSize === 'small') {
-                htmlRoot.classList.remove('font-normal-size', 'font-large-size', 'font-xlarge-size');
-                htmlRoot.classList.add('font-small-size');
+                appBody.classList.remove('font-normal-size', 'font-large-size', 'font-xlarge-size');
+                appBody.classList.add('font-small-size');
             } else if (appSettings.fontSize === 'large') {
-                htmlRoot.classList.remove('font-small-size', 'font-normal-size', 'font-xlarge-size');
-                htmlRoot.classList.add('font-large-size');
+                appBody.classList.remove('font-small-size', 'font-normal-size', 'font-xlarge-size');
+                appBody.classList.add('font-large-size');
             } else if (appSettings.fontSize === 'xlarge') {
-                htmlRoot.classList.remove('font-small-size', 'font-normal-size', 'font-large-size');
-                htmlRoot.classList.add('font-xlarge-size');
+                appBody.classList.remove('font-small-size', 'font-normal-size', 'font-large-size');
+                appBody.classList.add('font-xlarge-size');
             } else {
-                htmlRoot.classList.remove('font-small-size', 'font-large-size', 'font-xlarge-size');
-                htmlRoot.classList.add('font-normal-size');
+                appBody.classList.remove('font-small-size', 'font-large-size', 'font-xlarge-size');
+                appBody.classList.add('font-normal-size');
             }
 
             const fontFamilyVal = appSettings.fontFamily || 'Vazirmatn';
@@ -5357,6 +5395,11 @@
             document.getElementById('recordWorkDuration').value = record.workDuration || '';
             document.getElementById('recordDate').value = record.date;
             document.getElementById('recordTime').value = record.time;
+            if (isRecordDateInPastMonth(record.date)) {
+                const endParts = (record.endDateTime || '').split(' - ');
+                document.getElementById('manualEndDate').value = endParts[0] ? endParts[0].trim() : '';
+                document.getElementById('manualEndTime').value = endParts[1] ? endParts[1].trim() : '';
+            }
             toggleDeliveryDurationField();
             if (record.durationTime === 'نامعلوم') {
                 document.getElementById('deliveryDurationUnknown').checked = true;
@@ -5386,7 +5429,7 @@
                 removeSelectedPhoto();
             }
 
-            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-600"></i> ویرایش رکورد کد ${escapeHTML(record.itemCode || '-')}`;
+            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-600"></i> ویرایش رکورد کد ${escapeHTML(record.itemCode) || '-'}`;
             document.getElementById('submitBtn').className = "tactile-btn w-full bg-amber-600 text-white py-3.5 rounded-xl font-medium text-sm hover:bg-amber-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow";
             document.getElementById('submitBtn').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>ذخیره تغییرات</span>`;
             document.getElementById('cancelEditBtn').classList.remove('flex');
@@ -5414,6 +5457,7 @@
             document.getElementById('autoCalcInfoBox').classList.add('hidden');
             document.getElementById('recordEndDateTime').value = '';
             document.getElementById('recordWorkDuration').value = '';
+            disablePastMonthManualEnd();
 
             document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-circle-plus text-indigo-600 dark:text-indigo-400"></i> ثبت کارکرد جدید`;
             document.getElementById('submitBtn').className = "tactile-btn w-full bg-indigo-600 text-white py-3.5 rounded-xl font-medium text-sm hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow";
@@ -5518,88 +5562,61 @@
             });
         }
 
-        // یادداشت‌های دوره/ماهِ در حال نمایش (یا بازه‌ی جستجوی پیشرفته)؛ توسط چند بخش نمایشی استفاده می‌شود
-        const NOTE_TYPE_META = {
-            reminder: {
-                label: 'یادآوری',
-                border: 'border-r-4 border-r-amber-500',
-                badge: 'bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300'
-            },
-            holiday: {
-                label: 'تعطیلی',
-                border: 'border-r-4 border-r-orange-600',
-                badge: 'bg-orange-100 dark:bg-orange-950/50 text-orange-800 dark:text-orange-300'
-            },
-            normal: {
-                label: null,
-                border: 'border-r-4 border-r-slate-300 dark:border-r-slate-600',
-                badge: ''
-            }
-        };
+        function renderDailyNotes() {
+            const container = document.getElementById('notesContainer');
+            if (!container) return;
 
-        function getPeriodNotesList() {
-            if (advancedSearchFilters) {
-                const f = advancedSearchFilters;
-                return dailyNotes.filter(n => {
-                    const v = jalaliDateToComparable(n.date);
-                    if (f.dateFromVal !== null && (v === null || v < f.dateFromVal)) return false;
-                    if (f.dateToVal !== null && (v === null || v > f.dateToVal)) return false;
-                    return true;
-                });
-            }
-            return dailyNotes.filter(n => {
+            // یادداشت‌ها هم مثل جدول کارکردها باید فقط برای دوره/ماهِ در حال نمایش فیلتر شوند؛
+            // قبلاً همیشه یادداشت‌های همه‌ی ماه‌ها با هم نشان داده می‌شدند.
+            const periodNotes = dailyNotes.filter(n => {
                 const info = getMonthInfoFromDateStr(n.date);
                 return info ? info.monthKey === selectedMonthFilter : true;
             });
-        }
 
-        function buildNoteItemHTML(n) {
-            const meta = NOTE_TYPE_META[n.type] || NOTE_TYPE_META.normal;
+            if (periodNotes.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">هیچ یادداشتی برای این دوره ثبت نشده است.</p>`;
+                return;
+            }
+
+            const NOTE_TYPE_META = {
+                reminder: {
+                    label: 'یادآوری',
+                    border: 'border-r-4 border-r-amber-500',
+                    badge: 'bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300'
+                },
+                holiday: {
+                    label: 'تعطیلی',
+                    border: 'border-r-4 border-r-orange-600',
+                    badge: 'bg-orange-100 dark:bg-orange-950/50 text-orange-800 dark:text-orange-300'
+                },
+                normal: {
+                    label: null,
+                    border: 'border-r-4 border-r-slate-300 dark:border-r-slate-600',
+                    badge: ''
+                }
+            };
+
             const todayStr = (typeof currentJalali !== 'undefined' && currentJalali.fullDateStr) || '';
-            const isToday = n.date === todayStr;
-            const weekday = getWeekdayLabelForJalaliDate(n.date);
-            return `
+
+            container.innerHTML = periodNotes.map(n => {
+                const meta = NOTE_TYPE_META[n.type] || NOTE_TYPE_META.normal;
+                const isToday = n.date === todayStr;
+                const weekday = getWeekdayLabelForJalaliDate(n.date);
+                return `
                 <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-300 dark:border-slate-600 ${meta.border} text-xs overflow-hidden">
                     <div class="flex items-center justify-between p-3 cursor-pointer" data-action="toggle-note" data-id="${Number(n.id)}">
                         <div class="flex items-center gap-2 min-w-0 flex-wrap">
-                            <i class="fa-solid fa-chevron-${n.hidden ? 'left' : 'down'} text-slate-400 text-[11px] transition-transform shrink-0"></i>
+                            <i class="fa-solid fa-chevron-${n.hidden ? 'left' : 'down'} text-slate-400 text-[10px] transition-transform shrink-0"></i>
                             <span class="font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">${weekday ? escapeHTML(weekday) + '، ' : ''}${escapeHTML(n.date)}</span>
-                            ${isToday ? '<span class="bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-[11px] font-bold px-2 py-0.5 rounded-full">امروز</span>' : ''}
-                            ${meta.label ? `<span class="${meta.badge} text-[11px] font-bold px-2 py-0.5 rounded-full">${meta.label}</span>` : ''}
+                            ${isToday ? '<span class="bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold px-2 py-0.5 rounded-full">امروز</span>' : ''}
+                            ${meta.label ? `<span class="${meta.badge} text-[10px] font-bold px-2 py-0.5 rounded-full">${meta.label}</span>` : ''}
                         </div>
                         <button data-action="delete-note" data-id="${Number(n.id)}" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors shrink-0" title="حذف یادداشت" aria-label="حذف یادداشت"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                     ${n.hidden ? '' : `<div class="px-3 pb-3 pr-9 text-slate-700 dark:text-slate-200 whitespace-pre-wrap">${escapeHTML(n.text)}</div>`}
                 </div>
             `;
-        }
-
-        function renderDailyNotes() {
-            const container = document.getElementById('notesContainer');
-            if (!container) return;
-            const periodNotes = getPeriodNotesList();
-            container.innerHTML = periodNotes.length === 0
-                ? `<p class="text-xs text-slate-400 text-center py-2">هیچ یادداشتی برای این دوره ثبت نشده است.</p>`
-                : periodNotes.map(buildNoteItemHTML).join('');
-        }
-
-        // بخش نمایشیِ یادداشت‌ها زیرِ لیست کارکردها؛ همان یادداشت‌های دوره/جستجوی جاری را نشان می‌دهد
-        function renderRecordsBottomNotes() {
-            const list = document.getElementById('recordsBottomNotesList');
-            const empty = document.getElementById('recordsBottomNotesEmpty');
-            const countEl = document.getElementById('recordsBottomNotesCount');
-            if (!list || !empty || !countEl) return;
-            const periodNotes = getPeriodNotesList();
-            countEl.innerText = `${formatNumber(periodNotes.length)} یادداشت`;
-            if (periodNotes.length === 0) {
-                list.classList.add('hidden');
-                empty.classList.remove('hidden');
-                list.innerHTML = '';
-                return;
-            }
-            empty.classList.add('hidden');
-            list.classList.remove('hidden');
-            list.innerHTML = periodNotes.map(buildNoteItemHTML).join('');
+            }).join('');
         }
 
         const PERSIAN_WEEKDAYS_FULL = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
@@ -6008,6 +6025,65 @@
 
         // اجرای محاسبه‌ی خودکار: با تغییر «آمار روزانه»، «تعداد دریافتی» یا «ساعت ثبت»،
         // وضعیت تحویل و میزان تاخیر به‌صورت خودکار محاسبه و پر می‌شوند
+        // آیا تاریخ ثبت (رشته‌ی شمسی) مربوط به ماهی قبل از ماه جاری است؟
+        function isRecordDateInPastMonth(dateStr) {
+            const parts = toEnglishDigits((dateStr || '').trim()).split('/');
+            if (parts.length !== 3) return false;
+            const jy = parseInt(parts[0], 10), jm = parseInt(parts[1], 10);
+            if (isNaN(jy) || isNaN(jm)) return false;
+            const curY = parseInt(toEnglishDigits(currentJalali.year), 10);
+            const curM = currentJalali.monthNum;
+            return (jy < curY) || (jy === curY && jm < curM);
+        }
+
+        // برای کدهای ثبت‌شده با تاریخ ماه قبل، محاسبه‌ی خودکار زمان پایان معنی ندارد؛
+        // به‌جایش تاریخ/ساعت پایان با انتخاب دستیِ کاربر (تقویم + ساعت) پر می‌شود.
+        function enablePastMonthManualEnd() {
+            const infoBox = document.getElementById('autoCalcInfoBox');
+            const manualWrap = document.getElementById('manualEndDateTimeWrap');
+            const endDateTimeField = document.getElementById('recordEndDateTime');
+            infoBox.classList.add('hidden');
+            manualWrap.classList.remove('hidden');
+            endDateTimeField.readOnly = true; // این فیلد در این حالت فقط نمایش‌دهنده‌ی خلاصه است؛ ورودی واقعی دو فیلد پایین است
+            syncManualEndDateTime();
+        }
+
+        function disablePastMonthManualEnd() {
+            const manualWrap = document.getElementById('manualEndDateTimeWrap');
+            if (!manualWrap.classList.contains('hidden')) {
+                manualWrap.classList.add('hidden');
+                document.getElementById('manualEndDate').value = '';
+                document.getElementById('manualEndTime').value = '';
+            }
+        }
+
+        // ترکیب تاریخ و ساعت پایانِ دستی در فیلد خلاصه‌ی «تاریخ و زمان پایان»
+        // و محاسبه‌ی «مدت زمان تحویل کار» به‌صورت اختلاف ساده‌ی تقویمی (نه ساعات کاری) بین شروع و پایان
+        function syncManualEndDateTime() {
+            const endDateStr = document.getElementById('manualEndDate').value;
+            const endTimeStr = document.getElementById('manualEndTime').value;
+            const endDateTimeField = document.getElementById('recordEndDateTime');
+            const workDurationField = document.getElementById('recordWorkDuration');
+            endDateTimeField.value = (endDateStr && endTimeStr) ? `${endDateStr} - ${endTimeStr}` : '';
+
+            const startDateStr = document.getElementById('recordDate').value;
+            const startTimeStr = document.getElementById('recordTime').value;
+            if (!startDateStr || !startTimeStr || !endDateStr || !endTimeStr) {
+                if (workDurationField) workDurationField.value = '';
+                return;
+            }
+            const startJdn = parseJalaliDateToJdn(startDateStr);
+            const endJdn = parseJalaliDateToJdn(endDateStr);
+            if (!startJdn || !endJdn) { if (workDurationField) workDurationField.value = ''; return; }
+            const [sh, sm] = startTimeStr.split(':').map(Number);
+            const [eh, em] = endTimeStr.split(':').map(Number);
+            let totalMinutes = (endJdn - startJdn) * 1440 + (eh * 60 + em) - (sh * 60 + sm);
+            if (isNaN(totalMinutes) || totalMinutes < 0) totalMinutes = 0;
+            const hoursNeeded = Math.floor(totalMinutes / 60);
+            const minsNeeded = totalMinutes % 60;
+            if (workDurationField) workDurationField.value = `${String(hoursNeeded).padStart(2, '0')}:${String(minsNeeded).padStart(2, '0')}`;
+        }
+
         function runAutoDeliveryCalculation(keepStatus) {
             const infoBox = document.getElementById('autoCalcInfoBox');
             const infoText = document.getElementById('autoCalcInfoText');
@@ -6017,6 +6093,13 @@
             const startDateStr = document.getElementById('recordDate').value;
             const dailyStatVal = parsePersianInt(document.getElementById('dailyStat').value.trim());
             const receivedQtyVal = parsePersianInt(document.getElementById('receivedQuantity').value.trim());
+
+            if (isRecordDateInPastMonth(startDateStr)) {
+                enablePastMonthManualEnd();
+                if (!keepStatus) toggleDeliveryDurationField();
+                return;
+            }
+            disablePastMonthManualEnd();
 
             const result = calculateCompletionEstimate(startTimeStr, dailyStatVal, receivedQtyVal, startDateStr);
             if (!result) {
@@ -6299,7 +6382,7 @@
                         </span>
                         <span class="text-slate-500 dark:text-slate-400 whitespace-nowrap">${formatNumber(r.quantity)} عدد &nbsp;|&nbsp; ${formatPriceValue(r.totalPrice)} ${escapeHTML(currency)}</span>
                         <span class="text-slate-400 dark:text-slate-500 whitespace-nowrap">${escapeHTML(r.date)} <span class="opacity-60">-</span> ${escapeHTML(r.time)}</span>
-                        <span class="text-[11px] px-2 py-0.5 rounded-full border whitespace-nowrap ${getStatusBadgeClass(getDisplayStatus(r))}">${formatStatusWithDuration(getDisplayStatus(r), r.durationTime)}</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full border whitespace-nowrap ${getStatusBadgeClass(getDisplayStatus(r))}">${formatStatusWithDuration(getDisplayStatus(r), r.durationTime)}</span>
                     </div>
                 `).join('');
 
@@ -6428,8 +6511,13 @@
         // همیشه از طریق Service Worker ارسال می‌شود تا در نوار اعلان‌های اندروید/iOS بنشیند،
         // پایدار بماند (تا لمس نشود از بین نمی‌رود) و با هر بار تکرار دوباره لرزش/صدا بدهد.
         function sendBrowserNotification(title, body, tag, urgent) {
-            if (!('Notification' in window) || Notification.permission !== 'granted') return false;
             const appLabel = appSettings.shopName || 'آمار دوخت';
+            if (window.NativeNotify && window.NativeNotify.isSupported()) {
+                if (!window.__nativeNotifGranted) return false;
+                window.NativeNotify.notify(`${appLabel} • ${title}`, body, tag);
+                return true;
+            }
+            if (!('Notification' in window) || Notification.permission !== 'granted') return false;
             const options = {
                 body,
                 icon: 'icon-192.png',
@@ -6474,6 +6562,21 @@
         function updateNotificationPermissionStatusUI() {
             const statusEl = document.getElementById('notificationPermissionStatusText');
             if (!statusEl) return;
+            if (window.NativeNotify && window.NativeNotify.isSupported()) {
+                window.NativeNotify.checkPermission().then(display => {
+                    if (display === 'granted') {
+                        statusEl.innerText = 'وضعیت: اجازه‌ی اعلان داده شده است.';
+                        statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
+                    } else if (display === 'denied') {
+                        statusEl.innerText = 'وضعیت: اعلان مسدود شده؛ از تنظیمات اندروید برای این اپ اجازه را فعال کنید.';
+                        statusEl.className = 'text-xs font-semibold text-rose-600 dark:text-rose-400';
+                    } else {
+                        statusEl.innerText = 'وضعیت: هنوز اجازه‌ی اعلان درخواست نشده است.';
+                        statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
+                    }
+                });
+                return;
+            }
             if (!('Notification' in window)) {
                 statusEl.innerText = 'مرورگر شما از اعلان‌های سیستمی پشتیبانی نمی‌کند.';
                 statusEl.className = 'text-xs font-semibold text-slate-400';
@@ -6492,6 +6595,18 @@
         }
 
         async function requestNotificationPermission() {
+            if (window.NativeNotify && window.NativeNotify.isSupported()) {
+                const display = await window.NativeNotify.requestPermission();
+                updateNotificationPermissionStatusUI();
+                if (display === 'granted') {
+                    showFeedbackBanner('اعلان‌ها فعال شد.', 'success');
+                    checkDeliveryProgressNotifications();
+                    addLog('اجازه‌ی اعلان داده شد.', 'success');
+                } else {
+                    showFeedbackBanner('اجازه‌ی اعلان داده نشد؛ در این حالت فقط پیام‌های داخل برنامه نمایش داده می‌شوند.', 'warn');
+                }
+                return;
+            }
             if (!('Notification' in window)) {
                 showFeedbackBanner('مرورگر شما از اعلان‌های سیستمی پشتیبانی نمی‌کند.', 'warn');
                 return;
@@ -6514,8 +6629,10 @@
         // ارسال یک اعلان آزمایشی فوری؛ برای اینکه کاربر بلافاصله (بدون صبر برای رسیدن به ۲۵٪ پیشرفت
         // واقعی) بتواند بررسی کند آیا اعلان‌ها روی صفحه/صفحه‌قفل گوشی به‌صورت بنر ظاهر می‌شوند یا نه.
         function sendTestNotification() {
-            if (!('Notification' in window) || Notification.permission !== 'granted') {
-                showFeedbackBanner('برای ارسال اعلان آزمایشی، ابتدا باید اجازه‌ی اعلان مرورگر را بدهید.', 'warn');
+            const nativeReady = window.NativeNotify && window.NativeNotify.isSupported() && window.__nativeNotifGranted;
+            const webReady = ('Notification' in window) && Notification.permission === 'granted';
+            if (!nativeReady && !webReady) {
+                showFeedbackBanner('برای ارسال اعلان آزمایشی، ابتدا باید اجازه‌ی اعلان را بدهید.', 'warn');
                 return;
             }
             const delivered = sendBrowserNotification(
@@ -6782,7 +6899,7 @@
                 ring.classList.toggle('animate-pulse', isOverdue);
             }
             if (ringText) ringText.innerText = `${formatNumber(Math.min(999, progress.percent))}٪`;
-            if (ringIcon) ringIcon.className = `fa-solid ${isOverdue ? 'fa-triangle-exclamation' : 'fa-scissors'} text-[11px] mt-0.5 ${isOverdue ? 'text-rose-500' : 'text-slate-400 dark:text-slate-500'}`;
+            if (ringIcon) ringIcon.className = `fa-solid ${isOverdue ? 'fa-triangle-exclamation' : 'fa-stopwatch'} text-[10px] mt-0.5 ${isOverdue ? 'text-rose-500' : 'text-slate-400 dark:text-slate-500'}`;
 
             if (badge) {
                 badge.className = `text-xs font-bold px-2.5 py-1 rounded-full ${badgeColor}`;
@@ -6797,10 +6914,10 @@
                 <div class="text-xs">
                     <div class="font-bold text-slate-700 dark:text-slate-200 truncate">کد ${escapeHTML(rec.itemCode) || '-'} — ${escapeHTML(rec.itemTitle) || '-'}</div>
                     <div class="mt-1">${remainingText}</div>
-                    ${isStale ? '<div class="text-[11px] text-amber-600 dark:text-amber-400 mt-1">این کار بیش از ۳ روز کاری معوق است و یادآوری‌ها متوقف شده؛ اگر تمام شده، «کار تمام شد» را بزنید.</div>' : ''}
-                    <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
+                    ${isStale ? '<div class="text-[10px] text-amber-600 dark:text-amber-400 mt-1">این کار بیش از ۳ روز کاری معوق است و یادآوری‌ها متوقف شده؛ اگر تمام شده، «کار تمام شد» را بزنید.</div>' : ''}
+                    <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
                     <button type="button" data-action="finish-active" data-id="${Number(rec.id)}" class="no-print mt-2 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition-colors"><i class="fa-solid fa-circle-check"></i> کار تمام شد</button>
-                    ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print mt-1.5 text-[11px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatDateDigits(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
+                    ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print mt-1.5 text-[10px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatDateDigits(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
                 </div>
             `;
             updateAttentionIndicators();
@@ -6931,10 +7048,13 @@
         }
 
         function renderDashboard() {
+            // اگر از آخرین رندر، تاریخ سیستم عوض شده (مثلاً ماه جدید شروع شده) ولی هنوز به‌روزرسانی
+            // نشده، همین‌جا قبل از هر رندری اصلاح می‌شود؛ در نتیجه لیست هیچ‌وقت روی ماه/تاریخِ کهنه
+            // گیر نمی‌کند، حتی اگر تایمرِ پس‌زمینه (هر ۳۰ ثانیه) به‌خاطر مینیمایز شدن تب اجرا نشده باشد.
+            refreshCurrentJalaliIfChanged();
             applyAppSettingsToUI();
             renderMonthSelector();
             renderDailyNotes();
-            renderRecordsBottomNotes();
             renderActiveProgressWidget();
             renderStreakBadge();
             const sortSelect = document.getElementById('sortOptionSelect');
@@ -7177,61 +7297,6 @@
             showFeedbackBanner(`فایل گزارش HTML (${periodLabel}) استخراج و ذخیره شد.`, 'success');
         }
 
-        function exportToCsvReport() {
-            const records = getFilteredRecords();
-            if (records.length === 0) {
-                showFeedbackBanner('رکوردی برای خروجی گرفتن وجود ندارد.', 'warn');
-                return;
-            }
-            const periodLabel = advancedSearchFilters
-                ? 'نتیجه جستجوی پیشرفته'
-                : (() => {
-                    const [year, monthNum] = selectedMonthFilter.split('-');
-                    const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
-                    return `${monthName} ${formatYearDigits(year)}`;
-                })();
-            const currency = appSettings.currency || 'تومان';
-
-            // اکسل رشته‌های حاوی کاما/کوتیشن/خط‌جدید را بدون quote کردن به‌هم می‌ریزد
-            const csvEscape = (val) => {
-                const s = (val === null || val === undefined) ? '' : String(val);
-                return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-            };
-
-            const headers = ['ردیف', 'کد لباس', 'عنوان لباس', 'رنگ', 'تعداد دریافتی', `قیمت واحد (${currency})`, `مبلغ کل (${currency})`, 'شروع کد بعد', 'وضعیت', 'تاریخ ثبت'];
-            const rows = records.map((r, i) => [
-                i + 1,
-                r.itemCode || '-',
-                r.itemTitle,
-                r.itemColor || '-',
-                r.quantity,
-                (r.unitPrice === null || r.unitPrice === undefined) ? 'نامعلوم' : r.unitPrice,
-                (r.totalPrice === null || r.totalPrice === undefined) ? 'نامعلوم' : r.totalPrice,
-                r.nextCodeStartDate ? (r.nextCodeStartDate + (r.nextCodeStartTime ? ' - ' + r.nextCodeStartTime : '')) : '-',
-                getDisplayStatus(r) + (r.durationTime && r.status !== 'به موقع' ? ' (' + r.durationTime + ')' : ''),
-                r.date
-            ]);
-
-            const totalQtySum = records.reduce((sum, r) => sum + r.quantity, 0);
-            const totalAmountSum = sumTotalPrice(records);
-
-            let csvContent = headers.map(csvEscape).join(',') + '\r\n';
-            csvContent += rows.map(row => row.map(csvEscape).join(',')).join('\r\n') + '\r\n';
-            csvContent += '\r\n';
-            csvContent += [csvEscape('مجموع کل تعداد'), csvEscape(totalQtySum)].join(',') + '\r\n';
-            csvContent += [csvEscape(`مجموع کل کارکرد (${currency})`), csvEscape(totalAmountSum)].join(',') + '\r\n';
-
-            // پیشوند BOM برای نمایش صحیح حروف فارسی هنگام باز شدن در اکسل
-            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `آمار_دوخت_${periodLabel.replace(/\s+/g, '_')}.csv`;
-            link.click();
-
-            addLog('گزارش CSV استخراج شد.', 'success');
-            showFeedbackBanner(`فایل CSV (${periodLabel}) استخراج و ذخیره شد.`, 'success');
-        }
-
         function setCurrentTimeInInput() {
             const now = new Date();
             document.getElementById('recordTime').value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -7275,6 +7340,8 @@
         document.getElementById('recordFormCard').addEventListener('focusin', refreshFormDateTimeIfUntouched);
         setInterval(refreshFormDateTimeIfUntouched, 30 * 1000);
         document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshFormDateTimeIfUntouched(); });
+        window.addEventListener('focus', refreshFormDateTimeIfUntouched);
+        window.addEventListener('pageshow', refreshFormDateTimeIfUntouched);
 
         document.getElementById('recordDate').value = currentJalali.fullDateStr;
         document.getElementById('noteDateInput').value = currentJalali.fullDateStr;
@@ -7349,10 +7416,13 @@
         // بررسی دوره‌ای پیشرفت کار جاری برای اعلان‌های هوشمند (هر ۱ دقیقه یک‌بار)،
         // و تازه‌سازیِ سریع‌ترِ خودِ نوار پیشرفت (هر ۲۰ ثانیه) برای حس «زنده» بودن شمارش
         updateNotificationPermissionStatusUI();
+        updatePremiumStatusUI();
         renderStreakBadge();
         checkDeliveryProgressNotifications();
         setInterval(checkDeliveryProgressNotifications, 60 * 1000);
         setInterval(renderActiveProgressWidget, 20 * 1000);
     </script>
+    <script src="native-notify.js"></script>
+    <script src="premium.js"></script>
 </body>
 </html>

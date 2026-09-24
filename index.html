@@ -2558,40 +2558,6 @@
         /* ==================== پایان [بهبود ذخیره‌سازی ۲] ==================== */
 
         /* ==================== [بهبود ذخیره‌سازی ۴] ابزار بررسی سلامت داده ==================== */
-        // گروه‌بندی رکوردها بر اساس کد (نرمال‌شده) و مرتب‌سازی هر گروه بر اساس تاریخ/ساعت
-        // (و در صورت یکسان بودن، شناسه‌ی رکورد) تا رکورد «اول» هر کد مشخص شود.
-        function groupRecordsByCodeOrdered() {
-            const groups = new Map();
-            allRecords.forEach(r => {
-                const code = normalizeCodeValue(r.itemCode);
-                if (!code) return;
-                if (!groups.has(code)) groups.set(code, []);
-                groups.get(code).push(r);
-            });
-            groups.forEach(list => {
-                list.sort((a, b) =>
-                    (parseJalaliDateToJdn(a.date) - parseJalaliDateToJdn(b.date)) ||
-                    (parseTimeToMinutes(a.time) - parseTimeToMinutes(b.time)) ||
-                    ((a.id || 0) - (b.id || 0))
-                );
-            });
-            return groups;
-        }
-
-        // تعداد رکوردهایی که در یک گروه هم‌کد، عکسشان با عکس رکورد اولِ همان کد یکی نیست
-        function countCodePhotoMismatches() {
-            let count = 0;
-            groupRecordsByCodeOrdered().forEach(list => {
-                if (list.length < 2) return;
-                const first = list[0];
-                if (!isSafeImageDataUrl(first.photo)) return;
-                for (let i = 1; i < list.length; i++) {
-                    if (list[i].photo !== first.photo) count++;
-                }
-            });
-            return count;
-        }
-
         async function runDataHealthCheck() {
             const issues = [];
 
@@ -2613,9 +2579,6 @@
 
             const missingPhotoCount = allRecords.filter(r => r.hasPhoto && !r.photo).length;
             if (missingPhotoCount) issues.push({ key: 'missing_photo', severity: 'info', text: `${formatNumber(missingPhotoCount)} رکورد به عکسی اشاره می‌کند که پیدا نشد.`, fixable: true });
-
-            const codePhotoMismatchCount = countCodePhotoMismatches();
-            if (codePhotoMismatchCount) issues.push({ key: 'code_photo_sync', severity: 'info', text: `${formatNumber(codePhotoMismatchCount)} رکورد هم‌کد، عکسِ متفاوت از رکورد اولِ همان کد دارد.`, fixable: true });
 
             const invalidCoreCount = allRecords.filter(r => !r.itemCode || !(r.quantity > 0)).length;
             if (invalidCoreCount) issues.push({ key: 'invalid_core', severity: 'error', text: `${formatNumber(invalidCoreCount)} رکورد فاقد کد لباس یا با تعداد نامعتبر.`, fixable: false });
@@ -2674,21 +2637,6 @@
             } else if (key === 'missing_photo') {
                 allRecords.forEach(r => {
                     if (r.hasPhoto && !r.photo) { r.hasPhoto = false; r.updatedAt = Date.now(); fixedCount++; }
-                });
-            } else if (key === 'code_photo_sync') {
-                groupRecordsByCodeOrdered().forEach(list => {
-                    if (list.length < 2) return;
-                    const first = list[0];
-                    if (!isSafeImageDataUrl(first.photo)) return;
-                    for (let i = 1; i < list.length; i++) {
-                        const r = list[i];
-                        if (r.photo !== first.photo) {
-                            r.photo = first.photo;
-                            r.hasPhoto = true;
-                            r.updatedAt = Date.now();
-                            fixedCount++;
-                        }
-                    }
                 });
             }
             if (fixedCount > 0) { saveRecords(); renderDashboard(); }
@@ -5429,7 +5377,7 @@
                 removeSelectedPhoto();
             }
 
-            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-600"></i> ویرایش رکورد کد ${escapeHTML(record.itemCode) || '-'}`;
+            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-600"></i> ویرایش رکورد کد ${record.itemCode || '-'}`;
             document.getElementById('submitBtn').className = "tactile-btn w-full bg-amber-600 text-white py-3.5 rounded-xl font-medium text-sm hover:bg-amber-700 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow";
             document.getElementById('submitBtn').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>ذخیره تغییرات</span>`;
             document.getElementById('cancelEditBtn').classList.remove('flex');
@@ -7048,10 +6996,6 @@
         }
 
         function renderDashboard() {
-            // اگر از آخرین رندر، تاریخ سیستم عوض شده (مثلاً ماه جدید شروع شده) ولی هنوز به‌روزرسانی
-            // نشده، همین‌جا قبل از هر رندری اصلاح می‌شود؛ در نتیجه لیست هیچ‌وقت روی ماه/تاریخِ کهنه
-            // گیر نمی‌کند، حتی اگر تایمرِ پس‌زمینه (هر ۳۰ ثانیه) به‌خاطر مینیمایز شدن تب اجرا نشده باشد.
-            refreshCurrentJalaliIfChanged();
             applyAppSettingsToUI();
             renderMonthSelector();
             renderDailyNotes();
@@ -7340,8 +7284,6 @@
         document.getElementById('recordFormCard').addEventListener('focusin', refreshFormDateTimeIfUntouched);
         setInterval(refreshFormDateTimeIfUntouched, 30 * 1000);
         document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshFormDateTimeIfUntouched(); });
-        window.addEventListener('focus', refreshFormDateTimeIfUntouched);
-        window.addEventListener('pageshow', refreshFormDateTimeIfUntouched);
 
         document.getElementById('recordDate').value = currentJalali.fullDateStr;
         document.getElementById('noteDateInput').value = currentJalali.fullDateStr;

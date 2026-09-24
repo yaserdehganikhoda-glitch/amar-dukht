@@ -570,7 +570,7 @@
                 <div id="manualEndDateTimeWrap" class="hidden bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 rounded-xl p-3">
                     <p class="text-[11px] leading-relaxed text-amber-700 dark:text-amber-400 mb-2.5 flex items-start gap-1.5">
                         <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
-                        <span>تاریخ ثبت مربوط به ماه گذشته است؛ تاریخ و ساعت پایان را به‌صورت دستی انتخاب کنید. مدت هدف از روی آمار روزانه و وضعیت تحویل از روی زمان کاریِ واقعی محاسبه می‌شود.</span>
+                        <span>تاریخ ثبت مربوط به ماه گذشته است؛ محاسبه‌ی خودکار غیرفعال شد. تاریخ و ساعت پایان را به‌صورت دستی انتخاب کنید.</span>
                     </p>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
@@ -1147,20 +1147,6 @@
                         <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">مجموع بازه‌های کاری برنامه (شروع تا پایان منهای استراحت‌ها): <b id="shiftTotalPreview" class="text-indigo-600 dark:text-indigo-400">—</b> <button type="button" onclick="syncWorkdayWithSchedule()" class="underline text-purple-600 dark:text-purple-400 mr-1">هم‌سان‌سازی با آن</button></p>
                     </div>
                     <button type="button" onclick="resetWorkSettingsToDefaults()" class="text-xs text-slate-500 dark:text-slate-400 underline hover:text-purple-600">بازگشت به پیش‌فرض (۸ تا ۱۸، ۸ ساعت و ۱۵ دقیقه)</button>
-                </div>
-                <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-scale-balanced"></i> منطق محاسبه‌ی وضعیت تحویل</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <label class="flex items-start gap-2 p-3 border border-slate-400 dark:border-slate-500 rounded-xl cursor-pointer bg-white dark:bg-slate-800 field-box-bg">
-                            <input type="radio" name="settingDeliveryMode" id="settingDeliveryModeAuto" value="auto" class="mt-1 accent-purple-600">
-                            <span><b class="block text-xs text-slate-700 dark:text-slate-200">خودکار</b><span class="block text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">سیستم مدت هدف را با زمان کاریِ واقعی (تا شروع کد بعد، «کار تمام شد» یا پایان دستی) مقایسه و وضعیت و مدت تاخیر را خودش تعیین می‌کند.</span></span>
-                        </label>
-                        <label class="flex items-start gap-2 p-3 border border-slate-400 dark:border-slate-500 rounded-xl cursor-pointer bg-white dark:bg-slate-800 field-box-bg">
-                            <input type="radio" name="settingDeliveryMode" id="settingDeliveryModeManual" value="manual" class="mt-1 accent-purple-600">
-                            <span><b class="block text-xs text-slate-700 dark:text-slate-200">دستی</b><span class="block text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">وضعیت و مدت تاخیر/زودتر از موعد را خودتان در فرم انتخاب می‌کنید و سیستم آن را تغییر نمی‌دهد.</span></span>
-                        </label>
-                    </div>
-                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">تغییر حالت فقط روی ثبت و ویرایش‌های بعدی اثر می‌گذارد؛ رکوردهای قبلی تا زمان ویرایش عوض نمی‌شوند.</p>
                 </div>
                 <div class="space-y-3">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-pen-ruler"></i> نام فیلدهای فرم «ثبت کارکرد جدید»</h3>
@@ -2007,7 +1993,6 @@
             s.numFormat = pick(s.numFormat, ['persian', 'english'], 'persian');
             const tolRaw = Number(s.onTimeToleranceMinutes);
             s.onTimeToleranceMinutes = Number.isFinite(tolRaw) ? Math.max(0, Math.min(120, Math.floor(tolRaw))) : 5;
-            s.deliveryStatusMode = pick(s.deliveryStatusMode, ['auto', 'manual'], 'auto');
             s.fontFamily = pick(s.fontFamily, ['Vazirmatn', 'Vazir', 'Sahel', 'Samim', 'Shabnam'], 'Vazirmatn');
             const colorOk = c => c === 'default' || (typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c));
             ['bgColor', 'cardColor', 'fieldColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
@@ -2747,7 +2732,6 @@
             currency: 'تومان',
             defaultStatus: 'به موقع',
             onTimeToleranceMinutes: 5,
-            deliveryStatusMode: 'auto',
             theme: 'light',
             fontSize: 'normal',
             numFormat: 'persian',
@@ -4287,7 +4271,6 @@
             document.getElementById('settingCurrency').value = appSettings.currency || 'تومان';
             document.getElementById('settingDefaultStatus').value = appSettings.defaultStatus || 'به موقع';
             document.getElementById('settingOnTimeTolerance').value = formatNumber(getOnTimeTolerance()).replace(/,/g, '');
-            document.getElementById(isManualDeliveryMode() ? 'settingDeliveryModeManual' : 'settingDeliveryModeAuto').checked = true;
             document.getElementById('settingTheme').value = appSettings.theme || 'light';
             document.getElementById('settingFontSize').value = appSettings.fontSize || 'normal';
             document.getElementById('settingNumFormat').value = appSettings.numFormat || 'persian';
@@ -4364,7 +4347,6 @@
             appSettings.defaultStatus = defaultStatusVal;
             const tolInputRaw = document.getElementById('settingOnTimeTolerance').value.trim();
             appSettings.onTimeToleranceMinutes = tolInputRaw === '' ? getOnTimeTolerance() : Math.max(0, Math.min(120, parsePersianInt(tolInputRaw)));
-            appSettings.deliveryStatusMode = document.getElementById('settingDeliveryModeManual').checked ? 'manual' : 'auto';
             appSettings.theme = themeVal;
             appSettings.fontSize = fontSizeVal;
             appSettings.numFormat = numFormatVal;
@@ -5041,8 +5023,6 @@
         // مقایسه‌ی «مدت زمان تحویل کار» (هدف) رکورد با زمان کاریِ واقعاً سپری‌شده تا لحظه‌ی شروع
         // کد بعدیِ واقعی، و تنظیم وضعیت (تاخیر/زودتر از موعد/به‌موقع) و مقدار آن روی رکورد.
         // خروجی: true اگر محاسبه واقعاً انجام شد (یعنی داده‌های لازم کامل بودند).
-        function isManualDeliveryMode() { return appSettings.deliveryStatusMode === 'manual'; }
-
         function getOnTimeTolerance() {
             const t = Number(appSettings.onTimeToleranceMinutes);
             return (Number.isFinite(t) && t >= 0) ? Math.min(120, Math.floor(t)) : 0;
@@ -5059,7 +5039,6 @@
 
         // مقایسه‌ی زمان کاریِ واقعاً سپری‌شده تا لحظه‌ی پایان (شروع کد بعد یا «کار تمام شد») با مدت هدف
         function evaluateDeliveryAgainst(rec, endDateStr, endTimeStr) {
-            if (isManualDeliveryMode()) return false; // حالت دستی: وضعیت و مدت را کاربر تعیین می‌کند
             const target = parseDurationStrToMinutes(rec.workDuration);
             if (target === null || !rec.date || !rec.time || !endDateStr || !endTimeStr) return false;
             const startJdn = parseJalaliDateToJdn(rec.date);
@@ -5067,37 +5046,17 @@
             if (!startJdn || !endJdn) return false;
 
             const actual = calculateActualWorkingMinutesElapsed(startJdn, parseTimeToMinutes(rec.time), endJdn, parseTimeToMinutes(endTimeStr));
-            const out = classifyDelivery(target, actual);
-            rec.status = out.status;
-            rec.durationTime = out.durationTime;
+            const diff = actual - target;
+            if (Math.abs(diff) <= getOnTimeTolerance()) {
+                rec.status = 'به موقع';
+                rec.durationTime = '';
+            } else {
+                rec.status = diff > 0 ? 'تاخیر' : 'زودتر از موعد';
+                const absDiff = Math.abs(diff);
+                rec.durationTime = `${String(Math.floor(absDiff / 60)).padStart(2, '0')}:${String(absDiff % 60).padStart(2, '0')}`;
+            }
             updateOnTimeStreak(rec);
             return true;
-        }
-
-        // منطق واحدِ تشخیص «به موقع / تاخیر / زودتر از موعد» از روی مدت هدف و زمان کاریِ واقعی (هر دو بر حسب دقیقه)
-        function classifyDelivery(targetMin, actualMin) {
-            const diff = actualMin - targetMin;
-            if (Math.abs(diff) <= getOnTimeTolerance()) return { status: 'به موقع', durationTime: '', diff };
-            const a = Math.abs(diff);
-            return {
-                status: diff > 0 ? 'تاخیر' : 'زودتر از موعد',
-                durationTime: `${String(Math.floor(a / 60)).padStart(2, '0')}:${String(a % 60).padStart(2, '0')}`,
-                diff
-            };
-        }
-
-        // ثبت گذشته‌نگر (تاریخ ماه قبل): تاریخ/ساعت پایانِ دستی به‌عنوان «پایان کار» ثبت می‌شود تا وضعیت
-        // بر اساس زمان کاریِ واقعی محاسبه شود و بعداً با رکوردهای ماه جاری بازنویسی نشود.
-        function applyManualEndToRecord(rec, manualEnd) {
-            if (!manualEnd) return false;
-            const prevCounted = rec.streakCounted;
-            rec.finishedDate = manualEnd.date;
-            rec.finishedTime = manualEnd.time;
-            if (isManualDeliveryMode()) return true; // وضعیتِ انتخابیِ کاربر دست‌نخورده می‌ماند
-            rec.streakCounted = true; // ثبت گذشته‌نگر روی رکورد «کدهای متوالی به‌موقع» اثر نگذارد
-            const ok = evaluateDeliveryAgainst(rec, manualEnd.date, manualEnd.time);
-            if (!ok) { rec.finishedDate = null; rec.finishedTime = null; rec.streakCounted = prevCounted; }
-            return ok;
         }
 
         function computeAndSetDeliveryStatus(rec, nextDateStr, nextTimeStr) {
@@ -5181,7 +5140,6 @@
             rec.updatedAt = Date.now();
             rec.nextCodeStartDate = null;
             rec.nextCodeStartTime = null;
-            if (isManualDeliveryMode()) return; // حالت دستی: وضعیت ثبت‌شده‌ی کاربر بازنویسی نمی‌شود
             const est = calculateCompletionEstimate(rec.time, rec.dailyStat, rec.quantity, rec.date);
             if (!est) return;
             rec.status = 'به موقع';
@@ -5305,22 +5263,6 @@
                 return;
             }
 
-            // ثبت گذشته‌نگر: اگر تاریخ ثبت مربوط به ماه قبل است، تاریخ/ساعت پایانِ دستی «پایان کار» محسوب می‌شود
-            let manualEnd = null;
-            if (isRecordDateInPastMonth(date)) {
-                const mDate = document.getElementById('manualEndDate').value;
-                const mTime = document.getElementById('manualEndTime').value;
-                if (mDate && mTime) {
-                    const sKey = parseJalaliDateToJdn(date) * 1440 + parseTimeToMinutes(time);
-                    const eKey = parseJalaliDateToJdn(mDate) * 1440 + parseTimeToMinutes(mTime);
-                    if (eKey <= sKey) {
-                        showFeedbackBanner('تاریخ و ساعت پایان باید بعد از تاریخ و ساعت شروع باشد.', 'warn');
-                        return;
-                    }
-                    manualEnd = { date: mDate, time: mTime };
-                }
-            }
-
             // ماه/سال رکورد معمولاً از روی خودِ تاریخ انتخاب‌شده در فرم محاسبه می‌شود، نه از تاریخ
             // امروز سیستم؛ در غیر این صورت رکوردهای عقب‌افتاده/جلوافتاده زیر ماه اشتباهی فیلتر می‌شدند.
             // استثنا: وقتی «تاریخ ثبت» عمداً به ماه قبل برده شده (حالت ثبت دستیِ تاریخ/ساعت پایان)،
@@ -5362,13 +5304,6 @@
                     // اگر خودِ همین رکورد از قبل «شروع کد بعد» داشت (رکوردی بعد از آن وجود داشت)،
                     // آن اشاره‌گر هم ممکن است با تغییر تاریخ/ساعت یا مدت‌زمان هدف نامعتبر شده باشد؛
                     // بر مبنای رکورد بعدیِ واقعیِ فعلی (در صورت وجود) دوباره محاسبه می‌شود.
-                    if (manualEnd) {
-                        applyManualEndToRecord(allRecords[targetIndex], manualEnd);
-                    } else if (isRecordDateInPastMonth(oldDate)) {
-                        // رکورد از حالت «ماه قبل/پایان دستی» به ماه جاری منتقل شده؛ پایانِ دستیِ قبلی دیگر معتبر نیست
-                        allRecords[targetIndex].finishedDate = null;
-                        allRecords[targetIndex].finishedTime = null;
-                    }
                     refreshOwnNextCodeStartLink(allRecords[targetIndex]);
 
                     // مشابه ثبت رکورد جدید: رکورد قبلیِ (از نظر زمانی) همین رکورد نیز، در صورتی که
@@ -5400,7 +5335,6 @@
                 // به‌صورت خودکار محاسبه و در لیست کارکردها به‌روزرسانی می‌شود.
                 applyNextCodeStartToPreviousRecord(date, time, null);
                 allRecords.unshift(newRecord);
-                applyManualEndToRecord(newRecord, manualEnd);
                 // اگر رکوردی بعد از این تاریخ/ساعت از قبل وجود دارد (ثبت عقب‌افتاده)، لینک «شروع کد بعد» همین رکورد هم ساخته شود
                 refreshOwnNextCodeStartLink(newRecord);
                 addLog(`رکورد جدید ${code} ثبت شد.`, 'success');
@@ -5437,7 +5371,7 @@
             document.getElementById('recordDate').value = record.date;
             document.getElementById('recordTime').value = record.time;
             if (isRecordDateInPastMonth(record.date)) {
-                const endParts = (record.finishedDate ? `${record.finishedDate} - ${record.finishedTime || ''}` : (record.endDateTime || '')).split(' - ');
+                const endParts = (record.endDateTime || '').split(' - ');
                 document.getElementById('manualEndDate').value = endParts[0] ? endParts[0].trim() : '';
                 document.getElementById('manualEndTime').value = endParts[1] ? endParts[1].trim() : '';
             }
@@ -6098,51 +6032,31 @@
             }
         }
 
-        // ترکیب تاریخ و ساعت پایانِ دستی در فیلد خلاصه‌ی «تاریخ و زمان پایان».
-        // «مدت زمان تحویل کار» همان مدت هدفِ مبتنی بر آمار روزانه × تعداد است (نه اختلاف تقویمی شروع و پایان)،
-        // و وضعیت تحویل از مقایسه‌ی آن با زمان کاریِ واقعیِ سپری‌شده تا پایانِ دستی به‌دست می‌آید.
+        // ترکیب تاریخ و ساعت پایانِ دستی در فیلد خلاصه‌ی «تاریخ و زمان پایان»
+        // و محاسبه‌ی «مدت زمان تحویل کار» به‌صورت اختلاف ساده‌ی تقویمی (نه ساعات کاری) بین شروع و پایان
         function syncManualEndDateTime() {
             const endDateStr = document.getElementById('manualEndDate').value;
             const endTimeStr = document.getElementById('manualEndTime').value;
             const endDateTimeField = document.getElementById('recordEndDateTime');
             const workDurationField = document.getElementById('recordWorkDuration');
-            const infoBox = document.getElementById('autoCalcInfoBox');
-            const infoText = document.getElementById('autoCalcInfoText');
             endDateTimeField.value = (endDateStr && endTimeStr) ? `${endDateStr} - ${endTimeStr}` : '';
-            infoBox.classList.add('hidden');
 
             const startDateStr = document.getElementById('recordDate').value;
             const startTimeStr = document.getElementById('recordTime').value;
-            const dailyStatVal = parsePersianInt(document.getElementById('dailyStat').value.trim());
-            const receivedQtyVal = parsePersianInt(document.getElementById('receivedQuantity').value.trim());
-            const est = (startDateStr && startTimeStr)
-                ? calculateCompletionEstimate(startTimeStr, dailyStatVal, receivedQtyVal, startDateStr) : null;
-            if (workDurationField) {
-                workDurationField.value = est ? `${String(est.hoursNeeded).padStart(2, '0')}:${String(est.minsNeeded).padStart(2, '0')}` : '';
+            if (!startDateStr || !startTimeStr || !endDateStr || !endTimeStr) {
+                if (workDurationField) workDurationField.value = '';
+                return;
             }
-            if (!est || !endDateStr || !endTimeStr) return;
-
             const startJdn = parseJalaliDateToJdn(startDateStr);
             const endJdn = parseJalaliDateToJdn(endDateStr);
-            if (!startJdn || !endJdn) return;
-            const actual = calculateActualWorkingMinutesElapsed(startJdn, parseTimeToMinutes(startTimeStr), endJdn, parseTimeToMinutes(endTimeStr));
-            const out = classifyDelivery(est.targetWorkMinutes, actual);
-
-            const manualMode = isManualDeliveryMode();
-            if (!manualMode) {
-                document.getElementById('itemStatus').value = out.status;
-                toggleDeliveryDurationField();
-            }
-            if (!manualMode && out.durationTime) {
-                const [h, m] = out.durationTime.split(':').map(Number);
-                document.getElementById('deliveryDurationUnknown').checked = false;
-                document.getElementById('deliveryDurationHour').value = String(Math.min(200, h));
-                document.getElementById('deliveryDurationMinute').value = String(Math.min(55, Math.round(m / 5) * 5));
-                toggleDeliveryDurationUnknown();
-            }
-            infoText.innerText = `مدت هدف: ${formatMinutesDuration(est.targetWorkMinutes)} | زمان کاریِ واقعی: ${formatMinutesDuration(actual)} | نتیجه: ${out.status}` +
-                (out.durationTime ? ` (${formatMinutesDuration(Math.abs(out.diff))})` : '') + (manualMode ? ' — فقط پیشنهاد سیستم؛ وضعیت را خودتان انتخاب کنید' : ' — به‌صورت خودکار محاسبه شد');
-            infoBox.classList.remove('hidden');
+            if (!startJdn || !endJdn) { if (workDurationField) workDurationField.value = ''; return; }
+            const [sh, sm] = startTimeStr.split(':').map(Number);
+            const [eh, em] = endTimeStr.split(':').map(Number);
+            let totalMinutes = (endJdn - startJdn) * 1440 + (eh * 60 + em) - (sh * 60 + sm);
+            if (isNaN(totalMinutes) || totalMinutes < 0) totalMinutes = 0;
+            const hoursNeeded = Math.floor(totalMinutes / 60);
+            const minsNeeded = totalMinutes % 60;
+            if (workDurationField) workDurationField.value = `${String(hoursNeeded).padStart(2, '0')}:${String(minsNeeded).padStart(2, '0')}`;
         }
 
         function runAutoDeliveryCalculation(keepStatus) {
@@ -6187,7 +6101,7 @@
                 workDurationField.value = `${String(result.hoursNeeded).padStart(2, '0')}:${String(result.minsNeeded).padStart(2, '0')}`;
             }
 
-            if (!keepStatus && !isManualDeliveryMode()) {
+            if (!keepStatus) {
                 // وضعیت نهایی فقط با ثبت کد بعد یا «کار تمام شد» قطعی می‌شود؛ تا آن زمان «به موقع» (در انتظار) است.
                 // عبور کار از یک شبانه‌روز (یا شروع در جمعه/پایان شیفت) به‌تنهایی تاخیر نیست.
                 document.getElementById('itemStatus').value = 'به موقع';
@@ -6248,7 +6162,6 @@
         // رکورد «در انتظار»: مدت هدف دارد ولی هنوز نه کد بعدی ثبت شده و نه «کار تمام شد» زده شده؛
         // یعنی وضعیت واقعی تحویلش هنوز مشخص نیست و نباید جزو «به موقع» شمرده شود.
         function isRecordPending(r) {
-            if (isManualDeliveryMode()) return false;
             return (r.status || 'به موقع') === 'به موقع' && !r.nextCodeStartDate && !r.finishedDate && !!r.workDuration;
         }
         function getDisplayStatus(r) {

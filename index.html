@@ -73,12 +73,42 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
+        @keyframes motivationGlow {
+            0%, 100% { box-shadow: 0 0 0 0 currentColor; }
+            50% { box-shadow: 0 0 12px 1px currentColor; }
+        }
+        @keyframes motivationShake {
+            0%, 90%, 100% { transform: translateX(0); }
+            91% { transform: translateX(-2px); }
+            92.5% { transform: translateX(2px); }
+            94% { transform: translateX(-2px); }
+            95.5% { transform: translateX(2px); }
+            97% { transform: translateX(0); }
+        }
+        /* تنوع انیمیشنِ نوار متن انگیزشی، قابل انتخاب از تنظیمات (ظاهری) */
         .motivation-badge {
-            animation: fadeSlideIn 0.45s ease-out, motivationBreathe 2.6s ease-in-out infinite;
+            animation: fadeSlideIn 0.45s ease-out;
         }
         .motivation-badge i {
             display: inline-block;
+        }
+        .motivation-badge.motiv-anim-default {
+            animation: fadeSlideIn 0.45s ease-out, motivationBreathe 2.6s ease-in-out infinite;
+        }
+        .motivation-badge.motiv-anim-default i {
             animation: motivationPulse 1.3s ease-in-out infinite;
+        }
+        .motivation-badge.motiv-anim-pulse i {
+            animation: motivationPulse 1.1s ease-in-out infinite;
+        }
+        .motivation-badge.motiv-anim-glow {
+            animation: fadeSlideIn 0.45s ease-out, motivationGlow 2.4s ease-in-out infinite;
+        }
+        .motivation-badge.motiv-anim-glow i {
+            animation: motivationPulse 1.3s ease-in-out infinite;
+        }
+        .motivation-badge.motiv-anim-shake {
+            animation: fadeSlideIn 0.45s ease-out, motivationShake 4.2s ease-in-out infinite;
         }
         #actionFeedbackBanner:not(.hidden), .rc-card, #recordsTableBody tr {
             animation: fadeSlideIn 0.3s ease-out;
@@ -1352,6 +1382,73 @@
                         رنگ‌های سفارشی مستقل از حالت روشن/تاریک اعمال می‌شوند؛ گزینه «پیش‌فرض سامانه» رنگ‌بندی استاندارد را برمی‌گرداند. «کادرها» شامل کارت‌های بزرگ (مثل فرم و جدول) و «فیلدها» شامل جعبه‌های ورودی و دکمه‌های کوچک نوار ابزار است.
                     </p>
                 </div>
+
+                <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">نوار متن انگیزشی بالای صفحه</h3>
+                    <label class="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300 cursor-pointer w-fit">
+                        <input type="checkbox" id="settingMotivationVisible" class="w-4 h-4 rounded accent-purple-600">
+                        نمایش نوار متن انگیزشی
+                    </label>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">تنوع انیمیشن</label>
+                        <select id="settingMotivationAnimation" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                            <option value="default">پیش‌فرض (نبض ملایم + تنفس)</option>
+                            <option value="pulse">فقط ضربانِ آیکون</option>
+                            <option value="glow">درخشش دوره‌ای</option>
+                            <option value="shake">لرزش دوره‌ای کوتاه</option>
+                            <option value="none">بدون انیمیشن</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">رنگ پس‌زمینه نوار</label>
+                            <select id="settingMotivationBgColor" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                                <optgroup label="پیش‌فرض">
+                                    <option value="default">پیش‌فرض (بر اساس وضعیت)</option>
+                                </optgroup>
+                                <optgroup label="🔆 رنگ‌های روشن">
+                                    <option value="#ffffff">سفید خالص</option>
+                                    <option value="#faf6f0">کرم ملایم</option>
+                                    <option value="#fdf2f8">صورتی ملایم</option>
+                                    <option value="#f5f3ff">بنفش ملایم</option>
+                                    <option value="#eff6ff">آبی ملایم</option>
+                                    <option value="#ecfeff">فیروزه‌ای ملایم</option>
+                                    <option value="#f0fdf4">سبز ملایم</option>
+                                    <option value="#fefce8">زرد ملایم</option>
+                                    <option value="#fff7ed">نارنجی ملایم</option>
+                                    <option value="#f1f5f9">خاکستری روشن</option>
+                                </optgroup>
+                                <optgroup label="🌙 رنگ‌های تیره">
+                                    <option value="#1e293b">خاکستری تیره</option>
+                                    <option value="#0f172a">سرمه‌ای تیره</option>
+                                    <option value="#1c1917">قهوه‌ای تیره</option>
+                                    <option value="#171717">مشکی نرم</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">رنگ متن نوار</label>
+                            <select id="settingMotivationTextColor" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                                <optgroup label="پیش‌فرض">
+                                    <option value="default">پیش‌فرض (بر اساس وضعیت)</option>
+                                </optgroup>
+                                <optgroup label="رنگ‌های متن">
+                                    <option value="#1e293b">خاکستری تیره</option>
+                                    <option value="#0f172a">سرمه‌ای تیره</option>
+                                    <option value="#ffffff">سفید</option>
+                                    <option value="#4f46e5">بنفش/نیلی</option>
+                                    <option value="#b91c1c">قرمز</option>
+                                    <option value="#b45309">نارنجی/کهربایی</option>
+                                    <option value="#047857">سبز</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="text-[11px] leading-relaxed text-slate-400 dark:text-slate-500">
+                        <i class="fa-solid fa-circle-info ml-1"></i>
+                        اگر رنگ پس‌زمینه یا متن سفارشی انتخاب شود، همان رنگ برای همه‌ی حالت‌های نوار انگیزشی (عادی، تاخیر، رشته‌ی موفق و ...) به‌کار می‌رود؛ گزینه «پیش‌فرض» رنگ‌بندیِ خودکار بر اساس وضعیت را برمی‌گرداند.
+                    </p>
+                </div>
                 </div>
 
                 <div id="settingsTab-security" class="settings-tab-panel hidden space-y-4">
@@ -2083,6 +2180,9 @@
             s.fontFamily = pick(s.fontFamily, ['Vazirmatn', 'Vazir', 'Sahel', 'Samim', 'Shabnam'], 'Vazirmatn');
             const colorOk = c => c === 'default' || (typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c));
             ['bgColor', 'cardColor', 'fieldColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
+            s.motivationBadgeVisible = s.motivationBadgeVisible !== false;
+            s.motivationAnimation = pick(s.motivationAnimation, ['default', 'pulse', 'glow', 'shake', 'none'], 'default');
+            ['motivationBgColor', 'motivationTextColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
             s.shopName = String(s.shopName || DEFAULT_APP_SETTINGS.shopName).slice(0, 120);
             ['ownerName', 'ownerPhone', 'ownerAddress'].forEach(k => { s[k] = String(s[k] == null ? '' : s[k]).slice(0, 200); });
             s.ownerPhoto = isSafeImageDataUrl(s.ownerPhoto) ? s.ownerPhoto : null;
@@ -2833,6 +2933,10 @@
             bgColor: 'default',
             cardColor: 'default',
             fieldColor: 'default',
+            motivationBadgeVisible: true,
+            motivationAnimation: 'default',
+            motivationBgColor: 'default',
+            motivationTextColor: 'default',
             notificationsEnabled: false,
             voiceAlertsEnabled: false,
             onTimeStreak: 0,
@@ -4413,6 +4517,10 @@
             document.getElementById('settingBgColor').value = appSettings.bgColor || 'default';
             document.getElementById('settingCardColor').value = appSettings.cardColor || 'default';
             document.getElementById('settingFieldColor').value = appSettings.fieldColor || 'default';
+            document.getElementById('settingMotivationVisible').checked = appSettings.motivationBadgeVisible !== false;
+            document.getElementById('settingMotivationAnimation').value = appSettings.motivationAnimation || 'default';
+            document.getElementById('settingMotivationBgColor').value = appSettings.motivationBgColor || 'default';
+            document.getElementById('settingMotivationTextColor').value = appSettings.motivationTextColor || 'default';
             document.getElementById('settingNewPin').value = '';
             document.getElementById('settingConfirmPin').value = '';
             updatePinLockStatusUI();
@@ -4470,6 +4578,10 @@
             const bgColorVal = document.getElementById('settingBgColor').value;
             const cardColorVal = document.getElementById('settingCardColor').value;
             const fieldColorVal = document.getElementById('settingFieldColor').value;
+            const motivationVisibleVal = document.getElementById('settingMotivationVisible').checked;
+            const motivationAnimationVal = document.getElementById('settingMotivationAnimation').value;
+            const motivationBgColorVal = document.getElementById('settingMotivationBgColor').value;
+            const motivationTextColorVal = document.getElementById('settingMotivationTextColor').value;
             const notificationsEnabledVal = document.getElementById('settingNotificationsEnabled').checked;
             const voiceAlertsEnabledVal = document.getElementById('settingVoiceAlertsEnabled').checked;
 
@@ -4493,6 +4605,10 @@
             appSettings.bgColor = bgColorVal;
             appSettings.cardColor = cardColorVal;
             appSettings.fieldColor = fieldColorVal;
+            appSettings.motivationBadgeVisible = motivationVisibleVal;
+            appSettings.motivationAnimation = motivationAnimationVal;
+            appSettings.motivationBgColor = motivationBgColorVal;
+            appSettings.motivationTextColor = motivationTextColorVal;
             appSettings.notificationsEnabled = notificationsEnabledVal;
             appSettings.voiceAlertsEnabled = voiceAlertsEnabledVal;
             Object.assign(appSettings, workRes.data);
@@ -7183,9 +7299,20 @@
             renderStreakBadge();
         }
 
+        // نگاشتِ گزینه‌ی «تنوع انیمیشن» در تنظیمات به کلاس CSS متناظرش
+        const MOTIVATION_ANIM_CLASS_MAP = { default: 'motiv-anim-default', pulse: 'motiv-anim-pulse', glow: 'motiv-anim-glow', shake: 'motiv-anim-shake', none: 'motiv-anim-none' };
+
         function renderStreakBadge() {
             const el = document.getElementById('streakBadgeText');
             if (!el) return;
+
+            // اگر کاربر از تنظیمات نمایش نوار انگیزشی را غیرفعال کرده باشد
+            if (appSettings.motivationBadgeVisible === false) {
+                el.className = 'hidden';
+                el.innerHTML = '';
+                return;
+            }
+
             const streak = appSettings.onTimeStreak || 0;
             const daySeed = todayMotivationSeed();
             let activeProgress = null;
@@ -7194,18 +7321,37 @@
                 if (activeRec) activeProgress = computeRecordProgress(activeRec);
             } catch (e) { activeProgress = null; }
 
-            // کلاس پایه‌ی مشترک همه‌ی حالت‌ها: فونت کمی بزرگ‌تر (text-sm) + انیمیشنِ دایمیِ جلب‌توجه (motivation-badge)
-            const baseClass = 'motivation-badge inline-flex text-sm font-medium px-3.5 py-2 rounded-2xl border items-center gap-1.5 text-center leading-relaxed max-w-full';
+            // کلاس پایه‌ی مشترک همه‌ی حالت‌ها: فونت کمی بزرگ‌تر (text-sm) + انیمیشنِ انتخابیِ کاربر از تنظیمات
+            const animClass = MOTIVATION_ANIM_CLASS_MAP[appSettings.motivationAnimation] || MOTIVATION_ANIM_CLASS_MAP.default;
+            const baseClass = 'motivation-badge ' + animClass + ' inline-flex text-sm font-medium px-3.5 py-2 rounded-2xl border items-center gap-1.5 text-center leading-relaxed max-w-full';
+
+            // رنگ پس‌زمینه/متنِ سفارشی از تنظیمات (در صورت انتخاب) روی رنگ‌بندیِ خودکارِ هر حالت اعمال می‌شود
+            const applyCustomColors = () => {
+                if (appSettings.motivationBgColor && appSettings.motivationBgColor !== 'default') {
+                    el.style.backgroundColor = appSettings.motivationBgColor;
+                    el.style.borderColor = appSettings.motivationBgColor;
+                } else {
+                    el.style.backgroundColor = '';
+                    el.style.borderColor = '';
+                }
+                if (appSettings.motivationTextColor && appSettings.motivationTextColor !== 'default') {
+                    el.style.color = appSettings.motivationTextColor;
+                } else {
+                    el.style.color = '';
+                }
+            };
 
             if (streakLate) {
                 el.className = baseClass + ' bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-100 dark:border-rose-900';
                 el.innerHTML = `<i class="fa-solid fa-heart-pulse shrink-0"></i> <span>${escapeHTML(pickFromPool(LATE_MOTIVATIONS, daySeed))}</span>`;
+                applyCustomColors();
                 return;
             }
 
             if (activeProgress && activeProgress.percent >= 85 && activeProgress.percent < 100) {
                 el.className = baseClass + ' bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-100 dark:border-amber-900';
                 el.innerHTML = `<i class="fa-solid fa-bolt shrink-0"></i> <span>${escapeHTML(pickFromPool(URGENT_MOTIVATIONS, daySeed))}</span>`;
+                applyCustomColors();
                 return;
             }
 
@@ -7213,17 +7359,20 @@
                 const isRecord = streak > 1 && streak === (appSettings.bestStreak || 0);
                 el.className = baseClass + ' bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 border-orange-100 dark:border-orange-900 font-bold';
                 el.innerHTML = `<i class="fa-solid fa-fire shrink-0"></i> <span>${formatNumber(streak)} کد متوالی به‌موقع${isRecord ? ' — رکورد شخصی 🏆' : ''} — ${escapeHTML(pickFromPool(STREAK_MOTIVATIONS, daySeed + streak))}</span>`;
+                applyCustomColors();
                 return;
             }
 
             if (activeProgress) {
                 el.className = baseClass + ' bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900';
                 el.innerHTML = `<i class="fa-solid fa-seedling shrink-0"></i> <span>${escapeHTML(pickFromPool(ACTIVE_MOTIVATIONS, daySeed))}</span>`;
+                applyCustomColors();
                 return;
             }
 
             el.className = baseClass + ' bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border-slate-100 dark:border-slate-700';
             el.innerHTML = `<i class="fa-solid fa-star shrink-0"></i> <span>${escapeHTML(pickFromPool(NEUTRAL_MOTIVATIONS, daySeed))}</span>`;
+            applyCustomColors();
         }
 
         // بررسی دوره‌ای پیشرفتِ رکورد جاری و ارسال اعلانِ پلکانی در چند نقطه‌ی کلیدی:

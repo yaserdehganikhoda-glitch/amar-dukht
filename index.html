@@ -400,8 +400,9 @@
             <p id="mainAppSubtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-normal">سیستم هوشمند آمار و مدیریت دوخت</p>
             <p id="ownerInfoLine" class="hidden text-xs text-slate-400 dark:text-slate-500 mt-1"></p>
             <div id="todayDateBar" class="mt-3"></div>
-            <div class="mt-3 flex justify-center">
+            <div class="mt-3 flex justify-center items-center gap-2 flex-wrap">
                 <span id="streakBadgeText" class="hidden"></span>
+                <button type="button" id="streakRefreshBtn" onclick="refreshStreak()" title="به‌روزرسانی شمارنده" class="no-print w-7 h-7 shrink-0 rounded-full text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/40 flex items-center justify-center transition-colors"><i id="streakRefreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
             </div>
             
             <div id="syncStatus" style="display:none" class="text-xs text-emerald-600 dark:text-emerald-400 mt-4 font-medium inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-900">
@@ -430,7 +431,7 @@
 
         <!-- کارت آمار کلیدی (ارزش کل کارکرد) -->
         <div class="grid grid-cols-1 mb-6">
-            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-300 dark:border-slate-600 flex items-center justify-between transition-all hover:shadow-md">
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-300 dark:border-slate-600 flex flex-wrap items-center justify-between transition-all hover:shadow-md">
                 <div>
                     <div class="flex items-center gap-1.5">
                         <p id="kpiPriceLabel" class="text-xs text-slate-400 dark:text-slate-400 font-medium">ارزش کل کارکرد (تومان)</p>
@@ -445,6 +446,29 @@
                 </div>
                 <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center">
                     <i class="fa-solid fa-wallet text-lg"></i>
+                </div>
+                <div id="incomeGoalSection" class="basis-full w-full mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <div class="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
+                            <i class="fa-solid fa-bullseye text-indigo-500"></i> هدف درآمد
+                            <span id="incomeGoalPeriodLabel" class="text-[11px] text-slate-400 dark:text-slate-500"></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="inline-flex rounded-lg border border-slate-300 dark:border-slate-600 overflow-hidden text-[11px]">
+                                <button type="button" id="incomeGoalBtnWeekly" onclick="setIncomeGoalMode('weekly')" class="px-3 py-1 transition-colors">هفتگی</button>
+                                <button type="button" id="incomeGoalBtnMonthly" onclick="setIncomeGoalMode('monthly')" class="px-3 py-1 transition-colors">ماهانه</button>
+                            </div>
+                            <button type="button" onclick="openIncomeGoalSettings()" title="تنظیم هدف" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 p-1 rounded-lg"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                        </div>
+                    </div>
+                    <div class="mt-2.5 h-2.5 w-full rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                        <div id="incomeGoalBar" class="h-full rounded-full bg-indigo-500 transition-all duration-500" style="width:0%"></div>
+                    </div>
+                    <div class="mt-1.5 flex items-center justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span id="incomeGoalText"></span>
+                        <span id="incomeGoalPercent" class="font-bold"></span>
+                    </div>
+                    <p id="incomeGoalCongrats" class="hidden mt-2 text-xs font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl px-3 py-2"></p>
                 </div>
             </div>
         </div>
@@ -519,6 +543,7 @@
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemStatus">وضعیت تحویل / ثبت</label>
                         <select id="itemStatus" required onchange="toggleDeliveryDurationField()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 transition-all">
+                            <option value="">— انتخاب کنید —</option>
                             <option value="به موقع">به موقع</option>
                             <option value="تاخیر">تاخیر</option>
                             <option value="زودتر از موعد">زودتر از موعد</option>
@@ -570,19 +595,19 @@
                 <div id="manualEndDateTimeWrap" class="hidden bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 rounded-xl p-3">
                     <p class="text-[11px] leading-relaxed text-amber-700 dark:text-amber-400 mb-2.5 flex items-start gap-1.5">
                         <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
-                        <span>تاریخ ثبت مربوط به ماه گذشته است؛ محاسبه‌ی خودکار غیرفعال شد. تاریخ و ساعت پایان را به‌صورت دستی انتخاب کنید.</span>
+                        <span>تاریخ ثبت مربوط به ماه گذشته است؛ تاریخ و ساعت پایان را به‌صورت دستی انتخاب کنید. مدت هدف از روی آمار روزانه و وضعیت تحویل از روی زمان کاریِ واقعی محاسبه می‌شود.</span>
                     </p>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[11px] font-medium text-amber-700/80 dark:text-amber-400/80 mb-1">تاریخ پایان</label>
                             <div class="relative">
-                                <input type="text" id="manualEndDate" required readonly onclick="openDatePicker('manualEndDate', event)" placeholder="انتخاب تاریخ" class="w-full p-2.5 pr-9 border border-amber-300 dark:border-amber-800 rounded-lg text-xs bg-white dark:bg-slate-800 dark:text-slate-100 cursor-pointer outline-none focus:ring-2 focus:ring-amber-500/20">
+                                <input type="text" id="manualEndDate" readonly onclick="openDatePicker('manualEndDate', event)" placeholder="انتخاب تاریخ" class="w-full p-2.5 pr-9 border border-amber-300 dark:border-amber-800 rounded-lg text-xs bg-white dark:bg-slate-800 dark:text-slate-100 cursor-pointer outline-none focus:ring-2 focus:ring-amber-500/20">
                                 <span class="absolute inset-y-0 right-2.5 flex items-center pointer-events-none text-amber-400 text-xs"><i class="fa-solid fa-calendar-days"></i></span>
                             </div>
                         </div>
                         <div>
                             <label class="block text-[11px] font-medium text-amber-700/80 dark:text-amber-400/80 mb-1">ساعت پایان</label>
-                            <input type="time" id="manualEndTime" required oninput="syncManualEndDateTime()" class="w-full p-2.5 border border-amber-300 dark:border-amber-800 rounded-lg text-xs bg-white dark:bg-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-amber-500/20">
+                            <input type="time" id="manualEndTime" oninput="syncManualEndDateTime()" class="w-full p-2.5 border border-amber-300 dark:border-amber-800 rounded-lg text-xs bg-white dark:bg-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-amber-500/20">
                         </div>
                     </div>
                 </div>
@@ -1148,6 +1173,34 @@
                     </div>
                     <button type="button" onclick="resetWorkSettingsToDefaults()" class="text-xs text-slate-500 dark:text-slate-400 underline hover:text-purple-600">بازگشت به پیش‌فرض (۸ تا ۱۸، ۸ ساعت و ۱۵ دقیقه)</button>
                 </div>
+                <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-scale-balanced"></i> منطق محاسبه‌ی وضعیت تحویل</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label class="flex items-start gap-2 p-3 border border-slate-400 dark:border-slate-500 rounded-xl cursor-pointer bg-white dark:bg-slate-800 field-box-bg">
+                            <input type="radio" name="settingDeliveryMode" id="settingDeliveryModeAuto" value="auto" class="mt-1 accent-purple-600">
+                            <span><b class="block text-xs text-slate-700 dark:text-slate-200">خودکار</b><span class="block text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">سیستم مدت هدف را با زمان کاریِ واقعی (تا شروع کد بعد، «کار تمام شد» یا پایان دستی) مقایسه و وضعیت و مدت تاخیر را خودش تعیین می‌کند.</span></span>
+                        </label>
+                        <label class="flex items-start gap-2 p-3 border border-slate-400 dark:border-slate-500 rounded-xl cursor-pointer bg-white dark:bg-slate-800 field-box-bg">
+                            <input type="radio" name="settingDeliveryMode" id="settingDeliveryModeManual" value="manual" class="mt-1 accent-purple-600">
+                            <span><b class="block text-xs text-slate-700 dark:text-slate-200">دستی</b><span class="block text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">وضعیت و مدت تاخیر/زودتر از موعد را خودتان در فرم انتخاب می‌کنید و سیستم آن را تغییر نمی‌دهد.</span></span>
+                        </label>
+                    </div>
+                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">تغییر حالت فقط روی ثبت و ویرایش‌های بعدی اثر می‌گذارد؛ رکوردهای قبلی تا زمان ویرایش عوض نمی‌شوند.</p>
+                </div>
+                <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-bullseye"></i> هدف درآمد</h3>
+                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">مبلغ هدف را به تومان/ریال (مطابق واحد پول برنامه) وارد کنید؛ خالی یا صفر یعنی بدون هدف. هفته از شنبه تا جمعه است و درآمد، مجموع «ارزش کل» رکوردهای همان بازه (بدون رکوردهای قیمت نامعلوم) است. ماهانه شامل همه‌ی رکوردهای ثبت‌شده در ماه جاری است. نوار پیشرفت و پیام تبریک در کادر «ارزش کل کارکرد» نمایش داده می‌شود.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">هدف هفتگی</label>
+                            <input type="text" inputmode="numeric" id="settingIncomeGoalWeekly" placeholder="مثلاً ۵۰۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">هدف ماهانه</label>
+                            <input type="text" inputmode="numeric" id="settingIncomeGoalMonthly" placeholder="مثلاً ۲۰۰۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
                 <div class="space-y-3">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-pen-ruler"></i> نام فیلدهای فرم «ثبت کارکرد جدید»</h3>
                     <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">هر فیلد را که خالی بگذارید، نام پیش‌فرض نمایش داده می‌شود. واحد پول به‌طور خودکار کنار «قیمت واحد» می‌آید.</p>
@@ -1559,13 +1612,14 @@
 
     <!-- اسکریپت‌ها -->
     <script>
-        /* ==================== نسخه ویژه (Premium) — غیرفعال شد؛ همه‌ی قابلیت‌ها باز هستند ====================
-         * طبق درخواست، تمام قابلیت‌های قبلاً قفل‌شده (خروجی گزارش رسمی، پشتیبان‌گیری دستی،
-         * بازگردانی از سطل بازیافت) اکنون برای همه آزادند. این تابع همیشه true برمی‌گرداند
-         * تا هر جای برنامه که وضعیت نسخه ویژه را چک می‌کند، دیگر چیزی قفل نبیند.
+        /* ==================== نسخه ویژه (Premium) — قابلیت‌های قفل‌شده ====================
+         * این قابلیت‌ها فقط داخل اپ نصب‌شده از کافه بازار قفل هستند؛ در نسخه وب/PWA
+         * (چون امکان خرید در آنجا وجود ندارد) همیشه آزاد باقی می‌مانند تا کاربران قبلی مشکلی پیدا نکنند.
          */
         function isPremiumUnlocked() {
-            return true;
+            const native = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+            if (!native || !window.SewingPremium) return true;
+            return window.SewingPremium.isUnlocked();
         }
 
         function updatePremiumStatusUI() {
@@ -1927,16 +1981,26 @@
 
             const date = str(r.date, 20);
             const info = getMonthInfoFromDateStr(date);
-            let monthKey, monthName, year;
-            if (info) {
-                monthKey = info.monthKey; monthName = info.monthName; year = info.year;
-            } else {
-                const fb = getCurrentJalaliInfo();
-                monthKey = /^\d{4}-\d{1,2}$/.test(String(r.monthKey)) ? String(r.monthKey) : fb.monthKey;
-                const mNum = parseInt(monthKey.split('-')[1], 10);
-                monthName = PERSIAN_MONTHS[mNum - 1] || 'نامشخص';
-                year = toPersianDigits(monthKey.split('-')[0]);
+            const keyRe = /^\d{4}-\d{1,2}$/;
+            const curInfo = getCurrentJalaliInfo();
+            let monthKey;
+            // ماهِ ذخیره‌شده‌ی رکورد حفظ می‌شود؛ رکوردی که با تاریخ ماه قبل در ماه جاری ثبت شده، زیر «ماه جاری» می‌ماند
+            if (keyRe.test(String(r.monthKey))) monthKey = String(r.monthKey);
+            else if (info) monthKey = info.monthKey;
+            else monthKey = curInfo.monthKey;
+            // ترمیم: رکوردی که همین ماه ساخته شده (id = زمان ساخت) ولی به‌خاطر باگ قبلی زیر ماهی قدیمی‌تر رفته، به ماه جاری برمی‌گردد
+            if (id >= 1e12 && id <= Date.now() + 86400000) {
+                const cd = new Date(id);
+                const cj = gregorianToJalaali(cd.getFullYear(), cd.getMonth() + 1, cd.getDate());
+                const [ky, km] = monthKey.split('-').map(Number);
+                if (`${cj.jy}-${cj.jm}` === curInfo.monthKey && (ky * 100 + km) < (cj.jy * 100 + cj.jm) &&
+                    info && (info.yearEn * 100 + info.monthNum) < (cj.jy * 100 + cj.jm)) {
+                    monthKey = curInfo.monthKey;
+                }
             }
+            const mNum = parseInt(monthKey.split('-')[1], 10);
+            const monthName = PERSIAN_MONTHS[mNum - 1] || 'نامشخص';
+            const year = toPersianDigits(monthKey.split('-')[0]);
 
             const dt = str(r.durationTime, 20);
             const durationTime = (dt === 'نامعلوم' || /^\d{1,3}:\d{2}$/.test(toEnglishDigits(dt))) ? dt : '';
@@ -1992,6 +2056,11 @@
             s.numFormat = pick(s.numFormat, ['persian', 'english'], 'persian');
             const tolRaw = Number(s.onTimeToleranceMinutes);
             s.onTimeToleranceMinutes = Number.isFinite(tolRaw) ? Math.max(0, Math.min(120, Math.floor(tolRaw))) : 5;
+            s.deliveryStatusMode = pick(s.deliveryStatusMode, ['auto', 'manual'], 'auto');
+            ['incomeGoalWeekly', 'incomeGoalMonthly'].forEach(k => { const n = Math.floor(Number(s[k])); s[k] = (Number.isFinite(n) && n > 0) ? Math.min(n, 1e13) : 0; });
+            s.incomeGoalMode = pick(s.incomeGoalMode, ['weekly', 'monthly'], 'weekly');
+            const gc = (s.goalCelebrated && typeof s.goalCelebrated === 'object' && !Array.isArray(s.goalCelebrated)) ? s.goalCelebrated : {};
+            s.goalCelebrated = { weekly: String(gc.weekly || '').slice(0, 60), monthly: String(gc.monthly || '').slice(0, 60) };
             s.fontFamily = pick(s.fontFamily, ['Vazirmatn', 'Vazir', 'Sahel', 'Samim', 'Shabnam'], 'Vazirmatn');
             const colorOk = c => c === 'default' || (typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c));
             ['bgColor', 'cardColor', 'fieldColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
@@ -2731,6 +2800,11 @@
             currency: 'تومان',
             defaultStatus: 'به موقع',
             onTimeToleranceMinutes: 5,
+            deliveryStatusMode: 'auto',
+            incomeGoalWeekly: 0,
+            incomeGoalMonthly: 0,
+            incomeGoalMode: 'weekly',
+            goalCelebrated: {},
             theme: 'light',
             fontSize: 'normal',
             numFormat: 'persian',
@@ -4270,6 +4344,9 @@
             document.getElementById('settingCurrency').value = appSettings.currency || 'تومان';
             document.getElementById('settingDefaultStatus').value = appSettings.defaultStatus || 'به موقع';
             document.getElementById('settingOnTimeTolerance').value = formatNumber(getOnTimeTolerance()).replace(/,/g, '');
+            document.getElementById(isManualDeliveryMode() ? 'settingDeliveryModeManual' : 'settingDeliveryModeAuto').checked = true;
+            document.getElementById('settingIncomeGoalWeekly').value = appSettings.incomeGoalWeekly ? String(appSettings.incomeGoalWeekly) : '';
+            document.getElementById('settingIncomeGoalMonthly').value = appSettings.incomeGoalMonthly ? String(appSettings.incomeGoalMonthly) : '';
             document.getElementById('settingTheme').value = appSettings.theme || 'light';
             document.getElementById('settingFontSize').value = appSettings.fontSize || 'normal';
             document.getElementById('settingNumFormat').value = appSettings.numFormat || 'persian';
@@ -4346,6 +4423,10 @@
             appSettings.defaultStatus = defaultStatusVal;
             const tolInputRaw = document.getElementById('settingOnTimeTolerance').value.trim();
             appSettings.onTimeToleranceMinutes = tolInputRaw === '' ? getOnTimeTolerance() : Math.max(0, Math.min(120, parsePersianInt(tolInputRaw)));
+            appSettings.deliveryStatusMode = document.getElementById('settingDeliveryModeManual').checked ? 'manual' : 'auto';
+            const parseGoal = v => { const n = Number(toEnglishDigits(String(v || '')).replace(/[^\d]/g, '')); return (Number.isFinite(n) && n > 0) ? Math.min(n, 1e13) : 0; };
+            appSettings.incomeGoalWeekly = parseGoal(document.getElementById('settingIncomeGoalWeekly').value);
+            appSettings.incomeGoalMonthly = parseGoal(document.getElementById('settingIncomeGoalMonthly').value);
             appSettings.theme = themeVal;
             appSettings.fontSize = fontSizeVal;
             appSettings.numFormat = numFormatVal;
@@ -5022,6 +5103,8 @@
         // مقایسه‌ی «مدت زمان تحویل کار» (هدف) رکورد با زمان کاریِ واقعاً سپری‌شده تا لحظه‌ی شروع
         // کد بعدیِ واقعی، و تنظیم وضعیت (تاخیر/زودتر از موعد/به‌موقع) و مقدار آن روی رکورد.
         // خروجی: true اگر محاسبه واقعاً انجام شد (یعنی داده‌های لازم کامل بودند).
+        function isManualDeliveryMode() { return appSettings.deliveryStatusMode === 'manual'; }
+
         function getOnTimeTolerance() {
             const t = Number(appSettings.onTimeToleranceMinutes);
             return (Number.isFinite(t) && t >= 0) ? Math.min(120, Math.floor(t)) : 0;
@@ -5038,6 +5121,7 @@
 
         // مقایسه‌ی زمان کاریِ واقعاً سپری‌شده تا لحظه‌ی پایان (شروع کد بعد یا «کار تمام شد») با مدت هدف
         function evaluateDeliveryAgainst(rec, endDateStr, endTimeStr) {
+            if (isManualDeliveryMode()) return false; // حالت دستی: وضعیت و مدت را کاربر تعیین می‌کند
             const target = parseDurationStrToMinutes(rec.workDuration);
             if (target === null || !rec.date || !rec.time || !endDateStr || !endTimeStr) return false;
             const startJdn = parseJalaliDateToJdn(rec.date);
@@ -5045,17 +5129,37 @@
             if (!startJdn || !endJdn) return false;
 
             const actual = calculateActualWorkingMinutesElapsed(startJdn, parseTimeToMinutes(rec.time), endJdn, parseTimeToMinutes(endTimeStr));
-            const diff = actual - target;
-            if (Math.abs(diff) <= getOnTimeTolerance()) {
-                rec.status = 'به موقع';
-                rec.durationTime = '';
-            } else {
-                rec.status = diff > 0 ? 'تاخیر' : 'زودتر از موعد';
-                const absDiff = Math.abs(diff);
-                rec.durationTime = `${String(Math.floor(absDiff / 60)).padStart(2, '0')}:${String(absDiff % 60).padStart(2, '0')}`;
-            }
+            const out = classifyDelivery(target, actual);
+            rec.status = out.status;
+            rec.durationTime = out.durationTime;
             updateOnTimeStreak(rec);
             return true;
+        }
+
+        // منطق واحدِ تشخیص «به موقع / تاخیر / زودتر از موعد» از روی مدت هدف و زمان کاریِ واقعی (هر دو بر حسب دقیقه)
+        function classifyDelivery(targetMin, actualMin) {
+            const diff = actualMin - targetMin;
+            if (Math.abs(diff) <= getOnTimeTolerance()) return { status: 'به موقع', durationTime: '', diff };
+            const a = Math.abs(diff);
+            return {
+                status: diff > 0 ? 'تاخیر' : 'زودتر از موعد',
+                durationTime: `${String(Math.floor(a / 60)).padStart(2, '0')}:${String(a % 60).padStart(2, '0')}`,
+                diff
+            };
+        }
+
+        // ثبت گذشته‌نگر (تاریخ ماه قبل): تاریخ/ساعت پایانِ دستی به‌عنوان «پایان کار» ثبت می‌شود تا وضعیت
+        // بر اساس زمان کاریِ واقعی محاسبه شود و بعداً با رکوردهای ماه جاری بازنویسی نشود.
+        function applyManualEndToRecord(rec, manualEnd) {
+            if (!manualEnd) return false;
+            const prevCounted = rec.streakCounted;
+            rec.finishedDate = manualEnd.date;
+            rec.finishedTime = manualEnd.time;
+            if (isManualDeliveryMode()) return true; // وضعیتِ انتخابیِ کاربر دست‌نخورده می‌ماند
+            rec.streakCounted = true; // ثبت گذشته‌نگر روی رکورد «کدهای متوالی به‌موقع» اثر نگذارد
+            const ok = evaluateDeliveryAgainst(rec, manualEnd.date, manualEnd.time);
+            if (!ok) { rec.finishedDate = null; rec.finishedTime = null; rec.streakCounted = prevCounted; }
+            return ok;
         }
 
         function computeAndSetDeliveryStatus(rec, nextDateStr, nextTimeStr) {
@@ -5083,7 +5187,7 @@
                 renderDashboard();
                 checkDeliveryProgressNotifications();
                 addLog(`پایان کار کد ${rec.itemCode || '-'} ثبت شد (${rec.status}).`, 'success');
-                showFeedbackBanner(`کار کد ${rec.itemCode || '-'} تمام شد — وضعیت: ${rec.status}${rec.durationTime ? ' (' + rec.durationTime + ')' : ''}`, rec.status === 'تاخیر' ? 'warn' : 'success');
+                showFeedbackBanner(`کار کد ${rec.itemCode || '-'} تمام شد — وضعیت: ${rec.status}${rec.durationTime ? ' (' + rec.durationTime + ')' : ''}${rec.status === 'تاخیر' ? ' — ' + pickLateMotivation(Number(rec.id) + todayMotivationSeed()) : ''}`, rec.status === 'تاخیر' ? 'warn' : 'success');
             });
         }
 
@@ -5139,6 +5243,7 @@
             rec.updatedAt = Date.now();
             rec.nextCodeStartDate = null;
             rec.nextCodeStartTime = null;
+            if (isManualDeliveryMode()) return; // حالت دستی: وضعیت ثبت‌شده‌ی کاربر بازنویسی نمی‌شود
             const est = calculateCompletionEstimate(rec.time, rec.dailyStat, rec.quantity, rec.date);
             if (!est) return;
             rec.status = 'به موقع';
@@ -5262,11 +5367,38 @@
                 return;
             }
 
+            // حالت دستی: الزام انتخاب وضعیت
+            if (isManualDeliveryMode() && !status) {
+                showFeedbackBanner('در حالت دستی، باید وضعیت تحویل را انتخاب کنید.', 'warn');
+                return;
+            }
+            // حالت دستی: اگر وضعیت «تاخیر» یا «زودتر از موعد» است، باید مدت را انتخاب کنید
+            if (isManualDeliveryMode() && needsDuration && !durationTime) {
+                showFeedbackBanner('مدت زمان تاخیر یا زودتر از موعد را انتخاب کنید.', 'warn');
+                return;
+            }
+
+            // ثبت گذشته‌نگر: اگر تاریخ ثبت مربوط به ماه قبل است، تاریخ/ساعت پایانِ دستی «پایان کار» محسوب می‌شود
+            let manualEnd = null;
+            if (isRecordDateInPastMonth(date)) {
+                const mDate = document.getElementById('manualEndDate').value;
+                const mTime = document.getElementById('manualEndTime').value;
+                if (mDate && mTime) {
+                    const sKey = parseJalaliDateToJdn(date) * 1440 + parseTimeToMinutes(time);
+                    const eKey = parseJalaliDateToJdn(mDate) * 1440 + parseTimeToMinutes(mTime);
+                    if (eKey <= sKey) {
+                        showFeedbackBanner('تاریخ و ساعت پایان باید بعد از تاریخ و ساعت شروع باشد.', 'warn');
+                        return;
+                    }
+                    manualEnd = { date: mDate, time: mTime };
+                }
+            }
+
             // ماه/سال رکورد معمولاً از روی خودِ تاریخ انتخاب‌شده در فرم محاسبه می‌شود، نه از تاریخ
             // امروز سیستم؛ در غیر این صورت رکوردهای عقب‌افتاده/جلوافتاده زیر ماه اشتباهی فیلتر می‌شدند.
-            // استثنا: وقتی «تاریخ ثبت» عمداً به ماه قبل برده شده (حالت ثبت دستیِ تاریخ/ساعت پایان)،
-            // خواسته‌ی کاربر این است که رکورد همچنان زیر «ماه جاری» ذخیره و نمایش داده شود؛
-            // در این حالت به‌جای ماهِ خودِ تاریخ، از ماه جاری سیستم استفاده می‌شود.
+            // ماه/سال رکورد معمولاً از روی خودِ تاریخ انتخاب‌شده در فرم محاسبه می‌شود.
+            // استثنا: وقتی «تاریخ ثبت» عمداً به ماه قبل (یا قدیمی‌تر) برده شده، رکورد فقط زیر «ماه جاری» ثبت و نمایش
+            // داده می‌شود (نه زیر ماه قبل)؛ در این حالت به‌جای ماهِ خودِ تاریخ، از ماه جاری سیستم استفاده می‌شود.
             const dateInfo = isRecordDateInPastMonth(date) ? info : (getMonthInfoFromDateStr(date) || info);
 
             if (editingId) {
@@ -5303,6 +5435,13 @@
                     // اگر خودِ همین رکورد از قبل «شروع کد بعد» داشت (رکوردی بعد از آن وجود داشت)،
                     // آن اشاره‌گر هم ممکن است با تغییر تاریخ/ساعت یا مدت‌زمان هدف نامعتبر شده باشد؛
                     // بر مبنای رکورد بعدیِ واقعیِ فعلی (در صورت وجود) دوباره محاسبه می‌شود.
+                    if (manualEnd) {
+                        applyManualEndToRecord(allRecords[targetIndex], manualEnd);
+                    } else if (isRecordDateInPastMonth(oldDate)) {
+                        // رکورد از حالت «ماه قبل/پایان دستی» به ماه جاری منتقل شده؛ پایانِ دستیِ قبلی دیگر معتبر نیست
+                        allRecords[targetIndex].finishedDate = null;
+                        allRecords[targetIndex].finishedTime = null;
+                    }
                     refreshOwnNextCodeStartLink(allRecords[targetIndex]);
 
                     // مشابه ثبت رکورد جدید: رکورد قبلیِ (از نظر زمانی) همین رکورد نیز، در صورتی که
@@ -5334,6 +5473,7 @@
                 // به‌صورت خودکار محاسبه و در لیست کارکردها به‌روزرسانی می‌شود.
                 applyNextCodeStartToPreviousRecord(date, time, null);
                 allRecords.unshift(newRecord);
+                applyManualEndToRecord(newRecord, manualEnd);
                 // اگر رکوردی بعد از این تاریخ/ساعت از قبل وجود دارد (ثبت عقب‌افتاده)، لینک «شروع کد بعد» همین رکورد هم ساخته شود
                 refreshOwnNextCodeStartLink(newRecord);
                 addLog(`رکورد جدید ${code} ثبت شد.`, 'success');
@@ -5359,7 +5499,7 @@
             document.getElementById('priceUnknownCheckbox').checked = (record.unitPrice === null || record.unitPrice === undefined);
             document.getElementById('unitPrice').value = (record.unitPrice === null || record.unitPrice === undefined) ? '' : record.unitPrice;
             togglePriceUnknown();
-            document.getElementById('itemStatus').value = record.status || appSettings.defaultStatus || 'به موقع';
+            document.getElementById('itemStatus').value = record.status || '';
             document.getElementById('dailyStat').value = (record.dailyStat === null || record.dailyStat === undefined) ? '' : record.dailyStat;
             // تعداد دریافتی، جایگزینِ فیلد قدیمیِ «تعداد» است؛ برای سازگاری با رکوردهای قدیمی از خودِ quantity پر می‌شود.
             document.getElementById('receivedQuantity').value = (record.quantity === null || record.quantity === undefined)
@@ -5370,7 +5510,7 @@
             document.getElementById('recordDate').value = record.date;
             document.getElementById('recordTime').value = record.time;
             if (isRecordDateInPastMonth(record.date)) {
-                const endParts = (record.endDateTime || '').split(' - ');
+                const endParts = (record.finishedDate ? `${record.finishedDate} - ${record.finishedTime || ''}` : (record.endDateTime || '')).split(' - ');
                 document.getElementById('manualEndDate').value = endParts[0] ? endParts[0].trim() : '';
                 document.getElementById('manualEndTime').value = endParts[1] ? endParts[1].trim() : '';
             }
@@ -5423,7 +5563,7 @@
             document.getElementById('recordDate').value = info.fullDateStr;
             recordTimeTouched = false;
             recordDateTouched = false;
-            document.getElementById('itemStatus').value = appSettings.defaultStatus || 'به موقع';
+            document.getElementById('itemStatus').value = isManualDeliveryMode() ? '' : (appSettings.defaultStatus || 'به موقع');
             toggleDeliveryDurationField();
             togglePriceUnknown();
             setCurrentTimeInInput();
@@ -5478,10 +5618,114 @@
             }
         }
 
+        /* ==================== هدف درآمد هفتگی/ماهانه (کادر ارزش کل کارکرد) ==================== */
+        // ایندکس روز هفته با شروع از شنبه (شنبه=۰ ... جمعه=۶)
+        function saturdayBasedDayIndex(jdn) {
+            const { jy, jm, jd } = d2j(jdn);
+            const g = jalaaliToGregorian(jy, jm, jd);
+            return (new Date(g.gy, g.gm - 1, g.gd).getDay() + 1) % 7;
+        }
+
+        function getIncomeGoalData() {
+            const cur = getCurrentJalaliInfo();
+            const todayJdn = parseJalaliDateToJdn(cur.fullDateStr);
+            const ws = todayJdn - saturdayBasedDayIndex(todayJdn), we = ws + 6;
+            let weekly = 0, monthly = 0;
+            allRecords.forEach(r => {
+                const price = typeof r.totalPrice === 'number' ? r.totalPrice : 0;
+                if (!price) return;
+                if (r.monthKey === cur.monthKey) monthly += price;
+                const j = parseJalaliDateToJdn(r.date);
+                if (j && j >= ws && j <= we) weekly += price;
+            });
+            return {
+                weekly: { income: weekly, goal: appSettings.incomeGoalWeekly || 0, key: `w${ws}`, label: 'هفتگی', period: 'این هفته (شنبه تا جمعه)' },
+                monthly: { income: monthly, goal: appSettings.incomeGoalMonthly || 0, key: `m${cur.monthKey}`, label: 'ماهانه', period: `${cur.monthName} ${cur.year}` }
+            };
+        }
+
+        function setIncomeGoalMode(mode) {
+            appSettings.incomeGoalMode = mode === 'monthly' ? 'monthly' : 'weekly';
+            appSettings.updatedAt = new Date().toISOString();
+            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+            renderIncomeGoal();
+        }
+
+        function openIncomeGoalSettings() {
+            openSettingsModal();
+            switchSettingsTab('work');
+            const el = document.getElementById(appSettings.incomeGoalMode === 'monthly' ? 'settingIncomeGoalMonthly' : 'settingIncomeGoalWeekly');
+            if (el) setTimeout(() => el.focus(), 50);
+        }
+
+        function renderIncomeGoal() {
+            if (!document.getElementById('incomeGoalSection')) return;
+            const currency = appSettings.currency || 'تومان';
+            const data = getIncomeGoalData();
+
+            // پیام تبریک (بنر) فقط یک‌بار برای هر بازه و هر مبلغ هدف
+            const cel = appSettings.goalCelebrated || (appSettings.goalCelebrated = {});
+            let changed = false;
+            ['weekly', 'monthly'].forEach(m => {
+                const d = data[m];
+                if (d.goal > 0 && d.income >= d.goal) {
+                    const tag = `${d.key}|${d.goal}`;
+                    if (cel[m] !== tag) {
+                        cel[m] = tag; changed = true;
+                        showFeedbackBanner(`🎉 تبریک! هدف درآمد ${d.label} (${formatNumber(d.goal)} ${currency}) محقق شد.`, 'success');
+                        addLog(`هدف درآمد ${d.label} محقق شد.`, 'success');
+                    }
+                }
+            });
+            if (changed) {
+                appSettings.updatedAt = new Date().toISOString();
+                localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+                if (appDirHandle) saveAllMonthFilesToDirectory();
+            }
+
+            const mode = appSettings.incomeGoalMode === 'monthly' ? 'monthly' : 'weekly';
+            const d = data[mode];
+            [['weekly', 'incomeGoalBtnWeekly'], ['monthly', 'incomeGoalBtnMonthly']].forEach(([m, id]) => {
+                const b = document.getElementById(id);
+                if (!b) return;
+                const active = m === mode;
+                b.className = 'px-3 py-1 transition-colors ' + (active ? 'bg-indigo-600 text-white font-bold' : 'bg-transparent text-slate-500 dark:text-slate-400');
+            });
+            document.getElementById('incomeGoalPeriodLabel').innerText = `— ${d.period}`;
+            const bar = document.getElementById('incomeGoalBar');
+            const text = document.getElementById('incomeGoalText');
+            const pctEl = document.getElementById('incomeGoalPercent');
+            const congrats = document.getElementById('incomeGoalCongrats');
+            if (d.goal <= 0) {
+                bar.style.width = '0%';
+                bar.className = 'h-full rounded-full bg-indigo-500 transition-all duration-500';
+                text.innerText = `هدف ${d.label} تعیین نشده — برای تعیین، روی مداد بزنید`;
+                pctEl.innerText = '';
+                congrats.classList.add('hidden');
+                return;
+            }
+            const pct = (d.income / d.goal) * 100;
+            const reached = d.income >= d.goal;
+            bar.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+            bar.className = 'h-full rounded-full transition-all duration-500 ' + (reached ? 'bg-emerald-500' : 'bg-indigo-500');
+            text.innerText = `${formatNumber(d.income)} از ${formatNumber(d.goal)} ${currency}` + (reached ? '' : ` — مانده: ${formatNumber(d.goal - d.income)}`);
+            pctEl.innerText = `${formatNumber(Math.floor(pct))}٪`;
+            pctEl.className = 'font-bold ' + (reached ? 'text-emerald-600 dark:text-emerald-400' : 'text-indigo-600 dark:text-indigo-400');
+            if (reached) {
+                congrats.innerText = `🎉 تبریک! هدف درآمد ${d.label} محقق شد${d.income > d.goal ? ` و ${formatNumber(d.income - d.goal)} ${currency} از آن فراتر رفتید` : ''}. خسته نباشید!`;
+                congrats.classList.remove('hidden');
+            } else {
+                congrats.classList.add('hidden');
+            }
+        }
+        /* ==================== پایان هدف درآمد ==================== */
+
         function toggleKpiPriceVisibility() {
             const body = document.getElementById('kpiPriceValueWrap');
             const icon = document.getElementById('kpiPriceToggleIcon');
             const collapsed = body.classList.toggle('hidden');
+            const goalSec = document.getElementById('incomeGoalSection');
+            if (goalSec) goalSec.classList.toggle('hidden', collapsed);
             icon.classList.toggle('fa-chevron-up', !collapsed);
             icon.classList.toggle('fa-chevron-down', collapsed);
             localStorage.setItem('sewing_kpi_price_collapsed', collapsed ? '1' : '0');
@@ -6018,12 +6262,17 @@
             const endDateTimeField = document.getElementById('recordEndDateTime');
             infoBox.classList.add('hidden');
             manualWrap.classList.remove('hidden');
+            // فقط وقتی این فیلدها دیده می‌شوند اجباری‌اند؛ فیلد اجباریِ پنهان، ارسال فرم را بی‌صدا مسدود می‌کرد
+            document.getElementById('manualEndTime').required = true;
+            document.getElementById('manualEndDate').required = true;
             endDateTimeField.readOnly = true; // این فیلد در این حالت فقط نمایش‌دهنده‌ی خلاصه است؛ ورودی واقعی دو فیلد پایین است
             syncManualEndDateTime();
         }
 
         function disablePastMonthManualEnd() {
             const manualWrap = document.getElementById('manualEndDateTimeWrap');
+            document.getElementById('manualEndTime').required = false;
+            document.getElementById('manualEndDate').required = false;
             if (!manualWrap.classList.contains('hidden')) {
                 manualWrap.classList.add('hidden');
                 document.getElementById('manualEndDate').value = '';
@@ -6031,31 +6280,51 @@
             }
         }
 
-        // ترکیب تاریخ و ساعت پایانِ دستی در فیلد خلاصه‌ی «تاریخ و زمان پایان»
-        // و محاسبه‌ی «مدت زمان تحویل کار» به‌صورت اختلاف ساده‌ی تقویمی (نه ساعات کاری) بین شروع و پایان
+        // ترکیب تاریخ و ساعت پایانِ دستی در فیلد خلاصه‌ی «تاریخ و زمان پایان».
+        // «مدت زمان تحویل کار» همان مدت هدفِ مبتنی بر آمار روزانه × تعداد است (نه اختلاف تقویمی شروع و پایان)،
+        // و وضعیت تحویل از مقایسه‌ی آن با زمان کاریِ واقعیِ سپری‌شده تا پایانِ دستی به‌دست می‌آید.
         function syncManualEndDateTime() {
             const endDateStr = document.getElementById('manualEndDate').value;
             const endTimeStr = document.getElementById('manualEndTime').value;
             const endDateTimeField = document.getElementById('recordEndDateTime');
             const workDurationField = document.getElementById('recordWorkDuration');
+            const infoBox = document.getElementById('autoCalcInfoBox');
+            const infoText = document.getElementById('autoCalcInfoText');
             endDateTimeField.value = (endDateStr && endTimeStr) ? `${endDateStr} - ${endTimeStr}` : '';
+            infoBox.classList.add('hidden');
 
             const startDateStr = document.getElementById('recordDate').value;
             const startTimeStr = document.getElementById('recordTime').value;
-            if (!startDateStr || !startTimeStr || !endDateStr || !endTimeStr) {
-                if (workDurationField) workDurationField.value = '';
-                return;
+            const dailyStatVal = parsePersianInt(document.getElementById('dailyStat').value.trim());
+            const receivedQtyVal = parsePersianInt(document.getElementById('receivedQuantity').value.trim());
+            const est = (startDateStr && startTimeStr)
+                ? calculateCompletionEstimate(startTimeStr, dailyStatVal, receivedQtyVal, startDateStr) : null;
+            if (workDurationField) {
+                workDurationField.value = est ? `${String(est.hoursNeeded).padStart(2, '0')}:${String(est.minsNeeded).padStart(2, '0')}` : '';
             }
+            if (!est || !endDateStr || !endTimeStr) return;
+
             const startJdn = parseJalaliDateToJdn(startDateStr);
             const endJdn = parseJalaliDateToJdn(endDateStr);
-            if (!startJdn || !endJdn) { if (workDurationField) workDurationField.value = ''; return; }
-            const [sh, sm] = startTimeStr.split(':').map(Number);
-            const [eh, em] = endTimeStr.split(':').map(Number);
-            let totalMinutes = (endJdn - startJdn) * 1440 + (eh * 60 + em) - (sh * 60 + sm);
-            if (isNaN(totalMinutes) || totalMinutes < 0) totalMinutes = 0;
-            const hoursNeeded = Math.floor(totalMinutes / 60);
-            const minsNeeded = totalMinutes % 60;
-            if (workDurationField) workDurationField.value = `${String(hoursNeeded).padStart(2, '0')}:${String(minsNeeded).padStart(2, '0')}`;
+            if (!startJdn || !endJdn) return;
+            const actual = calculateActualWorkingMinutesElapsed(startJdn, parseTimeToMinutes(startTimeStr), endJdn, parseTimeToMinutes(endTimeStr));
+            const out = classifyDelivery(est.targetWorkMinutes, actual);
+
+            const manualMode = isManualDeliveryMode();
+            if (!manualMode) {
+                document.getElementById('itemStatus').value = out.status;
+                toggleDeliveryDurationField();
+            }
+            if (!manualMode && out.durationTime) {
+                const [h, m] = out.durationTime.split(':').map(Number);
+                document.getElementById('deliveryDurationUnknown').checked = false;
+                document.getElementById('deliveryDurationHour').value = String(Math.min(200, h));
+                document.getElementById('deliveryDurationMinute').value = String(Math.min(55, Math.round(m / 5) * 5));
+                toggleDeliveryDurationUnknown();
+            }
+            infoText.innerText = `مدت هدف: ${formatMinutesDuration(est.targetWorkMinutes)} | زمان کاریِ واقعی: ${formatMinutesDuration(actual)} | نتیجه: ${out.status}` +
+                (out.durationTime ? ` (${formatMinutesDuration(Math.abs(out.diff))})` : '') + (manualMode ? ' — فقط پیشنهاد سیستم؛ وضعیت را خودتان انتخاب کنید' : ' — به‌صورت خودکار محاسبه شد');
+            infoBox.classList.remove('hidden');
         }
 
         function runAutoDeliveryCalculation(keepStatus) {
@@ -6100,10 +6369,12 @@
                 workDurationField.value = `${String(result.hoursNeeded).padStart(2, '0')}:${String(result.minsNeeded).padStart(2, '0')}`;
             }
 
+            // وضعیت نهایی فقط با ثبت کد بعد یا «کار تمام شد» قطعی می‌شود؛ تا آن زمان «به موقع» (در انتظار) است.
+            // عبور کار از یک شبانه‌روز (یا شروع در جمعه/پایان شیفت) به‌تنهایی تاخیر نیست.
             if (!keepStatus) {
-                // وضعیت نهایی فقط با ثبت کد بعد یا «کار تمام شد» قطعی می‌شود؛ تا آن زمان «به موقع» (در انتظار) است.
-                // عبور کار از یک شبانه‌روز (یا شروع در جمعه/پایان شیفت) به‌تنهایی تاخیر نیست.
-                document.getElementById('itemStatus').value = 'به موقع';
+                if (!isManualDeliveryMode()) {
+                    document.getElementById('itemStatus').value = 'به موقع';
+                }
                 toggleDeliveryDurationField();
             }
         }
@@ -6161,6 +6432,7 @@
         // رکورد «در انتظار»: مدت هدف دارد ولی هنوز نه کد بعدی ثبت شده و نه «کار تمام شد» زده شده؛
         // یعنی وضعیت واقعی تحویلش هنوز مشخص نیست و نباید جزو «به موقع» شمرده شود.
         function isRecordPending(r) {
+            if (isManualDeliveryMode()) return false;
             return (r.status || 'به موقع') === 'به موقع' && !r.nextCodeStartDate && !r.finishedDate && !!r.workDuration;
         }
         function getDisplayStatus(r) {
@@ -6727,21 +6999,68 @@
             renderActiveProgressWidget();
         }
 
-        // به‌روزرسانی رکورد «کدهای متوالیِ به‌موقع»؛ برای هر رکورد فقط یک‌بار (در اولین قطعی‌شدن وضعیت) شمرده می‌شود
-        function updateOnTimeStreak(rec) {
-            if (rec.streakCounted) return;
-            rec.streakCounted = true;
-            if (rec.status === 'تاخیر') {
-                appSettings.onTimeStreak = 0;
-            } else {
-                appSettings.onTimeStreak = (appSettings.onTimeStreak || 0) + 1;
-                if (appSettings.onTimeStreak > (appSettings.bestStreak || 0)) {
-                    appSettings.bestStreak = appSettings.onTimeStreak;
+        // «کدهای متوالیِ به‌موقع» کاملاً از روی خودِ رکوردها و به ترتیب زمان محاسبه می‌شود (نه شمارنده‌ی ذخیره‌شده)،
+        // تا با ویرایش، حذف، بازیابی، حالت دستی و ثبت گذشته‌نگر همیشه درست بماند. بر اساس «وضعیت نمایشی» رکورد:
+        // «به موقع/زودتر از موعد» زنجیره را ادامه می‌دهد، «تاخیر» (یا کارِ در انتظارِ گذشته از موعد) آن را قطع می‌کند
+        // و رکوردِ در انتظارِ هنوز در مهلت شمرده نمی‌شود. رکورد شخصی هم از همین رکوردها محاسبه می‌شود.
+        let streakLate = false; // آخرین رکوردِ شمرده‌شده تاخیر بوده است (برای پیام انگیزشی)
+        function recomputeAppStreak() {
+            const list = allRecords
+                .filter(r => r && r.date && r.time)
+                .map(r => ({ r, key: (parseJalaliDateToJdn(r.date) || 0) * 1440 + parseTimeToMinutes(r.time) }))
+                .sort((a, b) => a.key - b.key);
+            let run = 0, best = 0, last = null;
+            list.forEach(({ r }) => {
+                let ds = getDisplayStatus(r);
+                if (ds === 'در انتظار') {
+                    let pr = null;
+                    try { pr = computeRecordProgress(r); } catch (e) { pr = null; }
+                    if (pr && pr.percent >= 100) ds = 'تاخیر'; else return;
                 }
+                if (ds === 'تاخیر') { run = 0; last = 'late'; }
+                else { run++; last = 'ok'; if (run > best) best = run; }
+            });
+            streakLate = (run === 0 && last === 'late');
+            if (run !== (appSettings.onTimeStreak || 0) || best !== (appSettings.bestStreak || 0)) {
+                appSettings.onTimeStreak = run;
+                appSettings.bestStreak = best;
+                appSettings.updatedAt = new Date().toISOString();
+                localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+                if (appDirHandle) saveAllMonthFilesToDirectory();
             }
-            appSettings.updatedAt = new Date().toISOString();
-            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-            if (appDirHandle) saveAllMonthFilesToDirectory();
+        }
+
+        // پیام‌های انگیزشی در وضعیت تاخیر (بر اساس seed ثابت می‌چرخند تا با هر رندر عوض نشوند)
+        const LATE_MOTIVATIONS = [
+            'تاخیر بخشی از مسیره؛ مهم اینه که کد بعدی رو قوی‌تر شروع کنی 💪',
+            'هر کد جدید یه فرصت تازه‌ست؛ با تحویل به‌موقعِ بعدی، رشته‌ات دوباره شروع می‌شه 🔥',
+            'نگران نباش؛ یه شروع سریع و برنامه‌ریزی دقیق‌تر، عقب‌افتادگی رو جبران می‌کنه ✨',
+            'یه قدم کوچیک الان، جبران بزرگی برای امروزه؛ کارِ جاری رو تموم کن 🌟',
+            'بهترین‌ها هم گاهی دیر می‌کنن؛ فرقشون اینه که سریع برمی‌گردن سر مسیر 🚀',
+            'یه نفس عمیق بکش؛ کارِ جاری رو تموم و ثبت کن، حالت خیلی بهتر می‌شه 🌿',
+            'تو می‌تونی! کد بعدی رو به‌موقع تحویل بده و رکوردت رو دوباره بساز 🏆'
+        ];
+        function pickLateMotivation(seed) {
+            return LATE_MOTIVATIONS[Math.abs(Math.floor(Number(seed) || 0)) % LATE_MOTIVATIONS.length];
+        }
+        function todayMotivationSeed() {
+            return parseJalaliDateToJdn(getCurrentJalaliInfo().fullDateStr) || 0;
+        }
+
+        function refreshStreak() {
+            const icon = document.getElementById('streakRefreshIcon');
+            if (icon) { icon.classList.add('fa-spin'); setTimeout(() => icon.classList.remove('fa-spin'), 700); }
+            recomputeAppStreak();
+            renderStreakBadge();
+            renderActiveProgressWidget();
+            const n = appSettings.onTimeStreak || 0;
+            showFeedbackBanner(n > 0
+                ? `شمارنده از روی رکوردها به‌روز شد: ${formatNumber(n)} کد متوالی به‌موقع.`
+                : 'شمارنده از روی رکوردها به‌روز شد؛ در حال حاضر کد متوالیِ به‌موقعی وجود ندارد.', 'info');
+        }
+
+        function updateOnTimeStreak(rec) {
+            recomputeAppStreak();
             renderStreakBadge();
         }
 
@@ -6749,7 +7068,15 @@
             const el = document.getElementById('streakBadgeText');
             if (!el) return;
             const streak = appSettings.onTimeStreak || 0;
-            if (streak <= 0) { el.className = 'hidden'; return; }
+            if (streak <= 0) {
+                if (streakLate) {
+                    el.className = 'inline-flex text-xs font-medium px-3.5 py-2 rounded-2xl bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-100 dark:border-rose-900 items-center gap-1.5 text-center leading-relaxed max-w-full';
+                    el.innerHTML = `<i class="fa-solid fa-heart-pulse shrink-0"></i> <span>${escapeHTML(pickLateMotivation(todayMotivationSeed()))}</span>`;
+                } else {
+                    el.className = 'hidden'; el.innerHTML = '';
+                }
+                return;
+            }
             const isRecord = streak > 1 && streak === (appSettings.bestStreak || 0);
             el.className = 'inline-flex text-xs font-bold px-3 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-900 items-center gap-1.5';
             el.innerHTML = `<i class="fa-solid fa-fire"></i> ${formatNumber(streak)} کد متوالی به‌موقع${isRecord ? ' — رکورد شخصی 🏆' : ''}`;
@@ -6888,6 +7215,7 @@
                 <div class="text-xs">
                     <div class="font-bold text-slate-700 dark:text-slate-200 truncate">کد ${escapeHTML(rec.itemCode) || '-'} — ${escapeHTML(rec.itemTitle) || '-'}</div>
                     <div class="mt-1">${remainingText}</div>
+                    ${isOverdue ? `<div class="mt-1 text-[11px] leading-relaxed text-amber-700 dark:text-amber-300">${escapeHTML(pickLateMotivation(Number(rec.id) + todayMotivationSeed()))}</div>` : ''}
                     ${isStale ? '<div class="text-[10px] text-amber-600 dark:text-amber-400 mt-1">این کار بیش از ۳ روز کاری معوق است و یادآوری‌ها متوقف شده؛ اگر تمام شده، «کار تمام شد» را بزنید.</div>' : ''}
                     <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
                     <button type="button" data-action="finish-active" data-id="${Number(rec.id)}" class="no-print mt-2 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition-colors"><i class="fa-solid fa-circle-check"></i> کار تمام شد</button>
@@ -7026,6 +7354,7 @@
             renderMonthSelector();
             renderDailyNotes();
             renderActiveProgressWidget();
+            recomputeAppStreak();
             renderStreakBadge();
             const sortSelect = document.getElementById('sortOptionSelect');
             if (sortSelect) sortSelect.value = currentSortOption;
@@ -7040,6 +7369,7 @@
 
             const totalPrice = sumTotalPrice(records);
             document.getElementById('kpiTotalPrice').innerText = `${formatNumber(totalPrice)} ${currency}`;
+            renderIncomeGoal();
             const unknownPriceCount = countUnknownPriceRecords(records);
             const kpiUnknownNote = document.getElementById('kpiUnknownPriceNote');
             if (kpiUnknownNote) {
@@ -7329,6 +7659,7 @@
 
         if (localStorage.getItem('sewing_kpi_price_collapsed') === '1') {
             document.getElementById('kpiPriceValueWrap').classList.add('hidden');
+            document.getElementById('incomeGoalSection').classList.add('hidden');
             document.getElementById('kpiPriceToggleIcon').classList.remove('fa-chevron-up');
             document.getElementById('kpiPriceToggleIcon').classList.add('fa-chevron-down');
         }
@@ -7385,6 +7716,7 @@
         // و تازه‌سازیِ سریع‌ترِ خودِ نوار پیشرفت (هر ۲۰ ثانیه) برای حس «زنده» بودن شمارش
         updateNotificationPermissionStatusUI();
         updatePremiumStatusUI();
+        recomputeAppStreak();
         renderStreakBadge();
         checkDeliveryProgressNotifications();
         setInterval(checkDeliveryProgressNotifications, 60 * 1000);

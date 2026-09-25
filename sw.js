@@ -1,13 +1,15 @@
 /*
- * Service Worker سامانه آمار دوخت
+ * Service Worker سامانه آمار کار
  * وظایف: ۱) کار آفلاین (کش برنامه و CDNها)  ۲) نمایش اعلان‌ها و ویجت وضعیت زنده  ۳) کلیک روی اعلان و دکمه‌های آن
  *
  * صفحه‌ی اصلی «اول شبکه» است؛ پس تغییر index.html بدون هیچ کار اضافه‌ای با اولین بازکردنِ آنلاین به کاربر می‌رسد.
  * عدد VERSION را فقط وقتی زیاد کنید که خودِ sw.js، لیست فایل‌های کش‌شده یا آیکون‌ها را عوض کرده‌اید؛
  * تغییر همین فایل باعث می‌شود بنر «نسخه جدید آماده است» در برنامه ظاهر شود.
  */
-const VERSION = 'v2';
-const CACHE = 'sewing-stats-' + VERSION;
+const VERSION = 'v3';
+const CACHE_PREFIX = 'work-stats-';
+const OLD_CACHE_PREFIXES = ['sewing-stats-']; // برای پاکسازی کش نسخه‌های قبلی، هنگام مهاجرت به نام عمومی
+const CACHE = CACHE_PREFIX + VERSION;
 const SCOPE = self.registration.scope;
 const INDEX_URL = new URL('index.html', SCOPE).href;
 
@@ -47,7 +49,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(k => k.startsWith('sewing-stats-') && k !== CACHE).map(k => caches.delete(k)));
+    await Promise.all(keys.filter(k => (k.startsWith(CACHE_PREFIX) || OLD_CACHE_PREFIXES.some(p => k.startsWith(p))) && k !== CACHE).map(k => caches.delete(k)));
     await self.clients.claim();
   })());
 });

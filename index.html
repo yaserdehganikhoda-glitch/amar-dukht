@@ -3,24 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه آمار دوخت لباس</title>
+    <title>سامانه آمار کار</title>
     
     <!-- تنظیمات PWA و مانیفست -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="آمار دوخت">
+    <meta name="apple-mobile-web-app-title" content="آمار کار">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="apple-touch-icon" href="icon-192.png">
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-        }
-    </script>
+    <!-- Tailwind CSS: به‌جای Play CDN زنده (که با هر تغییر DOM کل صفحه را دوباره اسکن می‌کرد و باعث لگ تایپ می‌شد)،
+         نسخه‌ی از پیش کامپایل‌شده و استاتیکِ همان کلاس‌های استفاده‌شده در این فایل جاسازی شده است. -->
+    <style id="tailwindStatic">*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.\!container{width:100%!important}.container{width:100%}@media (min-width:640px){.\!container{max-width:640px!important}.container{max-width:640px}}@media (min-width:768px){.\!container{max-width:768px!important}.container{max-width:768px}}@media (min-width:1024px){.\!container{max-width:1024px!important}.container{max-width:1024px}}@media (min-width:1280px){.\!container{max-width:1280px!important}.container{max-width:1280px}}@media (min-width:1536px){.\!container{max-width:1536px!important}.container{max-width:1536px}}.pointer-events-none{pointer-events:none}.visible{visibility:visible}.collapse{visibility:collapse}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.inset-x-0{left:0;right:0}.inset-y-0{top:0;bottom:0}.-bottom-1{bottom:-.25rem}.-left-1{left:-.25rem}.-left-2{left:-.5rem}.-top-2{top:-.5rem}.bottom-0{bottom:0}.left-0{left:0}.left-4{left:1rem}.left-5{left:1.25rem}.left-6{left:1.5rem}.right-0{right:0}.right-2\.5{right:.625rem}.right-3{right:.75rem}.top-0{top:0}.top-4{top:1rem}.top-5{top:1.25rem}.top-6{top:1.5rem}.z-10{z-index:10}.z-30{z-index:30}.z-50{z-index:50}.z-\[100000\]{z-index:100000}.z-\[100\]{z-index:100}.z-\[60\]{z-index:60}.z-\[90\]{z-index:90}.z-\[9999\]{z-index:9999}.col-span-2{grid-column:span 2/span 2}.-m-1{margin:-.25rem}.m-0{margin:0}.mx-auto{margin-left:auto;margin-right:auto}.my-6{margin-top:1.5rem;margin-bottom:1.5rem}.my-8{margin-top:2rem;margin-bottom:2rem}.-mt-2{margin-top:-.5rem}.-mt-3{margin-top:-.75rem}.-mt-5{margin-top:-1.25rem}.mb-1{margin-bottom:.25rem}.mb-1\.5{margin-bottom:.375rem}.mb-2{margin-bottom:.5rem}.mb-2\.5{margin-bottom:.625rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.ml-1{margin-left:.25rem}.mr-1{margin-right:.25rem}.mr-auto{margin-right:auto}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-2\.5{margin-top:.625rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-8{margin-top:2rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.h-1\.5{height:.375rem}.h-10{height:2.5rem}.h-11{height:2.75rem}.h-12{height:3rem}.h-14{height:3.5rem}.h-16{height:4rem}.h-2{height:.5rem}.h-2\.5{height:.625rem}.h-3\.5{height:.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-full{height:100%}.max-h-28{max-height:7rem}.max-h-40{max-height:10rem}.max-h-96{max-height:24rem}.max-h-\[50vh\]{max-height:50vh}.max-h-\[52vh\]{max-height:52vh}.max-h-\[55vh\]{max-height:55vh}.max-h-\[60vh\]{max-height:60vh}.max-h-\[80vh\]{max-height:80vh}.max-h-\[90vh\]{max-height:90vh}.max-h-full{max-height:100%}.max-h-none{max-height:none}.min-h-screen{min-height:100vh}.w-1\.5{width:.375rem}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-16{width:4rem}.w-2{width:.5rem}.w-2\.5{width:.625rem}.w-28{width:7rem}.w-3\.5{width:.875rem}.w-32{width:8rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-7{width:1.75rem}.w-72{width:18rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-\[19rem\]{width:19rem}.w-fit{width:-moz-fit-content;width:fit-content}.w-full{width:100%}.min-w-0{min-width:0}.max-w-4xl{max-width:56rem}.max-w-5xl{max-width:64rem}.max-w-full{max-width:100%}.max-w-lg{max-width:32rem}.max-w-none{max-width:none}.max-w-sm{max-width:24rem}.max-w-xl{max-width:36rem}.flex-1{flex:1 1 0%}.flex-shrink-0,.shrink-0{flex-shrink:0}.basis-full{flex-basis:100%}.border-collapse{border-collapse:collapse}.-rotate-90{--tw-rotate:-90deg}.-rotate-90,.rotate-180{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-180{--tw-rotate:180deg}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}.cursor-default{cursor:default}.cursor-not-allowed{cursor:not-allowed}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.resize-y{resize:vertical}.resize{resize:both}.list-decimal{list-style-type:decimal}.appearance-none{-webkit-appearance:none;-moz-appearance:none;appearance:none}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-7{grid-template-columns:repeat(7,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.justify-around{justify-content:space-around}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-x-3{-moz-column-gap:.75rem;column-gap:.75rem}.gap-y-1{row-gap:.25rem}.gap-y-1\.5{row-gap:.375rem}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.space-y-1\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.375rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.375rem*var(--tw-space-y-reverse))}.space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem*var(--tw-space-y-reverse))}.space-y-2\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.625rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.625rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.space-y-5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem*var(--tw-space-y-reverse))}.divide-y>:not([hidden])~:not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px*(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px*var(--tw-divide-y-reverse))}.divide-slate-300>:not([hidden])~:not([hidden]){--tw-divide-opacity:1;border-color:rgb(203 213 225/var(--tw-divide-opacity,1))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-none{border-radius:0}.rounded-xl{border-radius:.75rem}.rounded-t-xl{border-top-left-radius:.75rem;border-top-right-radius:.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-r-4{border-right-width:4px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-amber-100{--tw-border-opacity:1;border-color:rgb(254 243 199/var(--tw-border-opacity,1))}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138/var(--tw-border-opacity,1))}.border-amber-300{--tw-border-opacity:1;border-color:rgb(252 211 77/var(--tw-border-opacity,1))}.border-blue-100{--tw-border-opacity:1;border-color:rgb(219 234 254/var(--tw-border-opacity,1))}.border-blue-200{--tw-border-opacity:1;border-color:rgb(191 219 254/var(--tw-border-opacity,1))}.border-emerald-100{--tw-border-opacity:1;border-color:rgb(209 250 229/var(--tw-border-opacity,1))}.border-emerald-200{--tw-border-opacity:1;border-color:rgb(167 243 208/var(--tw-border-opacity,1))}.border-indigo-100{--tw-border-opacity:1;border-color:rgb(224 231 255/var(--tw-border-opacity,1))}.border-indigo-200{--tw-border-opacity:1;border-color:rgb(199 210 254/var(--tw-border-opacity,1))}.border-indigo-50{--tw-border-opacity:1;border-color:rgb(238 242 255/var(--tw-border-opacity,1))}.border-indigo-600{--tw-border-opacity:1;border-color:rgb(79 70 229/var(--tw-border-opacity,1))}.border-orange-100{--tw-border-opacity:1;border-color:rgb(255 237 213/var(--tw-border-opacity,1))}.border-purple-600{--tw-border-opacity:1;border-color:rgb(147 51 234/var(--tw-border-opacity,1))}.border-rose-100{--tw-border-opacity:1;border-color:rgb(255 228 230/var(--tw-border-opacity,1))}.border-rose-200{--tw-border-opacity:1;border-color:rgb(254 205 211/var(--tw-border-opacity,1))}.border-rose-300{--tw-border-opacity:1;border-color:rgb(253 164 175/var(--tw-border-opacity,1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249/var(--tw-border-opacity,1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240/var(--tw-border-opacity,1))}.border-slate-200\/60{border-color:rgba(226,232,240,.6)}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225/var(--tw-border-opacity,1))}.border-slate-400{--tw-border-opacity:1;border-color:rgb(148 163 184/var(--tw-border-opacity,1))}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59/var(--tw-border-opacity,1))}.border-teal-100{--tw-border-opacity:1;border-color:rgb(204 251 241/var(--tw-border-opacity,1))}.border-white\/10{border-color:hsla(0,0%,100%,.1)}.border-white\/25{border-color:hsla(0,0%,100%,.25)}.border-r-amber-500{--tw-border-opacity:1;border-right-color:rgb(245 158 11/var(--tw-border-opacity,1))}.border-r-orange-600{--tw-border-opacity:1;border-right-color:rgb(234 88 12/var(--tw-border-opacity,1))}.border-r-slate-300{--tw-border-opacity:1;border-right-color:rgb(203 213 225/var(--tw-border-opacity,1))}.bg-amber-100{--tw-bg-opacity:1;background-color:rgb(254 243 199/var(--tw-bg-opacity,1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235/var(--tw-bg-opacity,1))}.bg-amber-50\/60{background-color:rgba(255,251,235,.6)}.bg-amber-500{--tw-bg-opacity:1;background-color:rgb(245 158 11/var(--tw-bg-opacity,1))}.bg-amber-600{--tw-bg-opacity:1;background-color:rgb(217 119 6/var(--tw-bg-opacity,1))}.bg-black\/80{background-color:rgba(0,0,0,.8)}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254/var(--tw-bg-opacity,1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255/var(--tw-bg-opacity,1))}.bg-blue-50\/50{background-color:rgba(239,246,255,.5)}.bg-emerald-100{--tw-bg-opacity:1;background-color:rgb(209 250 229/var(--tw-bg-opacity,1))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245/var(--tw-bg-opacity,1))}.bg-emerald-50\/50{background-color:rgba(236,253,245,.5)}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129/var(--tw-bg-opacity,1))}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105/var(--tw-bg-opacity,1))}.bg-indigo-100{--tw-bg-opacity:1;background-color:rgb(224 231 255/var(--tw-bg-opacity,1))}.bg-indigo-50{--tw-bg-opacity:1;background-color:rgb(238 242 255/var(--tw-bg-opacity,1))}.bg-indigo-50\/60{background-color:rgba(238,242,255,.6)}.bg-indigo-50\/70{background-color:rgba(238,242,255,.7)}.bg-indigo-500{--tw-bg-opacity:1;background-color:rgb(99 102 241/var(--tw-bg-opacity,1))}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229/var(--tw-bg-opacity,1))}.bg-orange-100{--tw-bg-opacity:1;background-color:rgb(255 237 213/var(--tw-bg-opacity,1))}.bg-orange-50{--tw-bg-opacity:1;background-color:rgb(255 247 237/var(--tw-bg-opacity,1))}.bg-purple-50{--tw-bg-opacity:1;background-color:rgb(250 245 255/var(--tw-bg-opacity,1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234/var(--tw-bg-opacity,1))}.bg-rose-100{--tw-bg-opacity:1;background-color:rgb(255 228 230/var(--tw-bg-opacity,1))}.bg-rose-50{--tw-bg-opacity:1;background-color:rgb(255 241 242/var(--tw-bg-opacity,1))}.bg-rose-50\/50{background-color:rgba(255,241,242,.5)}.bg-rose-500{--tw-bg-opacity:1;background-color:rgb(244 63 94/var(--tw-bg-opacity,1))}.bg-rose-600{--tw-bg-opacity:1;background-color:rgb(225 29 72/var(--tw-bg-opacity,1))}.bg-sky-50{--tw-bg-opacity:1;background-color:rgb(240 249 255/var(--tw-bg-opacity,1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.bg-slate-100\/70{background-color:rgba(241,245,249,.7)}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240/var(--tw-bg-opacity,1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.bg-slate-50\/50{background-color:rgba(248,250,252,.5)}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42/var(--tw-bg-opacity,1))}.bg-slate-900\/50{background-color:rgba(15,23,42,.5)}.bg-slate-950{--tw-bg-opacity:1;background-color:rgb(2 6 23/var(--tw-bg-opacity,1))}.bg-teal-50{--tw-bg-opacity:1;background-color:rgb(240 253 250/var(--tw-bg-opacity,1))}.bg-teal-600{--tw-bg-opacity:1;background-color:rgb(13 148 136/var(--tw-bg-opacity,1))}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.bg-white\/10{background-color:hsla(0,0%,100%,.1)}.bg-white\/15{background-color:hsla(0,0%,100%,.15)}.bg-gradient-to-l{background-image:linear-gradient(to left,var(--tw-gradient-stops))}.from-purple-700{--tw-gradient-from:#7e22ce var(--tw-gradient-from-position);--tw-gradient-to:rgba(126,34,206,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.to-indigo-700{--tw-gradient-to:#4338ca var(--tw-gradient-to-position)}.stroke-slate-100{stroke:#f1f5f9}.object-contain{-o-object-fit:contain;object-fit:contain}.object-cover{-o-object-fit:cover;object-fit:cover}.p-1{padding:.25rem}.p-1\.5{padding:.375rem}.p-12{padding:3rem}.p-2{padding:.5rem}.p-2\.5{padding:.625rem}.p-3{padding:.75rem}.p-3\.5{padding:.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1{padding-left:.25rem;padding-right:.25rem}.px-1\.5{padding-left:.375rem;padding-right:.375rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-3\.5{padding-left:.875rem;padding-right:.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-3\.5{padding-top:.875rem;padding-bottom:.875rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-2{padding-bottom:.5rem}.pb-28{padding-bottom:7rem}.pb-3{padding-bottom:.75rem}.pb-4{padding-bottom:1rem}.pl-1{padding-left:.25rem}.pl-3{padding-left:.75rem}.pl-3\.5{padding-left:.875rem}.pr-10{padding-right:2.5rem}.pr-3\.5{padding-right:.875rem}.pr-4{padding-right:1rem}.pr-8{padding-right:2rem}.pr-9{padding-right:2.25rem}.pt-1{padding-top:.25rem}.pt-2{padding-top:.5rem}.pt-2\.5{padding-top:.625rem}.pt-3{padding-top:.75rem}.pt-4{padding-top:1rem}.pt-6{padding-top:1.5rem}.text-center{text-align:center}.text-right{text-align:right}.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[12px\]{font-size:12px}.text-\[9px\]{font-size:9px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-\[0\.3em\]{letter-spacing:.3em}.tracking-tight{letter-spacing:-.025em}.tracking-wider{letter-spacing:.05em}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36/var(--tw-text-opacity,1))}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11/var(--tw-text-opacity,1))}.text-amber-600{--tw-text-opacity:1;color:rgb(217 119 6/var(--tw-text-opacity,1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9/var(--tw-text-opacity,1))}.text-amber-700\/80{color:rgba(180,83,9,.8)}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14/var(--tw-text-opacity,1))}.text-blue-300{--tw-text-opacity:1;color:rgb(147 197 253/var(--tw-text-opacity,1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235/var(--tw-text-opacity,1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216/var(--tw-text-opacity,1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175/var(--tw-text-opacity,1))}.text-blue-900{--tw-text-opacity:1;color:rgb(30 58 138/var(--tw-text-opacity,1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153/var(--tw-text-opacity,1))}.text-emerald-500{--tw-text-opacity:1;color:rgb(16 185 129/var(--tw-text-opacity,1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105/var(--tw-text-opacity,1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87/var(--tw-text-opacity,1))}.text-emerald-800{--tw-text-opacity:1;color:rgb(6 95 70/var(--tw-text-opacity,1))}.text-emerald-900{--tw-text-opacity:1;color:rgb(6 78 59/var(--tw-text-opacity,1))}.text-indigo-400{--tw-text-opacity:1;color:rgb(129 140 248/var(--tw-text-opacity,1))}.text-indigo-500{--tw-text-opacity:1;color:rgb(99 102 241/var(--tw-text-opacity,1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229/var(--tw-text-opacity,1))}.text-indigo-700{--tw-text-opacity:1;color:rgb(67 56 202/var(--tw-text-opacity,1))}.text-orange-600{--tw-text-opacity:1;color:rgb(234 88 12/var(--tw-text-opacity,1))}.text-orange-700{--tw-text-opacity:1;color:rgb(194 65 12/var(--tw-text-opacity,1))}.text-orange-800{--tw-text-opacity:1;color:rgb(154 52 18/var(--tw-text-opacity,1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234/var(--tw-text-opacity,1))}.text-purple-700{--tw-text-opacity:1;color:rgb(126 34 206/var(--tw-text-opacity,1))}.text-rose-500{--tw-text-opacity:1;color:rgb(244 63 94/var(--tw-text-opacity,1))}.text-rose-600{--tw-text-opacity:1;color:rgb(225 29 72/var(--tw-text-opacity,1))}.text-rose-700{--tw-text-opacity:1;color:rgb(190 18 60/var(--tw-text-opacity,1))}.text-rose-900{--tw-text-opacity:1;color:rgb(136 19 55/var(--tw-text-opacity,1))}.text-sky-500{--tw-text-opacity:1;color:rgb(14 165 233/var(--tw-text-opacity,1))}.text-sky-600{--tw-text-opacity:1;color:rgb(2 132 199/var(--tw-text-opacity,1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240/var(--tw-text-opacity,1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225/var(--tw-text-opacity,1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity,1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105/var(--tw-text-opacity,1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85/var(--tw-text-opacity,1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59/var(--tw-text-opacity,1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42/var(--tw-text-opacity,1))}.text-teal-600{--tw-text-opacity:1;color:rgb(13 148 136/var(--tw-text-opacity,1))}.text-teal-700{--tw-text-opacity:1;color:rgb(15 118 110/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.text-white\/70{color:hsla(0,0%,100%,.7)}.text-white\/75{color:hsla(0,0%,100%,.75)}.text-white\/80{color:hsla(0,0%,100%,.8)}.underline{text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.accent-amber-600{accent-color:#d97706}.accent-indigo-600{accent-color:#4f46e5}.accent-purple-600{accent-color:#9333ea}.opacity-40{opacity:.4}.opacity-50{opacity:.5}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color)}.shadow,.shadow-2xl{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgba(0,0,0,.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color)}.shadow-\[0_-2px_10px_rgba\(0\2c 0\2c 0\2c 0\.04\)\]{--tw-shadow:0 -2px 10px rgba(0,0,0,.04);--tw-shadow-colored:0 -2px 10px var(--tw-shadow-color)}.shadow-\[0_-2px_10px_rgba\(0\2c 0\2c 0\2c 0\.04\)\],.shadow-inner{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgba(0,0,0,.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color)}.shadow-md{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color)}.shadow-md,.shadow-sm{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color),0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.ring{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring,.ring-2{box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring-white{--tw-ring-opacity:1;--tw-ring-color:rgb(255 255 255/var(--tw-ring-opacity,1))}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-300{transition-duration:.3s}.duration-500{transition-duration:.5s}.duration-700{transition-duration:.7s}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}.last\:mb-0:last-child{margin-bottom:0}.hover\:scale-105:hover{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:bg-amber-50:hover{--tw-bg-opacity:1;background-color:rgb(255 251 235/var(--tw-bg-opacity,1))}.hover\:bg-amber-600:hover{--tw-bg-opacity:1;background-color:rgb(217 119 6/var(--tw-bg-opacity,1))}.hover\:bg-amber-700:hover{--tw-bg-opacity:1;background-color:rgb(180 83 9/var(--tw-bg-opacity,1))}.hover\:bg-emerald-700:hover{--tw-bg-opacity:1;background-color:rgb(4 120 87/var(--tw-bg-opacity,1))}.hover\:bg-indigo-50:hover{--tw-bg-opacity:1;background-color:rgb(238 242 255/var(--tw-bg-opacity,1))}.hover\:bg-indigo-700:hover{--tw-bg-opacity:1;background-color:rgb(67 56 202/var(--tw-bg-opacity,1))}.hover\:bg-orange-50:hover{--tw-bg-opacity:1;background-color:rgb(255 247 237/var(--tw-bg-opacity,1))}.hover\:bg-purple-700:hover{--tw-bg-opacity:1;background-color:rgb(126 34 206/var(--tw-bg-opacity,1))}.hover\:bg-rose-50:hover{--tw-bg-opacity:1;background-color:rgb(255 241 242/var(--tw-bg-opacity,1))}.hover\:bg-slate-100:hover{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.hover\:bg-slate-200:hover{--tw-bg-opacity:1;background-color:rgb(226 232 240/var(--tw-bg-opacity,1))}.hover\:bg-slate-50:hover{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.hover\:bg-slate-50\/80:hover{background-color:rgba(248,250,252,.8)}.hover\:bg-teal-700:hover{--tw-bg-opacity:1;background-color:rgb(15 118 110/var(--tw-bg-opacity,1))}.hover\:bg-white\/10:hover{background-color:hsla(0,0%,100%,.1)}.hover\:bg-white\/20:hover{background-color:hsla(0,0%,100%,.2)}.hover\:text-amber-800:hover{--tw-text-opacity:1;color:rgb(146 64 14/var(--tw-text-opacity,1))}.hover\:text-amber-900:hover{--tw-text-opacity:1;color:rgb(120 53 15/var(--tw-text-opacity,1))}.hover\:text-indigo-600:hover{--tw-text-opacity:1;color:rgb(79 70 229/var(--tw-text-opacity,1))}.hover\:text-orange-600:hover{--tw-text-opacity:1;color:rgb(234 88 12/var(--tw-text-opacity,1))}.hover\:text-purple-600:hover{--tw-text-opacity:1;color:rgb(147 51 234/var(--tw-text-opacity,1))}.hover\:text-rose-600:hover{--tw-text-opacity:1;color:rgb(225 29 72/var(--tw-text-opacity,1))}.hover\:text-rose-700:hover{--tw-text-opacity:1;color:rgb(190 18 60/var(--tw-text-opacity,1))}.hover\:text-rose-800:hover{--tw-text-opacity:1;color:rgb(159 18 57/var(--tw-text-opacity,1))}.hover\:text-slate-600:hover{--tw-text-opacity:1;color:rgb(71 85 105/var(--tw-text-opacity,1))}.hover\:text-slate-700:hover{--tw-text-opacity:1;color:rgb(51 65 85/var(--tw-text-opacity,1))}.hover\:text-teal-600:hover{--tw-text-opacity:1;color:rgb(13 148 136/var(--tw-text-opacity,1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.hover\:underline:hover{text-decoration-line:underline}.hover\:opacity-100:hover{opacity:1}.hover\:opacity-90:hover{opacity:.9}.hover\:shadow:hover{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color)}.hover\:shadow-md:hover,.hover\:shadow:hover{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.hover\:shadow-md:hover{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color)}.focus\:border-amber-500:focus{--tw-border-opacity:1;border-color:rgb(245 158 11/var(--tw-border-opacity,1))}.focus\:border-indigo-500:focus{--tw-border-opacity:1;border-color:rgb(99 102 241/var(--tw-border-opacity,1))}.focus\:border-purple-500:focus{--tw-border-opacity:1;border-color:rgb(168 85 247/var(--tw-border-opacity,1))}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus\:ring-amber-500\/20:focus{--tw-ring-color:rgba(245,158,11,.2)}.focus\:ring-indigo-500\/20:focus{--tw-ring-color:rgba(99,102,241,.2)}.focus\:ring-indigo-500\/30:focus{--tw-ring-color:rgba(99,102,241,.3)}.focus\:ring-purple-500\/20:focus{--tw-ring-color:rgba(168,85,247,.2)}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.disabled\:bg-slate-100:disabled{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.disabled\:opacity-50:disabled{opacity:.5}.group:hover .group-hover\:opacity-100{opacity:1}.dark\:divide-slate-600:is(.dark *)>:not([hidden])~:not([hidden]){--tw-divide-opacity:1;border-color:rgb(71 85 105/var(--tw-divide-opacity,1))}.dark\:border-amber-800:is(.dark *){--tw-border-opacity:1;border-color:rgb(146 64 14/var(--tw-border-opacity,1))}.dark\:border-amber-900:is(.dark *){--tw-border-opacity:1;border-color:rgb(120 53 15/var(--tw-border-opacity,1))}.dark\:border-amber-900\/40:is(.dark *){border-color:rgba(120,53,15,.4)}.dark\:border-amber-900\/50:is(.dark *){border-color:rgba(120,53,15,.5)}.dark\:border-blue-800:is(.dark *){--tw-border-opacity:1;border-color:rgb(30 64 175/var(--tw-border-opacity,1))}.dark\:border-blue-800\/60:is(.dark *){border-color:rgba(30,64,175,.6)}.dark\:border-blue-900\/50:is(.dark *){border-color:rgba(30,58,138,.5)}.dark\:border-emerald-800:is(.dark *){--tw-border-opacity:1;border-color:rgb(6 95 70/var(--tw-border-opacity,1))}.dark\:border-emerald-800\/60:is(.dark *){border-color:rgba(6,95,70,.6)}.dark\:border-emerald-900:is(.dark *){--tw-border-opacity:1;border-color:rgb(6 78 59/var(--tw-border-opacity,1))}.dark\:border-emerald-900\/50:is(.dark *){border-color:rgba(6,78,59,.5)}.dark\:border-indigo-900\/40:is(.dark *){border-color:rgba(49,46,129,.4)}.dark\:border-indigo-900\/50:is(.dark *){border-color:rgba(49,46,129,.5)}.dark\:border-orange-900:is(.dark *){--tw-border-opacity:1;border-color:rgb(124 45 18/var(--tw-border-opacity,1))}.dark\:border-rose-800:is(.dark *){--tw-border-opacity:1;border-color:rgb(159 18 57/var(--tw-border-opacity,1))}.dark\:border-rose-800\/60:is(.dark *){border-color:rgba(159,18,57,.6)}.dark\:border-rose-900:is(.dark *){--tw-border-opacity:1;border-color:rgb(136 19 55/var(--tw-border-opacity,1))}.dark\:border-rose-900\/50:is(.dark *){border-color:rgba(136,19,55,.5)}.dark\:border-slate-500:is(.dark *){--tw-border-opacity:1;border-color:rgb(100 116 139/var(--tw-border-opacity,1))}.dark\:border-slate-600:is(.dark *){--tw-border-opacity:1;border-color:rgb(71 85 105/var(--tw-border-opacity,1))}.dark\:border-slate-700:is(.dark *){--tw-border-opacity:1;border-color:rgb(51 65 85/var(--tw-border-opacity,1))}.dark\:border-slate-800:is(.dark *){--tw-border-opacity:1;border-color:rgb(30 41 59/var(--tw-border-opacity,1))}.dark\:border-slate-800\/60:is(.dark *){border-color:rgba(30,41,59,.6)}.dark\:border-teal-900\/40:is(.dark *){border-color:rgba(19,78,74,.4)}.dark\:border-r-slate-600:is(.dark *){--tw-border-opacity:1;border-right-color:rgb(71 85 105/var(--tw-border-opacity,1))}.dark\:bg-amber-950\/20:is(.dark *){background-color:rgba(69,26,3,.2)}.dark\:bg-amber-950\/30:is(.dark *){background-color:rgba(69,26,3,.3)}.dark\:bg-amber-950\/40:is(.dark *){background-color:rgba(69,26,3,.4)}.dark\:bg-amber-950\/50:is(.dark *){background-color:rgba(69,26,3,.5)}.dark\:bg-blue-950\/30:is(.dark *){background-color:rgba(23,37,84,.3)}.dark\:bg-blue-950\/40:is(.dark *){background-color:rgba(23,37,84,.4)}.dark\:bg-blue-950\/50:is(.dark *){background-color:rgba(23,37,84,.5)}.dark\:bg-emerald-950\/30:is(.dark *){background-color:rgba(2,44,34,.3)}.dark\:bg-emerald-950\/40:is(.dark *){background-color:rgba(2,44,34,.4)}.dark\:bg-emerald-950\/50:is(.dark *){background-color:rgba(2,44,34,.5)}.dark\:bg-indigo-950\/20:is(.dark *){background-color:rgba(30,27,75,.2)}.dark\:bg-indigo-950\/30:is(.dark *){background-color:rgba(30,27,75,.3)}.dark\:bg-indigo-950\/40:is(.dark *){background-color:rgba(30,27,75,.4)}.dark\:bg-indigo-950\/50:is(.dark *){background-color:rgba(30,27,75,.5)}.dark\:bg-indigo-950\/60:is(.dark *){background-color:rgba(30,27,75,.6)}.dark\:bg-orange-950\/40:is(.dark *){background-color:rgba(67,20,7,.4)}.dark\:bg-orange-950\/50:is(.dark *){background-color:rgba(67,20,7,.5)}.dark\:bg-purple-950\/40:is(.dark *){background-color:rgba(59,7,100,.4)}.dark\:bg-rose-950\/30:is(.dark *){background-color:rgba(76,5,25,.3)}.dark\:bg-rose-950\/40:is(.dark *){background-color:rgba(76,5,25,.4)}.dark\:bg-rose-950\/50:is(.dark *){background-color:rgba(76,5,25,.5)}.dark\:bg-sky-950\/40:is(.dark *){background-color:rgba(8,47,73,.4)}.dark\:bg-slate-700:is(.dark *){--tw-bg-opacity:1;background-color:rgb(51 65 85/var(--tw-bg-opacity,1))}.dark\:bg-slate-800:is(.dark *){--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity,1))}.dark\:bg-slate-800\/50:is(.dark *){background-color:rgba(30,41,59,.5)}.dark\:bg-slate-800\/60:is(.dark *){background-color:rgba(30,41,59,.6)}.dark\:bg-slate-900:is(.dark *){--tw-bg-opacity:1;background-color:rgb(15 23 42/var(--tw-bg-opacity,1))}.dark\:bg-slate-900\/50:is(.dark *){background-color:rgba(15,23,42,.5)}.dark\:bg-slate-950:is(.dark *){--tw-bg-opacity:1;background-color:rgb(2 6 23/var(--tw-bg-opacity,1))}.dark\:bg-teal-950\/30:is(.dark *){background-color:rgba(4,47,46,.3)}.dark\:bg-teal-950\/40:is(.dark *){background-color:rgba(4,47,46,.4)}.dark\:stroke-slate-800:is(.dark *){stroke:#1e293b}.dark\:text-amber-300:is(.dark *){--tw-text-opacity:1;color:rgb(252 211 77/var(--tw-text-opacity,1))}.dark\:text-amber-400:is(.dark *){--tw-text-opacity:1;color:rgb(251 191 36/var(--tw-text-opacity,1))}.dark\:text-amber-400\/80:is(.dark *){color:rgba(251,191,36,.8)}.dark\:text-blue-100:is(.dark *){--tw-text-opacity:1;color:rgb(219 234 254/var(--tw-text-opacity,1))}.dark\:text-blue-300:is(.dark *){--tw-text-opacity:1;color:rgb(147 197 253/var(--tw-text-opacity,1))}.dark\:text-blue-400:is(.dark *){--tw-text-opacity:1;color:rgb(96 165 250/var(--tw-text-opacity,1))}.dark\:text-emerald-100:is(.dark *){--tw-text-opacity:1;color:rgb(209 250 229/var(--tw-text-opacity,1))}.dark\:text-emerald-300:is(.dark *){--tw-text-opacity:1;color:rgb(110 231 183/var(--tw-text-opacity,1))}.dark\:text-emerald-400:is(.dark *){--tw-text-opacity:1;color:rgb(52 211 153/var(--tw-text-opacity,1))}.dark\:text-indigo-300:is(.dark *){--tw-text-opacity:1;color:rgb(165 180 252/var(--tw-text-opacity,1))}.dark\:text-indigo-400:is(.dark *){--tw-text-opacity:1;color:rgb(129 140 248/var(--tw-text-opacity,1))}.dark\:text-indigo-500:is(.dark *){--tw-text-opacity:1;color:rgb(99 102 241/var(--tw-text-opacity,1))}.dark\:text-orange-300:is(.dark *){--tw-text-opacity:1;color:rgb(253 186 116/var(--tw-text-opacity,1))}.dark\:text-orange-400:is(.dark *){--tw-text-opacity:1;color:rgb(251 146 60/var(--tw-text-opacity,1))}.dark\:text-purple-300:is(.dark *){--tw-text-opacity:1;color:rgb(216 180 254/var(--tw-text-opacity,1))}.dark\:text-purple-400:is(.dark *){--tw-text-opacity:1;color:rgb(192 132 252/var(--tw-text-opacity,1))}.dark\:text-rose-100:is(.dark *){--tw-text-opacity:1;color:rgb(255 228 230/var(--tw-text-opacity,1))}.dark\:text-rose-300:is(.dark *){--tw-text-opacity:1;color:rgb(253 164 175/var(--tw-text-opacity,1))}.dark\:text-rose-400:is(.dark *){--tw-text-opacity:1;color:rgb(251 113 133/var(--tw-text-opacity,1))}.dark\:text-sky-400:is(.dark *){--tw-text-opacity:1;color:rgb(56 189 248/var(--tw-text-opacity,1))}.dark\:text-slate-100:is(.dark *){--tw-text-opacity:1;color:rgb(241 245 249/var(--tw-text-opacity,1))}.dark\:text-slate-200:is(.dark *){--tw-text-opacity:1;color:rgb(226 232 240/var(--tw-text-opacity,1))}.dark\:text-slate-300:is(.dark *){--tw-text-opacity:1;color:rgb(203 213 225/var(--tw-text-opacity,1))}.dark\:text-slate-400:is(.dark *){--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.dark\:text-slate-500:is(.dark *){--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity,1))}.dark\:text-slate-600:is(.dark *){--tw-text-opacity:1;color:rgb(71 85 105/var(--tw-text-opacity,1))}.dark\:text-teal-400:is(.dark *){--tw-text-opacity:1;color:rgb(45 212 191/var(--tw-text-opacity,1))}.dark\:text-white:is(.dark *){--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.dark\:ring-slate-900:is(.dark *){--tw-ring-opacity:1;--tw-ring-color:rgb(15 23 42/var(--tw-ring-opacity,1))}.dark\:hover\:bg-amber-950\/30:hover:is(.dark *){background-color:rgba(69,26,3,.3)}.dark\:hover\:bg-indigo-950\/30:hover:is(.dark *){background-color:rgba(30,27,75,.3)}.dark\:hover\:bg-orange-950\/40:hover:is(.dark *){background-color:rgba(67,20,7,.4)}.dark\:hover\:bg-rose-950\/30:hover:is(.dark *){background-color:rgba(76,5,25,.3)}.dark\:hover\:bg-slate-700:hover:is(.dark *){--tw-bg-opacity:1;background-color:rgb(51 65 85/var(--tw-bg-opacity,1))}.dark\:hover\:bg-slate-800:hover:is(.dark *){--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity,1))}.dark\:hover\:bg-slate-800\/40:hover:is(.dark *){background-color:rgba(30,41,59,.4)}.dark\:hover\:text-amber-300:hover:is(.dark *){--tw-text-opacity:1;color:rgb(252 211 77/var(--tw-text-opacity,1))}.dark\:hover\:text-indigo-400:hover:is(.dark *){--tw-text-opacity:1;color:rgb(129 140 248/var(--tw-text-opacity,1))}.dark\:hover\:text-orange-400:hover:is(.dark *){--tw-text-opacity:1;color:rgb(251 146 60/var(--tw-text-opacity,1))}.dark\:hover\:text-rose-400:hover:is(.dark *){--tw-text-opacity:1;color:rgb(251 113 133/var(--tw-text-opacity,1))}.dark\:hover\:text-slate-200:hover:is(.dark *){--tw-text-opacity:1;color:rgb(226 232 240/var(--tw-text-opacity,1))}.dark\:hover\:text-slate-300:hover:is(.dark *){--tw-text-opacity:1;color:rgb(203 213 225/var(--tw-text-opacity,1))}.dark\:hover\:text-teal-400:hover:is(.dark *){--tw-text-opacity:1;color:rgb(45 212 191/var(--tw-text-opacity,1))}.dark\:disabled\:bg-slate-800\/60:disabled:is(.dark *){background-color:rgba(30,41,59,.6)}@media (min-width:640px){.sm\:block{display:block}.sm\:inline{display:inline}.sm\:hidden{display:none}.sm\:w-40{width:10rem}.sm\:w-64{width:16rem}.sm\:w-auto{width:auto}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.sm\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.sm\:flex-row{flex-direction:row}}@media (min-width:768px){.md\:inline{display:inline}.md\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem}}</style>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- فونت‌های فارسی -->
@@ -185,7 +181,7 @@
             <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-4">
                 <i class="fa-solid fa-lock text-2xl"></i>
             </div>
-            <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-1">ورود به سامانه آمار دوخت</h2>
+            <h2 id="pinLockTitle" class="text-lg font-bold text-slate-800 dark:text-white mb-1">ورود به سامانه آمار</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-5">برای مشاهده اطلاعات، رمز عبور را وارد کنید.</p>
             <form onsubmit="attemptUnlock(event)" class="space-y-3">
                 <input type="password" id="pinLockInput" inputmode="numeric" required autocomplete="off" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-center text-lg tracking-[0.3em] bg-slate-50 dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" placeholder="رمز عبور">
@@ -395,9 +391,9 @@
                 <img src="icon-192.png" alt="لوگوی سامانه" class="w-10 h-10 object-contain rounded-lg">
             </div>
             <h1 id="mainAppTitle" class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-                سامانه آمار دوخت لباس
+                سامانه آمار کار
             </h1>
-            <p id="mainAppSubtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-normal">سیستم هوشمند آمار و مدیریت دوخت</p>
+            <p id="mainAppSubtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-normal">سیستم هوشمند آمار و مدیریت کار</p>
             <p id="ownerInfoLine" class="hidden text-xs text-slate-400 dark:text-slate-500 mt-1"></p>
             <div id="todayDateBar" class="mt-3"></div>
             <div class="mt-3 flex justify-center items-center gap-2 flex-wrap">
@@ -514,11 +510,11 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemCode">کد لباس / قطعه</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemCode">کد محصول / کار</label>
                         <input type="text" inputmode="numeric" id="itemCode" required class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemTitle">عنوان لباس / قطعه</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemTitle">عنوان محصول / کار</label>
                         <input type="text" id="itemTitle" required class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-xs bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
@@ -640,7 +636,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">عکس لباس / نمونه کار (اختیاری)</label>
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemPhoto">عکس محصول / نمونه کار (اختیاری)</label>
                     <div class="flex items-center gap-3 flex-wrap">
                         <label for="itemPhotoInput" class="tactile-btn cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-400 dark:border-slate-500">
                             <i class="fa-solid fa-camera"></i> <span>انتخاب / گرفتن عکس</span>
@@ -704,7 +700,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">متن یادداشت / نکته</label>
-                    <textarea id="noteTextInput" rows="4" placeholder="مثلاً: تعطیلی کارگاه یا تحویل سفارش خاص..." class="w-full p-3.5 border border-slate-400 dark:border-slate-500 rounded-xl text-base bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all resize-y"></textarea>
+                    <textarea id="noteTextInput" rows="4" placeholder="مثلاً: تعطیلی یا تحویل سفارش خاص..." class="w-full p-3.5 border border-slate-400 dark:border-slate-500 rounded-xl text-base bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all resize-y"></textarea>
                 </div>
 
                 <!-- لیست یادداشت‌های ثبت شده در ماه جاری -->
@@ -787,7 +783,7 @@
                             <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">#</th>
                             <th class="sticky top-0 z-10 p-3.5 no-print bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عکس</th>
                             <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="itemCode">کد</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="itemTitle">عنوان لباس</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="itemTitle">عنوان محصول</th>
                             <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="itemColor">رنگ</th>
                             <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="receivedQuantity">تعداد دریافتی</th>
                             <th id="thUnitPrice" class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">قیمت واحد (تومان)</th>
@@ -1042,7 +1038,7 @@
                     </div>
                     <div class="min-w-0">
                         <p id="settingsProfilePreviewName" class="text-sm font-bold truncate">کاربر مهمان</p>
-                        <p id="settingsProfilePreviewSub" class="text-[11px] text-white/70 truncate">سامانه آمار دوخت لباس</p>
+                        <p id="settingsProfilePreviewSub" class="text-[11px] text-white/70 truncate">سامانه آمار کار</p>
                     </div>
                 </div>
             </div>
@@ -1111,7 +1107,7 @@
                             <input type="text" inputmode="tel" id="settingOwnerPhone" placeholder="مثلاً ۰۹۱۲۱۲۳۴۵۶۷" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">آدرس کارگاه (اختیاری)</label>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">آدرس محل کار (اختیاری)</label>
                             <input type="text" id="settingOwnerAddress" placeholder="مثلاً تهران، ..." class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         </div>
                     </div>
@@ -1125,8 +1121,19 @@
                         <p class="text-[11px] leading-relaxed text-slate-400 dark:text-slate-500 mt-1">اگر اختلاف زمان واقعی با مدت هدف کمتر از این مقدار باشد، وضعیت «به موقع» ثبت می‌شود (۰ = دقیقاً بدون اختلاف، حداکثر ۱۲۰).</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">عنوان کارگاه / سامانه</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">نوع شغل (پر کردن خودکار نام‌ها)</label>
+                        <select id="settingJobPreset" onchange="if (this.value) applyJobPreset(this.value); this.value = '';" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                            <option value="">— انتخاب کنید —</option>
+                        </select>
+                        <p class="text-[11px] leading-relaxed text-slate-400 dark:text-slate-500 mt-1">با انتخاب شغل، نام سامانه و نام فیلدهای فرم (پایین‌تر) متناسب با آن پر می‌شود؛ همه قابل ویرایش دستی هستند.</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">عنوان کسب‌وکار / سامانه</label>
                         <input type="text" id="settingShopName" oninput="updateSettingsProfilePreview()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">زیرعنوان سامانه</label>
+                        <input type="text" id="settingShopSubtitle" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
@@ -1371,7 +1378,7 @@
                         <i class="fa-solid fa-bell"></i> اعلان‌های هوشمند پیشرفت کار
                     </h3>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                        با فعال بودن این گزینه، اعلان‌ها دقیقاً مثل یک پیامک یا یادآوریِ گوشی در نوار اعلان‌های سیستم نمایش داده می‌شوند (نه یک پیام داخل صفحه) و تا لمس نشوند باقی می‌مانند: در چهار مرحله‌ی ۲۵٪، ۵۰٪، ۷۵٪ و ۹۰٪ از زمان مجاز تحویل کدِ در حال دوختِ فعلی، و همچنین وقتی خودِ موعد تحویل برسد (و هر ۲۰ دقیقه (فقط در ساعات کاری) تا زمانی‌که رکورد بعدی ثبت یا دکمه‌ی «کار تمام شد» زده شود). عنوان تب و آیکون برنامه هم هنگام تاخیر هشدار می‌دهند.
+                        با فعال بودن این گزینه، اعلان‌ها دقیقاً مثل یک پیامک یا یادآوریِ گوشی در نوار اعلان‌های سیستم نمایش داده می‌شوند (نه یک پیام داخل صفحه) و تا لمس نشوند باقی می‌مانند: در چهار مرحله‌ی ۲۵٪، ۵۰٪، ۷۵٪ و ۹۰٪ از زمان مجاز تحویل کارِ در حال انجامِ فعلی، و همچنین وقتی خودِ موعد تحویل برسد (و هر ۲۰ دقیقه (فقط در ساعات کاری) تا زمانی‌که رکورد بعدی ثبت یا دکمه‌ی «کار تمام شد» زده شود). عنوان تب و آیکون برنامه هم هنگام تاخیر هشدار می‌دهند.
                     </p>
                     <p class="text-[11px] text-teal-700 dark:text-teal-400 leading-relaxed bg-teal-50 dark:bg-teal-950/30 rounded-lg p-2.5 border border-teal-100 dark:border-teal-900/40">
                         <i class="fa-solid fa-circle-info ml-1"></i>
@@ -1474,8 +1481,8 @@
                     <button id="premiumUpgradeBtn" onclick="runIfPremium('نسخه ویژه', () => showFeedbackBanner('نسخه ویژه از قبل فعال است.', 'success'))" class="shrink-0 text-xs font-bold px-3 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">فعال‌سازی</button>
                 </div>
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> درباره سامانه آمار دوخت لباس</h3>
-                    <p class="text-[12px] leading-relaxed text-slate-600 dark:text-slate-300">این سامانه یک ابزار آفلاین (PWA) برای ثبت و مدیریت کارکرد روزانه‌ی کارگاه خیاطی است: هر قطعه با کد، رنگ، تعداد و قیمت ثبت می‌شود، مدت‌زمان تحویل به‌صورت خودکار از روی آمار روزانه محاسبه می‌شود و وضعیت «به‌موقع / تاخیر / زودتر از موعد» خودکار تعیین می‌گردد.</p>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> درباره سامانه آمار کار</h3>
+                    <p class="text-[12px] leading-relaxed text-slate-600 dark:text-slate-300">این سامانه یک ابزار آفلاین (PWA) برای ثبت و مدیریت کارکرد روزانه در هر شغل کارمزدی یا پروژه‌ای است (تولیدی، نجاری، تعمیرات، تدریس، فریلنسری و ...): هر کار با کد، ویژگی، تعداد و قیمت ثبت می‌شود، مدت‌زمان تحویل به‌صورت خودکار از روی آمار روزانه محاسبه می‌شود و وضعیت «به‌موقع / تاخیر / زودتر از موعد» خودکار تعیین می‌گردد. نام فیلدها و نوع کار از تب «کاری» در تنظیمات قابل تنظیم است.</p>
                 </div>
                 <div class="space-y-2 pb-4 border-b border-slate-300 dark:border-slate-600">
                     <h4 class="text-[11px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">امکانات کلیدی</h4>
@@ -1491,7 +1498,7 @@
                     <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-2 shadow-inner overflow-hidden">
                         <img src="icon-192.png" alt="لوگوی سامانه" class="w-10 h-10 object-contain rounded-lg">
                     </div>
-                    <p class="text-sm font-bold text-slate-800 dark:text-white">سامانه آمار دوخت لباس</p>
+                    <p class="text-sm font-bold text-slate-800 dark:text-white">سامانه آمار کار</p>
                     <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">نسخه ۱۳.۰</p>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">طراحی و توسعه توسط تیم <span class="font-bold text-indigo-600 dark:text-indigo-400">Phoenix.Yaser</span></p>
                 </div>
@@ -2649,7 +2656,7 @@
             if (missingPhotoCount) issues.push({ key: 'missing_photo', severity: 'info', text: `${formatNumber(missingPhotoCount)} رکورد به عکسی اشاره می‌کند که پیدا نشد.`, fixable: true });
 
             const invalidCoreCount = allRecords.filter(r => !r.itemCode || !(r.quantity > 0)).length;
-            if (invalidCoreCount) issues.push({ key: 'invalid_core', severity: 'error', text: `${formatNumber(invalidCoreCount)} رکورد فاقد کد لباس یا با تعداد نامعتبر.`, fixable: false });
+            if (invalidCoreCount) issues.push({ key: 'invalid_core', severity: 'error', text: `${formatNumber(invalidCoreCount)} رکورد فاقد ${getFormLabel('itemCode')} یا با تعداد نامعتبر.`, fixable: false });
 
             return issues;
         }
@@ -2779,10 +2786,72 @@
         let dailyNotes = (() => { const raw = safeLoadJSON('sewing_daily_notes_v13', []); return Array.isArray(raw) ? raw.map(sanitizeNote).filter(Boolean) : []; })();
 
         const FORM_LABEL_DEFAULTS = {
-            itemCode: 'کد لباس / قطعه', itemTitle: 'عنوان لباس / قطعه', itemColor: 'رنگ', receivedQuantity: 'تعداد دریافتی',
+            itemCode: 'کد محصول / کار', itemTitle: 'عنوان محصول / کار', itemColor: 'رنگ / ویژگی', receivedQuantity: 'تعداد دریافتی',
             unitPrice: 'قیمت واحد', itemStatus: 'وضعیت تحویل / ثبت', recordDate: 'تاریخ ثبت', recordTime: 'ساعت ثبت',
-            dailyStat: 'آمار روزانه', recordEndDateTime: 'تاریخ و زمان پایان', recordWorkDuration: 'مدت زمان تحویل کار'
+            dailyStat: 'آمار روزانه', recordEndDateTime: 'تاریخ و زمان پایان', recordWorkDuration: 'مدت زمان تحویل کار',
+            itemPhoto: 'عکس محصول / نمونه کار (اختیاری)'
         };
+
+        // پیش‌فرض‌های آماده برای مشاغل مختلف: با انتخاب هر کدام در تنظیمات (تب «کاری»)،
+        // نام سامانه و نام فیلدهای فرم متناسب با آن شغل پر می‌شود (کاربر می‌تواند بعداً هرکدام را دستی ویرایش کند).
+        const JOB_PRESETS = {
+            general: {
+                name: 'عمومی / سایر مشاغل',
+                shopName: 'سامانه آمار کار', subtitle: 'سیستم هوشمند آمار و مدیریت کار',
+                labels: {}
+            },
+            workshop: {
+                name: 'تولیدی و کارگاه (کارمزدی)',
+                shopName: 'سامانه آمار کارگاه تولیدی', subtitle: 'سیستم هوشمند آمار و مدیریت تولید',
+                labels: { itemCode: 'کد سفارش / قطعه', itemTitle: 'عنوان محصول', itemColor: 'مدل / رنگ' }
+            },
+            carpentry: {
+                name: 'نجاری و صنایع چوب',
+                shopName: 'سامانه آمار کار نجاری', subtitle: 'سیستم هوشمند آمار و مدیریت کار نجاری',
+                labels: { itemCode: 'کد سفارش', itemTitle: 'عنوان کار / پروژه', itemColor: 'نوع چوب / رنگ', itemPhoto: 'عکس کار / نمونه (اختیاری)' }
+            },
+            repair: {
+                name: 'تعمیرات (موبایل، لوازم خانگی و ...)',
+                shopName: 'سامانه آمار تعمیرات', subtitle: 'سیستم هوشمند آمار و مدیریت تعمیرات',
+                labels: { itemCode: 'شماره پذیرش', itemTitle: 'نوع دستگاه / عیب', itemColor: 'مدل دستگاه', receivedQuantity: 'تعداد دستگاه', itemPhoto: 'عکس دستگاه (اختیاری)' }
+            },
+            tutoring: {
+                name: 'تدریس خصوصی / آموزش',
+                shopName: 'سامانه آمار تدریس', subtitle: 'سیستم هوشمند آمار و مدیریت کلاس‌ها',
+                labels: { itemCode: 'کد کلاس / دانش‌آموز', itemTitle: 'عنوان درس / مبحث', itemColor: 'مقطع / پایه', receivedQuantity: 'تعداد جلسه', unitPrice: 'شهریه هر جلسه' }
+            },
+            freelance: {
+                name: 'طراحی و کار فریلنسری',
+                shopName: 'سامانه آمار پروژه‌ها', subtitle: 'سیستم هوشمند آمار و مدیریت پروژه‌ها',
+                labels: { itemCode: 'کد پروژه', itemTitle: 'عنوان پروژه', itemColor: 'دسته‌بندی', receivedQuantity: 'تعداد آیتم' }
+            },
+            delivery: {
+                name: 'رانندگی، پیک و حمل بار',
+                shopName: 'سامانه آمار سفرها', subtitle: 'سیستم هوشمند آمار و مدیریت سفرها',
+                labels: { itemCode: 'کد سفارش / بار', itemTitle: 'مسیر / مقصد', itemColor: 'نوع بار', receivedQuantity: 'تعداد بسته' }
+            },
+            catering: {
+                name: 'آشپزی، قنادی و شیرینی‌پزی',
+                shopName: 'سامانه آمار سفارش‌ها', subtitle: 'سیستم هوشمند آمار و مدیریت سفارش‌ها',
+                labels: { itemCode: 'کد سفارش', itemTitle: 'نوع محصول', itemColor: 'طعم / تزئین', itemPhoto: 'عکس محصول (اختیاری)' }
+            }
+        };
+
+        // پر کردن خودکار «نام سامانه»، زیرعنوان و نام فیلدهای فرم در تنظیمات، بر اساس شغل انتخاب‌شده
+        function applyJobPreset(key) {
+            const preset = JOB_PRESETS[key];
+            if (!preset) return;
+            const shopEl = document.getElementById('settingShopName');
+            const subEl = document.getElementById('settingShopSubtitle');
+            if (shopEl) shopEl.value = preset.shopName || '';
+            if (subEl) subEl.value = preset.subtitle || '';
+            Object.keys(FORM_LABEL_DEFAULTS).forEach(k => {
+                const el = document.getElementById('settingLabel_' + k);
+                if (el) el.value = (preset.labels && preset.labels[k]) ? preset.labels[k] : '';
+            });
+            updateSettingsProfilePreview();
+            showFeedbackBanner('پیش‌فرض‌های «' + preset.name + '» در فرم پایین پر شد؛ در صورت نیاز ویرایش کنید و «ذخیره تنظیمات» را بزنید.', 'success');
+        }
         const BREAK_META = [['breakfast', 'صبحانه'], ['tea1', 'چای اول'], ['lunch', 'ناهار'], ['tea2', 'چای دوم']];
         const BREAK_KEYS = BREAK_META.map(x => x[0]);
         const DEFAULT_SHIFT = {
@@ -2796,7 +2865,8 @@
         const DEFAULT_APP_SETTINGS = {
             workdayMinutes: 495, shiftStart: '08:00', shiftEnd: '18:00', shiftBreaks: null, formLabels: {}, 
             schemaVersion: 1,
-            shopName: 'سامانه آمار دوخت لباس',
+            shopName: 'سامانه آمار کار',
+            shopSubtitle: '',
             currency: 'تومان',
             defaultStatus: 'به موقع',
             onTimeToleranceMinutes: 5,
@@ -2884,6 +2954,8 @@
             const screen = document.getElementById('pinLockScreen');
             if (!screen) return;
             if (appSettings.pinEnabled && appSettings.pinHash) {
+                const titleEl = document.getElementById('pinLockTitle');
+                if (titleEl) titleEl.innerText = `ورود به ${appSettings.shopName || 'سامانه آمار کار'}`;
                 screen.classList.remove('hidden');
                 setTimeout(() => {
                     const input = document.getElementById('pinLockInput');
@@ -3035,7 +3107,7 @@
 
         /*
          * ذخیره‌ی فایل پشتیبان:
-         * - تا پایان هر ماه شمسی فقط «یک» فایل پشتیبان وجود دارد (آمار_دوخت_پشتیبان_<ماه>_<سال>.json) و هر بار
+         * - تا پایان هر ماه شمسی فقط «یک» فایل پشتیبان وجود دارد (آمار_پشتیبان_<ماه>_<سال>.json) و هر بار
          *   همان فایل به‌روزرسانی (بازنویسی) می‌شود؛ با شروع ماه جدید، خودکار فایل ماه جدید ساخته می‌شود.
          * - مسیر ذخیره فقط از «تنظیمات ← حافظه ← پوشه پشتیبان» تعیین/تغییر می‌کند. در صفحه‌ی اصلی هیچ‌وقت
          *   پنجره‌ی انتخاب مسیر نمایش داده نمی‌شود.
@@ -3046,7 +3118,7 @@
         let backupPermissionState = 'unknown';
 
         function getMonthlyBackupFileName() {
-            return `آمار_دوخت_پشتیبان_${currentJalali.monthName}_${currentJalali.yearEn}.json`;
+            return `آمار_پشتیبان_${currentJalali.monthName}_${currentJalali.yearEn}.json`;
         }
 
         async function saveBackupFile(filename, jsonString, { onSuccess } = {}) {
@@ -3396,7 +3468,7 @@
             let hasAnyFile = false;
 
             for await (const [name, handle] of appDirHandle.entries()) {
-                if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name.startsWith('آمار_دوخت_پشتیبان_')) continue;
+                if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name.startsWith('آمار_پشتیبان_')) continue;
                 try {
                     const file = await handle.getFile();
                     const parsed = JSON.parse(await file.text());
@@ -3973,7 +4045,7 @@
                     const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
                     return `${monthName} ${formatYearDigits(year)}`;
                 })();
-            const shopName = (appSettings.shopName || 'سامانه آمار دوخت لباس');
+            const shopName = (appSettings.shopName || 'سامانه آمار کار');
             const currency = appSettings.currency || 'تومان';
             const totalAmountSum = sumTotalPrice(records);
             const unknownPriceCount = countUnknownPriceRecords(records);
@@ -4340,7 +4412,14 @@
                 removePhotoBtn.classList.add('hidden');
             }
 
-            document.getElementById('settingShopName').value = appSettings.shopName || 'سامانه آمار دوخت لباس';
+            document.getElementById('settingShopName').value = appSettings.shopName || 'سامانه آمار کار';
+            document.getElementById('settingShopSubtitle').value = appSettings.shopSubtitle || '';
+            const jobPresetSel = document.getElementById('settingJobPreset');
+            if (jobPresetSel && !jobPresetSel.dataset.filled) {
+                jobPresetSel.insertAdjacentHTML('beforeend', Object.keys(JOB_PRESETS).map(k =>
+                    `<option value="${k}">${escapeHTML(JOB_PRESETS[k].name)}</option>`).join(''));
+                jobPresetSel.dataset.filled = '1';
+            }
             document.getElementById('settingCurrency').value = appSettings.currency || 'تومان';
             document.getElementById('settingDefaultStatus').value = appSettings.defaultStatus || 'به موقع';
             document.getElementById('settingOnTimeTolerance').value = formatNumber(getOnTimeTolerance()).replace(/,/g, '');
@@ -4401,7 +4480,8 @@
             const ownerAddressVal = document.getElementById('settingOwnerAddress').value.trim();
             // اگر نام فروشگاه خالی گذاشته شود، از مقدار پیش‌فرض استفاده می‌شود؛ قبلاً در این حالت
             // کل فرم (از جمله تم، فونت، رنگ‌ها و واحد پول) بدون هیچ پیام خطایی ذخیره نمی‌شد.
-            const shopNameVal = document.getElementById('settingShopName').value.trim() || appSettings.shopName || 'سامانه آمار دوخت لباس';
+            const shopNameVal = document.getElementById('settingShopName').value.trim() || appSettings.shopName || 'سامانه آمار کار';
+            const shopSubtitleVal = document.getElementById('settingShopSubtitle').value.trim();
             const currencyVal = document.getElementById('settingCurrency').value;
             const defaultStatusVal = document.getElementById('settingDefaultStatus').value;
             const themeVal = document.getElementById('settingTheme').value;
@@ -4419,6 +4499,7 @@
             appSettings.ownerAddress = ownerAddressVal;
             appSettings.ownerPhoto = currentOwnerPhotoData;
             appSettings.shopName = shopNameVal;
+            appSettings.shopSubtitle = shopSubtitleVal;
             appSettings.currency = currencyVal;
             appSettings.defaultStatus = defaultStatusVal;
             const tolInputRaw = document.getElementById('settingOnTimeTolerance').value.trim();
@@ -4880,8 +4961,16 @@
             renderTodayDateBar();
             const titleElement = document.getElementById('mainAppTitle');
             if (titleElement) {
-                const customShopName = appSettings.shopName || 'سامانه آمار دوخت لباس';
+                const customShopName = appSettings.shopName || 'سامانه آمار کار';
                 titleElement.innerText = `${customShopName} - گزارش ماه ${currentJalali.monthName} ${formatYearDigits(currentJalali.yearEn)}`;
+            }
+            const subtitleElement = document.getElementById('mainAppSubtitle');
+            if (subtitleElement) {
+                subtitleElement.innerText = appSettings.shopSubtitle || 'سیستم هوشمند آمار و مدیریت کار';
+            }
+            const pinLockTitleEl = document.getElementById('pinLockTitle');
+            if (pinLockTitleEl) {
+                pinLockTitleEl.innerText = `ورود به ${appSettings.shopName || 'سامانه آمار کار'}`;
             }
             const ownerLine = document.getElementById('ownerInfoLine');
             if (ownerLine) {
@@ -5012,7 +5101,7 @@
             const shopName = shopInput ? shopInput.value.trim() : (appSettings.shopName || '');
 
             nameEl.innerText = ownerName || 'کاربر مهمان';
-            subEl.innerText = shopName || 'سامانه آمار دوخت لباس';
+            subEl.innerText = shopName || 'سامانه آمار کار';
 
             if (currentOwnerPhotoData) {
                 imgEl.src = currentOwnerPhotoData;
@@ -6694,7 +6783,7 @@
         const OVERDUE_RENOTIFY_MINUTES = 20; // فاصله‌ی یادآوری‌های مکرر بعد از گذشتن موعد تحویل
 
         // رکورد «در حال انجام» فعلی: جدیدترین رکوردی که هنوز «شروع کد بعد» برایش ثبت نشده؛
-        // یعنی همان کدی که خیاط همین الان روی آن مشغول است.
+        // یعنی همان موردی که همین الان روی آن مشغول است.
         function getCurrentActiveRecord() {
             const openRecords = allRecords.filter(r => !r.nextCodeStartDate && !r.finishedDate && r.workDuration && r.date && r.time);
             if (openRecords.length === 0) return null;
@@ -6757,7 +6846,7 @@
         // همیشه از طریق Service Worker ارسال می‌شود تا در نوار اعلان‌های اندروید/iOS بنشیند،
         // پایدار بماند (تا لمس نشود از بین نمی‌رود) و با هر بار تکرار دوباره لرزش/صدا بدهد.
         function sendBrowserNotification(title, body, tag, urgent) {
-            const appLabel = appSettings.shopName || 'آمار دوخت';
+            const appLabel = appSettings.shopName || 'آمار کار';
             if (window.NativeNotify && window.NativeNotify.isSupported()) {
                 if (!window.__nativeNotifGranted) return false;
                 window.NativeNotify.notify(`${appLabel} • ${title}`, body, tag);
@@ -7551,7 +7640,7 @@
     </style>
 </head>
 <body>
-    <h1>گزارش عملکرد کارگاه - ${periodLabel}</h1>
+    <h1>گزارش عملکرد ${escapeHTML(appSettings.shopName || 'کار')} - ${periodLabel}</h1>
     <p>${getOwnerInfoLineText() ? escapeHTML(getOwnerInfoLineText()) + ' &nbsp;|&nbsp; ' : ''}تاریخ تهیه گزارش: ${formatDateDigits(currentJalali.fullDateStr)}</p>
     <table>
         <tr>
@@ -7590,7 +7679,7 @@
             const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `گزارش_آمار_دوخت_${periodLabel.replace(/\s+/g, '_')}.html`;
+            link.download = `گزارش_آمار_${periodLabel.replace(/\s+/g, '_')}.html`;
             link.click();
             
             addLog('گزارش HTML استخراج شد.', 'success');

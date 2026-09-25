@@ -282,118 +282,156 @@
                         <i class="fa-solid fa-chevron-down text-[10px] mr-1"></i>
                     </button>
 
-                    <!-- منوی تمام‌صفحه (کشوی ناوبری اصلی برنامه) -->
-                    <div id="toolsDropdownMenu" class="hidden fixed inset-0 z-50 bg-slate-950 flex flex-col text-right" onclick="event.stopPropagation()">
+                    <!-- محتوای منوی کشویی (تب‌بندی‌شده) -->
+                    <div id="toolsDropdownMenu" class="hidden absolute left-0 mt-2 w-[19rem] bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-300 dark:border-slate-600 z-50 text-right max-h-[80vh] overflow-y-auto flex flex-col" onclick="event.stopPropagation()">
 
-                        <!-- هدر: پروفایل کاربر + دکمه بستن -->
-                        <div class="shrink-0 px-5 pt-7 pb-5 border-b border-slate-800">
-                            <div class="flex items-center justify-between gap-3">
-                                <div class="flex items-center gap-3 min-w-0">
-                                    <div class="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0 font-bold text-sm overflow-hidden">
-                                        <img id="navDrawerProfileImg" src="" class="hidden w-full h-full object-cover" alt="پروفایل">
-                                        <span id="navDrawerProfileInitials">کا</span>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p id="navDrawerProfileName" class="text-base font-bold text-white truncate">کاربر مهمان</p>
-                                        <p id="navDrawerProfileSub" class="text-xs text-slate-400 truncate">سامانه آمار دوخت لباس</p>
-                                    </div>
-                                </div>
-                                <button onclick="closeToolsDropdown()" class="w-10 h-10 shrink-0 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-colors" aria-label="بستن منو">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                            </div>
+                        <!-- تب‌های منوی ابزار -->
+                        <div class="flex items-center gap-1 px-2.5 pt-2.5 overflow-x-auto border-b border-slate-200 dark:border-slate-700 shrink-0 sticky top-0 bg-white dark:bg-slate-900 z-10">
+                            <button type="button" onclick="switchToolsTab('main', event)" data-tools-tab="main" class="tools-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-t-xl text-[11px] font-bold transition-colors" title="اصلی">
+                                <i class="fa-solid fa-star"></i> اصلی
+                            </button>
+                            <button type="button" onclick="switchToolsTab('data', event)" data-tools-tab="data" class="tools-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-t-xl text-[11px] font-bold transition-colors" title="داده‌ها">
+                                <i class="fa-solid fa-database"></i> داده‌ها
+                            </button>
+                            <button type="button" onclick="switchToolsTab('device', event)" data-tools-tab="device" class="tools-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-t-xl text-[11px] font-bold transition-colors" title="دستگاه">
+                                <i class="fa-solid fa-folder-open"></i> دستگاه
+                            </button>
                         </div>
 
-                        <!-- بدنه‌ی اسکرول‌شونده‌ی منو -->
-                        <div class="flex-1 overflow-y-auto px-4 py-5 space-y-6">
-
-                            <div class="space-y-1.5">
-                                <h3 class="px-2.5 text-[11px] font-bold text-slate-500 tracking-wide">مدیریت آمار</h3>
-                                <button onclick="openOverviewModal(); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-indigo-950/60 border border-indigo-900/60 text-right transition-colors">
-                                    <span class="font-bold text-sm text-indigo-200">داشبورد و گزارش کلی</span>
-                                    <i class="fa-solid fa-chart-pie text-indigo-300"></i>
+                        <div class="p-3.5">
+                        <!-- تب اصلی -->
+                        <div id="toolsTab-main" class="tools-tab-panel">
+                            <div class="grid grid-cols-3 gap-1.5 mb-3">
+                                <button onclick="runIfPremium('پشتیبان‌گیری دستی هوشمند', exportSmartBackup); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                    <span class="w-11 h-11 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-download text-base"></i>
+                                    </span>
+                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">پشتیبان‌گیری</span>
+                                    <span class="text-[9px] text-slate-400 leading-tight">فایل JSON</span>
                                 </button>
-                                <button onclick="bottomNavGoRecords(); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span class="font-medium text-sm text-slate-200">مدیریت کامل رکوردها</span>
-                                    <i class="fa-solid fa-table-list text-slate-400"></i>
+                                <button onclick="openOverviewModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                    <span class="w-11 h-11 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-chart-pie text-base"></i>
+                                    </span>
+                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">گزارش کلی</span>
+                                    <span class="text-[9px] text-slate-400 leading-tight">خلاصه آمار</span>
                                 </button>
-                                <button onclick="openSettingsModal(); switchSettingsTab('work'); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span class="font-medium text-sm text-slate-200">تنظیم هدف‌گذاری درآمد</span>
-                                    <i class="fa-solid fa-bullseye text-slate-400"></i>
+                                <button onclick="openSettingsModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                    <span class="w-11 h-11 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-gear text-base"></i>
+                                    </span>
+                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">تنظیمات</span>
+                                    <span class="text-[9px] text-slate-400 leading-tight">ظاهر و رمز</span>
                                 </button>
                             </div>
-
-                            <div class="space-y-1.5">
-                                <h3 class="px-2.5 text-[11px] font-bold text-slate-500 tracking-wide">داده‌ها و فایل‌ها</h3>
-                                <button onclick="runIfPremium('پشتیبان‌گیری دستی هوشمند', exportSmartBackup); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span class="font-medium text-sm text-slate-200">پشتیبان‌گیری هوشمند</span>
-                                    <span class="flex items-center gap-2 shrink-0">
-                                        <i class="fa-solid fa-cloud-arrow-down text-emerald-400"></i>
-                                        <span class="text-[10px] font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-900 rounded-md px-1.5 py-0.5">JSON</span>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <button onclick="toggleLogBox(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center">
+                                        <i class="fa-solid fa-terminal text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">رویدادها</span>
+                                        <span class="block text-[9px] text-slate-400">لاگ سیستم</span>
                                     </span>
                                 </button>
-                                <button onclick="runIfPremium('خروجی گزارش رسمی', exportToHtmlReport); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span class="font-medium text-sm text-slate-200">خروجی گزارش HTML (چاپ)</span>
-                                    <i class="fa-solid fa-file-arrow-down text-amber-400"></i>
-                                </button>
-                                <button onclick="document.getElementById('importFile').click(); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span class="font-medium text-sm text-slate-200">بارگذاری پشتیبان (JSON)</span>
-                                    <i class="fa-solid fa-upload text-sky-400"></i>
-                                </button>
-                                <button onclick="openTrashBinModal()" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span class="font-medium text-sm text-slate-200">سطل بازیافت (حذف‌شده‌ها)</span>
-                                    <i class="fa-solid fa-trash-can-arrow-up text-rose-400"></i>
-                                </button>
-                                <button onclick="openDataHealthModal()" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span class="font-medium text-sm text-slate-200">تست سلامت داده‌ها</span>
-                                    <i class="fa-solid fa-stethoscope text-amber-400"></i>
-                                </button>
-                                <button onclick="handleFolderMenuButtonClick()" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span id="folderMenuBtnLabel" class="font-medium text-sm text-slate-200">پوشه دستگاه</span>
-                                    <i id="folderMenuBtnIcon" class="fa-solid fa-folder-plus text-teal-400"></i>
-                                </button>
-                                <div class="flex items-center justify-between gap-2 px-3 pt-0.5 flex-wrap">
-                                    <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[10px] text-slate-500 hover:text-rose-400 flex items-center gap-1 transition-colors">
-                                        <i class="fa-solid fa-link-slash"></i> قطع اتصال پوشه
-                                    </button>
-                                    <button onclick="manualSaveToFolder(); closeToolsDropdown();" class="text-[10px] text-slate-500 hover:text-emerald-400 flex items-center gap-1 transition-colors mr-auto">
-                                        <i class="fa-solid fa-floppy-disk"></i> ذخیره دستی در پوشه
-                                    </button>
-                                    <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[10px] text-slate-500 hover:text-teal-400 flex items-center gap-1 transition-colors">
-                                        <i class="fa-solid fa-rotate"></i> بارگذاری دستی از پوشه
-                                    </button>
-                                </div>
-                                <button onclick="manualRotatingBackupNow()" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span class="font-medium text-sm text-slate-200">پشتیبان چرخشی الان</span>
-                                    <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i>
-                                </button>
-                                <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="tactile-btn hidden w-full items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span class="font-medium text-sm text-slate-200">نصب برنامه روی دستگاه</span>
-                                    <i class="fa-solid fa-mobile-screen-button text-teal-400"></i>
-                                </button>
-                            </div>
-
-                            <div class="space-y-1.5">
-                                <h3 class="px-2.5 text-[11px] font-bold text-slate-500 tracking-wide">سیستم و تنظیمات</h3>
-                                <button onclick="openSettingsModal(); switchSettingsTab('appearance'); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span class="font-medium text-sm text-slate-200">تنظیمات ظاهر و رمز عبور</span>
-                                    <i class="fa-solid fa-gear text-slate-300"></i>
-                                </button>
-                                <button onclick="toggleLogBox(); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span class="font-medium text-sm text-slate-200">رویدادها (لاگ سیستم)</span>
-                                    <i class="fa-solid fa-terminal text-slate-300"></i>
-                                </button>
-                                <button onclick="lockAppNow()" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
-                                    <span class="font-medium text-sm text-slate-200">قفل سریع برنامه</span>
-                                    <i class="fa-solid fa-lock text-blue-400"></i>
+                                <button onclick="lockAppNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-lock text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">قفل برنامه</span>
+                                        <span class="block text-[9px] text-slate-400">خروج سریع</span>
+                                    </span>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- فوتر منو -->
-                        <div class="shrink-0 px-5 py-4 border-t border-slate-800 flex items-center justify-between text-[11px]">
-                            <span class="text-slate-500">سامانه آمار دوخت لباس — نسخه ۱۳.۰</span>
-                            <span class="text-indigo-400 font-medium">آفلاین / حافظه محلی</span>
+                        <!-- تب داده‌ها -->
+                        <div id="toolsTab-data" class="tools-tab-panel hidden">
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <button onclick="runIfPremium('خروجی گزارش رسمی', exportToHtmlReport); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-file-arrow-down text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">خروجی HTML</span>
+                                        <span class="block text-[9px] text-slate-400">چاپ گزارش</span>
+                                    </span>
+                                </button>
+                                <button onclick="document.getElementById('importFile').click(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-upload text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بارگذاری پشتیبان</span>
+                                        <span class="block text-[9px] text-slate-400">وارد کردن JSON</span>
+                                    </span>
+                                </button>
+                                <button onclick="openTrashBinModal()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-trash-can-arrow-up text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">سطل بازیافت</span>
+                                        <span class="block text-[9px] text-slate-400">بازگردانی حذف‌شده‌ها</span>
+                                    </span>
+                                </button>
+                                <button onclick="openDataHealthModal()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-stethoscope text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بررسی سلامت داده</span>
+                                        <span class="block text-[9px] text-slate-400">پیدا کردن نواقص</span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- تب دستگاه -->
+                        <div id="toolsTab-device" class="tools-tab-panel hidden">
+                            <div class="grid grid-cols-2 gap-1.5 mb-2">
+                                <button onclick="handleFolderMenuButtonClick()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                                        <i id="folderMenuBtnIcon" class="fa-solid fa-folder-plus text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span id="folderMenuBtnLabel" class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پوشه دستگاه</span>
+                                        <span class="block text-[9px] text-slate-400">مسیر در تنظیمات</span>
+                                    </span>
+                                </button>
+                                <button onclick="manualRotatingBackupNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پشتیبان چرخشی الان</span>
+                                        <span class="block text-[9px] text-slate-400">در پوشه دستگاه</span>
+                                    </span>
+                                </button>
+                                <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="tactile-btn hidden items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right flex">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-mobile-screen-button text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نصب برنامه</span>
+                                        <span class="block text-[9px] text-slate-400">روی دستگاه</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <!-- اقدامات فرعی پوشه دستگاه -->
+                            <div class="flex items-center justify-between gap-2 px-1.5 pt-1 border-t border-slate-100 dark:border-slate-800 flex-wrap">
+                                <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[10px] text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors">
+                                    <i class="fa-solid fa-link-slash"></i> قطع اتصال پوشه
+                                </button>
+                                <button onclick="manualSaveToFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 transition-colors mr-auto">
+                                    <i class="fa-solid fa-floppy-disk"></i> ذخیره دستی در پوشه
+                                </button>
+                                <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1 transition-colors">
+                                    <i class="fa-solid fa-rotate"></i> بارگذاری دستی از پوشه
+                                </button>
+                            </div>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -1350,7 +1388,7 @@
                     </div>
                     <p class="text-[11px] leading-relaxed text-slate-400 dark:text-slate-500">
                         <i class="fa-solid fa-circle-info ml-1"></i>
-                        رنگ‌های سفارشی مستقل از حالت روشن/تاریک اعمال می‌شوند؛ گزینه «پیش‌فرض سامانه» رنگ‌بندی استاندارد را برمی‌گرداند. «کادرها» شامل کارت‌های بزرگ (مثل فرم و جدول) و «فیلدها» شامل جعبه‌های ورودی و دکمه‌های کوچک نوار ابزار است. «اندازه متن نوار انگیزشی» مستقل از «اندازه فونت» کلی برنامه است و فقط روی همین نوار اثر می‌گذارد.
+                        رنگ‌های سفارشی مستقل از حالت روشن/تاریک اعمال می‌شوند؛ گزینه «پیش‌فرض سامانه» رنگ‌بندی استاندارد را برمی‌گرداند. «کادرها» شامل کارت‌های بزرگ (مثل فرم و جدول) و «فیلدها» شامل جعبه‌های ورودی و دکمه‌های کوچک نوار ابزار است.
                     </p>
                 </div>
 
@@ -1368,15 +1406,6 @@
                             <option value="glow">درخشش دوره‌ای</option>
                             <option value="shake">لرزش دوره‌ای کوتاه</option>
                             <option value="none">بدون انیمیشن</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">اندازه متن نوار انگیزشی</label>
-                        <select id="settingMotivationTextSize" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
-                            <option value="small">کوچک</option>
-                            <option value="normal">عادی (پیش‌فرض)</option>
-                            <option value="large">بزرگ</option>
-                            <option value="xlarge">خیلی بزرگ</option>
                         </select>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2162,7 +2191,6 @@
             ['bgColor', 'cardColor', 'fieldColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
             s.motivationBadgeVisible = s.motivationBadgeVisible !== false;
             s.motivationAnimation = pick(s.motivationAnimation, ['default', 'pulse', 'glow', 'shake', 'none'], 'default');
-            s.motivationTextSize = pick(s.motivationTextSize, ['small', 'normal', 'large', 'xlarge'], 'normal');
             ['motivationBgColor', 'motivationTextColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
             s.shopName = String(s.shopName || DEFAULT_APP_SETTINGS.shopName).slice(0, 120);
             ['ownerName', 'ownerPhone', 'ownerAddress'].forEach(k => { s[k] = String(s[k] == null ? '' : s[k]).slice(0, 200); });
@@ -2966,7 +2994,6 @@
             fieldColor: 'default',
             motivationBadgeVisible: true,
             motivationAnimation: 'default',
-            motivationTextSize: 'normal',
             motivationBgColor: 'default',
             motivationTextColor: 'default',
             notificationsEnabled: false,
@@ -4002,48 +4029,35 @@
         }
 
         function toggleToolsDropdown(event) {
-            if (event) event.stopPropagation();
+            event.stopPropagation();
             const menu = document.getElementById('toolsDropdownMenu');
             const opening = menu.classList.contains('hidden');
             menu.classList.toggle('hidden');
-            if (opening) {
-                updateNavDrawerProfile();
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
+            if (opening) switchToolsTab('main');
         }
 
         function closeToolsDropdown() {
             const menu = document.getElementById('toolsDropdownMenu');
             if (menu) menu.classList.add('hidden');
-            document.body.style.overflow = '';
         }
 
-        // پر کردن هدر منوی تمام‌صفحه با نام/عکس/عنوانِ کاربر از روی تنظیمات پروفایل
-        function updateNavDrawerProfile() {
-            const nameEl = document.getElementById('navDrawerProfileName');
-            const subEl = document.getElementById('navDrawerProfileSub');
-            const imgEl = document.getElementById('navDrawerProfileImg');
-            const initialsEl = document.getElementById('navDrawerProfileInitials');
-            if (!nameEl || !subEl || !imgEl || !initialsEl) return;
-            const ownerName = (appSettings.ownerName || '').trim();
-            const shopName = (appSettings.shopName || 'سامانه آمار دوخت لباس').trim();
-            nameEl.innerText = ownerName || 'کاربر مهمان';
-            subEl.innerText = shopName || 'سامانه آمار دوخت لباس';
-            if (appSettings.ownerPhoto) {
-                imgEl.src = appSettings.ownerPhoto;
-                imgEl.classList.remove('hidden');
-                initialsEl.classList.add('hidden');
-            } else {
-                imgEl.classList.add('hidden');
-                initialsEl.classList.remove('hidden');
-                const parts = ownerName.split(/\s+/).filter(Boolean);
-                let initials = 'کا';
-                if (parts.length >= 2) initials = parts[0][0] + ' ' + parts[1][0];
-                else if (parts.length === 1) initials = parts[0].slice(0, 2);
-                initialsEl.innerText = initials;
-            }
+        // جابه‌جایی بین تب‌های منوی ابزار (اصلی، داده‌ها، دستگاه، خطرناک)
+        function switchToolsTab(tabName, event) {
+            if (event) event.stopPropagation();
+            document.querySelectorAll('.tools-tab-panel').forEach(panel => {
+                panel.classList.toggle('hidden', panel.id !== `toolsTab-${tabName}`);
+            });
+            document.querySelectorAll('.tools-tab-btn').forEach(btn => {
+                const isActive = btn.getAttribute('data-tools-tab') === tabName;
+                btn.classList.toggle('bg-indigo-50', isActive);
+                btn.classList.toggle('dark:bg-indigo-950/40', isActive);
+                btn.classList.toggle('text-indigo-700', isActive);
+                btn.classList.toggle('dark:text-indigo-300', isActive);
+                btn.classList.toggle('border-b-2', isActive);
+                btn.classList.toggle('border-indigo-600', isActive);
+                btn.classList.toggle('text-slate-400', !isActive);
+                btn.classList.toggle('dark:text-slate-500', !isActive);
+            });
         }
 
         // میکرو-اینترکشن: افکت ریپل روی هر دکمه‌ی دارای کلاس tactile-btn هنگام کلیک/لمس
@@ -4564,7 +4578,6 @@
             document.getElementById('settingFieldColor').value = appSettings.fieldColor || 'default';
             document.getElementById('settingMotivationVisible').checked = appSettings.motivationBadgeVisible !== false;
             document.getElementById('settingMotivationAnimation').value = appSettings.motivationAnimation || 'default';
-            document.getElementById('settingMotivationTextSize').value = appSettings.motivationTextSize || 'normal';
             document.getElementById('settingMotivationBgColor').value = appSettings.motivationBgColor || 'default';
             document.getElementById('settingMotivationTextColor').value = appSettings.motivationTextColor || 'default';
             document.getElementById('settingNewPin').value = '';
@@ -4626,7 +4639,6 @@
             const fieldColorVal = document.getElementById('settingFieldColor').value;
             const motivationVisibleVal = document.getElementById('settingMotivationVisible').checked;
             const motivationAnimationVal = document.getElementById('settingMotivationAnimation').value;
-            const motivationTextSizeVal = document.getElementById('settingMotivationTextSize').value;
             const motivationBgColorVal = document.getElementById('settingMotivationBgColor').value;
             const motivationTextColorVal = document.getElementById('settingMotivationTextColor').value;
             const notificationsEnabledVal = document.getElementById('settingNotificationsEnabled').checked;
@@ -4654,7 +4666,6 @@
             appSettings.fieldColor = fieldColorVal;
             appSettings.motivationBadgeVisible = motivationVisibleVal;
             appSettings.motivationAnimation = motivationAnimationVal;
-            appSettings.motivationTextSize = motivationTextSizeVal;
             appSettings.motivationBgColor = motivationBgColorVal;
             appSettings.motivationTextColor = motivationTextColorVal;
             appSettings.notificationsEnabled = notificationsEnabledVal;
@@ -7460,8 +7471,6 @@
 
         // نگاشتِ گزینه‌ی «تنوع انیمیشن» در تنظیمات به کلاس CSS متناظرش
         const MOTIVATION_ANIM_CLASS_MAP = { default: 'motiv-anim-default', pulse: 'motiv-anim-pulse', glow: 'motiv-anim-glow', shake: 'motiv-anim-shake', none: 'motiv-anim-none' };
-        // نگاشتِ گزینه‌ی «اندازه متن نوار انگیزشی» در تنظیمات (مستقل از «اندازه فونت» کلی برنامه) به واحد em
-        const MOTIVATION_TEXT_SIZE_MAP = { small: '0.8em', normal: '0.95em', large: '1.15em', xlarge: '1.35em' };
 
         function renderStreakBadge() {
             const el = document.getElementById('streakBadgeText');
@@ -7487,10 +7496,7 @@
             // (کوچک/عادی/بزرگ/خیلی‌بزرگ که روی body اعمال می‌شود) هیچ واکنشی نشان نمی‌داد. حالا با واحدِ
             // نسبیِ em (که به فونتِ به‌ارث‌رسیده از body وابسته است) اندازه‌اش هم از همان تنظیمات پیروی می‌کند.
             const animClass = MOTIVATION_ANIM_CLASS_MAP[appSettings.motivationAnimation] || MOTIVATION_ANIM_CLASS_MAP.default;
-            // اندازه‌ی متن نوار انگیزشی حالا از گزینه‌ی اختصاصی «اندازه متن نوار انگیزشی» در تنظیمات می‌آید
-            // (مستقل از گزینه‌ی سراسری «اندازه فونت»)؛ همچنان واحد em است تا نسبت به فونتِ به‌ارث‌رسیده از body سازگار بماند.
-            const sizeEm = MOTIVATION_TEXT_SIZE_MAP[appSettings.motivationTextSize] || MOTIVATION_TEXT_SIZE_MAP.normal;
-            const baseClass = 'motivation-badge ' + animClass + ' inline-flex text-[' + sizeEm + '] font-medium px-3.5 py-2 rounded-2xl border items-center gap-1.5 text-center leading-relaxed max-w-full';
+            const baseClass = 'motivation-badge ' + animClass + ' inline-flex text-[0.95em] font-medium px-3.5 py-2 rounded-2xl border items-center gap-1.5 text-center leading-relaxed max-w-full';
 
             // رنگ پس‌زمینه/متنِ سفارشی از تنظیمات (در صورت انتخاب) روی رنگ‌بندیِ خودکارِ هر حالت اعمال می‌شود
             const applyCustomColors = () => {
@@ -8136,7 +8142,7 @@
         });
 
         /* ---- دسترس‌پذیری: نقش دیالوگ، اتصال برچسب‌ها، aria-label و بستن با Escape ---- */
-        const MODAL_IDS = ['customConfirmModal', 'advancedSearchModal', 'trashBinModal', 'dataHealthModal', 'settingsModal', 'overviewModal', 'toolsDropdownMenu'];
+        const MODAL_IDS = ['customConfirmModal', 'advancedSearchModal', 'trashBinModal', 'dataHealthModal', 'settingsModal', 'overviewModal'];
         MODAL_IDS.forEach(id => {
             const el = document.getElementById(id);
             if (el) { el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); }
@@ -8156,7 +8162,6 @@
         }
         document.addEventListener('keydown', function (e) {
             if (e.key !== 'Escape') return;
-            if (isModalOpen('toolsDropdownMenu')) { closeToolsDropdown(); return; }
             if (isModalOpen('jalaliDatePickerPopup')) { closeDatePicker(); return; }
             if (isModalOpen('photoViewerModal')) { closePhotoViewer(); return; }
             if (isModalOpen('customConfirmModal')) { document.getElementById('customConfirmCancelBtn').click(); return; }

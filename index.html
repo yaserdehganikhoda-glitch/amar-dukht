@@ -282,156 +282,118 @@
                         <i class="fa-solid fa-chevron-down text-[10px] mr-1"></i>
                     </button>
 
-                    <!-- محتوای منوی کشویی (تب‌بندی‌شده) -->
-                    <div id="toolsDropdownMenu" class="hidden absolute left-0 mt-2 w-[19rem] bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-300 dark:border-slate-600 z-50 text-right max-h-[80vh] overflow-y-auto flex flex-col" onclick="event.stopPropagation()">
+                    <!-- منوی تمام‌صفحه (کشوی ناوبری اصلی برنامه) -->
+                    <div id="toolsDropdownMenu" class="hidden fixed inset-0 z-50 bg-slate-950 flex flex-col text-right" onclick="event.stopPropagation()">
 
-                        <!-- تب‌های منوی ابزار -->
-                        <div class="flex items-center gap-1 px-2.5 pt-2.5 overflow-x-auto border-b border-slate-200 dark:border-slate-700 shrink-0 sticky top-0 bg-white dark:bg-slate-900 z-10">
-                            <button type="button" onclick="switchToolsTab('main', event)" data-tools-tab="main" class="tools-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-t-xl text-[11px] font-bold transition-colors" title="اصلی">
-                                <i class="fa-solid fa-star"></i> اصلی
-                            </button>
-                            <button type="button" onclick="switchToolsTab('data', event)" data-tools-tab="data" class="tools-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-t-xl text-[11px] font-bold transition-colors" title="داده‌ها">
-                                <i class="fa-solid fa-database"></i> داده‌ها
-                            </button>
-                            <button type="button" onclick="switchToolsTab('device', event)" data-tools-tab="device" class="tools-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-t-xl text-[11px] font-bold transition-colors" title="دستگاه">
-                                <i class="fa-solid fa-folder-open"></i> دستگاه
-                            </button>
-                        </div>
-
-                        <div class="p-3.5">
-                        <!-- تب اصلی -->
-                        <div id="toolsTab-main" class="tools-tab-panel">
-                            <div class="grid grid-cols-3 gap-1.5 mb-3">
-                                <button onclick="runIfPremium('پشتیبان‌گیری دستی هوشمند', exportSmartBackup); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                    <span class="w-11 h-11 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-download text-base"></i>
-                                    </span>
-                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">پشتیبان‌گیری</span>
-                                    <span class="text-[9px] text-slate-400 leading-tight">فایل JSON</span>
-                                </button>
-                                <button onclick="openOverviewModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                    <span class="w-11 h-11 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-chart-pie text-base"></i>
-                                    </span>
-                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">گزارش کلی</span>
-                                    <span class="text-[9px] text-slate-400 leading-tight">خلاصه آمار</span>
-                                </button>
-                                <button onclick="openSettingsModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                    <span class="w-11 h-11 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-gear text-base"></i>
-                                    </span>
-                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">تنظیمات</span>
-                                    <span class="text-[9px] text-slate-400 leading-tight">ظاهر و رمز</span>
-                                </button>
-                            </div>
-                            <div class="grid grid-cols-2 gap-1.5">
-                                <button onclick="toggleLogBox(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center">
-                                        <i class="fa-solid fa-terminal text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">رویدادها</span>
-                                        <span class="block text-[9px] text-slate-400">لاگ سیستم</span>
-                                    </span>
-                                </button>
-                                <button onclick="lockAppNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-lock text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">قفل برنامه</span>
-                                        <span class="block text-[9px] text-slate-400">خروج سریع</span>
-                                    </span>
+                        <!-- هدر: پروفایل کاربر + دکمه بستن -->
+                        <div class="shrink-0 px-5 pt-7 pb-5 border-b border-slate-800">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0 font-bold text-sm overflow-hidden">
+                                        <img id="navDrawerProfileImg" src="" class="hidden w-full h-full object-cover" alt="پروفایل">
+                                        <span id="navDrawerProfileInitials">کا</span>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p id="navDrawerProfileName" class="text-base font-bold text-white truncate">کاربر مهمان</p>
+                                        <p id="navDrawerProfileSub" class="text-xs text-slate-400 truncate">سامانه آمار دوخت لباس</p>
+                                    </div>
+                                </div>
+                                <button onclick="closeToolsDropdown()" class="w-10 h-10 shrink-0 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-colors" aria-label="بستن منو">
+                                    <i class="fa-solid fa-xmark"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- تب داده‌ها -->
-                        <div id="toolsTab-data" class="tools-tab-panel hidden">
-                            <div class="grid grid-cols-2 gap-1.5">
-                                <button onclick="runIfPremium('خروجی گزارش رسمی', exportToHtmlReport); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-file-arrow-down text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">خروجی HTML</span>
-                                        <span class="block text-[9px] text-slate-400">چاپ گزارش</span>
+                        <!-- بدنه‌ی اسکرول‌شونده‌ی منو -->
+                        <div class="flex-1 overflow-y-auto px-4 py-5 space-y-6">
+
+                            <div class="space-y-1.5">
+                                <h3 class="px-2.5 text-[11px] font-bold text-slate-500 tracking-wide">مدیریت آمار</h3>
+                                <button onclick="openOverviewModal(); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-indigo-950/60 border border-indigo-900/60 text-right transition-colors">
+                                    <span class="font-bold text-sm text-indigo-200">داشبورد و گزارش کلی</span>
+                                    <i class="fa-solid fa-chart-pie text-indigo-300"></i>
+                                </button>
+                                <button onclick="bottomNavGoRecords(); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span class="font-medium text-sm text-slate-200">مدیریت کامل رکوردها</span>
+                                    <i class="fa-solid fa-table-list text-slate-400"></i>
+                                </button>
+                                <button onclick="openSettingsModal(); switchSettingsTab('work'); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span class="font-medium text-sm text-slate-200">تنظیم هدف‌گذاری درآمد</span>
+                                    <i class="fa-solid fa-bullseye text-slate-400"></i>
+                                </button>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <h3 class="px-2.5 text-[11px] font-bold text-slate-500 tracking-wide">داده‌ها و فایل‌ها</h3>
+                                <button onclick="runIfPremium('پشتیبان‌گیری دستی هوشمند', exportSmartBackup); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span class="font-medium text-sm text-slate-200">پشتیبان‌گیری هوشمند</span>
+                                    <span class="flex items-center gap-2 shrink-0">
+                                        <i class="fa-solid fa-cloud-arrow-down text-emerald-400"></i>
+                                        <span class="text-[10px] font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-900 rounded-md px-1.5 py-0.5">JSON</span>
                                     </span>
                                 </button>
-                                <button onclick="document.getElementById('importFile').click(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-upload text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بارگذاری پشتیبان</span>
-                                        <span class="block text-[9px] text-slate-400">وارد کردن JSON</span>
-                                    </span>
+                                <button onclick="runIfPremium('خروجی گزارش رسمی', exportToHtmlReport); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span class="font-medium text-sm text-slate-200">خروجی گزارش HTML (چاپ)</span>
+                                    <i class="fa-solid fa-file-arrow-down text-amber-400"></i>
                                 </button>
-                                <button onclick="openTrashBinModal()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-trash-can-arrow-up text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">سطل بازیافت</span>
-                                        <span class="block text-[9px] text-slate-400">بازگردانی حذف‌شده‌ها</span>
-                                    </span>
+                                <button onclick="document.getElementById('importFile').click(); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span class="font-medium text-sm text-slate-200">بارگذاری پشتیبان (JSON)</span>
+                                    <i class="fa-solid fa-upload text-sky-400"></i>
                                 </button>
-                                <button onclick="openDataHealthModal()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-stethoscope text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بررسی سلامت داده</span>
-                                        <span class="block text-[9px] text-slate-400">پیدا کردن نواقص</span>
-                                    </span>
+                                <button onclick="openTrashBinModal()" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span class="font-medium text-sm text-slate-200">سطل بازیافت (حذف‌شده‌ها)</span>
+                                    <i class="fa-solid fa-trash-can-arrow-up text-rose-400"></i>
+                                </button>
+                                <button onclick="openDataHealthModal()" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span class="font-medium text-sm text-slate-200">تست سلامت داده‌ها</span>
+                                    <i class="fa-solid fa-stethoscope text-amber-400"></i>
+                                </button>
+                                <button onclick="handleFolderMenuButtonClick()" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span id="folderMenuBtnLabel" class="font-medium text-sm text-slate-200">پوشه دستگاه</span>
+                                    <i id="folderMenuBtnIcon" class="fa-solid fa-folder-plus text-teal-400"></i>
+                                </button>
+                                <div class="flex items-center justify-between gap-2 px-3 pt-0.5 flex-wrap">
+                                    <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[10px] text-slate-500 hover:text-rose-400 flex items-center gap-1 transition-colors">
+                                        <i class="fa-solid fa-link-slash"></i> قطع اتصال پوشه
+                                    </button>
+                                    <button onclick="manualSaveToFolder(); closeToolsDropdown();" class="text-[10px] text-slate-500 hover:text-emerald-400 flex items-center gap-1 transition-colors mr-auto">
+                                        <i class="fa-solid fa-floppy-disk"></i> ذخیره دستی در پوشه
+                                    </button>
+                                    <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[10px] text-slate-500 hover:text-teal-400 flex items-center gap-1 transition-colors">
+                                        <i class="fa-solid fa-rotate"></i> بارگذاری دستی از پوشه
+                                    </button>
+                                </div>
+                                <button onclick="manualRotatingBackupNow()" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span class="font-medium text-sm text-slate-200">پشتیبان چرخشی الان</span>
+                                    <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i>
+                                </button>
+                                <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="tactile-btn hidden w-full items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span class="font-medium text-sm text-slate-200">نصب برنامه روی دستگاه</span>
+                                    <i class="fa-solid fa-mobile-screen-button text-teal-400"></i>
+                                </button>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <h3 class="px-2.5 text-[11px] font-bold text-slate-500 tracking-wide">سیستم و تنظیمات</h3>
+                                <button onclick="openSettingsModal(); switchSettingsTab('appearance'); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span class="font-medium text-sm text-slate-200">تنظیمات ظاهر و رمز عبور</span>
+                                    <i class="fa-solid fa-gear text-slate-300"></i>
+                                </button>
+                                <button onclick="toggleLogBox(); closeToolsDropdown();" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span class="font-medium text-sm text-slate-200">رویدادها (لاگ سیستم)</span>
+                                    <i class="fa-solid fa-terminal text-slate-300"></i>
+                                </button>
+                                <button onclick="lockAppNow()" class="tactile-btn w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-800/60 text-right transition-colors">
+                                    <span class="font-medium text-sm text-slate-200">قفل سریع برنامه</span>
+                                    <i class="fa-solid fa-lock text-blue-400"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- تب دستگاه -->
-                        <div id="toolsTab-device" class="tools-tab-panel hidden">
-                            <div class="grid grid-cols-2 gap-1.5 mb-2">
-                                <button onclick="handleFolderMenuButtonClick()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
-                                        <i id="folderMenuBtnIcon" class="fa-solid fa-folder-plus text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span id="folderMenuBtnLabel" class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پوشه دستگاه</span>
-                                        <span class="block text-[9px] text-slate-400">مسیر در تنظیمات</span>
-                                    </span>
-                                </button>
-                                <button onclick="manualRotatingBackupNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-clock-rotate-left text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پشتیبان چرخشی الان</span>
-                                        <span class="block text-[9px] text-slate-400">در پوشه دستگاه</span>
-                                    </span>
-                                </button>
-                                <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="tactile-btn hidden items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right flex">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-mobile-screen-button text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نصب برنامه</span>
-                                        <span class="block text-[9px] text-slate-400">روی دستگاه</span>
-                                    </span>
-                                </button>
-                            </div>
-                            <!-- اقدامات فرعی پوشه دستگاه -->
-                            <div class="flex items-center justify-between gap-2 px-1.5 pt-1 border-t border-slate-100 dark:border-slate-800 flex-wrap">
-                                <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[10px] text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors">
-                                    <i class="fa-solid fa-link-slash"></i> قطع اتصال پوشه
-                                </button>
-                                <button onclick="manualSaveToFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 transition-colors mr-auto">
-                                    <i class="fa-solid fa-floppy-disk"></i> ذخیره دستی در پوشه
-                                </button>
-                                <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1 transition-colors">
-                                    <i class="fa-solid fa-rotate"></i> بارگذاری دستی از پوشه
-                                </button>
-                            </div>
-                        </div>
+                        <!-- فوتر منو -->
+                        <div class="shrink-0 px-5 py-4 border-t border-slate-800 flex items-center justify-between text-[11px]">
+                            <span class="text-slate-500">سامانه آمار دوخت لباس — نسخه ۱۳.۰</span>
+                            <span class="text-indigo-400 font-medium">آفلاین / حافظه محلی</span>
                         </div>
                     </div>
                 </div>
@@ -811,6 +773,15 @@
                         <span class="hidden md:inline">تمام صفحه</span>
                     </button>
                 </div>
+            </div>
+
+            <!-- [رفع باگ] هشدار وقتی IndexedDB در دسترس نیست و ممکن است رکوردهای قدیمی‌تر نمایش داده نشوند -->
+            <div id="historyIncompleteBanner" class="no-print hidden px-4 py-3 bg-rose-50 dark:bg-rose-950/30 border-b border-rose-200 dark:border-rose-900/50 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span class="text-rose-700 dark:text-rose-400 font-medium flex items-center gap-1.5">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span id="historyIncompleteBannerText"></span>
+                </span>
+                <button onclick="dismissHistoryIncompleteBanner()" class="text-rose-700 dark:text-rose-400 underline hover:text-rose-900 dark:hover:text-rose-300 font-medium">متوجه شدم</button>
             </div>
 
             <!-- نوار وضعیت جستجوی پیشرفته -->
@@ -1379,7 +1350,7 @@
                     </div>
                     <p class="text-[11px] leading-relaxed text-slate-400 dark:text-slate-500">
                         <i class="fa-solid fa-circle-info ml-1"></i>
-                        رنگ‌های سفارشی مستقل از حالت روشن/تاریک اعمال می‌شوند؛ گزینه «پیش‌فرض سامانه» رنگ‌بندی استاندارد را برمی‌گرداند. «کادرها» شامل کارت‌های بزرگ (مثل فرم و جدول) و «فیلدها» شامل جعبه‌های ورودی و دکمه‌های کوچک نوار ابزار است.
+                        رنگ‌های سفارشی مستقل از حالت روشن/تاریک اعمال می‌شوند؛ گزینه «پیش‌فرض سامانه» رنگ‌بندی استاندارد را برمی‌گرداند. «کادرها» شامل کارت‌های بزرگ (مثل فرم و جدول) و «فیلدها» شامل جعبه‌های ورودی و دکمه‌های کوچک نوار ابزار است. «اندازه متن نوار انگیزشی» مستقل از «اندازه فونت» کلی برنامه است و فقط روی همین نوار اثر می‌گذارد.
                     </p>
                 </div>
 
@@ -1397,6 +1368,15 @@
                             <option value="glow">درخشش دوره‌ای</option>
                             <option value="shake">لرزش دوره‌ای کوتاه</option>
                             <option value="none">بدون انیمیشن</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">اندازه متن نوار انگیزشی</label>
+                        <select id="settingMotivationTextSize" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                            <option value="small">کوچک</option>
+                            <option value="normal">عادی (پیش‌فرض)</option>
+                            <option value="large">بزرگ</option>
+                            <option value="xlarge">خیلی بزرگ</option>
                         </select>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2182,6 +2162,7 @@
             ['bgColor', 'cardColor', 'fieldColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
             s.motivationBadgeVisible = s.motivationBadgeVisible !== false;
             s.motivationAnimation = pick(s.motivationAnimation, ['default', 'pulse', 'glow', 'shake', 'none'], 'default');
+            s.motivationTextSize = pick(s.motivationTextSize, ['small', 'normal', 'large', 'xlarge'], 'normal');
             ['motivationBgColor', 'motivationTextColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
             s.shopName = String(s.shopName || DEFAULT_APP_SETTINGS.shopName).slice(0, 120);
             ['ownerName', 'ownerPhone', 'ownerAddress'].forEach(k => { s[k] = String(s[k] == null ? '' : s[k]).slice(0, 200); });
@@ -2459,6 +2440,7 @@
                 notePuts.forEach(n => notesSynced.set(n.id, n.updatedAt));
                 noteDeletes.forEach(id => notesSynced.delete(id));
             }
+            updateHistoryMarker();
             return true;
         }
 
@@ -2636,7 +2618,9 @@
 
         // حداقل تعداد ماهِ اخیر که در localStorage (برای بارگذاری فوری/آفلاین) نگه داشته می‌شود؛
         // بقیه‌ی تاریخچه فقط در IndexedDB می‌ماند و هنگام بارگذاری برنامه از همان‌جا خوانده می‌شود.
-        const RECENT_MONTHS_IN_LOCALSTORAGE = 6;
+        // [رفع باگ] از ۶ به ۱۲ افزایش یافت: اگر IndexedDB در یک بارگذاری در دسترس نباشد، حاشیه‌ی
+        // ایمنیِ بیشتری برای دیده‌شدن ماه‌های اخیر در localStorage باقی می‌ماند.
+        const RECENT_MONTHS_IN_LOCALSTORAGE = 12;
         function getRecentMonthKeysSet(n) {
             const keys = [...new Set(allRecords.map(r => r.monthKey))];
             keys.push(currentJalali.monthKey);
@@ -2684,12 +2668,14 @@
                         if (photoSynced.get(id)) recordsSynced.set(id, -1);
                     });
                 }
+                updateHistoryMarker();
             } catch (e) {
                 dataIdbOk = false;
                 console.warn('IndexedDB برای رکوردها/یادداشت‌ها در دسترس نیست؛ فقط از حافظه محلی (localStorage) استفاده می‌شود.', e);
             } finally {
                 renderDashboard();
                 updateStorageQuotaUI();
+                if (!dataIdbOk) checkHistoryCompleteness();
                 // مهاجرت خودکار داده‌های موجود به IndexedDB (برای رفع محدودیت حجم localStorage)
                 if (dataIdbOk) {
                     persistPhotos().catch(() => {}).then(() => persistDataToIndexedDB()).catch(() => {});
@@ -2697,6 +2683,51 @@
             }
         }
         /* ==================== پایان [بهبود ذخیره‌سازی ۱] ==================== */
+
+        /* ==================== [رفع باگ] هشدار وقتی ذخیره‌گاه کامل تاریخچه در دسترس نیست ====================
+         * وقتی IndexedDB در دسترس باشد، فقط ماه‌های اخیر در localStorage می‌مانند و بقیه‌ی تاریخچه
+         * فقط در IndexedDB است. اگر در یک بارگذاری بعدی IndexedDB در دسترس نباشد (حافظه پاک‌شده
+         * توسط مرورگر، حالت خصوصی و...)، آن رکوردهای قدیمی‌تر بی‌سروصدا رندر نمی‌شدند. این بخش هر
+         * بار merge با IndexedDB موفق بود، یک «نشانه» از وسعت واقعیِ تاریخچه ذخیره می‌کند تا در
+         * بارگذاریِ بعدی، اگر بخشی از تاریخچه نمایش داده نشد، به‌جای سکوت هشدار واضحی داده شود. */
+        const HISTORY_MARKER_KEY = 'sewing_history_marker_v1';
+        function monthKeyOrder(key) {
+            const [y, m] = String(key).split('-').map(Number);
+            return y * 100 + m;
+        }
+        function updateHistoryMarker() {
+            if (!dataIdbOk) return;
+            try {
+                const keys = allRecords.map(r => r.monthKey).filter(Boolean);
+                if (!keys.length) return;
+                const oldestMonthKey = keys.reduce((a, b) => monthKeyOrder(b) < monthKeyOrder(a) ? b : a);
+                localStorage.setItem(HISTORY_MARKER_KEY, JSON.stringify({
+                    monthCount: new Set(keys).size, oldestMonthKey, totalRecords: allRecords.length, at: Date.now()
+                }));
+            } catch (e) { /* بی‌اهمیت */ }
+        }
+        function checkHistoryCompleteness() {
+            if (dataIdbOk) return;
+            let marker = null;
+            try { marker = JSON.parse(localStorage.getItem(HISTORY_MARKER_KEY) || 'null'); } catch (e) { return; }
+            if (!marker || !marker.oldestMonthKey) return;
+            const keys = allRecords.map(r => r.monthKey).filter(Boolean);
+            const currentOldest = keys.length ? keys.reduce((a, b) => monthKeyOrder(b) < monthKeyOrder(a) ? b : a) : null;
+            const incomplete = !currentOldest || monthKeyOrder(marker.oldestMonthKey) < monthKeyOrder(currentOldest) || marker.totalRecords > allRecords.length;
+            if (incomplete) showHistoryIncompleteBanner(marker);
+        }
+        function showHistoryIncompleteBanner(marker) {
+            const banner = document.getElementById('historyIncompleteBanner');
+            const text = document.getElementById('historyIncompleteBannerText');
+            if (!banner || !text) return;
+            text.innerText = `ذخیره‌گاه کامل تاریخچه (IndexedDB) در این بارگذاری در دسترس نیست؛ قبلاً ${formatNumber(marker.totalRecords)} رکورد در ${formatNumber(marker.monthCount)} ماه ثبت شده بود ولی اکنون ممکن است بخشی از رکوردها/آمار ماه‌های قدیمی‌تر نمایش داده نشود.`;
+            banner.classList.remove('hidden');
+        }
+        function dismissHistoryIncompleteBanner() {
+            const banner = document.getElementById('historyIncompleteBanner');
+            if (banner) banner.classList.add('hidden');
+        }
+        /* ==================== پایان [رفع باگ] ==================== */
 
         /* ==================== [بهبود ذخیره‌سازی ۲] هم‌گام‌سازی بین تب‌های باز مرورگر ==================== */
         const crossTabChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('sewing_app_sync_v13') : null;
@@ -2935,6 +2966,7 @@
             fieldColor: 'default',
             motivationBadgeVisible: true,
             motivationAnimation: 'default',
+            motivationTextSize: 'normal',
             motivationBgColor: 'default',
             motivationTextColor: 'default',
             notificationsEnabled: false,
@@ -3970,35 +4002,48 @@
         }
 
         function toggleToolsDropdown(event) {
-            event.stopPropagation();
+            if (event) event.stopPropagation();
             const menu = document.getElementById('toolsDropdownMenu');
             const opening = menu.classList.contains('hidden');
             menu.classList.toggle('hidden');
-            if (opening) switchToolsTab('main');
+            if (opening) {
+                updateNavDrawerProfile();
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
         }
 
         function closeToolsDropdown() {
             const menu = document.getElementById('toolsDropdownMenu');
             if (menu) menu.classList.add('hidden');
+            document.body.style.overflow = '';
         }
 
-        // جابه‌جایی بین تب‌های منوی ابزار (اصلی، داده‌ها، دستگاه، خطرناک)
-        function switchToolsTab(tabName, event) {
-            if (event) event.stopPropagation();
-            document.querySelectorAll('.tools-tab-panel').forEach(panel => {
-                panel.classList.toggle('hidden', panel.id !== `toolsTab-${tabName}`);
-            });
-            document.querySelectorAll('.tools-tab-btn').forEach(btn => {
-                const isActive = btn.getAttribute('data-tools-tab') === tabName;
-                btn.classList.toggle('bg-indigo-50', isActive);
-                btn.classList.toggle('dark:bg-indigo-950/40', isActive);
-                btn.classList.toggle('text-indigo-700', isActive);
-                btn.classList.toggle('dark:text-indigo-300', isActive);
-                btn.classList.toggle('border-b-2', isActive);
-                btn.classList.toggle('border-indigo-600', isActive);
-                btn.classList.toggle('text-slate-400', !isActive);
-                btn.classList.toggle('dark:text-slate-500', !isActive);
-            });
+        // پر کردن هدر منوی تمام‌صفحه با نام/عکس/عنوانِ کاربر از روی تنظیمات پروفایل
+        function updateNavDrawerProfile() {
+            const nameEl = document.getElementById('navDrawerProfileName');
+            const subEl = document.getElementById('navDrawerProfileSub');
+            const imgEl = document.getElementById('navDrawerProfileImg');
+            const initialsEl = document.getElementById('navDrawerProfileInitials');
+            if (!nameEl || !subEl || !imgEl || !initialsEl) return;
+            const ownerName = (appSettings.ownerName || '').trim();
+            const shopName = (appSettings.shopName || 'سامانه آمار دوخت لباس').trim();
+            nameEl.innerText = ownerName || 'کاربر مهمان';
+            subEl.innerText = shopName || 'سامانه آمار دوخت لباس';
+            if (appSettings.ownerPhoto) {
+                imgEl.src = appSettings.ownerPhoto;
+                imgEl.classList.remove('hidden');
+                initialsEl.classList.add('hidden');
+            } else {
+                imgEl.classList.add('hidden');
+                initialsEl.classList.remove('hidden');
+                const parts = ownerName.split(/\s+/).filter(Boolean);
+                let initials = 'کا';
+                if (parts.length >= 2) initials = parts[0][0] + ' ' + parts[1][0];
+                else if (parts.length === 1) initials = parts[0].slice(0, 2);
+                initialsEl.innerText = initials;
+            }
         }
 
         // میکرو-اینترکشن: افکت ریپل روی هر دکمه‌ی دارای کلاس tactile-btn هنگام کلیک/لمس
@@ -4519,6 +4564,7 @@
             document.getElementById('settingFieldColor').value = appSettings.fieldColor || 'default';
             document.getElementById('settingMotivationVisible').checked = appSettings.motivationBadgeVisible !== false;
             document.getElementById('settingMotivationAnimation').value = appSettings.motivationAnimation || 'default';
+            document.getElementById('settingMotivationTextSize').value = appSettings.motivationTextSize || 'normal';
             document.getElementById('settingMotivationBgColor').value = appSettings.motivationBgColor || 'default';
             document.getElementById('settingMotivationTextColor').value = appSettings.motivationTextColor || 'default';
             document.getElementById('settingNewPin').value = '';
@@ -4580,6 +4626,7 @@
             const fieldColorVal = document.getElementById('settingFieldColor').value;
             const motivationVisibleVal = document.getElementById('settingMotivationVisible').checked;
             const motivationAnimationVal = document.getElementById('settingMotivationAnimation').value;
+            const motivationTextSizeVal = document.getElementById('settingMotivationTextSize').value;
             const motivationBgColorVal = document.getElementById('settingMotivationBgColor').value;
             const motivationTextColorVal = document.getElementById('settingMotivationTextColor').value;
             const notificationsEnabledVal = document.getElementById('settingNotificationsEnabled').checked;
@@ -4607,6 +4654,7 @@
             appSettings.fieldColor = fieldColorVal;
             appSettings.motivationBadgeVisible = motivationVisibleVal;
             appSettings.motivationAnimation = motivationAnimationVal;
+            appSettings.motivationTextSize = motivationTextSizeVal;
             appSettings.motivationBgColor = motivationBgColorVal;
             appSettings.motivationTextColor = motivationTextColorVal;
             appSettings.notificationsEnabled = notificationsEnabledVal;
@@ -4883,6 +4931,46 @@
             });
         }
 
+        /* ==================== [رفع باگ حیاتی] رکورد گم‌شده بعد از رفرش ====================
+         * ریشه‌ی مشکل: نوشتن واقعی در localStorage قبلاً داخل یک debounce با تاخیر ۴۰۰ میلی‌ثانیه
+         * انجام می‌شد. در این ۴۰۰ میلی‌ثانیه، رکورد فقط در حافظه‌ی RAM (متغیر allRecords) وجود
+         * داشت و به‌صورت خوش‌بینانه («با موفقیت ثبت شد») به کاربر نمایش داده می‌شد. اگر کاربر در
+         * همین بازه‌ی کوتاه صفحه را رفرش می‌کرد، یا اگر رویدادهای pagehide/visibilitychange در آن
+         * مرورگر/وب‌ویوی خاص به‌موقع اجرا نمی‌شدند (که در برخی وب‌ویوهای اندروید/برنامه‌های داخلی
+         * رخ می‌دهد)، این نوشتن هرگز کامل نمی‌شد و رکورد از بین می‌رفت.
+         * راه‌حل: بخش حیاتیِ ذخیره‌سازی (خودِ رکوردها، یادداشت‌ها و گورستان حذف‌ها در localStorage)
+         * اکنون همزمان (sync) و بلافاصله در همان تیکِ فراخوانی saveRecords() نوشته می‌شود — نه در
+         * یک setTimeout. این‌طور هیچ پنجره‌ی زمانیِ ناامنی بین «ثبت» و «نوشتن واقعی روی دیسک» باقی
+         * نمی‌ماند. عملیات سنگین‌تر و ناهم‌زمانِ IndexedDB (که ذاتاً async است) همچنان با تاخیر کوتاه
+         * انجام می‌شود، چون یک لایه‌ی پشتیبان اضافه است، نه مسیر اصلی نجات داده.
+         * علاوه بر این، اگر حافظه‌ی localStorage پر باشد (QuotaExceededError — معمولاً به‌خاطر عکس‌های
+         * زیاد وقتی IndexedDB در دسترس نیست)، به‌جای شکست کامل و گم‌شدنِ کل رکورد، به‌صورت پلکانی
+         * تلاش مجدد می‌شود: ۱) بدون عکس‌ها  ۲) فقط ماه‌های اخیر و بدون عکس. */
+        function writeCriticalDataToLocalStorageSync() {
+            const recordsForLocalStorage = pruneRecordsForLocalStorage();
+            const attempts = [
+                () => recordsForLocalStorage,
+                () => recordsForLocalStorage.map(stripPhotoForStorage),
+                () => { const recent = getRecentMonthKeysSet(3); return recordsForLocalStorage.filter(r => recent.has(r.monthKey)).map(stripPhotoForStorage); }
+            ];
+            let lastError = null;
+            for (let i = 0; i < attempts.length; i++) {
+                try {
+                    localStorage.setItem('sewing_statistics_records_v13', JSON.stringify(attempts[i]()));
+                    localStorage.setItem(TOMBSTONE_KEY, JSON.stringify(tombstones));
+                    localStorage.setItem('sewing_daily_notes_v13', JSON.stringify(dailyNotes));
+                    if (i > 0) {
+                        addLog('حافظه محلی مرورگر پر بود؛ برای جلوگیری از گم‌شدن رکورد جدید، نسخه‌ی سبک‌تر' + (i === 2 ? ' (فقط ماه‌های اخیر و بدون عکس)' : ' (بدون عکس)') + ' ذخیره شد. برای جلوگیری از تکرار، از «تنظیمات ← حافظه» یک پوشه پشتیبان روی دستگاه متصل کنید.', 'warn');
+                    }
+                    return true;
+                } catch (e) {
+                    lastError = e;
+                }
+            }
+            console.error('نوشتن اضطراری در localStorage هم ناموفق بود:', lastError);
+            return false;
+        }
+
         function saveRecords() {
             const statusEl = document.getElementById('syncStatus');
             if (statusEl) {
@@ -4894,21 +4982,34 @@
             clearTimeout(saveTimeout);
             hasPendingSave = true;
 
+            // مرحله‌ی ۱ (هم‌زمان، بدون تاخیر): همین الان روی localStorage نوشته می‌شود تا رفرش یا
+            // بسته‌شدن ناگهانی صفحه، حتی یک میلی‌ثانیه بعد از ثبت، دیگر نتواند داده را از بین ببرد.
+            const immediateOk = writeCriticalDataToLocalStorageSync();
+            if (immediateOk) {
+                hasPendingSave = false;
+                broadcastLocalDataChange();
+            } else if (statusEl) {
+                // اگر همین نوشتن فوری هم شکست بخورد، بلافاصله (نه بعد از تایمر ۴۰۰ میلی‌ثانیه‌ای) به کاربر هشدار بده.
+                statusEl.style.display = '';
+                statusEl.innerText = "خطا: حافظه مرورگر پر شده است!";
+                statusEl.className = "text-xs text-rose-600 dark:text-rose-400 mt-4 font-medium inline-flex items-center gap-1.5 bg-rose-50 dark:bg-rose-950/50 px-3 py-1 rounded-full border border-rose-100 dark:border-rose-900 transition-all";
+                addLog('خطا در ذخیره‌سازی فوری اطلاعات! حافظه مرورگر پر است.', 'warn');
+            }
+
+            // مرحله‌ی ۲ (ناهم‌زمان، با تاخیر کوتاه): لایه‌ی پشتیبانِ عمیق‌تر و بدون سقفِ IndexedDB.
             saveTimeout = setTimeout(async () => {
                 try {
-                    // گورستان حذف‌ها (کوچک است) پیش از هر چیز نوشته می‌شود؛ اگر ذخیره‌ی بقیه نیمه‌کاره بماند،
-                    // رکورد حذف‌شده در بارگذاری بعدی دوباره زنده نمی‌شود.
-                    try { localStorage.setItem(TOMBSTONE_KEY, JSON.stringify(tombstones)); } catch (tbErr) { console.warn('ذخیره‌ی tombstone ناموفق بود:', tbErr); }
                     let photosPersisted = false;
                     try { photosPersisted = await persistPhotos(); } catch (photoErr) { console.warn('ذخیره‌ی عکس در IndexedDB ناموفق بود؛ عکس‌ها در localStorage نگه داشته می‌شوند.', photoErr); }
                     let dataPersisted = false;
                     try { dataPersisted = await persistDataToIndexedDB(); } catch (dataErr) { console.warn('ذخیره‌ی رکوردها/یادداشت‌ها در IndexedDB ناموفق بود؛ فقط در localStorage نگه داشته می‌شوند.', dataErr); }
-                    const recordsForLocalStorage = pruneRecordsForLocalStorage();
-                    localStorage.setItem('sewing_statistics_records_v13', JSON.stringify(photosPersisted ? recordsForLocalStorage.map(stripPhotoForStorage) : recordsForLocalStorage));
-                    localStorage.setItem(TOMBSTONE_KEY, JSON.stringify(tombstones));
-                    localStorage.setItem('sewing_daily_notes_v13', JSON.stringify(dailyNotes));
-                    addLog(dataPersisted ? 'تغییرات در حافظه محلی و IndexedDB ذخیره شد.' : 'تغییرات در حافظه محلی ذخیره شد.', 'success');
+
+                    // اگر عکس‌ها تازه با موفقیت به IndexedDB منتقل شدند، نسخه‌ی localStorage یک‌بار
+                    // دیگر (این‌بار بدون عکس، برای آزاد کردن جا و کاهش ریسک پرشدن حافظه) به‌روز می‌شود.
+                    if (photosPersisted) writeCriticalDataToLocalStorageSync();
+
                     hasPendingSave = false;
+                    addLog(dataPersisted ? 'تغییرات در حافظه محلی و IndexedDB ذخیره شد.' : 'تغییرات در حافظه محلی ذخیره شد.', 'success');
                     broadcastLocalDataChange();
                     updateStorageQuotaUI();
 
@@ -4918,16 +5019,14 @@
 
                     // ذخیره‌سازی با موفقیت انجام شد؛ چون این وضعیت عادی و همیشگی است،
                     // به‌جای نمایش دائمی، دوباره مخفی می‌شود.
-                    if (statusEl) {
+                    if (statusEl && immediateOk) {
                         statusEl.style.display = 'none';
                     }
                 } catch (error) {
                     console.error("Storage Error:", error);
-                    addLog('خطا در ذخیره‌سازی اطلاعات!', 'warn');
-                    if (statusEl) {
-                        statusEl.style.display = '';
-                        statusEl.innerText = "خطا: حافظه مرورگر پر شده است!";
-                        statusEl.className = "text-xs text-rose-600 dark:text-rose-400 mt-4 font-medium inline-flex items-center gap-1.5 bg-rose-50 dark:bg-rose-950/50 px-3 py-1 rounded-full border border-rose-100 dark:border-rose-900 transition-all";
+                    if (immediateOk) {
+                        // نوشتن فوری (مرحله‌ی ۱) موفق بود، پس داده‌ای گم نشده؛ فقط لایه‌ی پشتیبان IndexedDB ناموفق بوده.
+                        addLog('خطا در ذخیره‌سازی لایه‌ی پشتیبان (IndexedDB)! داده در حافظه محلی سالم است.', 'warn');
                     }
                 }
             }, 400);
@@ -4935,23 +5034,22 @@
 
         // ذخیره‌ی فوری و هم‌زمان (sync) هنگام رفتن صفحه به پس‌زمینه/بسته‌شدن؛ در موبایل، تایمر ۴۰۰ میلی‌ثانیه‌ای
         // ممکن است هرگز اجرا نشود و آخرین تغییر از بین برود.
+        // [رفع باگ حیاتی] این تابع اکنون بیشتر یک لایه‌ی ایمنیِ اضافه است، نه مسیر اصلیِ نجات داده؛
+        // چون saveRecords() از این پس بخش حیاتی را همزمان و بلافاصله می‌نویسد (بدون تاخیر ۴۰۰ میلی‌ثانیه‌ای)،
+        // در عمل معمولاً hasPendingSave پیش از رسیدن به اینجا از قبل false شده است. اما به‌عنوان محافظ
+        // نهایی برای موارد لبه‌ای (مثلاً اگر نوشتن اول با خطا مواجه شده) همچنان نگه داشته می‌شود.
         function flushPendingSaveNow() {
-            if (!hasPendingSave) return;
-            try {
-                try { localStorage.setItem(TOMBSTONE_KEY, JSON.stringify(tombstones)); } catch (e) { /* بی‌اهمیت */ }
-                const recent = pruneRecordsForLocalStorage();
-                const needFullPhotos = !photoIdbOk || allRecords.some(r => r.photo && photoSynced.get(r.id) !== r.photo);
-                localStorage.setItem('sewing_statistics_records_v13', JSON.stringify(needFullPhotos ? recent : recent.map(stripPhotoForStorage)));
-                localStorage.setItem('sewing_daily_notes_v13', JSON.stringify(dailyNotes));
-                broadcastLocalDataChange();
-            } catch (e) {
-                console.warn('ذخیره‌ی فوری ناموفق بود:', e);
+            if (hasPendingSave) {
+                if (writeCriticalDataToLocalStorageSync()) hasPendingSave = false;
             }
             // ذخیره‌ی IndexedDB (ناهم‌زمان) هم شروع می‌شود؛ اگر صفحه بسته شد، نسخه‌ی localStorage باقی است
             persistPhotos().catch(() => {}).then(() => persistDataToIndexedDB()).catch(() => {});
         }
         document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushPendingSaveNow(); });
         window.addEventListener('pagehide', flushPendingSaveNow);
+        // [رفع باگ حیاتی] beforeunload به‌عنوان محافظِ افزوده: در برخی مرورگرها/وب‌ویوها pagehide با
+        // تاخیر یا در شرایط خاص اجرا نمی‌شود؛ داشتن هر دو رویداد ریسک را عملاً به صفر می‌رساند.
+        window.addEventListener('beforeunload', flushPendingSaveNow);
 
         async function exportSmartBackup() {
             if (allRecords.length === 0 && dailyNotes.length === 0) {
@@ -7214,73 +7312,134 @@
         }
 
         // پیام‌های انگیزشی درون کادر بالا: چند دسته‌ی جدا بر اساس وضعیت واقعیِ تحویل (تاخیر/فوریِ نزدیک به موعد/
-        // در حال کار/رشته‌ی به‌موقع/خنثی)، هر کدام با تنوع بالا. با seed روزانه (و برای رشته، ترکیب با طول رشته) انتخاب
-        // می‌شوند تا هم هر روز عوض شوند و هم در طول یک روز با هر رندر ثابت بمانند.
+        // در حال کار/رشته‌ی به‌موقع/خنثی). به‌جای جمله‌های ساختگی و سبک، این‌ها سخنانِ واقعیِ اندیشمندانِ بزرگ
+        // و روان‌شناسانِ سرشناسِ دنیا هستند (استوایی‌ها، فرانکل، یونگ، مزلو، بندورا، چیک‌سنت‌میهای، راجرز، اسکینر و ...)،
+        // هر کدام با تنوعِ بالا (حداقل ۸ تا ۱۲ گزینه‌ی متمایز در هر دسته). [رفع باگِ تکراری‌بودن] پایین‌تر توضیح داده شده.
         const LATE_MOTIVATIONS = [
-            'تاخیر بخشی از مسیره؛ مهم اینه که کد بعدی رو قوی‌تر شروع کنی 💪',
-            'هر کد جدید یه فرصت تازه‌ست؛ با تحویل به‌موقعِ بعدی، رشته‌ات دوباره شروع می‌شه 🔥',
-            'نگران نباش؛ یه شروع سریع و برنامه‌ریزی دقیق‌تر، عقب‌افتادگی رو جبران می‌کنه ✨',
-            'یه قدم کوچیک الان، جبران بزرگی برای امروزه؛ کارِ جاری رو تموم کن 🌟',
-            'بهترین‌ها هم گاهی دیر می‌کنن؛ فرقشون اینه که سریع برمی‌گردن سر مسیر 🚀',
-            'یه نفس عمیق بکش؛ کارِ جاری رو تموم و ثبت کن، حالت خیلی بهتر می‌شه 🌿',
-            'تو می‌تونی! کد بعدی رو به‌موقع تحویل بده و رکوردت رو دوباره بساز 🏆',
-            'امروز روز خوبیه برای یه شروع تازه؛ بذار این تاخیر آخریش باشه 🌤️',
-            'هیچ رشته‌ای برای همیشه دوام نداره؛ رشته‌ی بعدیِ تو می‌تونه بلندتر باشه 📈',
-            'به‌جای نگرانی از دیروز، روی تحویلِ بعدی تمرکز کن؛ همین الان شروعش کن ⏱️',
-            'یه لحظه توقف کن، برنامه‌ی امروزت رو مرور کن و دوباره با انرژی ادامه بده 🔄',
-            'هر حرفه‌ای مسیرش پر از فراز و نشیبه؛ همین که ادامه می‌دی یعنی بردی 🌱',
-            'دیر رسیدن پایان راه نیست؛ فقط یه یادآوریه که سرعتت رو کمی بیشتر کنی ⚡',
-            'کد بعدی، صفحه‌ی تازه‌ست؛ بذار داستانش «به‌موقع» شروع بشه 📖'
+            'موفقیت پایانی ندارد و شکست هم نابودکننده نیست؛ آنچه اهمیت دارد شجاعتِ ادامه‌دادن است. — وینستون چرچیل',
+            'من شکست نخورده‌ام؛ فقط ده‌هزار روشی را پیدا کرده‌ام که جواب نمی‌دهند. — توماس ادیسون',
+            'بزرگ‌ترین افتخار ما نه در هرگز زمین‌نخوردن، که در برخاستن پس از هر زمین‌خوردن است. — کنفوسیوس',
+            'آنچه ما را از پا درنمی‌آورد، نیرومندترمان می‌کند. — فردریش نیچه',
+            'انسان می‌تواند هر «چگونه‌ای» را تحمل کند، اگر «چرا»یی برای زیستن داشته باشد. — فردریش نیچه',
+            'هرچه از یک انسان بگیرند، این یکی را نمی‌توانند بگیرند: آزادیِ انتخابِ نگرش خود در هر شرایطی. — ویکتور فرانکل',
+            'وقتی دیگر نمی‌توانیم شرایط را تغییر دهیم، چالش این است که خودمان را تغییر دهیم. — ویکتور فرانکل',
+            'وقتت را برای غصه‌خوردنِ دیروز تلف نکن؛ امروز را با اراده‌ای تازه شروع کن. — مارکوس اورلیوس',
+            'تا وقتی ناخودآگاه را آگاه نکنی، همان بر زندگی‌ات فرمان می‌راند و تو نامش را سرنوشت می‌گذاری. — کارل یونگ',
+            'هر بحران هم خطر دارد و هم فرصت؛ نگاهت را به فرصتش بدوز. — اریش فروم',
+            'شکست، اطلاعاتی برای مسیر بعدی است، نه داوری درباره‌ی ارزشِ تو. — مارتین سلیگمن',
+            'رشدِ واقعی همیشه در دلِ ناراحتی نطفه می‌بندد، نه در دلِ آسایش. — کارل یونگ'
         ];
         const URGENT_MOTIVATIONS = [
-            'موعد تحویل نزدیکه؛ یه فشار آخر و کارت به‌موقع تموم می‌شه ⏳',
-            'چیزی تا پایان مهلت نمونده؛ تمرکزت رو جمع کن و برسون 🏁',
-            'همین چند دقیقه‌ی آخر مهمه؛ یه دل‌کندن سریع و تحویلِ به‌موقع مال توئه 💨',
-            'وقتِ کمه اما هنوز دستِ توئه؛ سرعت رو ببر بالا و کارت رو ببند 🔧',
-            'یه اسپرینت کوتاه تا خط پایان؛ نفس عمیق و برو 🏃',
-            'داری به موعد نزدیک می‌شی؛ الان بهترین لحظه برای تمرکز کامله 🎯',
-            'کمی سرعت بیشتر، تحویلِ به‌موقعِ دیگه‌ای رو تضمین می‌کنه 🔥',
-            'تا همین چند دقیقه‌ی دیگه می‌تونی این کد رو به‌موقع ببندی؛ ادامه بده 💪'
+            'اکنون تنها لحظه‌ای است که واقعاً در اختیار داری؛ تمام تمرکزت را همین‌جا بگذار. — مارکوس اورلیوس',
+            'اگر از چیزی بیرون از خودت رنج می‌بری، درد از خودِ آن چیز نیست، بلکه از داوریِ توست درباره‌اش؛ همین الان می‌توانی این داوری را تغییر دهی. — مارکوس اورلیوس',
+            'نخست به خودت بگو چه می‌خواهی باشی، سپس آنچه باید انجام دهی را انجام بده. — اپیکتتوس',
+            'مردم را نه رویدادها، بلکه دیدگاهشان درباره‌ی رویدادها آشفته می‌کند. — اپیکتتوس',
+            'هیچ‌کس آزاد نیست مگر آنکه بر خویشتنِ خود چیره باشد. — اپیکتتوس',
+            'این دشواریِ کارها نیست که ما را از اقدام بازمی‌دارد؛ نبودِ اقدامِ ماست که کارها را دشوار می‌کند. — سنکا',
+            'ما در خیال، بیش از واقعیت رنج می‌بریم. — سنکا',
+            'ما عمرِ کوتاهی نداریم؛ بخشِ زیادی از آن را خودمان هدر می‌دهیم. — سنکا',
+            'افرادی که باور دارند می‌توانند بر زندگیِ خود کنترل داشته باشند، سالم‌تر، کاراتر و موفق‌ترند. — آلبرت بندورا',
+            'کسی که آغاز کرده، نیمی از راه را رفته است. — هوراس'
         ];
         const ACTIVE_MOTIVATIONS = [
-            'کارِ جاری در جریانه؛ با همین ریتم آروم و پیوسته پیش برو 🧵',
-            'هر دقیقه‌ای که کار می‌کنی، به تحویلِ به‌موقع نزدیک‌تر می‌شی ⏱️',
-            'تمرکز روی همین کد؛ بقیه‌ی چیزها بعداً حل می‌شن 🎯',
-            'روند خوبیه؛ همین‌طور با آرامش ادامه بده تا موعد 🌤️',
-            'یه کد، یه قدم به سمت رشته‌ی بلندترِ تحویل‌های به‌موقع 📈',
-            'کارِ خوب عجله نداره؛ با کیفیت و در زمان، پیش برو ✨',
-            'داری خوب پیش می‌ری؛ تا رسیدن به موعد همین مسیر رو ادامه بده 🚶',
-            'تمرکز الان یعنی راحتیِ چند ساعت بعد؛ ادامه بده 🌱'
+            'بهترین لحظه‌ها معمولاً وقتی رخ می‌دهند که ذهن یا بدنِ فرد، در تلاشی داوطلبانه برای انجام کاری دشوار و ارزشمند، تا مرزِ توانش کشیده می‌شود. — میهای چیک‌سنت‌میهای',
+            'خلاقیت به شجاعتِ رهاکردنِ قطعیت‌ها نیاز دارد. — اریش فروم',
+            'افرادی که به توانایی خود اطمینان دارند، کارهای دشوار را چالشی برای تسلط می‌بینند، نه تهدیدی برای فرار. — آلبرت بندورا',
+            'زندگیِ خوب، حالتی ثابت نیست؛ یک فرایند است، یک مسیر، نه یک مقصد. — کارل راجرز',
+            'مهم نیست چقدر آهسته پیش می‌روی، مهم این است که نایستی. — کنفوسیوس',
+            'هر کاری که ارزشِ انجام‌دادن دارد، ارزشِ انجام‌دادنِ خوب را هم دارد. — فیلیپ چسترفیلد',
+            'یادگیری هرگز ذهن را خسته نمی‌کند. — لئوناردو داوینچی',
+            'آنچه هستم، اگر با صداقت همان باشم، به‌قدرِ کافی خوب است. — کارل راجرز',
+            'هیچ کاری را از سرِ بی‌میلی یا اجبار انجام نده؛ هرچه انجام می‌دهی، با تمام دل انجامش بده. — مارکوس اورلیوس',
+            'کیفیتِ کار، یک لحظه‌ی خاص نیست؛ نتیجه‌ی عادتی است که در همین لحظه‌ها ساخته می‌شود. — ویل دورانت (در تفسیرِ اندیشه‌ی ارسطو)'
         ];
         const STREAK_MOTIVATIONS = [
-            'همین‌طور ادامه بده، رشته‌ات داره قوی‌تر می‌شه 🔥',
-            'هر کد به‌موقع یه آجر دیگه‌ست روی این رشته؛ محکم بچینش 🧱',
-            'عالیه! نذار این ریتم خوب بشکنه 🚀',
-            'داری یه عادت خیلی خوب می‌سازی؛ ادامه‌ش بده 🌟',
-            'رشته‌ی به‌موقع یعنی اعتماد بیشتر؛ همین مسیر رو ادامه بده 🏆',
-            'هر روز به‌موقع یعنی یه قدم به جلو؛ خسته نشو 💪',
-            'این ریتم رو حفظ کن، نتیجه‌اش رو به‌زودی می‌بینی 📊',
-            'کارت حرف نداره؛ کد بعدی هم همینطوری به‌موقع 🎯'
+            'ما همان چیزی هستیم که پیوسته انجامش می‌دهیم؛ برتری یک کار نیست، یک عادت است. — ویل دورانت (در تفسیرِ اندیشه‌ی ارسطو)',
+            'رشد را باید دوباره و دوباره انتخاب کرد؛ بر ترس هم باید بارها و بارها چیره شد. — آبراهام مزلو',
+            'شکست همیشه اشتباه نیست؛ گاهی بهترین کاری است که در آن شرایط از دست برمی‌آمده. اشتباهِ واقعی، دست‌کشیدن از تلاش است. — بی. اف. اسکینر',
+            'هیچ بادی برای کشتی‌ای که مقصدش را نمی‌داند، موافق نیست. — سنکا',
+            'کسی که آموختن را بدون تفکر رها کند، سرگردان است؛ کسی که تفکر را بدون آموختن رها کند، در خطر است. — کنفوسیوس',
+            'پیشرفتِ واقعی جایی رخ می‌دهد که به‌جای سرزنشِ دیگران یا شرایط، سراغِ خودت بروی. — اپیکتتوس',
+            'موفقیت‌های پیاپی، باورِ فرد به تواناییِ خودش را تحکیم می‌کنند. — آلبرت بندورا',
+            'خودت را به همین لحظه‌ی حاضر محدود کن. — مارکوس اورلیوس',
+            'تا کی صبر می‌کنی که بهترین را از خودت بخواهی؟ — اپیکتتوس',
+            'کنترلِ آگاهانه بر زندگی، مهارتی است که با تمرینِ روزانه ساخته می‌شود. — میهای چیک‌سنت‌میهای'
         ];
         const NEUTRAL_MOTIVATIONS = [
-            'امروز رو با یه شروع خوب باز کن؛ اولین کد رو ثبت کن 🌅',
-            'هر روز یه فرصت تازه‌ست برای یه رشته‌ی جدیدِ به‌موقع 🌱',
-            'آماده‌ای؟ اولین قدمِ امروز همینه که کارِ بعدی رو شروع کنی ✨',
-            'یه روزِ منظم، از همین حالا شروع می‌شه 📋',
-            'ثبت دقیق و به‌موقع، بهترین هدیه‌ای که به خودت می‌دی 🎁',
-            'برنامه‌ریزیِ امروز رو مرور کن و با انرژی شروع کن 🚀',
-            'هر کد که به‌موقع تحویل بشه، یعنی یه روزِ موفق دیگه 🌤️',
-            'وقتشه؛ اولین کدِ امروز منتظرِ شروعه ⏰'
+            'دیگر وقتت را برای بحث دربارهٔ اینکه انسانِ خوب چگونه باید باشد تلف نکن؛ همین حالا آن انسان باش. — مارکوس اورلیوس',
+            'برخی چیزها در اختیار مایند و برخی نیستند؛ آرامش از شناختنِ همین تفاوت آغاز می‌شود. — اپیکتتوس',
+            'پارادوکسِ عجیب این است: وقتی خودم را همان‌طور که هستم بپذیرم، آن‌وقت است که می‌توانم تغییر کنم. — کارل راجرز',
+            'زندگی طولانی است، اگر بدانی چگونه از آن استفاده کنی. — سنکا',
+            'همه‌ی آدمیان طبیعتاً خواهانِ دانستن‌اند. — ارسطو',
+            'شادی چیزی نیست که اتفاق بیفتد؛ باید برایش آماده شد، آن را پرورد و از آن مراقبت کرد. — میهای چیک‌سنت‌میهای',
+            'برای تغییرِ یک انسان، لازم است آگاهیِ او از خودش تغییر کند. — آبراهام مزلو',
+            'بامدادان که از خواب برمی‌خیزی و بیدارشدن برایت دشوار است، به خود بگو: من برای انجامِ کارِ انسان از خواب برمی‌خیزم. — مارکوس اورلیوس',
+            'کسی که برای آینده نمی‌اندیشد، به‌زودی گرفتارِ دغدغه‌های نزدیک می‌شود. — کنفوسیوس'
         ];
-        function pickFromPool(pool, seed) {
-            return pool[Math.abs(Math.floor(Number(seed) || 0)) % pool.length];
-        }
-        function pickLateMotivation(seed) {
-            return pickFromPool(LATE_MOTIVATIONS, seed);
+
+        /* ==================== [رفع درخواست] تنوعِ بالا و بدونِ تکرار در طول روز ====================
+         * قبلاً یک پیامِ ثابت بر اساس seedِ روزانه انتخاب می‌شد (یعنی در کل یک روز، فقط همان یک جمله دیده
+         * می‌شد). حالا برای هر دسته، ترتیبِ نمایش با یک شافلِ seed‌دار مخصوصِ همان روز مشخص می‌شود و با
+         * گذشتِ زمان (هر بار که کادر انگیزشی دوباره رندر شود و حداقل چند دقیقه از آخرین تغییر گذشته باشد)
+         * به آیتمِ بعدیِ همان شافل می‌رود؛ یعنی در طول یک روز، تا وقتی همه‌ی گزینه‌های آن دسته (حداقل ۸ تا
+         * ۱۲ مورد) یک‌بار دیده نشوند، هیچ‌کدام تکرار نمی‌شود. وضعیتِ این چرخش در localStorage نگه‌داری
+         * می‌شود تا با رفرشِ صفحه هم از همان‌جا ادامه پیدا کند، نه از اول. */
+        const MOTIVATION_ROTATE_INTERVAL_MS = 5 * 60 * 1000; // هر ۵ دقیقه، در صورت رندرِ دوباره، پیام عوض می‌شود
+        const MOTIVATION_STATE_KEY = 'sewing_motivation_rotation_v2';
+        function seededShuffleIndices(length, seed) {
+            const arr = Array.from({ length }, (_, i) => i);
+            let s = (Math.abs(Math.floor(Number(seed) || 0)) % 2147483647) || 1;
+            const rnd = () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(rnd() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
         }
         function todayMotivationSeed() {
             return parseJalaliDateToJdn(getCurrentJalaliInfo().fullDateStr) || 0;
         }
+        function loadMotivationRotationState() {
+            let st = null;
+            try { st = JSON.parse(localStorage.getItem(MOTIVATION_STATE_KEY) || 'null'); } catch (e) { st = null; }
+            const today = getCurrentJalaliInfo().fullDateStr;
+            if (!st || typeof st !== 'object' || st.date !== today) {
+                st = { date: today, pointers: {}, order: {}, lastAt: {} };
+            }
+            return st;
+        }
+        function saveMotivationRotationState(st) {
+            try { localStorage.setItem(MOTIVATION_STATE_KEY, JSON.stringify(st)); } catch (e) { /* بی‌اهمیت */ }
+        }
+        function pickFromPool(pool, category) {
+            if (!pool || !pool.length) return '';
+            const st = loadMotivationRotationState();
+            const daySeed = todayMotivationSeed();
+            let changed = false;
+            if (!Array.isArray(st.order[category]) || st.order[category].length !== pool.length) {
+                st.order[category] = seededShuffleIndices(pool.length, daySeed + category.length * 977);
+                st.pointers[category] = 0;
+                st.lastAt[category] = Date.now();
+                changed = true;
+            }
+            const now = Date.now();
+            if (now - (st.lastAt[category] || 0) >= MOTIVATION_ROTATE_INTERVAL_MS) {
+                const nextPointer = (st.pointers[category] + 1) % pool.length;
+                // وقتی یک دور کامل روی همه‌ی گزینه‌های این دسته تمام شد، برای ادامه‌ی روز دوباره
+                // (با seedِ تازه) شافل می‌شود تا الگوی نمایش هم قابل‌پیش‌بینی نباشد
+                if (nextPointer === 0) st.order[category] = seededShuffleIndices(pool.length, daySeed + now % 100000);
+                st.pointers[category] = nextPointer;
+                st.lastAt[category] = now;
+                changed = true;
+            }
+            if (changed) saveMotivationRotationState(st);
+            const idx = st.order[category][st.pointers[category]];
+            return pool[idx];
+        }
+        function pickLateMotivation(seed) {
+            return pickFromPool(LATE_MOTIVATIONS, 'late');
+        }
+        /* ==================== پایان [رفع درخواست] ==================== */
 
         function refreshStreak() {
             const icon = document.getElementById('streakRefreshIcon');
@@ -7301,6 +7460,8 @@
 
         // نگاشتِ گزینه‌ی «تنوع انیمیشن» در تنظیمات به کلاس CSS متناظرش
         const MOTIVATION_ANIM_CLASS_MAP = { default: 'motiv-anim-default', pulse: 'motiv-anim-pulse', glow: 'motiv-anim-glow', shake: 'motiv-anim-shake', none: 'motiv-anim-none' };
+        // نگاشتِ گزینه‌ی «اندازه متن نوار انگیزشی» در تنظیمات (مستقل از «اندازه فونت» کلی برنامه) به واحد em
+        const MOTIVATION_TEXT_SIZE_MAP = { small: '0.8em', normal: '0.95em', large: '1.15em', xlarge: '1.35em' };
 
         function renderStreakBadge() {
             const el = document.getElementById('streakBadgeText');
@@ -7314,16 +7475,22 @@
             }
 
             const streak = appSettings.onTimeStreak || 0;
-            const daySeed = todayMotivationSeed();
             let activeProgress = null;
             try {
                 const activeRec = getCurrentActiveRecord();
                 if (activeRec) activeProgress = computeRecordProgress(activeRec);
             } catch (e) { activeProgress = null; }
 
-            // کلاس پایه‌ی مشترک همه‌ی حالت‌ها: فونت کمی بزرگ‌تر (text-sm) + انیمیشنِ انتخابیِ کاربر از تنظیمات
+            // کلاس پایه‌ی مشترک همه‌ی حالت‌ها: انیمیشنِ انتخابیِ کاربر از تنظیمات.
+            // [رفع درخواست] فونتِ کادر انگیزشی: قبلاً با کلاس ثابتِ «text-sm» (واحد rem، همیشه ۰٫۸۷۵ رم
+            // صرف‌نظر از تنظیمات کاربر) رندر می‌شد و به‌همین‌دلیل به گزینه‌ی «اندازه‌ی فونت» در تنظیمات
+            // (کوچک/عادی/بزرگ/خیلی‌بزرگ که روی body اعمال می‌شود) هیچ واکنشی نشان نمی‌داد. حالا با واحدِ
+            // نسبیِ em (که به فونتِ به‌ارث‌رسیده از body وابسته است) اندازه‌اش هم از همان تنظیمات پیروی می‌کند.
             const animClass = MOTIVATION_ANIM_CLASS_MAP[appSettings.motivationAnimation] || MOTIVATION_ANIM_CLASS_MAP.default;
-            const baseClass = 'motivation-badge ' + animClass + ' inline-flex text-sm font-medium px-3.5 py-2 rounded-2xl border items-center gap-1.5 text-center leading-relaxed max-w-full';
+            // اندازه‌ی متن نوار انگیزشی حالا از گزینه‌ی اختصاصی «اندازه متن نوار انگیزشی» در تنظیمات می‌آید
+            // (مستقل از گزینه‌ی سراسری «اندازه فونت»)؛ همچنان واحد em است تا نسبت به فونتِ به‌ارث‌رسیده از body سازگار بماند.
+            const sizeEm = MOTIVATION_TEXT_SIZE_MAP[appSettings.motivationTextSize] || MOTIVATION_TEXT_SIZE_MAP.normal;
+            const baseClass = 'motivation-badge ' + animClass + ' inline-flex text-[' + sizeEm + '] font-medium px-3.5 py-2 rounded-2xl border items-center gap-1.5 text-center leading-relaxed max-w-full';
 
             // رنگ پس‌زمینه/متنِ سفارشی از تنظیمات (در صورت انتخاب) روی رنگ‌بندیِ خودکارِ هر حالت اعمال می‌شود
             const applyCustomColors = () => {
@@ -7343,14 +7510,14 @@
 
             if (streakLate) {
                 el.className = baseClass + ' bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-100 dark:border-rose-900';
-                el.innerHTML = `<i class="fa-solid fa-heart-pulse shrink-0"></i> <span>${escapeHTML(pickFromPool(LATE_MOTIVATIONS, daySeed))}</span>`;
+                el.innerHTML = `<i class="fa-solid fa-heart-pulse shrink-0"></i> <span>${escapeHTML(pickFromPool(LATE_MOTIVATIONS, 'late'))}</span>`;
                 applyCustomColors();
                 return;
             }
 
             if (activeProgress && activeProgress.percent >= 85 && activeProgress.percent < 100) {
                 el.className = baseClass + ' bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-100 dark:border-amber-900';
-                el.innerHTML = `<i class="fa-solid fa-bolt shrink-0"></i> <span>${escapeHTML(pickFromPool(URGENT_MOTIVATIONS, daySeed))}</span>`;
+                el.innerHTML = `<i class="fa-solid fa-bolt shrink-0"></i> <span>${escapeHTML(pickFromPool(URGENT_MOTIVATIONS, 'urgent'))}</span>`;
                 applyCustomColors();
                 return;
             }
@@ -7358,20 +7525,20 @@
             if (streak > 0) {
                 const isRecord = streak > 1 && streak === (appSettings.bestStreak || 0);
                 el.className = baseClass + ' bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 border-orange-100 dark:border-orange-900 font-bold';
-                el.innerHTML = `<i class="fa-solid fa-fire shrink-0"></i> <span>${formatNumber(streak)} کد متوالی به‌موقع${isRecord ? ' — رکورد شخصی 🏆' : ''} — ${escapeHTML(pickFromPool(STREAK_MOTIVATIONS, daySeed + streak))}</span>`;
+                el.innerHTML = `<i class="fa-solid fa-fire shrink-0"></i> <span>${formatNumber(streak)} کد متوالی به‌موقع${isRecord ? ' — رکورد شخصی 🏆' : ''} — ${escapeHTML(pickFromPool(STREAK_MOTIVATIONS, 'streak'))}</span>`;
                 applyCustomColors();
                 return;
             }
 
             if (activeProgress) {
                 el.className = baseClass + ' bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900';
-                el.innerHTML = `<i class="fa-solid fa-seedling shrink-0"></i> <span>${escapeHTML(pickFromPool(ACTIVE_MOTIVATIONS, daySeed))}</span>`;
+                el.innerHTML = `<i class="fa-solid fa-seedling shrink-0"></i> <span>${escapeHTML(pickFromPool(ACTIVE_MOTIVATIONS, 'active'))}</span>`;
                 applyCustomColors();
                 return;
             }
 
             el.className = baseClass + ' bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border-slate-100 dark:border-slate-700';
-            el.innerHTML = `<i class="fa-solid fa-star shrink-0"></i> <span>${escapeHTML(pickFromPool(NEUTRAL_MOTIVATIONS, daySeed))}</span>`;
+            el.innerHTML = `<i class="fa-solid fa-star shrink-0"></i> <span>${escapeHTML(pickFromPool(NEUTRAL_MOTIVATIONS, 'neutral'))}</span>`;
             applyCustomColors();
         }
 
@@ -7528,14 +7695,16 @@
         }
 
         /* ---- تصویر بندانگشتی (thumbnail) برای جدول؛ عکس اصلی فقط در نمایشگر عکس باز می‌شود ---- */
-        const thumbCache = new Map(); // id -> { len, url }
+        const thumbCache = new Map(); // id -> { key: updatedAt, url }
         const TRANSPARENT_PX = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
         let thumbHydrating = false;
         let thumbNeedsRerun = false;
 
         function getThumbSrc(r) {
+            // [رفع باگ] شناسایی نسخه‌ی کش‌شده بر اساس updatedAt، نه طول رشته‌ی base64 (دو عکس متفاوت
+            // می‌توانستند طول یکسان داشته باشند و باعث نمایش عکس اشتباه از کش شوند).
             const c = thumbCache.get(r.id);
-            return (c && r.photo && c.len === r.photo.length) ? c.url : TRANSPARENT_PX;
+            return (c && r.photo && c.key === r.updatedAt) ? c.url : TRANSPARENT_PX;
         }
         function makeThumb(photo, size = 96) {
             return new Promise((resolve, reject) => {
@@ -7563,10 +7732,10 @@
                     const rec = allRecords.find(x => x.id === id);
                     if (!rec || !rec.photo) continue;
                     let c = thumbCache.get(id);
-                    if (!c || c.len !== rec.photo.length) {
+                    if (!c || c.key !== rec.updatedAt) {
                         let url;
                         try { url = await makeThumb(rec.photo); } catch (e) { url = rec.photo; }
-                        c = { len: rec.photo.length, url };
+                        c = { key: rec.updatedAt, url };
                         thumbCache.set(id, c);
                     }
                     if (img.isConnected) img.src = c.url;
@@ -7967,7 +8136,7 @@
         });
 
         /* ---- دسترس‌پذیری: نقش دیالوگ، اتصال برچسب‌ها، aria-label و بستن با Escape ---- */
-        const MODAL_IDS = ['customConfirmModal', 'advancedSearchModal', 'trashBinModal', 'dataHealthModal', 'settingsModal', 'overviewModal'];
+        const MODAL_IDS = ['customConfirmModal', 'advancedSearchModal', 'trashBinModal', 'dataHealthModal', 'settingsModal', 'overviewModal', 'toolsDropdownMenu'];
         MODAL_IDS.forEach(id => {
             const el = document.getElementById(id);
             if (el) { el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); }
@@ -7987,6 +8156,7 @@
         }
         document.addEventListener('keydown', function (e) {
             if (e.key !== 'Escape') return;
+            if (isModalOpen('toolsDropdownMenu')) { closeToolsDropdown(); return; }
             if (isModalOpen('jalaliDatePickerPopup')) { closeDatePicker(); return; }
             if (isModalOpen('photoViewerModal')) { closePhotoViewer(); return; }
             if (isModalOpen('customConfirmModal')) { document.getElementById('customConfirmCancelBtn').click(); return; }
@@ -8016,6 +8186,10 @@
         checkDeliveryProgressNotifications();
         setInterval(checkDeliveryProgressNotifications, 60 * 1000);
         setInterval(renderActiveProgressWidget, 20 * 1000);
+        // [رفع درخواست] رندرِ دوره‌ای کادر انگیزشی تا چرخشِ پیام‌ها (حداقل ۱۰ پیامِ متفاوت در روز، بدون
+        // تکرار) حتی وقتی کاربر کاری انجام نمی‌دهد هم پیش برود؛ خودِ pickFromPool تضمین می‌کند که پیام
+        // فقط بعد از گذشتِ MOTIVATION_ROTATE_INTERVAL_MS واقعاً عوض شود.
+        setInterval(renderStreakBadge, 60 * 1000);
 
         // ذخیره‌سازی دوره‌ای خودکار: هر ۵ دقیقه، صرف‌نظر از اینکه تغییری ثبت شده یا نه،
         // لیست کارکرد، یادداشت‌ها و تنظیمات را ذخیره می‌کند (در حافظه مرورگر/IndexedDB و

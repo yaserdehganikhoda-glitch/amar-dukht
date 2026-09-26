@@ -40,7 +40,7 @@
             transform: scale(0.97);
         }
         .tactile-btn:hover {
-            box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.12);
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.12);
         }
         /* میکرو-اینترکشن سراسری: همه‌ی دکمه‌های برنامه هنگام لمس/کلیک کمی جمع می‌شوند */
         button:not(:disabled) {
@@ -255,7 +255,7 @@
             background-color: rgb(238 242 255);
         }
         .dark .jdp-day-btn:hover {
-            background-color: rgba(var(--accent-rgb), 0.15);
+            background-color: rgba(99, 102, 241, 0.15);
         }
 
         /* ============ بهینه‌سازی سرعت: کاهش سنگینی transition روی فیلدهای فرم ============ */
@@ -287,12 +287,9 @@
             color: rgb(148 163 184);
         }
         .main-tab-btn.main-tab-active {
-            background: var(--accent-glass-gradient);
-            backdrop-filter: blur(10px) saturate(180%);
-            -webkit-backdrop-filter: blur(10px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.25);
+            background-color: rgb(79 70 229);
             color: #fff;
-            box-shadow: 0 2px 10px -2px rgba(var(--accent-rgb), 0.45);
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
         }
     </style>
     <style>
@@ -323,83 +320,30 @@
             --brand-700: #4338ca;
             --brand-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 55%, #4338ca 100%);
             --surface-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 10px 28px -14px rgba(15,23,42,0.14);
-            --surface-shadow-hover: 0 4px 10px rgba(15,23,42,0.06), 0 18px 36px -16px rgba(var(--accent-rgb),0.22);
-            /* ============ رنگ تاکیدیِ شیشه‌ای (قابل تغییر از تنظیمات) ============ */
-            --accent-rgb: 147,51,234;
-            --accent-50: #faf5ff;
-            --accent-400: #c084fc;
-            --accent-500: #a855f7;
-            --accent-600: #9333ea;
-            --accent-700: #7e22ce;
-            --accent-gradient: linear-gradient(135deg, #a855f7 0%, #9333ea 55%, #7e22ce 100%);
-            /* گرادیان شیشه‌ایِ نیمه‌شفاف برای هدر/دکمه‌ها/تب‌های تاکیدی */
-            --accent-glass-gradient: linear-gradient(135deg, rgba(var(--accent-rgb),0.92) 0%, rgba(var(--accent-rgb),0.78) 100%);
-            /* هدر/دکمه‌ی اصلی، هم‌رنگ با تاکیدی، برای یکدستیِ کامل با انتخاب کاربر */
-            --brand-gradient: var(--accent-glass-gradient);
+            --surface-shadow-hover: 0 4px 10px rgba(15,23,42,0.06), 0 18px 36px -16px rgba(79,70,229,0.22);
         }
         .dark {
             --surface-shadow: 0 1px 2px rgba(0,0,0,0.35), 0 10px 28px -14px rgba(0,0,0,0.55);
-            --surface-shadow-hover: 0 4px 10px rgba(0,0,0,0.4), 0 18px 36px -16px rgba(var(--accent-rgb),0.32);
+            --surface-shadow-hover: 0 4px 10px rgba(0,0,0,0.4), 0 18px 36px -16px rgba(79,70,229,0.32);
         }
-        /* ============ کلاس‌های عمومیِ رنگ تاکیدیِ شیشه‌ای، جایگزین کلاس‌های ثابت purple/indigo تیلویند ============ */
-        .accent-icon-text { color: var(--accent-600); }
-        .dark .accent-icon-text { color: var(--accent-400); }
-        .accent-link:hover { color: var(--accent-600) !important; }
-        .accent-radio { accent-color: var(--accent-600); }
-        .accent-field-focus:focus { box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.18) !important; border-color: var(--accent-500) !important; }
-        .accent-icon-circle {
-            background: rgba(var(--accent-rgb),0.10);
-            color: var(--accent-600);
-            border: 1px solid rgba(var(--accent-rgb),0.16);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-        }
-        .dark .accent-icon-circle { background: rgba(var(--accent-rgb),0.22); color: var(--accent-400); border-color: rgba(var(--accent-rgb),0.3); }
-        /* دکمه/سطحِ شیشه‌ای تاکیدی: پس‌زمینه‌ی نیمه‌شفاف + بلور پشت آن (Glassmorphism) */
-        .accent-glass {
-            background: var(--accent-glass-gradient);
-            backdrop-filter: blur(14px) saturate(180%);
-            -webkit-backdrop-filter: blur(14px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.28);
-            color: #fff;
-            box-shadow: 0 6px 18px -8px rgba(var(--accent-rgb),0.55);
-        }
-        .accent-glass:hover { filter: brightness(1.07); }
-        .accent-glass-soft {
-            background: rgba(var(--accent-rgb),0.12);
-            color: var(--accent-600);
-            border: 1px solid rgba(var(--accent-rgb),0.2);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        .dark .accent-glass-soft { background: rgba(var(--accent-rgb),0.22); color: var(--accent-400); border-color: rgba(var(--accent-rgb),0.32); }
-        .accent-glass-soft.accent-glass-soft-active {
-            background: rgba(var(--accent-rgb),0.2) !important;
-            border-color: rgba(var(--accent-rgb),0.4) !important;
-            color: var(--accent-600) !important;
-        }
-        .dark .accent-glass-soft.accent-glass-soft-active { color: var(--accent-400) !important; }
         #appBody {
             background-image:
-                radial-gradient(circle at 10% -5%, rgba(var(--accent-rgb),0.08), transparent 40%),
+                radial-gradient(circle at 10% -5%, rgba(99,102,241,0.08), transparent 40%),
                 radial-gradient(circle at 100% 10%, rgba(16,185,129,0.05), transparent 38%);
             background-attachment: fixed;
         }
         .dark #appBody {
             background-image:
-                radial-gradient(circle at 10% -5%, rgba(var(--accent-rgb),0.12), transparent 40%),
+                radial-gradient(circle at 10% -5%, rgba(99,102,241,0.12), transparent 40%),
                 radial-gradient(circle at 100% 10%, rgba(16,185,129,0.07), transparent 38%);
         }
         /* کارت‌های اصلی صفحه: سایه‌ی یکدست و نرم‌ترِ حرفه‌ای به‌جای shadow-sm پراکنده */
         .pro-card { box-shadow: var(--surface-shadow) !important; transition: box-shadow .25s ease, transform .2s ease; }
         .pro-card:hover { box-shadow: var(--surface-shadow-hover) !important; }
 
-        /* نوار برند بالای هدر: شیشه‌ای (Glassmorphism) و هم‌رنگ با «رنگ تاکیدی» انتخابی کاربر */
+        /* نوار برند بالای هدر */
         #appHeaderBrandBar {
             background: var(--brand-gradient);
-            backdrop-filter: blur(18px) saturate(180%);
-            -webkit-backdrop-filter: blur(18px) saturate(180%);
-            border-bottom: 1px solid rgba(255,255,255,0.25);
             position: relative;
         }
         #appHeaderBrandBar::before {
@@ -414,14 +358,8 @@
             backdrop-filter: blur(6px);
         }
 
-        /* دکمه‌ی محرکِ منوی ابزار: شیشه‌ای و هم‌رنگ با رنگ تاکیدی */
-        #toolsMenuTrigger {
-            background: var(--brand-gradient);
-            backdrop-filter: blur(10px) saturate(180%);
-            -webkit-backdrop-filter: blur(10px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.28);
-            box-shadow: 0 6px 16px -6px rgba(var(--accent-rgb),0.55);
-        }
+        /* دکمه‌ی محرکِ منوی ابزار */
+        #toolsMenuTrigger { background: var(--brand-gradient); box-shadow: 0 6px 16px -6px rgba(79,70,229,0.55); }
         #toolsMenuTrigger:hover { filter: brightness(1.06); }
 
         /* نوار ناوبری پایین: شیشه‌ای و شناور */
@@ -440,21 +378,21 @@
         }
 
         /* مدال‌ها: سایه‌ی عمیق‌تر و حرفه‌ای‌تر به‌جای shadow-2xl خام */
-        .pro-modal { box-shadow: 0 24px 60px -16px rgba(15,23,42,0.35), 0 10px 28px -10px rgba(var(--accent-rgb),0.20) !important; }
-        .dark .pro-modal { box-shadow: 0 24px 60px -16px rgba(0,0,0,0.6), 0 10px 28px -10px rgba(var(--accent-rgb),0.28) !important; }
+        .pro-modal { box-shadow: 0 24px 60px -16px rgba(15,23,42,0.35), 0 10px 28px -10px rgba(79,70,229,0.20) !important; }
+        .dark .pro-modal { box-shadow: 0 24px 60px -16px rgba(0,0,0,0.6), 0 10px 28px -10px rgba(79,70,229,0.28) !important; }
 
         /* هالوی فوکوس یکدست برای فیلدها در سراسر برنامه */
         input:focus, select:focus, textarea:focus {
-            box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.12);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
         }
 
         /* سربرگ جدول رکوردها: کمی برجسته‌تر و خواناتر */
         #recordsTableCard table thead th {
-            background: linear-gradient(180deg, rgba(var(--accent-rgb),0.06), rgba(var(--accent-rgb),0.02));
+            background: linear-gradient(180deg, rgba(99,102,241,0.06), rgba(99,102,241,0.02));
             font-weight: 700;
         }
         .dark #recordsTableCard table thead th {
-            background: linear-gradient(180deg, rgba(var(--accent-rgb),0.10), rgba(var(--accent-rgb),0.03));
+            background: linear-gradient(180deg, rgba(99,102,241,0.10), rgba(99,102,241,0.03));
         }
     </style>
 </head>
@@ -488,7 +426,7 @@
                 <span class="text-[10px] font-medium">یادداشت‌ها</span>
             </button>
             <button type="button" onclick="bottomNavGoAddRecord()" class="flex flex-col items-center -mt-6">
-                <span class="w-13 h-13 rounded-full flex items-center justify-center transition-transform active:scale-95" style="width:3.25rem;height:3.25rem;background:var(--brand-gradient);backdrop-filter:blur(10px) saturate(180%);-webkit-backdrop-filter:blur(10px) saturate(180%);border:1px solid rgba(255,255,255,0.28);box-shadow:0 8px 18px -6px rgba(var(--accent-rgb),0.55);">
+                <span class="w-13 h-13 rounded-full flex items-center justify-center transition-transform active:scale-95" style="width:3.25rem;height:3.25rem;background:var(--brand-gradient);box-shadow:0 8px 18px -6px rgba(79,70,229,0.55);">
                     <i class="fa-solid fa-plus text-lg text-white"></i>
                 </span>
                 <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 mt-1">ثبت</span>
@@ -554,7 +492,7 @@
                                     <span class="text-[9px] text-slate-400 leading-tight">خلاصه آمار</span>
                                 </button>
                                 <button onclick="openSettingsModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                    <span class="w-11 h-11 rounded-full accent-icon-circle flex items-center justify-center">
+                                    <span class="w-11 h-11 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                                         <i class="fa-solid fa-gear text-base"></i>
                                     </span>
                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">تنظیمات</span>
@@ -1337,7 +1275,7 @@
     <!-- مدال تنظیمات و ظاهر برنامه -->
     <div id="settingsModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white dark:bg-slate-900 pro-modal rounded-2xl max-w-xl w-full shadow-2xl border border-slate-300 dark:border-slate-600 my-8 transition-all overflow-hidden">
-            <div class="accent-glass px-6 py-5 text-white relative" style="border-radius: inherit;">
+            <div class="bg-gradient-to-l from-purple-700 to-indigo-700 px-6 py-5 text-white relative">
                 <button onclick="closeSettingsModal()" class="absolute top-4 left-4 text-white/80 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
@@ -1382,15 +1320,15 @@
             <div class="p-6 space-y-4 max-h-[52vh] overflow-y-auto">
                 <div id="settingsTab-profile" class="settings-tab-panel space-y-5">
                 <div class="space-y-3 pb-4 border-b border-slate-200 dark:border-slate-700">
-                    <h3 class="text-xs font-bold accent-icon-text uppercase tracking-wider flex items-center gap-1.5">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-calendar-check"></i> دوره گزارش فعال
                     </h3>
                     <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">ماهی که می‌خواهید لیست کارکردها و آمار آن نمایش داده شود را انتخاب کنید؛ همه‌ی ماه‌های گذشته و یک ماه آینده قابل انتخاب هستند.</p>
-                    <select id="monthFilterSelect" onchange="onMonthFilterChange(event)" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                    <select id="monthFilterSelect" onchange="onMonthFilterChange(event)" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                     </select>
                 </div>
                 <div class="space-y-3 pb-4 border-b border-slate-200 dark:border-slate-700">
-                    <h3 class="text-xs font-bold accent-icon-text uppercase tracking-wider flex items-center gap-1.5">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-id-badge"></i> پروفایل کاربری
                     </h3>
                     <div class="flex items-center gap-4">
@@ -1399,54 +1337,54 @@
                                 <img id="settingOwnerPhotoPreview" src="" class="hidden w-full h-full object-cover" alt="عکس پروفایل">
                                 <i id="settingOwnerPhotoIcon" class="fa-solid fa-user text-2xl text-slate-300 dark:text-slate-600"></i>
                             </div>
-                            <button type="button" onclick="document.getElementById('settingOwnerPhotoInput').click()" class="absolute -bottom-1 -left-1 w-6 h-6 accent-glass rounded-full flex items-center justify-center text-[10px] shadow" title="تغییر عکس پروفایل">
+                            <button type="button" onclick="document.getElementById('settingOwnerPhotoInput').click()" class="absolute -bottom-1 -left-1 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-[10px] shadow" title="تغییر عکس پروفایل">
                                 <i class="fa-solid fa-camera"></i>
                             </button>
                             <input type="file" id="settingOwnerPhotoInput" accept="image/*" class="hidden" onchange="handleOwnerPhotoSelect(event)">
                         </div>
                         <div class="flex-1 min-w-0 flex flex-wrap items-center gap-x-3 gap-y-1">
-                            <button type="button" onclick="document.getElementById('settingOwnerPhotoInput').click()" class="text-xs accent-icon-text font-medium hover:underline">تغییر عکس پروفایل</button>
+                            <button type="button" onclick="document.getElementById('settingOwnerPhotoInput').click()" class="text-xs text-purple-600 dark:text-purple-400 font-medium hover:underline">تغییر عکس پروفایل</button>
                             <button type="button" id="removeOwnerPhotoBtn" onclick="removeOwnerPhoto()" class="hidden text-xs text-rose-600 dark:text-rose-400 font-medium hover:underline">حذف عکس</button>
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">نام و نام خانوادگی</label>
-                        <input type="text" id="settingOwnerName" oninput="updateSettingsProfilePreview()" placeholder="مثلاً علی محمدی" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                        <input type="text" id="settingOwnerName" oninput="updateSettingsProfilePreview()" placeholder="مثلاً علی محمدی" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">شماره تماس</label>
-                            <input type="text" inputmode="tel" id="settingOwnerPhone" placeholder="مثلاً ۰۹۱۲۱۲۳۴۵۶۷" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <input type="text" inputmode="tel" id="settingOwnerPhone" placeholder="مثلاً ۰۹۱۲۱۲۳۴۵۶۷" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">آدرس کارگاه (اختیاری)</label>
-                            <input type="text" id="settingOwnerAddress" placeholder="مثلاً تهران، ..." class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <input type="text" id="settingOwnerAddress" placeholder="مثلاً تهران، ..." class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         </div>
                     </div>
                 </div>
 
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold accent-icon-text uppercase tracking-wider">مشخصات پایه</h3>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">مشخصات پایه</h3>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">حاشیه‌ی «به‌موقع» (دقیقه)</label>
-                        <input type="text" inputmode="numeric" id="settingOnTimeTolerance" placeholder="مثلاً ۵" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                        <input type="text" inputmode="numeric" id="settingOnTimeTolerance" placeholder="مثلاً ۵" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         <p class="text-[11px] leading-relaxed text-slate-400 dark:text-slate-500 mt-1">اگر اختلاف زمان واقعی با مدت هدف کمتر از این مقدار باشد، وضعیت «به موقع» ثبت می‌شود (۰ = دقیقاً بدون اختلاف، حداکثر ۱۲۰).</p>
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">عنوان کارگاه / سامانه</label>
-                        <input type="text" id="settingShopName" oninput="updateSettingsProfilePreview()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                        <input type="text" id="settingShopName" oninput="updateSettingsProfilePreview()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">واحد پول</label>
-                            <select id="settingCurrency" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingCurrency" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <option value="تومان">تومان</option>
                                 <option value="ریال">ریال</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">وضعیت پیش‌فرض ثبت</label>
-                            <select id="settingDefaultStatus" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingDefaultStatus" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <option value="به موقع">به موقع</option>
                                 <option value="زودتر از موعد">زودتر از موعد</option>
                                 <option value="تاخیر">تاخیر</option>
@@ -1458,62 +1396,62 @@
 
                 <div id="settingsTab-work" class="settings-tab-panel hidden space-y-4">
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold accent-icon-text uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> ساعات کاری و استراحت‌ها</h3>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> ساعات کاری و استراحت‌ها</h3>
                     <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">«ساعت کاری مفید روزانه» (مبنای محاسبه مدت از روی آمار روزانه) مستقل از بازه‌های زیر وارد می‌شود؛ بازه‌ها فقط تعیین می‌کنند کار در چه ساعاتی جلو برود. برای حذف یک استراحت، هر دو ساعت آن را خالی بگذارید. جمعه‌ها همچنان تعطیل است. تغییر فقط روی محاسبه‌های بعدی اثر می‌گذارد؛ رکوردهای قبلی تا زمان ویرایش عوض نمی‌شوند.</p>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">شروع کار</label>
-                            <input type="time" id="settingShiftStart" oninput="updateShiftPreview()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <input type="time" id="settingShiftStart" oninput="updateShiftPreview()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">پایان کار</label>
-                            <input type="time" id="settingShiftEnd" oninput="updateShiftPreview()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <input type="time" id="settingShiftEnd" oninput="updateShiftPreview()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         </div>
                     </div>
                     <div id="workBreaksFields" class="space-y-2"></div>
                     <div class="space-y-2">
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300">ساعت کاری مفید روزانه (مبنای محاسبه)</label>
                         <div class="grid grid-cols-2 gap-3">
-                            <div class="flex items-center gap-2"><input type="text" inputmode="numeric" id="settingWorkdayHours" placeholder="۸" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all"><span class="text-xs text-slate-500 shrink-0">ساعت</span></div>
-                            <div class="flex items-center gap-2"><input type="text" inputmode="numeric" id="settingWorkdayMins" placeholder="۱۵" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all"><span class="text-xs text-slate-500 shrink-0">دقیقه</span></div>
+                            <div class="flex items-center gap-2"><input type="text" inputmode="numeric" id="settingWorkdayHours" placeholder="۸" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"><span class="text-xs text-slate-500 shrink-0">ساعت</span></div>
+                            <div class="flex items-center gap-2"><input type="text" inputmode="numeric" id="settingWorkdayMins" placeholder="۱۵" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all"><span class="text-xs text-slate-500 shrink-0">دقیقه</span></div>
                         </div>
-                        <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">مجموع بازه‌های کاری برنامه (شروع تا پایان منهای استراحت‌ها): <b id="shiftTotalPreview" class="text-indigo-600 dark:text-indigo-400">—</b> <button type="button" onclick="syncWorkdayWithSchedule()" class="underline accent-icon-text mr-1">هم‌سان‌سازی با آن</button></p>
+                        <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">مجموع بازه‌های کاری برنامه (شروع تا پایان منهای استراحت‌ها): <b id="shiftTotalPreview" class="text-indigo-600 dark:text-indigo-400">—</b> <button type="button" onclick="syncWorkdayWithSchedule()" class="underline text-purple-600 dark:text-purple-400 mr-1">هم‌سان‌سازی با آن</button></p>
                     </div>
-                    <button type="button" onclick="resetWorkSettingsToDefaults()" class="text-xs text-slate-500 dark:text-slate-400 underline accent-link">بازگشت به پیش‌فرض (۸ تا ۱۸، ۸ ساعت و ۱۵ دقیقه)</button>
+                    <button type="button" onclick="resetWorkSettingsToDefaults()" class="text-xs text-slate-500 dark:text-slate-400 underline hover:text-purple-600">بازگشت به پیش‌فرض (۸ تا ۱۸، ۸ ساعت و ۱۵ دقیقه)</button>
                 </div>
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold accent-icon-text uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-scale-balanced"></i> منطق محاسبه‌ی وضعیت تحویل</h3>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-scale-balanced"></i> منطق محاسبه‌ی وضعیت تحویل</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <label class="flex items-start gap-2 p-3 border border-slate-400 dark:border-slate-500 rounded-xl cursor-pointer bg-white dark:bg-slate-800 field-box-bg">
-                            <input type="radio" name="settingDeliveryMode" id="settingDeliveryModeAuto" value="auto" class="mt-1 accent-radio">
+                            <input type="radio" name="settingDeliveryMode" id="settingDeliveryModeAuto" value="auto" class="mt-1 accent-purple-600">
                             <span><b class="block text-xs text-slate-700 dark:text-slate-200">خودکار</b><span class="block text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">سیستم مدت هدف را با زمان کاریِ واقعی (تا شروع کد بعد، «کار تمام شد» یا پایان دستی) مقایسه و وضعیت و مدت تاخیر را خودش تعیین می‌کند.</span></span>
                         </label>
                         <label class="flex items-start gap-2 p-3 border border-slate-400 dark:border-slate-500 rounded-xl cursor-pointer bg-white dark:bg-slate-800 field-box-bg">
-                            <input type="radio" name="settingDeliveryMode" id="settingDeliveryModeManual" value="manual" class="mt-1 accent-radio">
+                            <input type="radio" name="settingDeliveryMode" id="settingDeliveryModeManual" value="manual" class="mt-1 accent-purple-600">
                             <span><b class="block text-xs text-slate-700 dark:text-slate-200">دستی</b><span class="block text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">وضعیت و مدت تاخیر/زودتر از موعد را خودتان در فرم انتخاب می‌کنید و سیستم آن را تغییر نمی‌دهد.</span></span>
                         </label>
                     </div>
                     <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">تغییر حالت فقط روی ثبت و ویرایش‌های بعدی اثر می‌گذارد؛ رکوردهای قبلی تا زمان ویرایش عوض نمی‌شوند.</p>
                 </div>
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold accent-icon-text uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-bullseye"></i> هدف درآمد</h3>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-bullseye"></i> هدف درآمد</h3>
                     <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">مبلغ هدف را به تومان/ریال (مطابق واحد پول برنامه) وارد کنید؛ خالی یا صفر یعنی بدون هدف. هفته از شنبه تا جمعه است و درآمد، مجموع «ارزش کل» رکوردهای همان بازه (بدون رکوردهای قیمت نامعلوم) است. ماهانه شامل همه‌ی رکوردهای ثبت‌شده در ماه جاری است. نوار پیشرفت و پیام تبریک در کادر «ارزش کل کارکرد» نمایش داده می‌شود.</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">هدف هفتگی</label>
-                            <input type="text" inputmode="numeric" id="settingIncomeGoalWeekly" placeholder="مثلاً ۵۰۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <input type="text" inputmode="numeric" id="settingIncomeGoalWeekly" placeholder="مثلاً ۵۰۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">هدف ماهانه</label>
-                            <input type="text" inputmode="numeric" id="settingIncomeGoalMonthly" placeholder="مثلاً ۲۰۰۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <input type="text" inputmode="numeric" id="settingIncomeGoalMonthly" placeholder="مثلاً ۲۰۰۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         </div>
                     </div>
                 </div>
                 <div class="space-y-3">
-                    <h3 class="text-xs font-bold accent-icon-text uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-pen-ruler"></i> نام فیلدهای فرم «ثبت کارکرد جدید»</h3>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-pen-ruler"></i> نام فیلدهای فرم «ثبت کارکرد جدید»</h3>
                     <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">هر فیلد را که خالی بگذارید، نام پیش‌فرض نمایش داده می‌شود. واحد پول به‌طور خودکار کنار «قیمت واحد» می‌آید.</p>
                     <div id="formLabelsFields" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-                    <button type="button" onclick="resetFormLabelsFields()" class="text-xs text-slate-500 dark:text-slate-400 underline accent-link">پاک کردن همه‌ی نام‌های سفارشی</button>
+                    <button type="button" onclick="resetFormLabelsFields()" class="text-xs text-slate-500 dark:text-slate-400 underline hover:text-purple-600">پاک کردن همه‌ی نام‌های سفارشی</button>
                 </div>
                 <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 border border-slate-300 dark:border-slate-600 flex items-center justify-between">
                     <span class="text-[11px] text-slate-500 dark:text-slate-400">رکورد کدهای متوالی به‌موقع:</span>
@@ -1523,48 +1461,27 @@
 
                 <div id="settingsTab-appearance" class="settings-tab-panel hidden space-y-4">
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold accent-icon-text uppercase tracking-wider">تنظیمات ظاهری و محیطی</h3>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">تنظیمات ظاهری و محیطی</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">تم رنگی برنامه</label>
-                            <select id="settingTheme" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingTheme" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <option value="light">روشن (Light)</option>
                                 <option value="dark">تاریک (Dark)</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">فرمت اعداد</label>
-                            <select id="settingNumFormat" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingNumFormat" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <option value="persian">فارسی (۰-۹)</option>
                                 <option value="english">انگلیسی (0-9)</option>
                             </select>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">
-                            <i class="fa-solid fa-droplet ml-1"></i>رنگ تاکیدی و شیشه‌ای برنامه (هدر، دکمه‌ها، تب‌ها)
-                        </label>
-                        <div class="flex items-center gap-2">
-                            <select id="settingAccentColor" onchange="onAccentColorPresetChange()" class="flex-1 p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
-                                <option value="#9333ea">بنفش (پیش‌فرض)</option>
-                                <option value="#4f46e5">نیلی</option>
-                                <option value="#2563eb">آبی</option>
-                                <option value="#0891b2">فیروزه‌ای</option>
-                                <option value="#059669">سبز</option>
-                                <option value="#db2777">صورتی</option>
-                                <option value="#e11d48">قرمز</option>
-                                <option value="#ea580c">نارنجی</option>
-                                <option value="#ca8a04">طلایی</option>
-                                <option value="#475569">خاکستری شیک</option>
-                                <option value="custom">سفارشی...</option>
-                            </select>
-                            <input type="color" id="settingAccentColorCustom" value="#9333ea" oninput="onAccentColorCustomChange()" class="hidden w-11 h-[42px] p-1 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-800 cursor-pointer" title="انتخاب رنگ دلخواه">
-                        </div>
-                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">فونت متن برنامه</label>
-                            <select id="settingFontFamily" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingFontFamily" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <option value="Vazirmatn">وزیرمتن (پیش‌فرض)</option>
                                 <option value="Vazir">وزیر</option>
                                 <option value="Sahel">ساحل</option>
@@ -1574,7 +1491,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">اندازه فونت</label>
-                            <select id="settingFontSize" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingFontSize" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <option value="small">کوچک</option>
                                 <option value="normal">معمولی</option>
                                 <option value="large">بزرگ (مناسب تبلت)</option>
@@ -1585,7 +1502,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">رنگ پس‌زمینه برنامه</label>
-                            <select id="settingBgColor" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingBgColor" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <optgroup label="پیش‌فرض">
                                     <option value="default">پیش‌فرض سامانه</option>
                                 </optgroup>
@@ -1611,7 +1528,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">رنگ کادرها و باکس‌ها</label>
-                            <select id="settingCardColor" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingCardColor" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <optgroup label="پیش‌فرض">
                                     <option value="default">پیش‌فرض سامانه</option>
                                 </optgroup>
@@ -1637,7 +1554,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">رنگ فیلدها و باکس‌های ورودی</label>
-                            <select id="settingFieldColor" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingFieldColor" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <optgroup label="پیش‌فرض">
                                     <option value="default">پیش‌فرض سامانه</option>
                                 </optgroup>
@@ -1669,14 +1586,14 @@
                 </div>
 
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold accent-icon-text uppercase tracking-wider">نوار متن انگیزشی بالای صفحه</h3>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">نوار متن انگیزشی بالای صفحه</h3>
                     <label class="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300 cursor-pointer w-fit">
-                        <input type="checkbox" id="settingMotivationVisible" class="w-4 h-4 rounded accent-radio">
+                        <input type="checkbox" id="settingMotivationVisible" class="w-4 h-4 rounded accent-purple-600">
                         نمایش نوار متن انگیزشی
                     </label>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">تنوع انیمیشن</label>
-                        <select id="settingMotivationAnimation" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                        <select id="settingMotivationAnimation" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                             <option value="default">پیش‌فرض (نبض ملایم + تنفس)</option>
                             <option value="pulse">فقط ضربانِ آیکون</option>
                             <option value="glow">درخشش دوره‌ای</option>
@@ -1693,7 +1610,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">فونت متن انگیزشی</label>
-                            <select id="settingMotivationFontFamily" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingMotivationFontFamily" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <option value="inherit">پیرو فونت کلی برنامه</option>
                                 <option value="Vazirmatn">وزیرمتن</option>
                                 <option value="Vazir">وزیر</option>
@@ -1704,7 +1621,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">اندازه فونت متن انگیزشی</label>
-                            <select id="settingMotivationFontSize" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingMotivationFontSize" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <option value="small">کوچک</option>
                                 <option value="normal">معمولی (پیش‌فرض)</option>
                                 <option value="large">بزرگ</option>
@@ -1715,7 +1632,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">رنگ پس‌زمینه نوار</label>
-                            <select id="settingMotivationBgColor" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingMotivationBgColor" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <optgroup label="پیش‌فرض">
                                     <option value="default">پیش‌فرض (بر اساس وضعیت)</option>
                                 </optgroup>
@@ -1741,7 +1658,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">رنگ متن نوار</label>
-                            <select id="settingMotivationTextColor" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                            <select id="settingMotivationTextColor" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                                 <optgroup label="پیش‌فرض">
                                     <option value="default">پیش‌فرض (بر اساس وضعیت)</option>
                                 </optgroup>
@@ -1795,7 +1712,7 @@
 
                 <div id="settingsTab-storage" class="settings-tab-panel hidden space-y-4">
                 <div class="space-y-3">
-                    <h3 class="text-xs font-bold accent-icon-text uppercase tracking-wider">مسیرهای ذخیره‌سازی</h3>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">مسیرهای ذخیره‌سازی</h3>
                     <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">تا پایان هر ماه فقط یک فایل ساخته و همان فایل به‌روزرسانی می‌شود. مسیرها فقط از همین‌جا تعیین یا تغییر می‌کنند؛ در صفحه‌ی اصلی هیچ‌وقت مسیری پرسیده نمی‌شود.</p>
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 space-y-2.5">
                         <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">پوشه پشتیبان (زیرپوشه‌ی جدا برای هر ماه)</span>
@@ -1815,7 +1732,7 @@
                             <button type="button" id="dataFolderDisconnectBtn" onclick="disconnectStorageFolder()" class="hidden px-3 py-2 border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 rounded-xl text-xs font-medium hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors">قطع اتصال</button>
                         </div>
                     </div>
-                    <h3 class="text-xs font-bold accent-icon-text uppercase tracking-wider pt-2">وضعیت حافظه سامانه</h3>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider pt-2">وضعیت حافظه سامانه</h3>
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 text-xs space-y-2">
                         <div class="flex justify-between">
                             <span class="text-slate-500 dark:text-slate-400">تعداد کل رکوردهای ثبت‌شده:</span>
@@ -1852,11 +1769,11 @@
                     <button id="premiumUpgradeBtn" onclick="runIfPremium('نسخه ویژه', () => showFeedbackBanner('نسخه ویژه از قبل فعال است.', 'success'))" class="shrink-0 text-xs font-bold px-3 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">فعال‌سازی</button>
                 </div>
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold accent-icon-text uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> درباره سامانه آمار دوخت لباس</h3>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> درباره سامانه آمار دوخت لباس</h3>
                     <p class="text-[12px] leading-relaxed text-slate-600 dark:text-slate-300">این سامانه یک ابزار آفلاین (PWA) برای ثبت و مدیریت کارکرد روزانه‌ی کارگاه خیاطی است: هر قطعه با کد، رنگ، تعداد و قیمت ثبت می‌شود، مدت‌زمان تحویل به‌صورت خودکار از روی آمار روزانه محاسبه می‌شود و وضعیت «به‌موقع / تاخیر / زودتر از موعد» خودکار تعیین می‌گردد.</p>
                 </div>
                 <div class="space-y-2 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h4 class="text-[11px] font-bold accent-icon-text uppercase tracking-wider">امکانات کلیدی</h4>
+                    <h4 class="text-[11px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">امکانات کلیدی</h4>
                     <ul class="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed space-y-1.5">
                         <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>محاسبه‌ی خودکار زمان تحویل با احتساب ساعات کاری، استراحت‌ها و تعطیلی جمعه‌ها</span></li>
                         <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>اعلان‌های هوشمند پلکانی (۲۵٪ تا ۹۰٪) برای پیشرفت کار جاری</span></li>
@@ -1878,7 +1795,7 @@
 
             <div class="flex justify-end gap-2 px-6 py-4 border-t border-slate-300 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-900/50">
                 <button onclick="closeSettingsModal()" class="px-4 py-2 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">انصراف</button>
-                <button onclick="saveAppSettings(event)" class="px-4 py-2 accent-glass rounded-xl text-sm transition-colors shadow-sm">ذخیره تنظیمات</button>
+                <button onclick="saveAppSettings(event)" class="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm hover:bg-purple-700 transition-colors shadow-sm">ذخیره تنظیمات</button>
             </div>
         </div>
     </div>
@@ -4368,9 +4285,12 @@
             });
             document.querySelectorAll('.tools-tab-btn').forEach(btn => {
                 const isActive = btn.getAttribute('data-tools-tab') === tabName;
-                btn.classList.toggle('accent-glass-soft', isActive);
-                btn.classList.toggle('accent-glass-soft-active', isActive);
+                btn.classList.toggle('bg-indigo-50', isActive);
+                btn.classList.toggle('dark:bg-indigo-950/40', isActive);
+                btn.classList.toggle('text-indigo-700', isActive);
+                btn.classList.toggle('dark:text-indigo-300', isActive);
                 btn.classList.toggle('border-b-2', isActive);
+                btn.classList.toggle('border-indigo-600', isActive);
                 btn.classList.toggle('text-slate-400', !isActive);
                 btn.classList.toggle('dark:text-slate-500', !isActive);
             });
@@ -4799,7 +4719,7 @@
             document.getElementById('settingWorkdayMins').value = formatNumber(wdm % 60).replace(/,/g, '');
             document.getElementById('settingShiftStart').value = shiftStart;
             document.getElementById('settingShiftEnd').value = shiftEnd;
-            const cls = 'flex-1 min-w-0 p-2 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 outline-none accent-field-focus';
+            const cls = 'flex-1 min-w-0 p-2 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 outline-none focus:border-purple-500';
             document.getElementById('workBreaksFields').innerHTML = BREAK_META.map(([k, name]) => {
                 const b = shiftBreaks[k] || { start: '', end: '' };
                 return `<div class="flex items-center gap-2">
@@ -4812,7 +4732,7 @@
             document.getElementById('formLabelsFields').innerHTML = Object.keys(FORM_LABEL_DEFAULTS).map(k => `
                 <div>
                     <label class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">${escapeHTML(FORM_LABEL_DEFAULTS[k])}</label>
-                    <input type="text" id="settingLabel_${k}" maxlength="60" value="${escapeHTML(labels[k] || '')}" placeholder="${escapeHTML(FORM_LABEL_DEFAULTS[k])}" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 accent-field-focus outline-none transition-all">
+                    <input type="text" id="settingLabel_${k}" maxlength="60" value="${escapeHTML(labels[k] || '')}" placeholder="${escapeHTML(FORM_LABEL_DEFAULTS[k])}" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                 </div>`).join('');
             updateShiftPreview();
         }
@@ -4909,7 +4829,6 @@
             document.getElementById('settingIncomeGoalWeekly').value = appSettings.incomeGoalWeekly ? String(appSettings.incomeGoalWeekly) : '';
             document.getElementById('settingIncomeGoalMonthly').value = appSettings.incomeGoalMonthly ? String(appSettings.incomeGoalMonthly) : '';
             document.getElementById('settingTheme').value = appSettings.theme || 'light';
-            loadAccentColorIntoForm();
             document.getElementById('settingFontSize').value = appSettings.fontSize || 'normal';
             document.getElementById('settingNumFormat').value = appSettings.numFormat || 'persian';
             document.getElementById('settingFontFamily').value = appSettings.fontFamily || 'Vazirmatn';
@@ -4973,7 +4892,6 @@
             const fontSizeVal = document.getElementById('settingFontSize').value;
             const numFormatVal = document.getElementById('settingNumFormat').value;
             const fontFamilyVal = document.getElementById('settingFontFamily').value;
-            const accentColorVal = getSelectedAccentColorValue();
             const bgColorVal = document.getElementById('settingBgColor').value;
             const cardColorVal = document.getElementById('settingCardColor').value;
             const fieldColorVal = document.getElementById('settingFieldColor').value;
@@ -4998,7 +4916,6 @@
             appSettings.incomeGoalWeekly = parseGoal(document.getElementById('settingIncomeGoalWeekly').value);
             appSettings.incomeGoalMonthly = parseGoal(document.getElementById('settingIncomeGoalMonthly').value);
             appSettings.theme = themeVal;
-            appSettings.accentColor = accentColorVal;
             appSettings.fontSize = fontSizeVal;
             appSettings.numFormat = numFormatVal;
             appSettings.fontFamily = fontFamilyVal;
@@ -5138,86 +5055,7 @@
             applyDuplicateCodesVisibilityFromSettings();
         }
 
-        // ============ سیستم رنگ تاکیدیِ شیشه‌ای (هدر/دکمه‌ها/تب‌ها) ============
-        // تبدیل کد HEX به رشته‌ی «r,g,b» برای استفاده در rgba() داخل متغیرهای CSS
-        function hexToRgbString(hex) {
-            const h = (hex || '').replace('#', '').trim();
-            const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
-            const num = parseInt(full, 16);
-            if (isNaN(num) || full.length !== 6) return '147,51,234';
-            return `${(num >> 16) & 255},${(num >> 8) & 255},${num & 255}`;
-        }
-        // روشن/تیره‌کردن یک رنگ HEX به میزان درصدِ داده‌شده (مثبت: روشن‌تر، منفی: تیره‌تر)
-        function shadeHexColor(hex, percent) {
-            const h = (hex || '').replace('#', '').trim();
-            const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
-            const num = parseInt(full, 16);
-            if (isNaN(num) || full.length !== 6) return hex;
-            let r = (num >> 16) & 255, g = (num >> 8) & 255, b = num & 255;
-            const t = percent < 0 ? 0 : 255;
-            const p = Math.abs(percent) / 100;
-            r = Math.round((t - r) * p) + r;
-            g = Math.round((t - g) * p) + g;
-            b = Math.round((t - b) * p) + b;
-            return '#' + [r, g, b].map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('');
-        }
-        // مقدار انتخاب‌شده‌ی رنگ تاکیدی را از فرم تنظیمات می‌خواند (پیش‌فرض یا سفارشی)
-        function getSelectedAccentColorValue() {
-            const sel = document.getElementById('settingAccentColor');
-            if (!sel) return appSettings.accentColor || '#9333ea';
-            if (sel.value === 'custom') {
-                const custom = document.getElementById('settingAccentColorCustom');
-                return (custom && custom.value) || '#9333ea';
-            }
-            return sel.value;
-        }
-        // فرم تنظیمات را با رنگ تاکیدیِ ذخیره‌شده هم‌گام می‌کند (پیش‌فرض یا سفارشی)
-        function loadAccentColorIntoForm() {
-            const sel = document.getElementById('settingAccentColor');
-            const custom = document.getElementById('settingAccentColorCustom');
-            if (!sel || !custom) return;
-            const current = (appSettings.accentColor || '#9333ea').toLowerCase();
-            const presetOptions = Array.from(sel.options).map(o => o.value.toLowerCase());
-            if (presetOptions.includes(current)) {
-                sel.value = current;
-                custom.classList.add('hidden');
-            } else {
-                sel.value = 'custom';
-                custom.value = current;
-                custom.classList.remove('hidden');
-            }
-        }
-        function previewAccentColor(hex) {
-            const root = document.documentElement.style;
-            root.setProperty('--accent-rgb', hexToRgbString(hex));
-            root.setProperty('--accent-400', shadeHexColor(hex, 25));
-            root.setProperty('--accent-500', shadeHexColor(hex, 12));
-            root.setProperty('--accent-600', hex);
-            root.setProperty('--accent-700', shadeHexColor(hex, -15));
-            root.setProperty('--accent-50', shadeHexColor(hex, 92));
-        }
-        function onAccentColorPresetChange() {
-            const sel = document.getElementById('settingAccentColor');
-            const custom = document.getElementById('settingAccentColorCustom');
-            if (!sel || !custom) return;
-            custom.classList.toggle('hidden', sel.value !== 'custom');
-            previewAccentColor(getSelectedAccentColorValue());
-        }
-        function onAccentColorCustomChange() { previewAccentColor(getSelectedAccentColorValue()); }
-        // متغیرهای CSS رنگ تاکیدی را روی صفحه اعمال می‌کند (بدون نیاز به ذخیره، برای پیش‌نمایش زنده هم قابل استفاده است)
-        function applyAccentColorVars() {
-            const accent = appSettings.accentColor || '#9333ea';
-            const root = document.documentElement.style;
-            root.setProperty('--accent-rgb', hexToRgbString(accent));
-            root.setProperty('--accent-400', shadeHexColor(accent, 25));
-            root.setProperty('--accent-500', shadeHexColor(accent, 12));
-            root.setProperty('--accent-600', accent);
-            root.setProperty('--accent-700', shadeHexColor(accent, -15));
-            root.setProperty('--accent-50', shadeHexColor(accent, 92));
-        }
-
         function applyCustomColors() {
-            applyAccentColorVars();
             const styleTag = document.getElementById('customColorStyle');
             if (!styleTag) return;
             let css = '';
@@ -5744,9 +5582,12 @@
             });
             document.querySelectorAll('.settings-tab-btn').forEach(btn => {
                 const isActive = btn.getAttribute('data-settings-tab') === tabName;
-                btn.classList.toggle('accent-glass-soft', isActive);
-                btn.classList.toggle('accent-glass-soft-active', isActive);
+                btn.classList.toggle('bg-purple-50', isActive);
+                btn.classList.toggle('dark:bg-purple-950/40', isActive);
+                btn.classList.toggle('text-purple-700', isActive);
+                btn.classList.toggle('dark:text-purple-300', isActive);
                 btn.classList.toggle('border-b-2', isActive);
+                btn.classList.toggle('border-purple-600', isActive);
                 btn.classList.toggle('text-slate-400', !isActive);
                 btn.classList.toggle('dark:text-slate-500', !isActive);
             });

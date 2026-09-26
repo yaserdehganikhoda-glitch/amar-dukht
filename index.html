@@ -85,6 +85,39 @@
             95.5% { transform: translateX(2px); }
             97% { transform: translateX(0); }
         }
+        @keyframes motivationBounce {
+            0%, 100% { transform: translateY(0); }
+            25% { transform: translateY(-5px); }
+            50% { transform: translateY(0); }
+            75% { transform: translateY(-2px); }
+        }
+        @keyframes motivationWiggle {
+            0%, 100% { transform: rotate(0deg); }
+            20% { transform: rotate(-3deg); }
+            40% { transform: rotate(3deg); }
+            60% { transform: rotate(-2deg); }
+            80% { transform: rotate(2deg); }
+        }
+        @keyframes motivationTada {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            10%, 30% { transform: scale(0.94) rotate(-2deg); }
+            20% { transform: scale(0.94) rotate(2deg); }
+            40%, 60%, 80% { transform: scale(1.08) rotate(1.5deg); }
+            50%, 70% { transform: scale(1.08) rotate(-1.5deg); }
+            90% { transform: scale(1.04) rotate(1deg); }
+        }
+        @keyframes motivationRainbow {
+            0% { filter: hue-rotate(0deg) saturate(1.4); }
+            100% { filter: hue-rotate(360deg) saturate(1.4); }
+        }
+        @keyframes motivationFlip {
+            0%, 82%, 100% { transform: perspective(400px) rotateY(0deg); }
+            91% { transform: perspective(400px) rotateY(180deg); }
+        }
+        @keyframes motivationSlideX {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(4px); }
+        }
         /* تنوع انیمیشنِ نوار متن انگیزشی، قابل انتخاب از تنظیمات (ظاهری) */
         .motivation-badge {
             animation: fadeSlideIn 0.45s ease-out;
@@ -109,6 +142,24 @@
         }
         .motivation-badge.motiv-anim-shake {
             animation: fadeSlideIn 0.45s ease-out, motivationShake 4.2s ease-in-out infinite;
+        }
+        .motivation-badge.motiv-anim-bounce {
+            animation: fadeSlideIn 0.45s ease-out, motivationBounce 1.7s ease-in-out infinite;
+        }
+        .motivation-badge.motiv-anim-wiggle {
+            animation: fadeSlideIn 0.45s ease-out, motivationWiggle 3.4s ease-in-out infinite;
+        }
+        .motivation-badge.motiv-anim-tada {
+            animation: fadeSlideIn 0.45s ease-out, motivationTada 3.8s ease-in-out infinite;
+        }
+        .motivation-badge.motiv-anim-rainbow {
+            animation: fadeSlideIn 0.45s ease-out, motivationRainbow 3.5s linear infinite;
+        }
+        .motivation-badge.motiv-anim-flip {
+            animation: fadeSlideIn 0.45s ease-out, motivationFlip 5.5s ease-in-out infinite;
+        }
+        .motivation-badge.motiv-anim-slide i {
+            animation: motivationSlideX 1.4s ease-in-out infinite;
         }
         #actionFeedbackBanner:not(.hidden), .rc-card, #recordsTableBody tr {
             animation: fadeSlideIn 0.3s ease-out;
@@ -1117,9 +1168,6 @@
                 <button type="button" onclick="switchSettingsTab('security')" data-settings-tab="security" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
                     <i class="fa-solid fa-shield-halved"></i> امنیت
                 </button>
-                <button type="button" onclick="switchSettingsTab('notifications')" data-settings-tab="notifications" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
-                    <i class="fa-solid fa-bell"></i> اعلان‌ها
-                </button>
                 <button type="button" onclick="switchSettingsTab('storage')" data-settings-tab="storage" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
                     <i class="fa-solid fa-database"></i> حافظه
                 </button>
@@ -1264,6 +1312,10 @@
                     <div id="formLabelsFields" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
                     <button type="button" onclick="resetFormLabelsFields()" class="text-xs text-slate-500 dark:text-slate-400 underline hover:text-purple-600">پاک کردن همه‌ی نام‌های سفارشی</button>
                 </div>
+                <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 border border-slate-300 dark:border-slate-600 flex items-center justify-between">
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400">رکورد کدهای متوالی به‌موقع:</span>
+                    <span class="text-xs font-bold text-orange-600 dark:text-orange-400"><i class="fa-solid fa-fire"></i> جاری: <span id="settingCurrentStreakVal">۰</span> &nbsp;|&nbsp; بهترین: <span id="settingBestStreakVal">۰</span></span>
+                </div>
                 </div>
 
                 <div id="settingsTab-appearance" class="settings-tab-panel hidden space-y-4">
@@ -1405,8 +1457,36 @@
                             <option value="pulse">فقط ضربانِ آیکون</option>
                             <option value="glow">درخشش دوره‌ای</option>
                             <option value="shake">لرزش دوره‌ای کوتاه</option>
+                            <option value="bounce">پرش (بالا و پایین)</option>
+                            <option value="wiggle">تکان چرخشی (تاب خوردن)</option>
+                            <option value="tada">تادا (بزرگ‌نمایی و چرخش)</option>
+                            <option value="rainbow">رنگین‌کمان (چرخش رنگ)</option>
+                            <option value="flip">چرخش سه‌بعدی (فلیپ)</option>
+                            <option value="slide">لغزش آیکون</option>
                             <option value="none">بدون انیمیشن</option>
                         </select>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">فونت متن انگیزشی</label>
+                            <select id="settingMotivationFontFamily" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                                <option value="inherit">پیرو فونت کلی برنامه</option>
+                                <option value="Vazirmatn">وزیرمتن</option>
+                                <option value="Vazir">وزیر</option>
+                                <option value="Sahel">ساحل</option>
+                                <option value="Samim">صمیم</option>
+                                <option value="Shabnam">شبنم</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">اندازه فونت متن انگیزشی</label>
+                            <select id="settingMotivationFontSize" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                                <option value="small">کوچک</option>
+                                <option value="normal">معمولی (پیش‌فرض)</option>
+                                <option value="large">بزرگ</option>
+                                <option value="xlarge">خیلی بزرگ</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
@@ -1486,57 +1566,6 @@
                     <button type="button" onclick="savePinLock()" class="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-sm hover:bg-indigo-700 font-medium transition-colors shadow-sm flex items-center justify-center gap-2">
                         <i class="fa-solid fa-key"></i> ذخیره تنظیمات قفل
                     </button>
-                </div>
-                </div>
-
-                <div id="settingsTab-notifications" class="settings-tab-panel hidden space-y-4">
-                <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-bell"></i> اعلان‌های هوشمند پیشرفت کار
-                    </h3>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                        با فعال بودن این گزینه، اعلان‌ها دقیقاً مثل یک پیامک یا یادآوریِ گوشی در نوار اعلان‌های سیستم نمایش داده می‌شوند (نه یک پیام داخل صفحه) و تا لمس نشوند باقی می‌مانند: در چهار مرحله‌ی ۲۵٪، ۵۰٪، ۷۵٪ و ۹۰٪ از زمان مجاز تحویل کدِ در حال دوختِ فعلی، و همچنین وقتی خودِ موعد تحویل برسد (و هر ۲۰ دقیقه (فقط در ساعات کاری) تا زمانی‌که رکورد بعدی ثبت یا دکمه‌ی «کار تمام شد» زده شود). عنوان تب و آیکون برنامه هم هنگام تاخیر هشدار می‌دهند.
-                    </p>
-                    <p class="text-[11px] text-teal-700 dark:text-teal-400 leading-relaxed bg-teal-50 dark:bg-teal-950/30 rounded-lg p-2.5 border border-teal-100 dark:border-teal-900/40">
-                        <i class="fa-solid fa-circle-info ml-1"></i>
-                        برای دریافت این اعلان‌ها به‌صورت واقعیِ گوشی (به‌خصوص در آیفون)، ابتدا برنامه را از منوی مرورگر به «صفحه اصلی» اضافه کنید (Add to Home Screen) و همیشه از همان آیکون بازش کنید؛ سپس دکمه‌ی زیر را بزنید.
-                    </p>
-                    <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
-                        <input type="checkbox" id="settingNotificationsEnabled" class="w-4 h-4 rounded accent-indigo-600">
-                        فعال‌سازی اعلان‌های پلکانی پیشرفت (۲۵٪ تا پایان مهلت)
-                    </label>
-                    <label class="flex items-center gap-2.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
-                        <input type="checkbox" id="settingVoiceAlertsEnabled" class="w-4 h-4 rounded accent-indigo-600">
-                        پخش هشدار صوتی گفتاری (فارسی) در لحظات حساس
-                    </label>
-                    <button type="button" onclick="requestNotificationPermission()" class="w-full py-2.5 border border-indigo-200 dark:border-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded-xl text-sm hover:bg-indigo-50 dark:hover:bg-indigo-950/30 font-medium transition-colors flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-bell"></i> درخواست اجازه اعلان مرورگر
-                    </button>
-                    <p id="notificationPermissionStatusText" class="text-xs font-semibold"></p>
-                    <button type="button" onclick="sendTestNotification()" class="w-full py-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium transition-colors flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-paper-plane"></i> ارسال اعلان آزمایشی (برای بررسی نمایش روی صفحه)
-                    </button>
-
-                    <div class="rounded-xl border border-amber-200 dark:border-amber-900/50 overflow-hidden">
-                        <button type="button" onclick="toggleXiaomiGuide()" class="w-full flex items-center justify-between px-3 py-2.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 text-xs font-bold transition-colors">
-                            <span><i class="fa-solid fa-mobile-screen-button"></i> راهنمای اختصاصی گوشی‌های شیائومی (HyperOS / MIUI)</span>
-                            <i id="xiaomiGuideToggleIcon" class="fa-solid fa-chevron-down text-[10px] transition-transform"></i>
-                        </button>
-                        <div id="xiaomiGuideBody" class="hidden p-3 text-[11px] leading-relaxed text-slate-600 dark:text-slate-300 space-y-2 bg-white dark:bg-slate-900">
-                            <p>گوشی‌های شیائومی به‌طور پیش‌فرض اعلان‌های اپ‌های تحت مرورگر را فقط در «نوار اعلان‌ها» نشان می‌دهند، نه به‌صورت بنر روی صفحه یا قفل صفحه. برای تغییر این رفتار، این چهار مورد را در گوشی خودتان بررسی کنید:</p>
-                            <ol class="list-decimal pr-4 space-y-1.5">
-                                <li>مسیر <b>تنظیمات ← Notifications &amp; Control center ← App notifications</b> را باز کنید، Chrome (یا نام این برنامه اگر با Add to Home Screen نصبش کرده‌اید) را پیدا کنید و «نمایش روی صفحه قفل» و «اعلان شناور / بنر» را برایش فعال کنید.</li>
-                                <li>مسیر <b>تنظیمات ← برنامه‌ها ← مجوزها ← اجرای خودکار (Autostart)</b> را باز کنید و آن را برای Chrome روشن کنید تا اعلان حتی وقتی برنامه در پس‌زمینه بسته شده هم برسد.</li>
-                                <li>مسیر <b>تنظیمات ← باتری ← صرفه‌جویی باتری برنامه</b> را باز کنید و برای Chrome گزینه‌ی «بدون محدودیت» را انتخاب کنید (نه «صرفه‌جویی» یا «محدودشده»).</li>
-                                <li>برنامه را حتماً با «Add to Home Screen» به صفحه اصلی اضافه کرده و همیشه از همان آیکون بازش کنید، نه از تب مرورگر.</li>
-                            </ol>
-                            <p class="text-amber-700 dark:text-amber-400">این چهار تنظیم در اختیار خودِ سیستم‌عامل گوشی است؛ هیچ برنامه یا وب‌سایتی نمی‌تواند آن‌ها را به‌صورت خودکار عوض کند، فقط شما می‌توانید از مسیر بالا انجامشان دهید.</p>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 border border-slate-300 dark:border-slate-600 flex items-center justify-between">
-                        <span class="text-[11px] text-slate-500 dark:text-slate-400">رکورد کدهای متوالی به‌موقع:</span>
-                        <span class="text-xs font-bold text-orange-600 dark:text-orange-400"><i class="fa-solid fa-fire"></i> جاری: <span id="settingCurrentStreakVal">۰</span> &nbsp;|&nbsp; بهترین: <span id="settingBestStreakVal">۰</span></span>
-                    </div>
                 </div>
                 </div>
 
@@ -1736,6 +1765,10 @@
     </div>
 
     <!-- اسکریپت‌ها -->
+    <!-- پایگاه دادهٔ سخنانِ انگیزشی؛ فایلی جدا تا حجمِ همین فایل اصلی بالا نرود.
+         اگر این فایل کنارِ index.html نباشد، برنامه بدونِ خطا به مجموعهٔ کوچکِ
+         پیش‌فرضِ داخلِ همین اسکریپت برمی‌گردد (نگاه کنید به تابعِ getMotivationPool). -->
+    <script src="motivations-db.js"></script>
     <script>
         /* ==================== نسخه ویژه (Premium) — قابلیت‌های قفل‌شده ====================
          * این قابلیت‌ها فقط داخل اپ نصب‌شده از کافه بازار قفل هستند؛ در نسخه وب/PWA
@@ -2144,10 +2177,6 @@
                 photo: isSafeImageDataUrl(r.photo) ? r.photo : null,
                 hasPhoto: !!r.hasPhoto || isSafeImageDataUrl(r.photo),
                 monthKey, monthName, year,
-                notifiedStages: Array.isArray(r.notifiedStages) ? r.notifiedStages.map(Number).filter(Number.isFinite) : [],
-                notifiedFull: !!r.notifiedFull,
-                lastOverdueNotifyAt: num(r.lastOverdueNotifyAt),
-                mutedUntil: num(r.mutedUntil),
                 streakCounted: !!r.streakCounted,
                 // رکوردهای قدیمی updatedAt نداشتند؛ id (زمان ساخت) جایگزین منطقی آن است
                 updatedAt: (Number.isFinite(upd) && upd > 0) ? upd : id
@@ -2190,7 +2219,9 @@
             const colorOk = c => c === 'default' || (typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c));
             ['bgColor', 'cardColor', 'fieldColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
             s.motivationBadgeVisible = s.motivationBadgeVisible !== false;
-            s.motivationAnimation = pick(s.motivationAnimation, ['default', 'pulse', 'glow', 'shake', 'none'], 'default');
+            s.motivationAnimation = pick(s.motivationAnimation, ['default', 'pulse', 'glow', 'shake', 'bounce', 'wiggle', 'tada', 'rainbow', 'flip', 'slide', 'none'], 'default');
+            s.motivationFontFamily = pick(s.motivationFontFamily, ['inherit', 'Vazirmatn', 'Vazir', 'Sahel', 'Samim', 'Shabnam'], 'inherit');
+            s.motivationFontSize = pick(s.motivationFontSize, ['small', 'normal', 'large', 'xlarge'], 'normal');
             ['motivationBgColor', 'motivationTextColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
             s.shopName = String(s.shopName || DEFAULT_APP_SETTINGS.shopName).slice(0, 120);
             ['ownerName', 'ownerPhone', 'ownerAddress'].forEach(k => { s[k] = String(s[k] == null ? '' : s[k]).slice(0, 200); });
@@ -2198,7 +2229,6 @@
             s.pinHash = (typeof s.pinHash === 'string' && s.pinHash) ? s.pinHash : null;
             s.pinEnabled = !!s.pinEnabled && !!s.pinHash;
             delete s.deleteCodeHash; // ویژگی «پاک کردن کلی داده‌ها» حذف شده است
-            ['notificationsEnabled', 'voiceAlertsEnabled'].forEach(k => { s[k] = !!s[k]; });
             s.onTimeStreak = Math.max(0, Number(s.onTimeStreak) || 0);
             // ساعات کاری و استراحت‌ها
             const timeRe = /^\d{1,2}:\d{2}$/;
@@ -2994,10 +3024,10 @@
             fieldColor: 'default',
             motivationBadgeVisible: true,
             motivationAnimation: 'default',
+            motivationFontFamily: 'inherit',
+            motivationFontSize: 'normal',
             motivationBgColor: 'default',
             motivationTextColor: 'default',
-            notificationsEnabled: false,
-            voiceAlertsEnabled: false,
             onTimeStreak: 0,
             bestStreak: 0,
             ownerName: '',
@@ -4127,8 +4157,10 @@
                     bottomNavGoRecords();
                 } else if (action === 'notes') {
                     bottomNavGoNotes();
-                } else if (action === 'finish' || action === 'snooze') {
-                    handleNotificationAction(action);
+                } else if (action === 'finish') {
+                    const rec = getCurrentActiveRecord();
+                    if (rec) { window.scrollTo({ top: 0, behavior: 'smooth' }); finishRecordNow(rec.id); }
+                    else showFeedbackBanner('کار جاری‌ای برای ثبت پایان وجود ندارد.', 'warn');
                 }
             }, 300);
         }
@@ -4578,17 +4610,16 @@
             document.getElementById('settingFieldColor').value = appSettings.fieldColor || 'default';
             document.getElementById('settingMotivationVisible').checked = appSettings.motivationBadgeVisible !== false;
             document.getElementById('settingMotivationAnimation').value = appSettings.motivationAnimation || 'default';
+            document.getElementById('settingMotivationFontFamily').value = appSettings.motivationFontFamily || 'inherit';
+            document.getElementById('settingMotivationFontSize').value = appSettings.motivationFontSize || 'normal';
             document.getElementById('settingMotivationBgColor').value = appSettings.motivationBgColor || 'default';
             document.getElementById('settingMotivationTextColor').value = appSettings.motivationTextColor || 'default';
             document.getElementById('settingNewPin').value = '';
             document.getElementById('settingConfirmPin').value = '';
             updatePinLockStatusUI();
 
-            document.getElementById('settingNotificationsEnabled').checked = !!appSettings.notificationsEnabled;
-            document.getElementById('settingVoiceAlertsEnabled').checked = !!appSettings.voiceAlertsEnabled;
             document.getElementById('settingCurrentStreakVal').innerText = formatNumber(appSettings.onTimeStreak || 0);
             document.getElementById('settingBestStreakVal').innerText = formatNumber(appSettings.bestStreak || 0);
-            updateNotificationPermissionStatusUI();
 
             const totalRecords = allRecords.length;
             document.getElementById('storageTotalRecordsCount').innerText = formatNumber(totalRecords);
@@ -4639,10 +4670,10 @@
             const fieldColorVal = document.getElementById('settingFieldColor').value;
             const motivationVisibleVal = document.getElementById('settingMotivationVisible').checked;
             const motivationAnimationVal = document.getElementById('settingMotivationAnimation').value;
+            const motivationFontFamilyVal = document.getElementById('settingMotivationFontFamily').value;
+            const motivationFontSizeVal = document.getElementById('settingMotivationFontSize').value;
             const motivationBgColorVal = document.getElementById('settingMotivationBgColor').value;
             const motivationTextColorVal = document.getElementById('settingMotivationTextColor').value;
-            const notificationsEnabledVal = document.getElementById('settingNotificationsEnabled').checked;
-            const voiceAlertsEnabledVal = document.getElementById('settingVoiceAlertsEnabled').checked;
 
             appSettings.ownerName = ownerNameVal;
             appSettings.ownerPhone = ownerPhoneVal;
@@ -4666,18 +4697,12 @@
             appSettings.fieldColor = fieldColorVal;
             appSettings.motivationBadgeVisible = motivationVisibleVal;
             appSettings.motivationAnimation = motivationAnimationVal;
+            appSettings.motivationFontFamily = motivationFontFamilyVal;
+            appSettings.motivationFontSize = motivationFontSizeVal;
             appSettings.motivationBgColor = motivationBgColorVal;
             appSettings.motivationTextColor = motivationTextColorVal;
-            appSettings.notificationsEnabled = notificationsEnabledVal;
-            appSettings.voiceAlertsEnabled = voiceAlertsEnabledVal;
             Object.assign(appSettings, workRes.data);
             applyShiftSettings();
-            if (notificationsEnabledVal && 'Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission().then(() => {
-                    updateNotificationPermissionStatusUI();
-                    checkDeliveryProgressNotifications();
-                }).catch(() => {});
-            }
 
             appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
@@ -5472,7 +5497,6 @@
                 if (!confirmed) return;
                 rec.finishedDate = nowInfo.fullDateStr;
                 rec.finishedTime = hhmm;
-                rec.mutedUntil = null;
                 rec.updatedAt = Date.now();
                 evaluateDeliveryAgainst(rec, rec.finishedDate, rec.finishedTime);
                 saveRecords();
@@ -5711,7 +5735,7 @@
                         workDuration: workDuration,
                         photo: currentPhotoData, hasPhoto: !!currentPhotoData,
                         monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year,
-                        notifiedStages: [], notifiedFull: false, lastOverdueNotifyAt: null, mutedUntil: null, updatedAt: Date.now()
+                        updatedAt: Date.now()
                     };
 
                     // اگر تاریخ/ساعت ثبتِ همین رکورد تغییر کرده باشد، ممکن است رکوردی که قبلاً
@@ -5741,7 +5765,6 @@
                     // همین رکورد به‌روزرسانی و وضعیت تحویلش دوباره محاسبه می‌شود.
                     applyNextCodeStartToPreviousRecord(date, time, editingId);
 
-                    saveNotifState(allRecords[targetIndex]);
                     addLog(`رکورد ${code} ویرایش شد.`, 'warn');
                     showFeedbackBanner(
                         movedToDifferentMonth
@@ -6958,32 +6981,8 @@
             applyDuplicateCodesVisibilityFromSettings();
         }
 
-        /* ==================== اعلان‌های هوشمند پیشرفت کار (برای جلوگیری از تاخیر) ==================== */
-        const NOTIF_STATE_KEY = 'sewing_notif_state_v1';
-        // اگر رکوردی بیش از ۳ روز کاری از موعد گذشته باشد، یادآوری‌های تکراری متوقف می‌شود (نمایش ویجت ادامه دارد)
+        // اگر رکوردی بیش از ۳ روز کاری از موعد گذشته باشد، نمایش تاخیر در ویجت به‌صورت «راکد» علامت خورده و متفاوت نشان داده می‌شود
         function getStaleOverdueMinutes() { return 3 * SHIFT_MINUTES; }
-        // وضعیت اعلان‌های هر رکورد در کلیدی جدا نگه‌داری می‌شود (نه داخل خودِ رکورد)، تا
-        // ۱) نسخه‌ی رکورد (updatedAt) و ادغام دستگاه‌ها را به‌هم نزند، ۲) بین تب‌ها هم‌گام باشد.
-        function loadNotifStateMap() {
-            const m = safeLoadJSON(NOTIF_STATE_KEY, {});
-            return (m && typeof m === 'object' && !Array.isArray(m)) ? m : {};
-        }
-        function loadNotifState(rec) {
-            const st = loadNotifStateMap()[String(rec.id)];
-            if (!st) return;
-            rec.notifiedStages = Array.isArray(st.s) ? st.s.map(Number).filter(Number.isFinite) : [];
-            rec.notifiedFull = !!st.f;
-            rec.lastOverdueNotifyAt = Number.isFinite(Number(st.l)) && st.l ? Number(st.l) : null;
-            rec.mutedUntil = Number.isFinite(Number(st.m)) && st.m ? Number(st.m) : null;
-        }
-        function saveNotifState(rec) {
-            const map = loadNotifStateMap();
-            map[String(rec.id)] = { s: rec.notifiedStages || [], f: !!rec.notifiedFull, l: rec.lastOverdueNotifyAt || null, m: rec.mutedUntil || null };
-            const live = new Set(allRecords.map(r => String(r.id)));
-            Object.keys(map).forEach(k => { if (!live.has(k)) delete map[k]; });
-            try { localStorage.setItem(NOTIF_STATE_KEY, JSON.stringify(map)); } catch (e) { /* بی‌اهمیت */ }
-        }
-        const OVERDUE_RENOTIFY_MINUTES = 20; // فاصله‌ی یادآوری‌های مکرر بعد از گذشتن موعد تحویل
 
         // رکورد «در حال انجام» فعلی: جدیدترین رکوردی که هنوز «شروع کد بعد» برایش ثبت نشده؛
         // یعنی همان کدی که خیاط همین الان روی آن مشغول است.
@@ -7024,195 +7023,6 @@
             if (h > 0) text += `${formatNumber(h)} ساعت `;
             if (m > 0 || h === 0) text += `${formatNumber(m)} دقیقه`;
             return text.trim();
-        }
-
-        // بوق کوتاه هشدار (بدون نیاز به فایل صوتی خارجی)؛ در برخی مرورگرها بدون تعامل اخیر کاربر پخش نمی‌شود.
-        function playAlertSound(urgent) {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const o = ctx.createOscillator();
-                const g = ctx.createGain();
-                o.connect(g); g.connect(ctx.destination);
-                o.type = 'sine';
-                o.frequency.value = urgent ? 880 : 640;
-                g.gain.setValueAtTime(0.001, ctx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
-                g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (urgent ? 0.5 : 0.3));
-                o.onended = () => { try { ctx.close(); } catch (e) { /* بی‌اهمیت */ } };
-                o.start();
-                o.stop(ctx.currentTime + (urgent ? 0.55 : 0.35));
-                if (urgent) setTimeout(() => playAlertSound(false), 350);
-            } catch (e) { /* پخش صدا در برخی مرورگرها بدون تعامل کاربر امکان‌پذیر نیست */ }
-        }
-
-        // ارسال اعلان به شکل واقعیِ سیستم‌عامل گوشی (دقیقاً مثل اعلان پیامک یا یادآوری)؛
-        // همیشه از طریق Service Worker ارسال می‌شود تا در نوار اعلان‌های اندروید/iOS بنشیند،
-        // پایدار بماند (تا لمس نشود از بین نمی‌رود) و با هر بار تکرار دوباره لرزش/صدا بدهد.
-        function sendBrowserNotification(title, body, tag, urgent) {
-            const appLabel = appSettings.shopName || 'آمار دوخت';
-            if (window.NativeNotify && window.NativeNotify.isSupported()) {
-                if (!window.__nativeNotifGranted) return false;
-                window.NativeNotify.notify(`${appLabel} • ${title}`, body, tag);
-                return true;
-            }
-            if (!('Notification' in window) || Notification.permission !== 'granted') return false;
-            const options = {
-                body,
-                icon: 'icon-192.png',
-                badge: 'icon-192.png',
-                tag,
-                renotify: true,
-                requireInteraction: true, // مثل پیامک/یادآوری‌های گوشی، تا لمس نشود از نوار اعلان‌ها پاک نشود
-                silent: false,
-                dir: 'rtl',
-                lang: 'fa',
-                timestamp: Date.now(),
-                vibrate: urgent ? [300, 100, 300, 100, 300] : [200, 80, 200]
-            };
-            try {
-                if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-                    navigator.serviceWorker.ready.then(reg => reg.showNotification(`${appLabel} • ${title}`, options)).catch(() => { try { new Notification(`${appLabel} • ${title}`, options); } catch (e2) {} });
-                } else if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
-                    navigator.serviceWorker.getRegistration().then(reg => {
-                        if (reg) reg.showNotification(`${appLabel} • ${title}`, options);
-                        else new Notification(`${appLabel} • ${title}`, options);
-                    }).catch(() => { try { new Notification(`${appLabel} • ${title}`, options); } catch (e2) {} });
-                } else {
-                    new Notification(`${appLabel} • ${title}`, options);
-                }
-            } catch (e) {
-                console.error('خطا در ارسال اعلان:', e);
-                return false;
-            }
-            return true;
-        }
-
-        // نقطه‌ی واحدِ اطلاع‌رسانی: اگر اجازه‌ی اعلان گوشی داده شده باشد، فقط همان اعلان واقعی
-        // نمایش داده می‌شود (نه بنر داخل صفحه)؛ فقط وقتی اجازه داده نشده، به‌جای آن یک بنر
-        // داخل برنامه به‌عنوان جایگزین نشان داده می‌شود تا پیام از دست نرود.
-        function notifyUser(title, body, tag, urgent) {
-            const delivered = sendBrowserNotification(title, body, tag, urgent);
-            if (!delivered) {
-                showFeedbackBanner(`${title} — ${body}`, urgent ? 'warn' : 'info');
-            }
-        }
-
-        function updateNotificationPermissionStatusUI() {
-            const statusEl = document.getElementById('notificationPermissionStatusText');
-            if (!statusEl) return;
-            if (window.NativeNotify && window.NativeNotify.isSupported()) {
-                window.NativeNotify.checkPermission().then(display => {
-                    if (display === 'granted') {
-                        statusEl.innerText = 'وضعیت: اجازه‌ی اعلان داده شده است.';
-                        statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
-                    } else if (display === 'denied') {
-                        statusEl.innerText = 'وضعیت: اعلان مسدود شده؛ از تنظیمات اندروید برای این اپ اجازه را فعال کنید.';
-                        statusEl.className = 'text-xs font-semibold text-rose-600 dark:text-rose-400';
-                    } else {
-                        statusEl.innerText = 'وضعیت: هنوز اجازه‌ی اعلان درخواست نشده است.';
-                        statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
-                    }
-                });
-                return;
-            }
-            if (!('Notification' in window)) {
-                statusEl.innerText = 'مرورگر شما از اعلان‌های سیستمی پشتیبانی نمی‌کند.';
-                statusEl.className = 'text-xs font-semibold text-slate-400';
-                return;
-            }
-            if (Notification.permission === 'granted') {
-                statusEl.innerText = 'وضعیت: اجازه‌ی اعلان مرورگر داده شده است.';
-                statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
-            } else if (Notification.permission === 'denied') {
-                statusEl.innerText = 'وضعیت: اعلان مرورگر مسدود شده؛ برای فعال‌سازی از تنظیمات سایتِ مرورگرتان اجازه را تغییر دهید.';
-                statusEl.className = 'text-xs font-semibold text-rose-600 dark:text-rose-400';
-            } else {
-                statusEl.innerText = 'وضعیت: هنوز اجازه‌ی اعلان درخواست نشده است.';
-                statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
-            }
-        }
-
-        async function requestNotificationPermission() {
-            if (window.NativeNotify && window.NativeNotify.isSupported()) {
-                const display = await window.NativeNotify.requestPermission();
-                updateNotificationPermissionStatusUI();
-                if (display === 'granted') {
-                    showFeedbackBanner('اعلان‌ها فعال شد.', 'success');
-                    checkDeliveryProgressNotifications();
-                    addLog('اجازه‌ی اعلان داده شد.', 'success');
-                } else {
-                    showFeedbackBanner('اجازه‌ی اعلان داده نشد؛ در این حالت فقط پیام‌های داخل برنامه نمایش داده می‌شوند.', 'warn');
-                }
-                return;
-            }
-            if (!('Notification' in window)) {
-                showFeedbackBanner('مرورگر شما از اعلان‌های سیستمی پشتیبانی نمی‌کند.', 'warn');
-                return;
-            }
-            try {
-                const perm = await Notification.requestPermission();
-                updateNotificationPermissionStatusUI();
-                if (perm === 'granted') {
-                    showFeedbackBanner('اعلان‌های مرورگر فعال شد.', 'success');
-                    checkDeliveryProgressNotifications();
-                    addLog('اجازه‌ی اعلان مرورگر داده شد.', 'success');
-                } else {
-                    showFeedbackBanner('اجازه‌ی اعلان داده نشد؛ در این حالت فقط پیام‌های داخل برنامه نمایش داده می‌شوند.', 'warn');
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        // ارسال یک اعلان آزمایشی فوری؛ برای اینکه کاربر بلافاصله (بدون صبر برای رسیدن به ۲۵٪ پیشرفت
-        // واقعی) بتواند بررسی کند آیا اعلان‌ها روی صفحه/صفحه‌قفل گوشی به‌صورت بنر ظاهر می‌شوند یا نه.
-        function sendTestNotification() {
-            const nativeReady = window.NativeNotify && window.NativeNotify.isSupported() && window.__nativeNotifGranted;
-            const webReady = ('Notification' in window) && Notification.permission === 'granted';
-            if (!nativeReady && !webReady) {
-                showFeedbackBanner('برای ارسال اعلان آزمایشی، ابتدا باید اجازه‌ی اعلان را بدهید.', 'warn');
-                return;
-            }
-            const delivered = sendBrowserNotification(
-                '🔔 اعلان آزمایشی',
-                'اگر این پیام را به‌صورت بنر روی صفحه یا صفحه قفل گوشی دیدید، تنظیمات درست است. اگر فقط داخل نوار اعلان‌ها بود، راهنمای زیر را ببینید.',
-                'sewing-test-' + Date.now(),
-                true
-            );
-            if (delivered) {
-                showFeedbackBanner('اعلان آزمایشی ارسال شد؛ صفحه یا نوار اعلان گوشی را بررسی کنید.', 'info');
-                addLog('یک اعلان آزمایشی ارسال شد.', 'info');
-            }
-        }
-
-        function toggleXiaomiGuide() {
-            const body = document.getElementById('xiaomiGuideBody');
-            const icon = document.getElementById('xiaomiGuideToggleIcon');
-            if (!body) return;
-            const collapsed = body.classList.toggle('hidden');
-            if (icon) icon.classList.toggle('rotate-180', !collapsed);
-        }
-
-        // مراحل هشدار پیشرفت؛ هر چه درصد بالاتر می‌رود، لحن اعلان جدی‌تر می‌شود
-        const PROGRESS_STAGES = [
-            { threshold: 25, emoji: '🟢', title: 'یک‌چهارم زمان گذشت', urgent: false },
-            { threshold: 50, emoji: '⏳', title: 'نیمی از زمان تحویل گذشت', urgent: false },
-            { threshold: 75, emoji: '🟠', title: 'فقط ۲۵٪ از زمان باقی مانده', urgent: false },
-            { threshold: 90, emoji: '🔴', title: 'فرصت رو به پایان است!', urgent: true }
-        ];
-
-        // پخش هشدار گفتاریِ فارسی (اختیاری، فقط برای رویدادهای حساس)
-        function speakPersianAlert(text) {
-            if (!appSettings.voiceAlertsEnabled) return;
-            if (!('speechSynthesis' in window)) return;
-            try {
-                const utter = new SpeechSynthesisUtterance(text);
-                utter.lang = 'fa-IR';
-                utter.rate = 0.95;
-                utter.volume = 1;
-                window.speechSynthesis.cancel();
-                window.speechSynthesis.speak(utter);
-            } catch (e) { /* در برخی مرورگرها بدون تعامل کاربر قابل پخش نیست */ }
         }
 
         // نشان‌گر عددی روی آیکون برنامه (فقط در حالت نصب‌شده/PWA و مرورگرهای پشتیبان)
@@ -7259,7 +7069,7 @@
 
             setDynamicFavicon(overdue ? '#e11d48' : (nearDeadline ? '#f59e0b' : null));
 
-            if (overdue && document.hidden && appSettings.notificationsEnabled) {
+            if (overdue && document.hidden) {
                 if (!titleFlashInterval) {
                     let toggle = false;
                     titleFlashInterval = setInterval(() => {
@@ -7276,20 +7086,8 @@
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) document.title = originalPageTitle;
             updateAttentionIndicators();
-            if (!document.hidden) checkDeliveryProgressNotifications(); // با برگشت به برنامه، ویجت/اعلان‌ها فوراً تازه شوند
+            if (!document.hidden) checkDeliveryProgressNotifications(); // با برگشت به برنامه، ویجت پیشرفت فوراً تازه شود
         });
-
-        // بی‌صدا کردن موقت اعلان‌های رکورد جاری (۳۰ دقیقه)؛ فقط اعلان‌ها را به تعویق می‌اندازد، نه خودِ مهلت را
-        function snoozeActiveNotifications() {
-            const rec = getCurrentActiveRecord();
-            if (!rec) return;
-            loadNotifState(rec);
-            rec.mutedUntil = Date.now() + 30 * 60 * 1000;
-            saveNotifState(rec);
-            addLog(`اعلان‌های کد ${rec.itemCode || '-'} به مدت ۳۰ دقیقه بی‌صدا شد.`, 'info');
-            showFeedbackBanner('اعلان‌های این کد به مدت ۳۰ دقیقه بی‌صدا شد (خودِ مهلت تحویل تغییری نکرد).', 'info');
-            renderActiveProgressWidget();
-        }
 
         // «کدهای متوالیِ به‌موقع» کاملاً از روی خودِ رکوردها و به ترتیب زمان محاسبه می‌شود (نه شمارنده‌ی ذخیره‌شده)،
         // تا با ویرایش، حذف، بازیابی، حالت دستی و ثبت گذشته‌نگر همیشه درست بماند. بر اساس «وضعیت نمایشی» رکورد:
@@ -7323,10 +7121,13 @@
         }
 
         // پیام‌های انگیزشی درون کادر بالا: چند دسته‌ی جدا بر اساس وضعیت واقعیِ تحویل (تاخیر/فوریِ نزدیک به موعد/
-        // در حال کار/رشته‌ی به‌موقع/خنثی). به‌جای جمله‌های ساختگی و سبک، این‌ها سخنانِ واقعیِ اندیشمندانِ بزرگ
-        // و روان‌شناسانِ سرشناسِ دنیا هستند (استوایی‌ها، فرانکل، یونگ، مزلو، بندورا، چیک‌سنت‌میهای، راجرز، اسکینر و ...)،
-        // هر کدام با تنوعِ بالا (حداقل ۸ تا ۱۲ گزینه‌ی متمایز در هر دسته). [رفع باگِ تکراری‌بودن] پایین‌تر توضیح داده شده.
-        const LATE_MOTIVATIONS = [
+        // در حال کار/رشته‌ی به‌موقع/خنثی). این‌ها سخنانِ واقعیِ اندیشمندانِ بزرگ، شاعرانِ کلاسیک، روان‌شناسانِ
+        // سرشناس و استاد محمدعلی طاهری هستند. مجموعه‌ی اصلی و بزرگِ این سخنان (چند صد مورد) در فایلِ جداگانه‌ی
+        // motivations-db.js نگه‌داری می‌شود (تا حجمِ همین فایل بالا نرود) و در window.MOTIVATIONS_DB می‌نشیند؛
+        // آرایه‌های زیر فقط یک مجموعه‌ی کوچکِ «پیش‌فرض/پشتیبان» هستند که اگر آن فایل به هر دلیلی کنارِ
+        // index.html نبود یا بارگذاری نشد، برنامه همچنان بدونِ خطا کار کند. تابعِ getMotivationPool پایین‌تر
+        // تصمیم می‌گیرد از کدام مجموعه استفاده شود.
+        const LATE_MOTIVATIONS_DEFAULT = [
             'موفقیت پایانی ندارد و شکست هم نابودکننده نیست؛ آنچه اهمیت دارد شجاعتِ ادامه‌دادن است. — وینستون چرچیل',
             'من شکست نخورده‌ام؛ فقط ده‌هزار روشی را پیدا کرده‌ام که جواب نمی‌دهند. — توماس ادیسون',
             'بزرگ‌ترین افتخار ما نه در هرگز زمین‌نخوردن، که در برخاستن پس از هر زمین‌خوردن است. — کنفوسیوس',
@@ -7340,7 +7141,7 @@
             'شکست، اطلاعاتی برای مسیر بعدی است، نه داوری درباره‌ی ارزشِ تو. — مارتین سلیگمن',
             'رشدِ واقعی همیشه در دلِ ناراحتی نطفه می‌بندد، نه در دلِ آسایش. — کارل یونگ'
         ];
-        const URGENT_MOTIVATIONS = [
+        const URGENT_MOTIVATIONS_DEFAULT = [
             'اکنون تنها لحظه‌ای است که واقعاً در اختیار داری؛ تمام تمرکزت را همین‌جا بگذار. — مارکوس اورلیوس',
             'اگر از چیزی بیرون از خودت رنج می‌بری، درد از خودِ آن چیز نیست، بلکه از داوریِ توست درباره‌اش؛ همین الان می‌توانی این داوری را تغییر دهی. — مارکوس اورلیوس',
             'نخست به خودت بگو چه می‌خواهی باشی، سپس آنچه باید انجام دهی را انجام بده. — اپیکتتوس',
@@ -7352,7 +7153,7 @@
             'افرادی که باور دارند می‌توانند بر زندگیِ خود کنترل داشته باشند، سالم‌تر، کاراتر و موفق‌ترند. — آلبرت بندورا',
             'کسی که آغاز کرده، نیمی از راه را رفته است. — هوراس'
         ];
-        const ACTIVE_MOTIVATIONS = [
+        const ACTIVE_MOTIVATIONS_DEFAULT = [
             'بهترین لحظه‌ها معمولاً وقتی رخ می‌دهند که ذهن یا بدنِ فرد، در تلاشی داوطلبانه برای انجام کاری دشوار و ارزشمند، تا مرزِ توانش کشیده می‌شود. — میهای چیک‌سنت‌میهای',
             'خلاقیت به شجاعتِ رهاکردنِ قطعیت‌ها نیاز دارد. — اریش فروم',
             'افرادی که به توانایی خود اطمینان دارند، کارهای دشوار را چالشی برای تسلط می‌بینند، نه تهدیدی برای فرار. — آلبرت بندورا',
@@ -7364,7 +7165,7 @@
             'هیچ کاری را از سرِ بی‌میلی یا اجبار انجام نده؛ هرچه انجام می‌دهی، با تمام دل انجامش بده. — مارکوس اورلیوس',
             'کیفیتِ کار، یک لحظه‌ی خاص نیست؛ نتیجه‌ی عادتی است که در همین لحظه‌ها ساخته می‌شود. — ویل دورانت (در تفسیرِ اندیشه‌ی ارسطو)'
         ];
-        const STREAK_MOTIVATIONS = [
+        const STREAK_MOTIVATIONS_DEFAULT = [
             'ما همان چیزی هستیم که پیوسته انجامش می‌دهیم؛ برتری یک کار نیست، یک عادت است. — ویل دورانت (در تفسیرِ اندیشه‌ی ارسطو)',
             'رشد را باید دوباره و دوباره انتخاب کرد؛ بر ترس هم باید بارها و بارها چیره شد. — آبراهام مزلو',
             'شکست همیشه اشتباه نیست؛ گاهی بهترین کاری است که در آن شرایط از دست برمی‌آمده. اشتباهِ واقعی، دست‌کشیدن از تلاش است. — بی. اف. اسکینر',
@@ -7376,7 +7177,7 @@
             'تا کی صبر می‌کنی که بهترین را از خودت بخواهی؟ — اپیکتتوس',
             'کنترلِ آگاهانه بر زندگی، مهارتی است که با تمرینِ روزانه ساخته می‌شود. — میهای چیک‌سنت‌میهای'
         ];
-        const NEUTRAL_MOTIVATIONS = [
+        const NEUTRAL_MOTIVATIONS_DEFAULT = [
             'دیگر وقتت را برای بحث دربارهٔ اینکه انسانِ خوب چگونه باید باشد تلف نکن؛ همین حالا آن انسان باش. — مارکوس اورلیوس',
             'برخی چیزها در اختیار مایند و برخی نیستند؛ آرامش از شناختنِ همین تفاوت آغاز می‌شود. — اپیکتتوس',
             'پارادوکسِ عجیب این است: وقتی خودم را همان‌طور که هستم بپذیرم، آن‌وقت است که می‌توانم تغییر کنم. — کارل راجرز',
@@ -7387,6 +7188,22 @@
             'بامدادان که از خواب برمی‌خیزی و بیدارشدن برایت دشوار است، به خود بگو: من برای انجامِ کارِ انسان از خواب برمی‌خیزم. — مارکوس اورلیوس',
             'کسی که برای آینده نمی‌اندیشد، به‌زودی گرفتارِ دغدغه‌های نزدیک می‌شود. — کنفوسیوس'
         ];
+
+        // اگر motivations-db.js کنارِ index.html باشد و درست بارگذاری شده باشد، برای هر دسته از
+        // مجموعه‌ی بزرگِ همان فایل (window.MOTIVATIONS_DB) استفاده می‌شود؛ در غیرِ این صورت (فایل گم شده،
+        // خالی، یا با ساختارِ نادرست)، بی‌سروصدا و بدونِ هیچ خطایی به مجموعه‌ی کوچکِ پیش‌فرضِ همین بالا
+        // برمی‌گردد. این تابع همان چیزی‌ست که باید به‌جایِ نامِ مستقیمِ آرایه‌ها به pickFromPool داده شود.
+        const MOTIVATION_POOL_DEFAULTS = {
+            late: LATE_MOTIVATIONS_DEFAULT,
+            urgent: URGENT_MOTIVATIONS_DEFAULT,
+            active: ACTIVE_MOTIVATIONS_DEFAULT,
+            streak: STREAK_MOTIVATIONS_DEFAULT,
+            neutral: NEUTRAL_MOTIVATIONS_DEFAULT
+        };
+        function getMotivationPool(category) {
+            const ext = window.MOTIVATIONS_DB && window.MOTIVATIONS_DB[category];
+            return (Array.isArray(ext) && ext.length > 0) ? ext : MOTIVATION_POOL_DEFAULTS[category];
+        }
 
         /* ==================== [رفع درخواست] تنوعِ بالا و بدونِ تکرار در طول روز ====================
          * قبلاً یک پیامِ ثابت بر اساس seedِ روزانه انتخاب می‌شد (یعنی در کل یک روز، فقط همان یک جمله دیده
@@ -7448,7 +7265,7 @@
             return pool[idx];
         }
         function pickLateMotivation(seed) {
-            return pickFromPool(LATE_MOTIVATIONS, 'late');
+            return pickFromPool(getMotivationPool('late'), 'late');
         }
         /* ==================== پایان [رفع درخواست] ==================== */
 
@@ -7470,7 +7287,9 @@
         }
 
         // نگاشتِ گزینه‌ی «تنوع انیمیشن» در تنظیمات به کلاس CSS متناظرش
-        const MOTIVATION_ANIM_CLASS_MAP = { default: 'motiv-anim-default', pulse: 'motiv-anim-pulse', glow: 'motiv-anim-glow', shake: 'motiv-anim-shake', none: 'motiv-anim-none' };
+        const MOTIVATION_ANIM_CLASS_MAP = { default: 'motiv-anim-default', pulse: 'motiv-anim-pulse', glow: 'motiv-anim-glow', shake: 'motiv-anim-shake', bounce: 'motiv-anim-bounce', wiggle: 'motiv-anim-wiggle', tada: 'motiv-anim-tada', rainbow: 'motiv-anim-rainbow', flip: 'motiv-anim-flip', slide: 'motiv-anim-slide', none: 'motiv-anim-none' };
+        // نگاشتِ گزینه‌ی «اندازه فونت متن انگیزشی» به مقدار em متناظرش (نسبت به فونتِ به‌ارث‌رسیده از body)
+        const MOTIVATION_FONT_SIZE_MAP = { small: '0.8em', normal: '0.95em', large: '1.15em', xlarge: '1.35em' };
 
         function renderStreakBadge() {
             const el = document.getElementById('streakBadgeText');
@@ -7496,9 +7315,10 @@
             // (کوچک/عادی/بزرگ/خیلی‌بزرگ که روی body اعمال می‌شود) هیچ واکنشی نشان نمی‌داد. حالا با واحدِ
             // نسبیِ em (که به فونتِ به‌ارث‌رسیده از body وابسته است) اندازه‌اش هم از همان تنظیمات پیروی می‌کند.
             const animClass = MOTIVATION_ANIM_CLASS_MAP[appSettings.motivationAnimation] || MOTIVATION_ANIM_CLASS_MAP.default;
-            const baseClass = 'motivation-badge ' + animClass + ' inline-flex text-[0.95em] font-medium px-3.5 py-2 rounded-2xl border items-center gap-1.5 text-center leading-relaxed max-w-full';
+            const baseClass = 'motivation-badge ' + animClass + ' inline-flex font-medium px-3.5 py-2 rounded-2xl border items-center gap-1.5 text-center leading-relaxed max-w-full';
 
-            // رنگ پس‌زمینه/متنِ سفارشی از تنظیمات (در صورت انتخاب) روی رنگ‌بندیِ خودکارِ هر حالت اعمال می‌شود
+            // رنگ پس‌زمینه/متنِ سفارشی و فونتِ سفارشیِ نوار انگیزشی (در صورت انتخاب در تنظیمات) روی
+            // رنگ‌بندی/فونتِ خودکارِ هر حالت اعمال می‌شود
             const applyCustomColors = () => {
                 if (appSettings.motivationBgColor && appSettings.motivationBgColor !== 'default') {
                     el.style.backgroundColor = appSettings.motivationBgColor;
@@ -7512,18 +7332,26 @@
                 } else {
                     el.style.color = '';
                 }
+                el.style.fontSize = MOTIVATION_FONT_SIZE_MAP[appSettings.motivationFontSize] || MOTIVATION_FONT_SIZE_MAP.normal;
+                const motivFont = appSettings.motivationFontFamily;
+                if (motivFont && motivFont !== 'inherit') {
+                    ensureFontLoaded(motivFont);
+                    el.style.fontFamily = `'${motivFont}', 'Vazirmatn', Tahoma, sans-serif`;
+                } else {
+                    el.style.fontFamily = '';
+                }
             };
 
             if (streakLate) {
                 el.className = baseClass + ' bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-100 dark:border-rose-900';
-                el.innerHTML = `<i class="fa-solid fa-heart-pulse shrink-0"></i> <span>${escapeHTML(pickFromPool(LATE_MOTIVATIONS, 'late'))}</span>`;
+                el.innerHTML = `<i class="fa-solid fa-heart-pulse shrink-0"></i> <span>${escapeHTML(pickFromPool(getMotivationPool('late'), 'late'))}</span>`;
                 applyCustomColors();
                 return;
             }
 
             if (activeProgress && activeProgress.percent >= 85 && activeProgress.percent < 100) {
                 el.className = baseClass + ' bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-100 dark:border-amber-900';
-                el.innerHTML = `<i class="fa-solid fa-bolt shrink-0"></i> <span>${escapeHTML(pickFromPool(URGENT_MOTIVATIONS, 'urgent'))}</span>`;
+                el.innerHTML = `<i class="fa-solid fa-bolt shrink-0"></i> <span>${escapeHTML(pickFromPool(getMotivationPool('urgent'), 'urgent'))}</span>`;
                 applyCustomColors();
                 return;
             }
@@ -7531,103 +7359,30 @@
             if (streak > 0) {
                 const isRecord = streak > 1 && streak === (appSettings.bestStreak || 0);
                 el.className = baseClass + ' bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 border-orange-100 dark:border-orange-900 font-bold';
-                el.innerHTML = `<i class="fa-solid fa-fire shrink-0"></i> <span>${formatNumber(streak)} کد متوالی به‌موقع${isRecord ? ' — رکورد شخصی 🏆' : ''} — ${escapeHTML(pickFromPool(STREAK_MOTIVATIONS, 'streak'))}</span>`;
+                el.innerHTML = `<i class="fa-solid fa-fire shrink-0"></i> <span>${formatNumber(streak)} کد متوالی به‌موقع${isRecord ? ' — رکورد شخصی 🏆' : ''} — ${escapeHTML(pickFromPool(getMotivationPool('streak'), 'streak'))}</span>`;
                 applyCustomColors();
                 return;
             }
 
             if (activeProgress) {
                 el.className = baseClass + ' bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900';
-                el.innerHTML = `<i class="fa-solid fa-seedling shrink-0"></i> <span>${escapeHTML(pickFromPool(ACTIVE_MOTIVATIONS, 'active'))}</span>`;
+                el.innerHTML = `<i class="fa-solid fa-seedling shrink-0"></i> <span>${escapeHTML(pickFromPool(getMotivationPool('active'), 'active'))}</span>`;
                 applyCustomColors();
                 return;
             }
 
             el.className = baseClass + ' bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border-slate-100 dark:border-slate-700';
-            el.innerHTML = `<i class="fa-solid fa-star shrink-0"></i> <span>${escapeHTML(pickFromPool(NEUTRAL_MOTIVATIONS, 'neutral'))}</span>`;
+            el.innerHTML = `<i class="fa-solid fa-star shrink-0"></i> <span>${escapeHTML(pickFromPool(getMotivationPool('neutral'), 'neutral'))}</span>`;
             applyCustomColors();
         }
 
-        // بررسی دوره‌ای پیشرفتِ رکورد جاری و ارسال اعلانِ پلکانی در چند نقطه‌ی کلیدی:
-        // ۲۵٪ / ۵۰٪ / ۷۵٪ / ۹۰٪ از زمان مجاز، و رسیدن/گذشتن از خودِ موعد تحویل (با یادآوری‌های مکرر هر ۲۰ دقیقه)
-        // دکمه‌های اعلان (از sw.js می‌رسند): پایان کار / بی‌صدا
-        function handleNotificationAction(action) {
-            const rec = getCurrentActiveRecord();
-            if (action === 'finish') {
-                if (!rec) { showFeedbackBanner('کار جاری‌ای برای ثبت پایان وجود ندارد.', 'warn'); return; }
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                finishRecordNow(rec.id);
-            } else if (action === 'snooze') {
-                if (rec) snoozeActiveNotifications();
-            } else if (action === 'progress') {
-                const card = document.getElementById('activeProgressCard');
-                if (card && !card.classList.contains('hidden')) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                else window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.addEventListener('message', e => {
-                if (e.data && e.data.type === 'NOTIF_ACTION') handleNotificationAction(e.data.action);
-            });
-        }
-
+        // بررسی دوره‌ای پیشرفتِ رکورد جاری: به‌روزرسانی نشان‌گر عددی روی آیکون برنامه و تازه‌سازی ویجت پیشرفت داخل صفحه
         function checkDeliveryProgressNotifications() {
             const rec = getCurrentActiveRecord();
             if (!rec) { updateAppBadge(0); return; }
             const progress = computeRecordProgress(rec);
             if (!progress) { updateAppBadge(0); return; }
-            loadNotifState(rec);
-            if (!rec.notifiedStages) rec.notifiedStages = [];
-
             updateAppBadge(progress.percent >= 100 ? 1 : 0);
-
-            if (!appSettings.notificationsEnabled) { renderActiveProgressWidget(); return; }
-
-            const muted = rec.mutedUntil && Date.now() < rec.mutedUntil;
-            let changed = false;
-
-            if (!muted && progress.percent < 100) {
-                // برای جلوگیری از سیل اعلان (مثلاً اگر برنامه مدتی بسته بوده)، فقط بالاترین مرحله‌ی
-                // تازه‌رسیده اعلان می‌شود؛ مراحلِ زیرِ آن هم به‌صورت خاموش «دیده‌شده» علامت می‌خورند.
-                const reached = PROGRESS_STAGES.filter(s => progress.percent >= s.threshold && !rec.notifiedStages.includes(s.threshold));
-                if (reached.length > 0) {
-                    const stage = reached[reached.length - 1];
-                    PROGRESS_STAGES.forEach(s => { if (s.threshold <= stage.threshold && !rec.notifiedStages.includes(s.threshold)) rec.notifiedStages.push(s.threshold); });
-                    const msg = `کد ${rec.itemCode || '-'} (${rec.itemTitle || '-'}) — ${formatNumber(progress.percent)}٪ از زمان مجاز گذشت. حدود ${formatMinutesDuration(progress.remainingMinutes)} تا موعد باقی مانده.`;
-                    notifyUser(`${stage.emoji} ${stage.title}`, msg, 'sewing-stage-' + stage.threshold + '-' + rec.id, stage.urgent);
-                    addLog(`اعلان ${formatNumber(stage.threshold)}٪ پیشرفت برای کد ${rec.itemCode || '-'} ارسال شد.`, stage.urgent ? 'warn' : 'info');
-                    playAlertSound(stage.urgent);
-                    if (stage.urgent) speakPersianAlert(`توجه، فرصت کد ${rec.itemCode || ''} رو به پایان است`);
-                    changed = true;
-                }
-            }
-
-            if (progress.percent >= 100 && !muted) {
-                if (!rec.notifiedFull) {
-                    const msg = `موعد تحویل کد ${rec.itemCode || '-'} (${rec.itemTitle || '-'}) رسید! برای جلوگیری از ثبت تاخیر، همین الان کار را تمام کن یا رکورد بعدی را ثبت بزن.`;
-                    notifyUser('⚠️ موعد تحویل رسید', msg, 'sewing-progress-100-' + rec.id, true);
-                    addLog(`اعلان پایان مهلت برای کد ${rec.itemCode || '-'} ارسال شد.`, 'warn');
-                    playAlertSound(true);
-                    speakPersianAlert(`موعد تحویل کد ${rec.itemCode || ''} رسید`);
-                    rec.notifiedFull = true;
-                    rec.lastOverdueNotifyAt = Date.now();
-                    changed = true;
-                } else {
-                    const last = rec.lastOverdueNotifyAt || 0;
-                    if (isWithinWorkingTimeNow() && -progress.remainingMinutes <= getStaleOverdueMinutes() && Date.now() - last >= OVERDUE_RENOTIFY_MINUTES * 60 * 1000) {
-                        const overdueBy = formatMinutesDuration(progress.remainingMinutes);
-                        const msg = `کد ${rec.itemCode || '-'} حدود ${overdueBy} از موعدش تاخیر دارد. لطفاً هر چه زودتر کار را تمام و ثبت کن.`;
-                        notifyUser('🚨 یادآوری تاخیر', msg, 'sewing-progress-overdue-' + rec.id, true);
-                        addLog(`یادآوری تاخیر برای کد ${rec.itemCode || '-'} ارسال شد.`, 'warn');
-                        playAlertSound(true);
-                        speakPersianAlert(`هنوز کد ${rec.itemCode || ''} تحویل داده نشده`);
-                        rec.lastOverdueNotifyAt = Date.now();
-                        changed = true;
-                    }
-                }
-            }
-
-            if (changed) saveNotifState(rec);
             renderActiveProgressWidget();
         }
 
@@ -7654,8 +7409,6 @@
             const isWarn = progress.percent >= 50 && progress.percent < 90;
             const statusHex = isOverdue ? '#e11d48' : (isUrgent ? '#f97316' : (isWarn ? '#f59e0b' : '#10b981'));
             const badgeColor = isOverdue ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300' : (isUrgent ? 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300' : (isWarn ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300' : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300'));
-            loadNotifState(rec);
-            const isMuted = rec.mutedUntil && Date.now() < rec.mutedUntil;
             const isStale = isOverdue && (-progress.remainingMinutes > getStaleOverdueMinutes());
 
             // به‌روزرسانی ویجت رینگ دایره‌ای: هر چه پیشرفت بیشتر، کمانِ رنگی کامل‌تر می‌شود
@@ -7672,7 +7425,7 @@
 
             if (badge) {
                 badge.className = `text-xs font-bold px-2.5 py-1 rounded-full ${badgeColor}`;
-                badge.innerText = `${formatNumber(Math.min(999, progress.percent))}٪${isMuted ? ' 🔇' : ''}`;
+                badge.innerText = `${formatNumber(Math.min(999, progress.percent))}٪`;
             }
 
             const remainingText = isOverdue
@@ -7684,15 +7437,14 @@
                     <div class="font-bold text-slate-700 dark:text-slate-200 truncate">کد ${escapeHTML(rec.itemCode) || '-'} — ${escapeHTML(rec.itemTitle) || '-'}</div>
                     <div class="mt-1">${remainingText}</div>
                     ${isOverdue ? `<div class="mt-1 text-[11px] leading-relaxed text-amber-700 dark:text-amber-300">${escapeHTML(pickLateMotivation(Number(rec.id) + todayMotivationSeed()))}</div>` : ''}
-                    ${isStale ? '<div class="text-[10px] text-amber-600 dark:text-amber-400 mt-1">این کار بیش از ۳ روز کاری معوق است و یادآوری‌ها متوقف شده؛ اگر تمام شده، «کار تمام شد» را بزنید.</div>' : ''}
+                    ${isStale ? '<div class="text-[10px] text-amber-600 dark:text-amber-400 mt-1">این کار بیش از ۳ روز کاری معوق است؛ اگر تمام شده، «کار تمام شد» را بزنید.</div>' : ''}
                     <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
                     <button type="button" data-action="finish-active" data-id="${Number(rec.id)}" class="no-print mt-2 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition-colors"><i class="fa-solid fa-circle-check"></i> کار تمام شد</button>
-                    ${appSettings.notificationsEnabled ? `<button type="button" onclick="snoozeActiveNotifications()" class="no-print mt-1.5 text-[10px] text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors" title="بی‌صدا کردن اعلان‌های این کد به مدت ۳۰ دقیقه">${isMuted ? '<i class="fa-solid fa-bell-slash"></i> بی‌صدا تا ' + formatNumber(new Date(rec.mutedUntil).getHours()) + ':' + formatDateDigits(String(new Date(rec.mutedUntil).getMinutes()).padStart(2,'0')) : '<i class="fa-solid fa-bell-slash"></i> بی‌صدا کردن ۳۰ دقیقه'}</button>` : ''}
                 </div>
             `;
             updateAttentionIndicators();
         }
-        /* ==================== پایان اعلان‌های هوشمند پیشرفت کار ==================== */
+        /* ==================== پایان ویجت پیشرفت کار جاری ==================== */
 
         let searchDebounceTimer = null;
         function debouncedRenderDashboard() {
@@ -8182,9 +7934,8 @@
         initStorageFolderConnection();
         handleStartupShortcutAction();
 
-        // بررسی دوره‌ای پیشرفت کار جاری برای اعلان‌های هوشمند (هر ۱ دقیقه یک‌بار)،
+        // بررسی دوره‌ای پیشرفت کار جاری (هر ۱ دقیقه یک‌بار)،
         // و تازه‌سازیِ سریع‌ترِ خودِ نوار پیشرفت (هر ۲۰ ثانیه) برای حس «زنده» بودن شمارش
-        updateNotificationPermissionStatusUI();
         updatePremiumStatusUI();
         recomputeAppStreak();
         renderStreakBadge();
@@ -8208,7 +7959,6 @@
             }
         }, 5 * 60 * 1000);
     </script>
-    <script src="native-notify.js"></script>
     <script src="premium.js"></script>
 </body>
 </html>

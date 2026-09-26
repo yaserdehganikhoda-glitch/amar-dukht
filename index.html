@@ -257,6 +257,40 @@
         .dark .jdp-day-btn:hover {
             background-color: rgba(99, 102, 241, 0.15);
         }
+
+        /* ============ بهینه‌سازی سرعت: کاهش سنگینی transition روی فیلدهای فرم ============ */
+        /* transition-all باعث می‌شود مرورگر تغییرات همه‌ی خواص CSS را در هر ضربه کلید زیر نظر بگیرد؛
+           محدود کردنش فقط به border و box-shadow (که واقعاً استفاده می‌شوند) تایپ را روان‌تر می‌کند. */
+        input.transition-all, select.transition-all, textarea.transition-all {
+            transition-property: border-color, box-shadow, background-color !important;
+        }
+
+        /* ============ بهینه‌سازی سرعت: توقف انیمیشن‌های پس‌زمینه هنگام باز بودن مودال تنظیمات ============ */
+        /* وقتی مودال تنظیمات (با backdrop-blur) باز است، انیمیشن‌های بی‌پایانِ پشتِ آن (نوار انگیزشی،
+           چشمک وضعیت آنلاین، نوار پیشرفت) هر فریم مجبور به بازسازی لایه‌ی تارشده می‌شوند؛ متوقف کردنشان
+           در این حالت، تایپ داخل فیلدهای تنظیمات را به‌شکل محسوسی سریع‌تر می‌کند. */
+        body.modal-anim-paused .motivation-badge,
+        body.modal-anim-paused .motivation-badge i,
+        body.modal-anim-paused .animate-pulse,
+        body.modal-anim-paused #incomeGoalBar,
+        body.modal-anim-paused #progressRingArc,
+        body.modal-anim-paused #activeProgressCard * {
+            animation: none !important;
+            transition: none !important;
+        }
+
+        /* ============ تب‌بندیِ اصلیِ صفحه (فرم ثبت / لیست کارکردها) ============ */
+        .main-tab-btn {
+            color: rgb(100 116 139);
+        }
+        .dark .main-tab-btn {
+            color: rgb(148 163 184);
+        }
+        .main-tab-btn.main-tab-active {
+            background-color: rgb(79 70 229);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+        }
     </style>
     <style>
         /* نمای کارتی واکنش‌گرا برای جدول رکوردها: زیر ۶۴۰px جدول جای خود را به کارت‌ها می‌دهد */
@@ -272,12 +306,101 @@
         #recordsTableCard[data-view="card"] #recordsCardView { display: block !important; }
         #recordsTableCard[data-view="card"] .overflow-x-auto { display: none !important; }
     </style>
+    <style>
+        /* ============================================================
+           سیستم طراحیِ حرفه‌ایِ نسخه‌ی جدید: توکن‌های رنگ/سایه/شعاع + هدر،
+           منو و ناوبری بازطراحی‌شده. تمام id ها و رویدادهای onclick قبلی
+           دست‌نخورده مانده‌اند؛ این لایه فقط ظاهر را ارتقا می‌دهد.
+           ============================================================ */
+        :root {
+            --brand-50: #eef2ff;
+            --brand-100: #e0e7ff;
+            --brand-500: #6366f1;
+            --brand-600: #4f46e5;
+            --brand-700: #4338ca;
+            --brand-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 55%, #4338ca 100%);
+            --surface-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 10px 28px -14px rgba(15,23,42,0.14);
+            --surface-shadow-hover: 0 4px 10px rgba(15,23,42,0.06), 0 18px 36px -16px rgba(79,70,229,0.22);
+        }
+        .dark {
+            --surface-shadow: 0 1px 2px rgba(0,0,0,0.35), 0 10px 28px -14px rgba(0,0,0,0.55);
+            --surface-shadow-hover: 0 4px 10px rgba(0,0,0,0.4), 0 18px 36px -16px rgba(79,70,229,0.32);
+        }
+        #appBody {
+            background-image:
+                radial-gradient(circle at 10% -5%, rgba(99,102,241,0.08), transparent 40%),
+                radial-gradient(circle at 100% 10%, rgba(16,185,129,0.05), transparent 38%);
+            background-attachment: fixed;
+        }
+        .dark #appBody {
+            background-image:
+                radial-gradient(circle at 10% -5%, rgba(99,102,241,0.12), transparent 40%),
+                radial-gradient(circle at 100% 10%, rgba(16,185,129,0.07), transparent 38%);
+        }
+        /* کارت‌های اصلی صفحه: سایه‌ی یکدست و نرم‌ترِ حرفه‌ای به‌جای shadow-sm پراکنده */
+        .pro-card { box-shadow: var(--surface-shadow) !important; transition: box-shadow .25s ease, transform .2s ease; }
+        .pro-card:hover { box-shadow: var(--surface-shadow-hover) !important; }
+
+        /* نوار برند بالای هدر */
+        #appHeaderBrandBar {
+            background: var(--brand-gradient);
+            position: relative;
+        }
+        #appHeaderBrandBar::before {
+            content: '';
+            position: absolute; inset: 0;
+            border-radius: 1rem 1rem 0 0;
+            background-image: radial-gradient(circle at 88% -20%, rgba(255,255,255,0.22), transparent 45%);
+            pointer-events: none;
+        }
+        #appHeaderLogoRing {
+            background: rgba(255,255,255,0.16);
+            backdrop-filter: blur(6px);
+        }
+
+        /* دکمه‌ی محرکِ منوی ابزار */
+        #toolsMenuTrigger { background: var(--brand-gradient); box-shadow: 0 6px 16px -6px rgba(79,70,229,0.55); }
+        #toolsMenuTrigger:hover { filter: brightness(1.06); }
+
+        /* نوار ناوبری پایین: شیشه‌ای و شناور */
+        #bottomNavBar {
+            background-color: rgba(255,255,255,0.82) !important;
+            backdrop-filter: blur(16px) saturate(170%);
+            -webkit-backdrop-filter: blur(16px) saturate(170%);
+        }
+        .dark #bottomNavBar { background-color: rgba(2,6,23,0.82) !important; }
+        #bottomNavBar .bottom-nav-item { position: relative; }
+        #bottomNavBar .bottom-nav-item.text-indigo-600::after,
+        #bottomNavBar .bottom-nav-item.dark\:text-indigo-400::after {
+            content: '';
+            position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 4px; border-radius: 999px; background: currentColor;
+        }
+
+        /* مدال‌ها: سایه‌ی عمیق‌تر و حرفه‌ای‌تر به‌جای shadow-2xl خام */
+        .pro-modal { box-shadow: 0 24px 60px -16px rgba(15,23,42,0.35), 0 10px 28px -10px rgba(79,70,229,0.20) !important; }
+        .dark .pro-modal { box-shadow: 0 24px 60px -16px rgba(0,0,0,0.6), 0 10px 28px -10px rgba(79,70,229,0.28) !important; }
+
+        /* هالوی فوکوس یکدست برای فیلدها در سراسر برنامه */
+        input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+        }
+
+        /* سربرگ جدول رکوردها: کمی برجسته‌تر و خواناتر */
+        #recordsTableCard table thead th {
+            background: linear-gradient(180deg, rgba(99,102,241,0.06), rgba(99,102,241,0.02));
+            font-weight: 700;
+        }
+        .dark #recordsTableCard table thead th {
+            background: linear-gradient(180deg, rgba(99,102,241,0.10), rgba(99,102,241,0.03));
+        }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen pb-28 font-normal-size" id="appBody">
 
     <!-- صفحه قفل ورود به برنامه -->
     <div id="pinLockScreen" class="hidden fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 w-full max-w-sm text-center border border-slate-300 dark:border-slate-600">
+        <div class="bg-white dark:bg-slate-900 pro-modal rounded-2xl shadow-xl p-8 w-full max-w-sm text-center border border-slate-300 dark:border-slate-600">
             <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-4">
                 <i class="fa-solid fa-lock text-2xl"></i>
             </div>
@@ -291,28 +414,28 @@
         </div>
     </div>
 
-    <!-- نوار ناوبری پایین صفحه -->
-    <div id="bottomNavBar" class="no-print fixed bottom-0 inset-x-0 z-30 bg-white dark:bg-slate-900 border-t border-slate-300 dark:border-slate-600 shadow-[0_-2px_10px_rgba(0,0,0,0.04)]">
+    <!-- نوار ناوبری پایین صفحه: نسخه‌ی شیشه‌ای شناور -->
+    <div id="bottomNavBar" class="no-print fixed bottom-0 inset-x-0 z-30 border-t border-slate-200/70 dark:border-slate-700/60">
         <div class="max-w-5xl mx-auto px-4 flex items-end justify-around pt-2" style="padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));">
-            <button type="button" onclick="bottomNavGoHome()" class="flex flex-col items-center gap-1 text-indigo-600 dark:text-indigo-400 py-1 px-2">
+            <button type="button" onclick="bottomNavGoHome()" class="bottom-nav-item flex flex-col items-center gap-1 text-indigo-600 dark:text-indigo-400 py-1 px-2">
                 <i class="fa-solid fa-house text-base"></i>
                 <span class="text-[10px] font-medium">خانه</span>
             </button>
-            <button type="button" onclick="bottomNavGoNotes()" class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
+            <button type="button" onclick="bottomNavGoNotes()" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
                 <i class="fa-solid fa-note-sticky text-base"></i>
                 <span class="text-[10px] font-medium">یادداشت‌ها</span>
             </button>
-            <button type="button" onclick="bottomNavGoAddRecord()" class="flex flex-col items-center -mt-5">
-                <span class="w-12 h-12 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center shadow-md transition-colors">
-                    <i class="fa-solid fa-plus text-lg"></i>
+            <button type="button" onclick="bottomNavGoAddRecord()" class="flex flex-col items-center -mt-6">
+                <span class="w-13 h-13 rounded-full flex items-center justify-center transition-transform active:scale-95" style="width:3.25rem;height:3.25rem;background:var(--brand-gradient);box-shadow:0 8px 18px -6px rgba(79,70,229,0.55);">
+                    <i class="fa-solid fa-plus text-lg text-white"></i>
                 </span>
                 <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 mt-1">ثبت</span>
             </button>
-            <button type="button" onclick="bottomNavGoRecords()" class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
+            <button type="button" onclick="bottomNavGoRecords()" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
                 <i class="fa-solid fa-table-list text-base"></i>
                 <span class="text-[10px] font-medium">رکوردها</span>
             </button>
-            <button type="button" onclick="bottomNavOpenMore(event)" class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
+            <button type="button" onclick="bottomNavOpenMore(event)" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
                 <i class="fa-solid fa-ellipsis text-base"></i>
                 <span class="text-[10px] font-medium">بیشتر</span>
             </button>
@@ -321,13 +444,14 @@
 
     <div class="max-w-5xl mx-auto px-4 pt-6">
 
-        <!-- هدر اصلی برنامه -->
-        <header class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm mb-6 border border-slate-300 dark:border-slate-600 text-center relative transition-all">
-            
+        <!-- هدر اصلی برنامه: نوار برندِ گرادینتی + بخش اطلاعات روز -->
+        <header class="pro-card bg-white dark:bg-slate-900 rounded-2xl mb-6 border border-slate-300 dark:border-slate-600 relative transition-all">
+        <div id="appHeaderBrandBar" class="px-6 pt-6 pb-8 text-center relative rounded-t-2xl">
+
             <!-- منوی ابزار و عملیات در گوشه بالا سمت چپ -->
-            <div class="absolute top-6 left-6 z-25">
+            <div class="absolute top-5 left-5 z-25">
                 <div class="relative inline-block text-right">
-                    <button onclick="toggleToolsDropdown(event)" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all shadow-sm hover:shadow">
+                    <button id="toolsMenuTrigger" onclick="toggleToolsDropdown(event)" class="text-white text-xs px-4 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all">
                         <i class="fa-solid fa-bars-staggered"></i>
                         <span class="hidden sm:inline">منوی ابزار</span>
                         <i class="fa-solid fa-chevron-down text-[10px] mr-1"></i>
@@ -490,25 +614,28 @@
                 <input type="file" id="importFile" accept=".json" class="hidden" onchange="importSmartBackup(event)">
             </div>
 
-            <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-3 shadow-inner overflow-hidden">
-                <img src="icon-192.png" alt="لوگوی سامانه" class="w-10 h-10 object-contain rounded-lg">
+            <div id="appHeaderLogoRing" class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-3 overflow-hidden relative z-10">
+                <img src="icon-192.png" alt="لوگوی سامانه" class="w-11 h-11 object-contain rounded-lg">
             </div>
-            <h1 id="mainAppTitle" class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h1 id="mainAppTitle" class="text-2xl md:text-3xl font-bold text-white tracking-tight relative z-10">
                 سامانه آمار دوخت لباس
             </h1>
-            <p id="mainAppSubtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-2 font-normal">سیستم هوشمند آمار و مدیریت دوخت</p>
-            <p id="ownerInfoLine" class="hidden text-xs text-slate-400 dark:text-slate-500 mt-1"></p>
-            <div id="todayDateBar" class="mt-3"></div>
+            <p id="mainAppSubtitle" class="text-sm text-indigo-100 mt-2 font-normal relative z-10">سیستم هوشمند آمار و مدیریت دوخت</p>
+            <p id="ownerInfoLine" class="hidden text-xs text-indigo-100/80 mt-1 relative z-10"></p>
+        </div>
+        <div class="px-6 py-5 text-center">
+            <div id="todayDateBar"></div>
             <div class="mt-3 flex justify-center items-center gap-2 flex-wrap">
                 <span id="streakBadgeText" class="hidden"></span>
                 <button type="button" id="streakRefreshBtn" onclick="refreshStreak()" title="به‌روزرسانی شمارنده" class="no-print w-7 h-7 shrink-0 rounded-full text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/40 flex items-center justify-center transition-colors"><i id="streakRefreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
             </div>
-            
+
             <div id="syncStatus" style="display:none" class="text-xs text-emerald-600 dark:text-emerald-400 mt-4 font-medium inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-900">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 ذخیره‌سازی امن در حافظه مرورگر فعال است
             </div>
             <div id="folderStatusLine" class="hidden mt-2"></div>
+        </div>
         </header>
 
         <!-- کادر نمایش لاگ‌ها -->
@@ -530,7 +657,7 @@
 
         <!-- کارت آمار کلیدی (ارزش کل کارکرد) -->
         <div class="grid grid-cols-1 mb-6">
-            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-300 dark:border-slate-600 flex flex-wrap items-center justify-between transition-all hover:shadow-md">
+            <div class="bg-white dark:bg-slate-900 p-6 pro-card rounded-2xl shadow-sm border border-slate-300 dark:border-slate-600 flex flex-wrap items-center justify-between transition-all hover:shadow-md">
                 <div>
                     <div class="flex items-center gap-1.5">
                         <p id="kpiPriceLabel" class="text-xs text-slate-400 dark:text-slate-400 font-medium">ارزش کل کارکرد (تومان)</p>
@@ -573,7 +700,7 @@
         </div>
 
         <!-- کارت پیشرفت کار جاری و اعلان‌های هوشمند تحویل -->
-        <div id="activeProgressCard" class="hidden bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-300 dark:border-slate-600 mb-6 transition-all">
+        <div id="activeProgressCard" class="hidden bg-white dark:bg-slate-900 p-5 pro-card rounded-2xl shadow-sm border border-slate-300 dark:border-slate-600 mb-6 transition-all">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
                     <i class="fa-solid fa-stopwatch text-indigo-600 dark:text-indigo-400"></i>
@@ -596,8 +723,19 @@
             </div>
         </div>
 
+        <!-- تب‌بندیِ اصلیِ صفحه: فرم ثبت / لیست کارکردها، برای کوتاه‌تر شدن درازای صفحه -->
+        <div class="mb-4 bg-white dark:bg-slate-900 pro-card rounded-2xl border border-slate-300 dark:border-slate-600 p-1.5 flex gap-1.5 sticky top-2 z-20">
+            <button type="button" onclick="switchMainTab('entry')" data-main-tab="entry" class="main-tab-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-colors">
+                <i class="fa-solid fa-circle-plus"></i> ثبت رکورد جدید
+            </button>
+            <button type="button" onclick="switchMainTab('list')" data-main-tab="list" class="main-tab-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-colors">
+                <i class="fa-solid fa-table"></i> لیست کارکردها
+            </button>
+        </div>
+
+        <div id="mainTabPanel-entry">
         <!-- فرم ثبت و ویرایش -->
-        <div id="recordFormCard" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6 border border-slate-300 dark:border-slate-600 mb-6 transition-all">
+        <div id="recordFormCard" class="bg-white dark:bg-slate-900 pro-card rounded-2xl shadow-sm p-6 border border-slate-300 dark:border-slate-600 mb-6 transition-all">
             <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-300 dark:border-slate-600">
                 <h2 id="formTitle" class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2.5 tracking-tight">
                     <i class="fa-solid fa-circle-plus text-indigo-600 dark:text-indigo-400 text-lg"></i>
@@ -764,7 +902,7 @@
         </div>
 
         <!-- بخش یادداشت‌های خاص روزانه -->
-        <div id="dailyNotesSection" class="hidden bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-6 border border-slate-300 dark:border-slate-600 mb-6 transition-all">
+        <div id="dailyNotesSection" class="hidden bg-white dark:bg-slate-900 pro-card rounded-2xl shadow-sm p-6 border border-slate-300 dark:border-slate-600 mb-6 transition-all">
             <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-300 dark:border-slate-600">
                 <h2 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2.5 tracking-tight">
                     <i class="fa-solid fa-note-sticky text-amber-500 text-lg"></i>
@@ -814,9 +952,11 @@
                 </div>
             </div>
         </div>
+        </div><!-- پایان mainTabPanel-entry -->
 
+        <div id="mainTabPanel-list" class="hidden">
         <!-- جدول رکوردها -->
-        <div id="recordsTableCard" class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-300 dark:border-slate-600 overflow-hidden transition-all">
+        <div id="recordsTableCard" class="bg-white dark:bg-slate-900 pro-card rounded-2xl shadow-sm border border-slate-300 dark:border-slate-600 overflow-hidden transition-all">
             <div class="p-4 border-b border-slate-300 dark:border-slate-600 flex flex-col sm:flex-row justify-between items-center gap-3 bg-slate-50/50 dark:bg-slate-900/50">
                 <div class="flex items-center gap-3 w-full sm:w-auto">
                     <h3 class="font-bold text-slate-700 dark:text-slate-200 text-sm flex items-center gap-2 whitespace-nowrap">
@@ -950,6 +1090,7 @@
                 </div>
             </div>
         </div>
+        </div><!-- پایان mainTabPanel-list -->
 
         <!-- فوتر -->
         <footer class="mt-8 mb-4 text-center text-xs text-slate-400 dark:text-slate-500 border-t border-slate-200/60 dark:border-slate-800/60 pt-4 transition-all">
@@ -981,7 +1122,7 @@
 
     <!-- صفحه خروج از برنامه؛ فقط از طریق دکمه «خروج از برنامه» فعال می‌شود -->
     <div id="exitAppScreen" class="hidden fixed inset-0 bg-slate-950 z-[100000] flex items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-4 text-center">
+        <div class="bg-white dark:bg-slate-900 pro-modal rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-4 text-center">
             <div class="inline-flex items-center justify-center w-14 h-14 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-2xl mb-1 shadow-inner">
                 <i class="fa-solid fa-circle-check text-xl"></i>
             </div>
@@ -993,7 +1134,7 @@
 
     <!-- مدال سفارشی تایید -->
     <div id="customConfirmModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-4 text-center transition-all">
+        <div class="bg-white dark:bg-slate-900 pro-modal rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-4 text-center transition-all">
             <div id="customConfirmIcon" class="inline-flex items-center justify-center w-12 h-12 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-2xl mb-1 shadow-inner">
                 <i class="fa-solid fa-circle-question text-xl"></i>
             </div>
@@ -1008,7 +1149,7 @@
 
     <!-- مدال جستجوی پیشرفته در کل داده‌ها -->
     <div id="advancedSearchModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-5 my-8 transition-all">
+        <div class="bg-white dark:bg-slate-900 pro-modal rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-5 my-8 transition-all">
             <div class="flex items-center justify-between pb-4 border-b border-slate-300 dark:border-slate-600">
                 <h2 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                     <i class="fa-solid fa-filter text-indigo-600 dark:text-indigo-400"></i>
@@ -1092,7 +1233,7 @@
 
     <!-- مدال سطل بازیافت (رکوردها/یادداشت‌های اخیراً حذف‌شده، تا ۳۰ روز قابل بازگردانی) -->
     <div id="trashBinModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto no-print">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-4 my-8 transition-all">
+        <div class="bg-white dark:bg-slate-900 pro-modal rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-4 my-8 transition-all">
             <div class="flex items-center justify-between pb-4 border-b border-slate-300 dark:border-slate-600">
                 <h2 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                     <i class="fa-solid fa-trash-can-arrow-up text-rose-600 dark:text-rose-400"></i>
@@ -1113,7 +1254,7 @@
 
     <!-- مدال بررسی سلامت داده -->
     <div id="dataHealthModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto no-print">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-4 my-8 transition-all">
+        <div class="bg-white dark:bg-slate-900 pro-modal rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-4 my-8 transition-all">
             <div class="flex items-center justify-between pb-4 border-b border-slate-300 dark:border-slate-600">
                 <h2 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                     <i class="fa-solid fa-stethoscope text-indigo-600 dark:text-indigo-400"></i>
@@ -1133,7 +1274,7 @@
 
     <!-- مدال تنظیمات و ظاهر برنامه -->
     <div id="settingsModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-xl w-full shadow-2xl border border-slate-300 dark:border-slate-600 my-8 transition-all overflow-hidden">
+        <div class="bg-white dark:bg-slate-900 pro-modal rounded-2xl max-w-xl w-full shadow-2xl border border-slate-300 dark:border-slate-600 my-8 transition-all overflow-hidden">
             <div class="bg-gradient-to-l from-purple-700 to-indigo-700 px-6 py-5 text-white relative">
                 <button onclick="closeSettingsModal()" class="absolute top-4 left-4 text-white/80 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors">
                     <i class="fa-solid fa-xmark text-lg"></i>
@@ -1669,7 +1810,7 @@
 
     <!-- مدال نمای کلی -->
     <div id="overviewModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div id="printableOverviewContent" class="bg-white dark:bg-slate-900 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-8 border border-slate-300 dark:border-slate-600 max-h-[90vh] overflow-y-auto transition-all flex flex-col justify-between">
+        <div id="printableOverviewContent" class="bg-white dark:bg-slate-900 pro-modal rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-8 border border-slate-300 dark:border-slate-600 max-h-[90vh] overflow-y-auto transition-all flex flex-col justify-between">
             <div>
                 <div class="flex items-center justify-between pb-4 border-b border-slate-300 dark:border-slate-600">
                     <div>
@@ -4111,11 +4252,22 @@
             closeToolsDropdown();
         });
 
+        // جابه‌جایی بین دو تبِ اصلیِ صفحه («ثبت رکورد جدید» و «لیست کارکردها») برای کوتاه‌تر شدن درازای صفحه
+        function switchMainTab(tab) {
+            document.getElementById('mainTabPanel-entry').classList.toggle('hidden', tab !== 'entry');
+            document.getElementById('mainTabPanel-list').classList.toggle('hidden', tab !== 'list');
+            document.querySelectorAll('.main-tab-btn').forEach(btn => {
+                btn.classList.toggle('main-tab-active', btn.dataset.mainTab === tab);
+            });
+            try { localStorage.setItem('sewing_main_tab_v1', tab); } catch (e) { /* بی‌اهمیت */ }
+        }
+
         function bottomNavGoHome() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function bottomNavGoNotes() {
+            switchMainTab('entry');
             const section = document.getElementById('dailyNotesSection');
             if (!section) return;
             if (section.classList.contains('hidden')) {
@@ -4126,6 +4278,7 @@
         }
 
         function bottomNavGoAddRecord() {
+            switchMainTab('entry');
             const card = document.getElementById('recordFormCard');
             if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
             setTimeout(() => {
@@ -4135,6 +4288,7 @@
         }
 
         function bottomNavGoRecords() {
+            switchMainTab('list');
             const card = document.getElementById('recordsTableCard');
             if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -4478,12 +4632,20 @@
             };
         }
 
+        // [بهینه‌سازی سرعت] اجرای واقعی روی requestAnimationFrame موکول می‌شود تا اگر کاربر سریع تایپ کند
+        // (یا چند فیلد پشت‌سرهم رویدادِ input بدهند)، این محاسبه فقط یک‌بار در هر فریم انجام شود، نه به ازای هر ضربه‌کلید.
+        let _shiftPreviewScheduled = false;
         function updateShiftPreview() {
-            const el = document.getElementById('shiftTotalPreview');
-            if (!el) return;
-            const v = collectShiftFormValues();
-            const c = buildShiftConfig(v.start, v.end, v.pairs);
-            el.innerText = c.minutes > 0 ? `${formatMinutesDuration(c.minutes)} (${formatNumber(c.minutes)} دقیقه)` : 'نامعتبر';
+            if (_shiftPreviewScheduled) return;
+            _shiftPreviewScheduled = true;
+            requestAnimationFrame(() => {
+                _shiftPreviewScheduled = false;
+                const el = document.getElementById('shiftTotalPreview');
+                if (!el) return;
+                const v = collectShiftFormValues();
+                const c = buildShiftConfig(v.start, v.end, v.pairs);
+                el.innerText = c.minutes > 0 ? `${formatMinutesDuration(c.minutes)} (${formatNumber(c.minutes)} دقیقه)` : 'نامعتبر';
+            });
         }
 
         function fillWorkSettingsForm(shiftStart, shiftEnd, shiftBreaks, labels, workdayMinutes) {
@@ -5316,29 +5478,36 @@
         }
 
         // پیش‌نمایش زنده‌ی کارت پروفایل در هدر مدال تنظیمات، هم‌زمان با تایپ کاربر
+        // [بهینه‌سازی سرعت] مثل updateShiftPreview، اجرا با requestAnimationFrame یک‌بار در هر فریم دسته‌بندی می‌شود.
+        let _profilePreviewScheduled = false;
         function updateSettingsProfilePreview() {
-            const nameEl = document.getElementById('settingsProfilePreviewName');
-            const subEl = document.getElementById('settingsProfilePreviewSub');
-            const imgEl = document.getElementById('settingsProfilePreviewImg');
-            const iconEl = document.getElementById('settingsProfilePreviewIcon');
-            if (!nameEl || !subEl) return;
+            if (_profilePreviewScheduled) return;
+            _profilePreviewScheduled = true;
+            requestAnimationFrame(() => {
+                _profilePreviewScheduled = false;
+                const nameEl = document.getElementById('settingsProfilePreviewName');
+                const subEl = document.getElementById('settingsProfilePreviewSub');
+                const imgEl = document.getElementById('settingsProfilePreviewImg');
+                const iconEl = document.getElementById('settingsProfilePreviewIcon');
+                if (!nameEl || !subEl) return;
 
-            const nameInput = document.getElementById('settingOwnerName');
-            const shopInput = document.getElementById('settingShopName');
-            const ownerName = nameInput ? nameInput.value.trim() : (appSettings.ownerName || '');
-            const shopName = shopInput ? shopInput.value.trim() : (appSettings.shopName || '');
+                const nameInput = document.getElementById('settingOwnerName');
+                const shopInput = document.getElementById('settingShopName');
+                const ownerName = nameInput ? nameInput.value.trim() : (appSettings.ownerName || '');
+                const shopName = shopInput ? shopInput.value.trim() : (appSettings.shopName || '');
 
-            nameEl.innerText = ownerName || 'کاربر مهمان';
-            subEl.innerText = shopName || 'سامانه آمار دوخت لباس';
+                nameEl.innerText = ownerName || 'کاربر مهمان';
+                subEl.innerText = shopName || 'سامانه آمار دوخت لباس';
 
-            if (currentOwnerPhotoData) {
-                imgEl.src = currentOwnerPhotoData;
-                imgEl.classList.remove('hidden');
-                iconEl.classList.add('hidden');
-            } else {
-                imgEl.classList.add('hidden');
-                iconEl.classList.remove('hidden');
-            }
+                if (currentOwnerPhotoData) {
+                    imgEl.src = currentOwnerPhotoData;
+                    imgEl.classList.remove('hidden');
+                    iconEl.classList.add('hidden');
+                } else {
+                    imgEl.classList.add('hidden');
+                    iconEl.classList.remove('hidden');
+                }
+            });
         }
 
         // جابه‌جایی بین تب‌های مدال تنظیمات (پروفایل، ظاهری، امنیت، اعلان‌ها، حافظه)
@@ -5864,6 +6033,7 @@
             document.getElementById('cancelEditBtn').classList.remove('flex');
             document.getElementById('cancelEditBtn').classList.remove('hidden');
             document.getElementById('cancelEditBtn').classList.add('flex');
+            switchMainTab('entry');
             document.getElementById('recordFormCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
             setTimeout(() => {
                 const firstField = document.getElementById('itemCode');
@@ -7936,6 +8106,30 @@
 
         // بررسی دوره‌ای پیشرفت کار جاری (هر ۱ دقیقه یک‌بار)،
         // و تازه‌سازیِ سریع‌ترِ خودِ نوار پیشرفت (هر ۲۰ ثانیه) برای حس «زنده» بودن شمارش
+        // [بهینه‌سازی سرعت] هر مودالِ تمام‌صفحه (با پس‌زمینه‌ی backdrop-blur) که باز است، انیمیشن‌های بی‌پایانِ
+        // پشتِ خودش (نوار انگیزشی، چشمک وضعیت، نوار پیشرفت) را متوقف می‌کند تا مرورگر مجبور به بازسازی
+        // مکرر لایه‌ی تارشده در هر فریم نباشد؛ این باعث می‌شود تایپ داخل فیلدهای هر مودال (به‌خصوص تنظیمات)
+        // به‌شکل محسوسی روان‌تر شود. با MutationObserver پیاده شده تا مستقل از تابعِ باز/بسته‌کردنِ هر مودال کار کند.
+        (function () {
+            const overlaySelector = '#settingsModal, #trashBinModal, #dataHealthModal, #advancedSearchModal, #overviewModal, #customConfirmModal';
+            const overlays = Array.from(document.querySelectorAll(overlaySelector));
+            function syncModalAnimPause() {
+                const anyOpen = overlays.some(el => !el.classList.contains('hidden'));
+                document.body.classList.toggle('modal-anim-paused', anyOpen);
+            }
+            overlays.forEach(el => {
+                new MutationObserver(syncModalAnimPause).observe(el, { attributes: true, attributeFilter: ['class'] });
+            });
+            syncModalAnimPause();
+        })();
+
+        // بازیابی آخرین تبِ انتخابیِ کاربر (ثبت رکورد جدید / لیست کارکردها)، پیش‌فرض: ثبت رکورد جدید
+        (function () {
+            let savedTab = 'entry';
+            try { savedTab = localStorage.getItem('sewing_main_tab_v1') || 'entry'; } catch (e) { /* بی‌اهمیت */ }
+            switchMainTab(savedTab === 'list' ? 'list' : 'entry');
+        })();
+
         updatePremiumStatusUI();
         recomputeAppStreak();
         renderStreakBadge();

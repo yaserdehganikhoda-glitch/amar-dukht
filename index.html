@@ -279,6 +279,17 @@
             transition: none !important;
         }
 
+        /* ============ بهینه‌سازی سرعت: روان‌سازی اسکرول داخل تب‌ها و منوها ============ */
+        /* بدون این خواص، اسکرول داخل نواحیِ overflow-auto (تب‌های تنظیمات، منوی ابزار، جدول کارکردها،
+           لیست‌های داخل مودال‌ها) روی موبایل کند و پرش‌دار حس می‌شود؛ overflow-scrolling:touch مومنتوم
+           اینرسی می‌دهد، overscroll-behavior از سرریز اسکرول به صفحه‌ی پشت جلوگیری می‌کند و لایه‌ی
+           کامپوزیت جدا (translateZ) اسکرول را از بازسازیِ پس‌زمینه‌ی تارشده (backdrop-blur) مودال‌ها مستقل می‌کند. */
+        .overflow-y-auto, .overflow-x-auto {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            transform: translateZ(0);
+        }
+
         /* ============ تب‌بندیِ اصلیِ صفحه (فرم ثبت / لیست کارکردها) ============ */
         .main-tab-btn {
             color: rgb(100 116 139);
@@ -1284,7 +1295,7 @@
                 </h2>
                 <p class="text-xs text-white/75 mt-1">مدیریت پروفایل، ظاهر، امنیت و اعلان‌های برنامه</p>
 
-                <div class="mt-4 flex items-center gap-3 bg-white/10 rounded-xl p-3 backdrop-blur-sm border border-white/10">
+                <div class="mt-4 flex items-center gap-3 bg-white/15 rounded-xl p-3 border border-white/10">
                     <div class="w-11 h-11 rounded-full bg-white/15 flex items-center justify-center overflow-hidden shrink-0 border-2 border-white/25">
                         <img id="settingsProfilePreviewImg" src="" class="hidden w-full h-full object-cover" alt="پروفایل">
                         <i id="settingsProfilePreviewIcon" class="fa-solid fa-user text-white/80"></i>
@@ -6877,7 +6888,21 @@
             infoBox.classList.remove('hidden');
         }
 
+        // [بهینه‌سازی سرعت] مثل updateShiftPreview/updateSettingsProfilePreview، اجرای واقعی روی
+        // requestAnimationFrame موکول می‌شود تا هنگام تایپ سریع در فیلدهای فرم (تعداد دریافتی، ساعت،
+        // آمار روزانه)، این محاسبه فقط یک‌بار در هر فریم انجام شود، نه به ازای هر ضربه‌کلید.
+        let _autoCalcScheduled = false;
+        let _autoCalcKeepStatus = false;
         function runAutoDeliveryCalculation(keepStatus) {
+            _autoCalcKeepStatus = !!keepStatus;
+            if (_autoCalcScheduled) return;
+            _autoCalcScheduled = true;
+            requestAnimationFrame(() => {
+                _autoCalcScheduled = false;
+                runAutoDeliveryCalculationNow(_autoCalcKeepStatus);
+            });
+        }
+        function runAutoDeliveryCalculationNow(keepStatus) {
             const infoBox = document.getElementById('autoCalcInfoBox');
             const infoText = document.getElementById('autoCalcInfoText');
             const endDateTimeField = document.getElementById('recordEndDateTime');

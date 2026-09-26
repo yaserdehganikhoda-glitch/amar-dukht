@@ -476,27 +476,24 @@
                         <div class="p-3.5">
                         <!-- تب اصلی -->
                         <div id="toolsTab-main" class="tools-tab-panel">
-                            <div class="grid grid-cols-3 gap-1.5 mb-3">
-                                <button onclick="runIfPremium('پشتیبان‌گیری دستی هوشمند', exportSmartBackup); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                    <span class="w-11 h-11 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-download text-base"></i>
+                            <div class="grid grid-cols-2 gap-1.5 mb-1.5">
+                                <button onclick="openOverviewModal(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-chart-pie text-xs"></i>
                                     </span>
-                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">پشتیبان‌گیری</span>
-                                    <span class="text-[9px] text-slate-400 leading-tight">فایل JSON</span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">گزارش کلی</span>
+                                        <span class="block text-[9px] text-slate-400">خلاصه آمار</span>
+                                    </span>
                                 </button>
-                                <button onclick="openOverviewModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                    <span class="w-11 h-11 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-chart-pie text-base"></i>
+                                <button onclick="openSettingsModal(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-gear text-xs"></i>
                                     </span>
-                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">گزارش کلی</span>
-                                    <span class="text-[9px] text-slate-400 leading-tight">خلاصه آمار</span>
-                                </button>
-                                <button onclick="openSettingsModal(); closeToolsDropdown();" class="tactile-btn flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                    <span class="w-11 h-11 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-gear text-base"></i>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">تنظیمات</span>
+                                        <span class="block text-[9px] text-slate-400">ظاهر و رمز</span>
                                     </span>
-                                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 leading-tight">تنظیمات</span>
-                                    <span class="text-[9px] text-slate-400 leading-tight">ظاهر و رمز</span>
                                 </button>
                             </div>
                             <div class="grid grid-cols-2 gap-1.5">
@@ -521,9 +518,28 @@
                             </div>
                         </div>
 
-                        <!-- تب داده‌ها -->
+                        <!-- تب داده‌ها: تمام ابزارهای ذخیره و بارگذاری اینجا متمرکز شده‌اند -->
                         <div id="toolsTab-data" class="tools-tab-panel hidden">
-                            <div class="grid grid-cols-2 gap-1.5">
+                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 px-0.5">پشتیبان‌گیری و بازیابی</p>
+                            <div class="grid grid-cols-2 gap-1.5 mb-3">
+                                <button onclick="runIfPremium('پشتیبان‌گیری دستی هوشمند', exportSmartBackup); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-download text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پشتیبان‌گیری</span>
+                                        <span class="block text-[9px] text-slate-400">فایل JSON</span>
+                                    </span>
+                                </button>
+                                <button onclick="runIfPremium('ارسال پشتیبان به فضای ابری', shareBackupFileToCloud); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-cloud-arrow-up text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">ارسال به فضای ابری</span>
+                                        <span class="block text-[9px] text-slate-400">گوگل‌درایو، آی‌کلود و...</span>
+                                    </span>
+                                </button>
                                 <button onclick="runIfPremium('خروجی گزارش رسمی', exportToHtmlReport); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
                                     <span class="w-9 h-9 shrink-0 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                                         <i class="fa-solid fa-file-arrow-down text-xs"></i>
@@ -542,6 +558,44 @@
                                         <span class="block text-[9px] text-slate-400">وارد کردن JSON</span>
                                     </span>
                                 </button>
+                            </div>
+
+                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 px-0.5">ذخیره و بارگذاری در پوشه دستگاه</p>
+                            <div class="grid grid-cols-2 gap-1.5 mb-2">
+                                <button onclick="handleFolderMenuButtonClick()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                                        <i id="folderMenuBtnIcon" class="fa-solid fa-folder-plus text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span id="folderMenuBtnLabel" class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پوشه دستگاه</span>
+                                        <span class="block text-[9px] text-slate-400">مسیر در تنظیمات</span>
+                                    </span>
+                                </button>
+                                <button onclick="manualRotatingBackupNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پشتیبان چرخشی الان</span>
+                                        <span class="block text-[9px] text-slate-400">در پوشه دستگاه</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <!-- اقدامات فرعی پوشه دستگاه -->
+                            <div class="flex items-center justify-between gap-2 px-1.5 pt-1 pb-2 border-t border-slate-100 dark:border-slate-800 flex-wrap">
+                                <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[10px] text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors">
+                                    <i class="fa-solid fa-link-slash"></i> قطع اتصال پوشه
+                                </button>
+                                <button onclick="manualSaveToFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 transition-colors mr-auto">
+                                    <i class="fa-solid fa-floppy-disk"></i> ذخیره دستی در پوشه
+                                </button>
+                                <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1 transition-colors">
+                                    <i class="fa-solid fa-rotate"></i> بارگذاری دستی از پوشه
+                                </button>
+                            </div>
+
+                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 px-0.5 pt-1 border-t border-slate-100 dark:border-slate-800">مدیریت داده</p>
+                            <div class="grid grid-cols-2 gap-1.5">
                                 <button onclick="openTrashBinModal()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
                                     <span class="w-9 h-9 shrink-0 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center">
                                         <i class="fa-solid fa-trash-can-arrow-up text-xs"></i>
@@ -565,47 +619,16 @@
 
                         <!-- تب دستگاه -->
                         <div id="toolsTab-device" class="tools-tab-panel hidden">
-                            <div class="grid grid-cols-2 gap-1.5 mb-2">
-                                <button onclick="handleFolderMenuButtonClick()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
-                                        <i id="folderMenuBtnIcon" class="fa-solid fa-folder-plus text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span id="folderMenuBtnLabel" class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پوشه دستگاه</span>
-                                        <span class="block text-[9px] text-slate-400">مسیر در تنظیمات</span>
-                                    </span>
-                                </button>
-                                <button onclick="manualRotatingBackupNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-clock-rotate-left text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پشتیبان چرخشی الان</span>
-                                        <span class="block text-[9px] text-slate-400">در پوشه دستگاه</span>
-                                    </span>
-                                </button>
-                                <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="tactile-btn hidden items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right flex">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-mobile-screen-button text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نصب برنامه</span>
-                                        <span class="block text-[9px] text-slate-400">روی دستگاه</span>
-                                    </span>
-                                </button>
-                            </div>
-                            <!-- اقدامات فرعی پوشه دستگاه -->
-                            <div class="flex items-center justify-between gap-2 px-1.5 pt-1 border-t border-slate-100 dark:border-slate-800 flex-wrap">
-                                <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[10px] text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors">
-                                    <i class="fa-solid fa-link-slash"></i> قطع اتصال پوشه
-                                </button>
-                                <button onclick="manualSaveToFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 transition-colors mr-auto">
-                                    <i class="fa-solid fa-floppy-disk"></i> ذخیره دستی در پوشه
-                                </button>
-                                <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1 transition-colors">
-                                    <i class="fa-solid fa-rotate"></i> بارگذاری دستی از پوشه
-                                </button>
-                            </div>
+                            <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="tactile-btn hidden w-full items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right flex">
+                                <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                                    <i class="fa-solid fa-mobile-screen-button text-xs"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نصب برنامه</span>
+                                    <span class="block text-[9px] text-slate-400">روی دستگاه</span>
+                                </span>
+                            </button>
+                            <p id="deviceTabEmptyHint" class="text-xs text-slate-400 dark:text-slate-500 text-center py-4">در حال حاضر امکانی برای نمایش نیست. ابزارهای ذخیره و بارگذاری در تب «داده‌ها» قرار دارند.</p>
                         </div>
                         </div>
                     </div>
@@ -764,11 +787,11 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="receivedQuantity">تعداد دریافتی</label>
-                        <input type="text" inputmode="numeric" id="receivedQuantity" required oninput="runAutoDeliveryCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        <input type="text" inputmode="numeric" id="receivedQuantity" data-thousands="1" required oninput="runAutoDeliveryCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
                         <label id="unitPriceLabel" class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">قیمت واحد (تومان)</label>
-                        <input type="text" inputmode="numeric" id="unitPrice" required class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800/60">
+                        <input type="text" inputmode="numeric" id="unitPrice" data-thousands="1" required class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800/60">
                         <label class="flex items-center gap-1.5 mt-1.5 text-[11px] text-slate-500 dark:text-slate-400 cursor-pointer select-none">
                             <input type="checkbox" id="priceUnknownCheckbox" onchange="togglePriceUnknown()" class="w-3.5 h-3.5 rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500/30 cursor-pointer">
                             <span>قیمت نامعلوم (هنوز تعیین نشده)</span>
@@ -803,7 +826,7 @@
 
                 <div>
                     <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="dailyStat">آمار روزانه</label>
-                    <input type="text" inputmode="numeric" id="dailyStat" oninput="runAutoDeliveryCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    <input type="text" inputmode="numeric" id="dailyStat" data-thousands="1" oninput="runAutoDeliveryCalculation()" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -1201,22 +1224,22 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">حداقل تعداد</label>
-                        <input type="text" inputmode="numeric" id="advSearchQtyMin" placeholder="مثلاً ۱۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        <input type="text" inputmode="numeric" id="advSearchQtyMin" data-thousands="1" placeholder="مثلاً ۱۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">حداکثر تعداد</label>
-                        <input type="text" inputmode="numeric" id="advSearchQtyMax" placeholder="مثلاً ۱۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        <input type="text" inputmode="numeric" id="advSearchQtyMax" data-thousands="1" placeholder="مثلاً ۱۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">حداقل مبلغ کل</label>
-                        <input type="text" inputmode="numeric" id="advSearchPriceMin" placeholder="مثلاً ۱۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        <input type="text" inputmode="numeric" id="advSearchPriceMin" data-thousands="1" placeholder="مثلاً ۱۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">حداکثر مبلغ کل</label>
-                        <input type="text" inputmode="numeric" id="advSearchPriceMax" placeholder="مثلاً ۵۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        <input type="text" inputmode="numeric" id="advSearchPriceMax" data-thousands="1" placeholder="مثلاً ۵۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                 </div>
             </div>
@@ -1396,7 +1419,11 @@
 
                 <div id="settingsTab-work" class="settings-tab-panel hidden space-y-4">
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> ساعات کاری و استراحت‌ها</h3>
+                    <button type="button" onclick="toggleSettingsSection('workHoursSectionBody', 'workHoursSectionIcon', 'sewing_settings_workhours_collapsed')" class="w-full flex items-center justify-between gap-2 text-right">
+                        <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> ساعات کاری و استراحت‌ها</h3>
+                        <i id="workHoursSectionIcon" class="fa-solid fa-chevron-up text-[10px] text-slate-400 shrink-0 transition-transform"></i>
+                    </button>
+                    <div id="workHoursSectionBody" class="space-y-3">
                     <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">«ساعت کاری مفید روزانه» (مبنای محاسبه مدت از روی آمار روزانه) مستقل از بازه‌های زیر وارد می‌شود؛ بازه‌ها فقط تعیین می‌کنند کار در چه ساعاتی جلو برود. برای حذف یک استراحت، هر دو ساعت آن را خالی بگذارید. جمعه‌ها همچنان تعطیل است. تغییر فقط روی محاسبه‌های بعدی اثر می‌گذارد؛ رکوردهای قبلی تا زمان ویرایش عوض نمی‌شوند.</p>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
@@ -1418,6 +1445,7 @@
                         <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">مجموع بازه‌های کاری برنامه (شروع تا پایان منهای استراحت‌ها): <b id="shiftTotalPreview" class="text-indigo-600 dark:text-indigo-400">—</b> <button type="button" onclick="syncWorkdayWithSchedule()" class="underline text-purple-600 dark:text-purple-400 mr-1">هم‌سان‌سازی با آن</button></p>
                     </div>
                     <button type="button" onclick="resetWorkSettingsToDefaults()" class="text-xs text-slate-500 dark:text-slate-400 underline hover:text-purple-600">بازگشت به پیش‌فرض (۸ تا ۱۸، ۸ ساعت و ۱۵ دقیقه)</button>
+                    </div>
                 </div>
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-scale-balanced"></i> منطق محاسبه‌ی وضعیت تحویل</h3>
@@ -1439,19 +1467,24 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">هدف هفتگی</label>
-                            <input type="text" inputmode="numeric" id="settingIncomeGoalWeekly" placeholder="مثلاً ۵۰۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                            <input type="text" inputmode="numeric" id="settingIncomeGoalWeekly" data-thousands="1" placeholder="مثلاً ۵۰۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">هدف ماهانه</label>
-                            <input type="text" inputmode="numeric" id="settingIncomeGoalMonthly" placeholder="مثلاً ۲۰۰۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                            <input type="text" inputmode="numeric" id="settingIncomeGoalMonthly" data-thousands="1" placeholder="مثلاً ۲۰۰۰۰۰۰۰" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         </div>
                     </div>
                 </div>
                 <div class="space-y-3">
-                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-pen-ruler"></i> نام فیلدهای فرم «ثبت کارکرد جدید»</h3>
+                    <button type="button" onclick="toggleSettingsSection('formLabelsSectionBody', 'formLabelsSectionIcon', 'sewing_settings_formlabels_collapsed')" class="w-full flex items-center justify-between gap-2 text-right">
+                        <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-pen-ruler"></i> نام فیلدهای فرم «ثبت کارکرد جدید»</h3>
+                        <i id="formLabelsSectionIcon" class="fa-solid fa-chevron-up text-[10px] text-slate-400 shrink-0 transition-transform"></i>
+                    </button>
+                    <div id="formLabelsSectionBody" class="space-y-3">
                     <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">هر فیلد را که خالی بگذارید، نام پیش‌فرض نمایش داده می‌شود. واحد پول به‌طور خودکار کنار «قیمت واحد» می‌آید.</p>
                     <div id="formLabelsFields" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
                     <button type="button" onclick="resetFormLabelsFields()" class="text-xs text-slate-500 dark:text-slate-400 underline hover:text-purple-600">پاک کردن همه‌ی نام‌های سفارشی</button>
+                    </div>
                 </div>
                 <div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 border border-slate-300 dark:border-slate-600 flex items-center justify-between">
                     <span class="text-[11px] text-slate-500 dark:text-slate-400">رکورد کدهای متوالی به‌موقع:</span>
@@ -1915,9 +1948,26 @@
          * این قابلیت‌ها فقط داخل اپ نصب‌شده از کافه بازار قفل هستند؛ در نسخه وب/PWA
          * (چون امکان خرید در آنجا وجود ندارد) همیشه آزاد باقی می‌مانند تا کاربران قبلی مشکلی پیدا نکنند.
          */
+        const TRIAL_DURATION_MS = 15 * 24 * 60 * 60 * 1000;
+        function getTrialStartTime() {
+            let t = parseInt(localStorage.getItem('sewing_trial_start_v1') || '', 10);
+            if (!t) {
+                t = Date.now();
+                try { localStorage.setItem('sewing_trial_start_v1', String(t)); } catch (e) { /* بی‌اهمیت */ }
+            }
+            return t;
+        }
+        function isTrialActive() {
+            return (Date.now() - getTrialStartTime()) < TRIAL_DURATION_MS;
+        }
+        function trialDaysLeft() {
+            return Math.max(1, Math.ceil((TRIAL_DURATION_MS - (Date.now() - getTrialStartTime())) / (24 * 60 * 60 * 1000)));
+        }
+
         function isPremiumUnlocked() {
             const native = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
             if (!native || !window.SewingPremium) return true;
+            if (isTrialActive()) return true;
             return window.SewingPremium.isUnlocked();
         }
 
@@ -1931,11 +1981,17 @@
                 btnEl.classList.add('hidden');
                 return;
             }
-            if (isPremiumUnlocked()) {
+            const purchased = !!(window.SewingPremium && window.SewingPremium.isUnlocked());
+            if (purchased) {
                 textEl.innerText = 'نسخه ویژه فعال است ✅';
                 btnEl.innerText = 'فعال شده';
                 btnEl.disabled = true;
                 btnEl.classList.add('opacity-50', 'cursor-default');
+            } else if (isTrialActive()) {
+                textEl.innerText = `${formatNumber(trialDaysLeft())} روز دیگر از دوره‌ی رایگان ۱۵ روزه باقی مانده است.`;
+                btnEl.innerText = 'فعال‌سازی';
+                btnEl.disabled = false;
+                btnEl.classList.remove('opacity-50', 'cursor-default');
             } else {
                 textEl.innerText = 'خروجی گزارش رسمی، پشتیبان‌گیری دستی و بازگردانی از سطل بازیافت با نسخه ویژه باز می‌شود.';
                 btnEl.innerText = 'فعال‌سازی';
@@ -2023,11 +2079,20 @@
         /* ==================== نصب برنامه روی دستگاه (PWA Install Prompt) ==================== */
         let deferredInstallPrompt = null;
 
+        // تب «دستگاه» فقط دکمه‌ی نصب برنامه را دارد؛ وقتی این دکمه مخفی است (نصب ممکن نیست یا قبلاً
+        // نصب شده)، به‌جای تب خالی یک متن راهنما نمایش داده می‌شود.
+        function syncDeviceTabEmptyHint() {
+            const btn = document.getElementById('installAppBtn');
+            const hint = document.getElementById('deviceTabEmptyHint');
+            if (hint) hint.classList.toggle('hidden', !!(btn && !btn.classList.contains('hidden')));
+        }
+
         window.addEventListener('beforeinstallprompt', (event) => {
             event.preventDefault();
             deferredInstallPrompt = event;
             const btn = document.getElementById('installAppBtn');
             if (btn) btn.classList.remove('hidden');
+            syncDeviceTabEmptyHint();
         });
 
         function promptInstallApp() {
@@ -2043,6 +2108,7 @@
                 deferredInstallPrompt = null;
                 const btn = document.getElementById('installAppBtn');
                 if (btn) btn.classList.add('hidden');
+                syncDeviceTabEmptyHint();
             });
         }
 
@@ -2051,7 +2117,9 @@
             if (btn) btn.classList.add('hidden');
             deferredInstallPrompt = null;
             addLog('برنامه با موفقیت روی دستگاه نصب شد.', 'success');
+            syncDeviceTabEmptyHint();
         });
+        syncDeviceTabEmptyHint();
         /* ==================== پایان نصب برنامه ==================== */
 
         window.addEventListener('offline', () => {
@@ -2395,6 +2463,9 @@
                 const v = srcLabels[k];
                 if (typeof v === 'string' && v.trim()) s.formLabels[k] = v.trim().slice(0, 60);
             });
+            const srcOptional = (s.optionalFields && typeof s.optionalFields === 'object' && !Array.isArray(s.optionalFields)) ? s.optionalFields : {};
+            s.optionalFields = {};
+            FIELD_REQUIRED_KEYS.forEach(k => { if (srcOptional[k]) s.optionalFields[k] = true; });
             s.bestStreak = Math.max(0, Number(s.bestStreak) || 0);
             return s;
         }
@@ -3132,6 +3203,7 @@
             unitPrice: 'قیمت واحد', itemStatus: 'وضعیت تحویل / ثبت', recordDate: 'تاریخ ثبت', recordTime: 'ساعت ثبت',
             dailyStat: 'آمار روزانه', recordEndDateTime: 'تاریخ و زمان پایان', recordWorkDuration: 'مدت زمان تحویل کار'
         };
+        const FIELD_REQUIRED_KEYS = ['itemCode', 'itemTitle', 'itemColor', 'receivedQuantity', 'unitPrice', 'itemStatus', 'recordDate', 'recordTime'];
         const BREAK_META = [['breakfast', 'صبحانه'], ['tea1', 'چای اول'], ['lunch', 'ناهار'], ['tea2', 'چای دوم']];
         const BREAK_KEYS = BREAK_META.map(x => x[0]);
         const DEFAULT_SHIFT = {
@@ -3143,7 +3215,7 @@
             }
         };
         const DEFAULT_APP_SETTINGS = {
-            workdayMinutes: 495, shiftStart: '08:00', shiftEnd: '18:00', shiftBreaks: null, formLabels: {}, 
+            workdayMinutes: 495, shiftStart: '08:00', shiftEnd: '18:00', shiftBreaks: null, formLabels: {}, optionalFields: {}, 
             schemaVersion: 1,
             shopName: 'سامانه آمار کار',
             currency: 'تومان',
@@ -4247,6 +4319,22 @@
             return numStr.replace(/\d/g, d => persianDigits[d]);
         }
 
+        // جداکننده‌ی هزارگان زنده روی فیلدهای عددی مقداری (data-thousands): هنگام تایپ، عدد
+        // با کاما گروه‌بندی می‌شود؛ موقعیت مکان‌نما هم به‌نسبتِ فاصله از انتهای متن حفظ می‌شود.
+        function formatThousandsInput(el) {
+            if (!el) return;
+            const distFromEnd = (typeof el.selectionStart === 'number') ? el.value.length - el.selectionStart : 0;
+            const digitsOnly = toEnglishDigits(el.value).replace(/[^\d]/g, '');
+            if (!digitsOnly) { el.value = ''; return; }
+            const trimmed = digitsOnly.replace(/^0+(?=\d)/, '');
+            el.value = formatNumber(parseInt(trimmed, 10));
+            const newPos = Math.max(0, el.value.length - distFromEnd);
+            try { el.setSelectionRange(newPos, newPos); } catch (e) { /* بی‌اهمیت */ }
+        }
+        document.addEventListener('input', e => {
+            if (e.target && e.target.matches && e.target.matches('[data-thousands]')) formatThousandsInput(e.target);
+        });
+
         // برخلاف formatNumber (که برای اعداد بزرگ جداکننده هزارگان می‌گذارد)، این تابع مخصوص
         // نمایش سالِ شمسی است: فقط ارقام را بر اساس تنظیم «فرمت اعداد» فارسی/انگلیسی می‌کند،
         // بدون هیچ جداکننده‌ای. قبلاً سال در برچسب‌های دوره (کشوی ماه، عنوان گزارش‌ها و...)
@@ -4688,6 +4776,17 @@
                 if (el.textContent !== t) el.textContent = t;
             });
         }
+        function isFieldOptional(key) {
+            return !!((appSettings.optionalFields || {})[key]);
+        }
+        function applyRequiredFieldsToUI() {
+            FIELD_REQUIRED_KEYS.forEach(k => {
+                const el = document.getElementById(k);
+                if (!el) return;
+                if (isFieldOptional(k)) el.removeAttribute('required');
+                else el.setAttribute('required', 'required');
+            });
+        }
 
         function collectShiftFormValues() {
             const val = id => { const el = document.getElementById(id); return el ? el.value : ''; };
@@ -4729,11 +4828,21 @@
                     <input type="time" id="settingBreak_${k}_end" value="${escapeHTML(b.end)}" oninput="updateShiftPreview()" class="${cls}">
                 </div>`;
             }).join('');
-            document.getElementById('formLabelsFields').innerHTML = Object.keys(FORM_LABEL_DEFAULTS).map(k => `
+            document.getElementById('formLabelsFields').innerHTML = Object.keys(FORM_LABEL_DEFAULTS).map(k => {
+                const canToggle = FIELD_REQUIRED_KEYS.includes(k);
+                const checkedAttr = isFieldOptional(k) ? '' : 'checked';
+                return `
                 <div>
-                    <label class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">${escapeHTML(FORM_LABEL_DEFAULTS[k])}</label>
+                    <div class="flex items-center justify-between mb-1 gap-2">
+                        <label class="block text-[11px] font-medium text-slate-500 dark:text-slate-400">${escapeHTML(FORM_LABEL_DEFAULTS[k])}</label>
+                        ${canToggle ? `<label class="flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-500 cursor-pointer select-none shrink-0">
+                            <input type="checkbox" id="settingRequired_${k}" ${checkedAttr} class="w-3.5 h-3.5 rounded accent-purple-600">
+                            اجباری
+                        </label>` : ''}
+                    </div>
                     <input type="text" id="settingLabel_${k}" maxlength="60" value="${escapeHTML(labels[k] || '')}" placeholder="${escapeHTML(FORM_LABEL_DEFAULTS[k])}" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
-                </div>`).join('');
+                </div>`;
+            }).join('');
             updateShiftPreview();
         }
 
@@ -4798,7 +4907,12 @@
                 const val = el ? el.value.trim() : '';
                 if (val && val !== FORM_LABEL_DEFAULTS[k]) labels[k] = val.slice(0, 60);
             });
-            return { data: { workdayMinutes, shiftStart: v.start, shiftEnd: v.end, shiftBreaks: breaks, formLabels: labels } };
+            const optionalFields = {};
+            FIELD_REQUIRED_KEYS.forEach(k => {
+                const el = document.getElementById('settingRequired_' + k);
+                if (el && !el.checked) optionalFields[k] = true;
+            });
+            return { data: { workdayMinutes, shiftStart: v.start, shiftEnd: v.end, shiftBreaks: breaks, formLabels: labels, optionalFields } };
         }
         /* ============ پایان نام فیلدها و ساعات کاری ============ */
 
@@ -5018,6 +5132,7 @@
             document.getElementById('kpiPriceLabel').innerText = `ارزش کل کارکرد (${currency})`;
             document.getElementById('unitPriceLabel').innerText = `${getFormLabel('unitPrice')} (${currency})`;
             applyFormLabels();
+            applyRequiredFieldsToUI();
             const basisNote = document.getElementById('workdayBasisNote');
             if (basisNote) basisNote.innerText = `بر مبنای ${formatMinutesDuration(SHIFT_MINUTES)} کاری در هر روز`;
             document.getElementById('thUnitPrice').innerText = `${getFormLabel('unitPrice')} (${currency})`;
@@ -5343,6 +5458,49 @@
                     );
                 }
             });
+        }
+
+        /*
+         * ارسال فایل پشتیبان به فضاهای ابری سیستم‌عامل (گوگل‌درایو، آی‌کلود، وان‌درایو، تلگرام و...):
+         * با Web Share API سطح ۲ (اشتراک‌گذاری فایل)، پنجره‌ی اشتراک‌گذاری بومیِ خودِ گوشی/سیستم‌عامل باز
+         * می‌شود و کاربر خودش برنامه‌ی فضای ابری مورد نظرش را از میان برنامه‌های نصب‌شده انتخاب می‌کند؛
+         * این قابلیت اصولاً روی گوشی‌های اندروید و آیفون (و برخی مرورگرهای دسکتاپ) در دسترس است.
+         */
+        async function shareBackupFileToCloud() {
+            if (allRecords.length === 0 && dailyNotes.length === 0) {
+                showFeedbackBanner('داده‌ای برای ارسال پشتیبان وجود ندارد.', 'warn');
+                return;
+            }
+            const filename = getMonthlyBackupFileName();
+            const jsonString = JSON.stringify(buildBackupPayload(), null, 2);
+
+            let file;
+            try {
+                file = new File([jsonString], filename, { type: 'application/json' });
+            } catch (e) {
+                showFeedbackBanner('این مرورگر امکان ساخت فایل برای اشتراک‌گذاری را ندارد.', 'warn');
+                return;
+            }
+
+            const canUseShare = !!(navigator.share && navigator.canShare && navigator.canShare({ files: [file] }));
+            if (!canUseShare) {
+                showFeedbackBanner('این مرورگر یا دستگاه از ارسال مستقیم فایل به فضای ابری پشتیبانی نمی‌کند (این قابلیت روی گوشی‌های اندروید و آیفون در دسترس است). به‌جای آن از گزینه «پشتیبان‌گیری» فایل را دانلود کنید و سپس در برنامه‌ی فضای ابری بارگذاری کنید.', 'warn');
+                return;
+            }
+
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: 'پشتیبان سامانه آمار کار',
+                    text: `فایل پشتیبان ماه جاری (${filename})`
+                });
+                addLog('فایل پشتیبان از طریق منوی اشتراک‌گذاری سیستم ارسال شد.', 'success');
+                showFeedbackBanner('پنجره‌ی اشتراک‌گذاری سیستم باز شد؛ برنامه‌ی فضای ابری دلخواه (گوگل‌درایو، آی‌کلود، وان‌درایو و...) را برای ذخیره‌ی فایل انتخاب کنید.', 'success');
+            } catch (err) {
+                if (err && err.name === 'AbortError') return; // کاربر از پنجره‌ی اشتراک‌گذاری صرف‌نظر کرد؛ نیازی به پیام خطا نیست
+                console.warn('ارسال فایل پشتیبان به فضای ابری ناموفق بود:', err);
+                showFeedbackBanner('ارسال فایل پشتیبان انجام نشد. می‌توانید از گزینه «پشتیبان‌گیری» فایل را دانلود و سپس دستی در فضای ابری بارگذاری کنید.', 'warn');
+            }
         }
 
         function importSmartBackup(event) {
@@ -5912,7 +6070,7 @@
                 }
             }
 
-            if (qty <= 0 || (!isPriceUnknown && price <= 0)) {
+            if ((!isFieldOptional('receivedQuantity') && qty <= 0) || (!isPriceUnknown && !isFieldOptional('unitPrice') && price <= 0)) {
                 showFeedbackBanner('لطفاً مقادیر معتبر (بزرگ‌تر از صفر) برای تعداد دریافتی و قیمت واحد وارد کنید.', 'warn');
                 return;
             }
@@ -6269,6 +6427,25 @@
             }
         }
         /* ==================== پایان هدف درآمد ==================== */
+
+        // حالت تاشوی کادرهای تنظیمات (مثل «ساعات کاری و استراحت‌ها» و «نام فیلدهای فرم»)؛
+        // وضعیت باز/بسته هر کادر جدا در localStorage ذخیره و در بارگذاری بعدی اعمال می‌شود.
+        function toggleSettingsSection(bodyId, iconId, storageKey) {
+            const body = document.getElementById(bodyId);
+            if (!body) return;
+            const collapsed = body.classList.toggle('hidden');
+            const icon = document.getElementById(iconId);
+            if (icon) { icon.classList.toggle('fa-chevron-up', !collapsed); icon.classList.toggle('fa-chevron-down', collapsed); }
+            try { localStorage.setItem(storageKey, collapsed ? '1' : '0'); } catch (e) { /* بی‌اهمیت */ }
+        }
+        function applySettingsSectionCollapsedState(bodyId, iconId, storageKey) {
+            let collapsed = false;
+            try { collapsed = localStorage.getItem(storageKey) === '1'; } catch (e) { /* بی‌اهمیت */ }
+            const body = document.getElementById(bodyId);
+            if (body) body.classList.toggle('hidden', collapsed);
+            const icon = document.getElementById(iconId);
+            if (icon) { icon.classList.toggle('fa-chevron-up', !collapsed); icon.classList.toggle('fa-chevron-down', collapsed); }
+        }
 
         function toggleKpiPriceVisibility() {
             const body = document.getElementById('kpiPriceValueWrap');
@@ -8120,6 +8297,9 @@
             document.getElementById('kpiPriceToggleIcon').classList.remove('fa-chevron-up');
             document.getElementById('kpiPriceToggleIcon').classList.add('fa-chevron-down');
         }
+
+        applySettingsSectionCollapsedState('workHoursSectionBody', 'workHoursSectionIcon', 'sewing_settings_workhours_collapsed');
+        applySettingsSectionCollapsedState('formLabelsSectionBody', 'formLabelsSectionIcon', 'sewing_settings_formlabels_collapsed');
 
         // اگر صفحه‌ی قفل ورود در حال نمایش است، یادآوری پشتیبان‌گیری روزانه نمایش داده نمی‌شود
         // (چون پشت آن مخفی می‌ماند)؛ در این حالت خودِ attemptUnlock بعد از باز شدن قفل صدايش می‌زند.

@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه آمار دوخت لباس</title>
+    <title>سامانه آمار کار</title>
     
     <!-- تنظیمات PWA و مانیفست -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="آمار دوخت">
+    <meta name="apple-mobile-web-app-title" content="آمار کار">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="apple-touch-icon" href="icon-192.png">
     
@@ -279,17 +279,6 @@
             transition: none !important;
         }
 
-        /* ============ بهینه‌سازی سرعت: روان‌سازی اسکرول داخل تب‌ها و منوها ============ */
-        /* بدون این خواص، اسکرول داخل نواحیِ overflow-auto (تب‌های تنظیمات، منوی ابزار، جدول کارکردها،
-           لیست‌های داخل مودال‌ها) روی موبایل کند و پرش‌دار حس می‌شود؛ overflow-scrolling:touch مومنتوم
-           اینرسی می‌دهد، overscroll-behavior از سرریز اسکرول به صفحه‌ی پشت جلوگیری می‌کند و لایه‌ی
-           کامپوزیت جدا (translateZ) اسکرول را از بازسازیِ پس‌زمینه‌ی تارشده (backdrop-blur) مودال‌ها مستقل می‌کند. */
-        .overflow-y-auto, .overflow-x-auto {
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            transform: translateZ(0);
-        }
-
         /* ============ تب‌بندیِ اصلیِ صفحه (فرم ثبت / لیست کارکردها) ============ */
         .main-tab-btn {
             color: rgb(100 116 139);
@@ -415,7 +404,7 @@
             <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-4">
                 <i class="fa-solid fa-lock text-2xl"></i>
             </div>
-            <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-1">ورود به سامانه آمار دوخت</h2>
+            <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-1">ورود به سامانه آمار کار</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-5">برای مشاهده اطلاعات، رمز عبور را وارد کنید.</p>
             <form onsubmit="attemptUnlock(event)" class="space-y-3">
                 <input type="password" id="pinLockInput" inputmode="numeric" required autocomplete="off" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-center text-lg tracking-[0.3em] bg-slate-50 dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" placeholder="رمز عبور">
@@ -629,9 +618,9 @@
                 <img src="icon-192.png" alt="لوگوی سامانه" class="w-11 h-11 object-contain rounded-lg">
             </div>
             <h1 id="mainAppTitle" class="text-2xl md:text-3xl font-bold text-white tracking-tight relative z-10">
-                سامانه آمار دوخت لباس
+                سامانه آمار کار
             </h1>
-            <p id="mainAppSubtitle" class="text-sm text-indigo-100 mt-2 font-normal relative z-10">سیستم هوشمند آمار و مدیریت دوخت</p>
+            <p id="mainAppSubtitle" class="text-sm text-indigo-100 mt-2 font-normal relative z-10">سیستم هوشمند آمار و مدیریت کار</p>
             <p id="ownerInfoLine" class="hidden text-xs text-indigo-100/80 mt-1 relative z-10"></p>
         </div>
         <div class="px-6 py-5 text-center">
@@ -1295,14 +1284,14 @@
                 </h2>
                 <p class="text-xs text-white/75 mt-1">مدیریت پروفایل، ظاهر، امنیت و اعلان‌های برنامه</p>
 
-                <div class="mt-4 flex items-center gap-3 bg-white/15 rounded-xl p-3 border border-white/10">
+                <div class="mt-4 flex items-center gap-3 bg-white/10 rounded-xl p-3 backdrop-blur-sm border border-white/10">
                     <div class="w-11 h-11 rounded-full bg-white/15 flex items-center justify-center overflow-hidden shrink-0 border-2 border-white/25">
                         <img id="settingsProfilePreviewImg" src="" class="hidden w-full h-full object-cover" alt="پروفایل">
                         <i id="settingsProfilePreviewIcon" class="fa-solid fa-user text-white/80"></i>
                     </div>
                     <div class="min-w-0">
                         <p id="settingsProfilePreviewName" class="text-sm font-bold truncate">کاربر مهمان</p>
-                        <p id="settingsProfilePreviewSub" class="text-[11px] text-white/70 truncate">سامانه آمار دوخت لباس</p>
+                        <p id="settingsProfilePreviewSub" class="text-[11px] text-white/70 truncate">سامانه آمار کار</p>
                     </div>
                 </div>
             </div>
@@ -1780,8 +1769,8 @@
                     <button id="premiumUpgradeBtn" onclick="runIfPremium('نسخه ویژه', () => showFeedbackBanner('نسخه ویژه از قبل فعال است.', 'success'))" class="shrink-0 text-xs font-bold px-3 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">فعال‌سازی</button>
                 </div>
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> درباره سامانه آمار دوخت لباس</h3>
-                    <p class="text-[12px] leading-relaxed text-slate-600 dark:text-slate-300">این سامانه یک ابزار آفلاین (PWA) برای ثبت و مدیریت کارکرد روزانه‌ی کارگاه خیاطی است: هر قطعه با کد، رنگ، تعداد و قیمت ثبت می‌شود، مدت‌زمان تحویل به‌صورت خودکار از روی آمار روزانه محاسبه می‌شود و وضعیت «به‌موقع / تاخیر / زودتر از موعد» خودکار تعیین می‌گردد.</p>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> درباره سامانه آمار کار</h3>
+                    <p class="text-[12px] leading-relaxed text-slate-600 dark:text-slate-300">این سامانه یک ابزار آفلاین (PWA) برای ثبت و مدیریت کارکرد روزانه‌ی هر شغل کارمزدی یا پروژه‌ای است: هر کد کار با عنوان، رنگ/مشخصات، تعداد و قیمت ثبت می‌شود، مدت‌زمان تحویل به‌صورت خودکار از روی آمار روزانه محاسبه می‌شود و وضعیت «به‌موقع / تاخیر / زودتر از موعد» خودکار تعیین می‌گردد.</p>
                 </div>
                 <div class="space-y-2 pb-4 border-b border-slate-300 dark:border-slate-600">
                     <h4 class="text-[11px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">امکانات کلیدی</h4>
@@ -1797,7 +1786,7 @@
                     <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-2 shadow-inner overflow-hidden">
                         <img src="icon-192.png" alt="لوگوی سامانه" class="w-10 h-10 object-contain rounded-lg">
                     </div>
-                    <p class="text-sm font-bold text-slate-800 dark:text-white">سامانه آمار دوخت لباس</p>
+                    <p class="text-sm font-bold text-slate-800 dark:text-white">سامانه آمار کار</p>
                     <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">نسخه ۱۳.۰</p>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">طراحی و توسعه توسط تیم <span class="font-bold text-indigo-600 dark:text-indigo-400">Phoenix.Yaser</span></p>
                 </div>
@@ -3139,7 +3128,7 @@
         let dailyNotes = (() => { const raw = safeLoadJSON('sewing_daily_notes_v13', []); return Array.isArray(raw) ? raw.map(sanitizeNote).filter(Boolean) : []; })();
 
         const FORM_LABEL_DEFAULTS = {
-            itemCode: 'کد لباس / قطعه', itemTitle: 'عنوان لباس / قطعه', itemColor: 'رنگ', receivedQuantity: 'تعداد دریافتی',
+            itemCode: 'کد کار / قطعه', itemTitle: 'عنوان کار / قطعه', itemColor: 'رنگ', receivedQuantity: 'تعداد دریافتی',
             unitPrice: 'قیمت واحد', itemStatus: 'وضعیت تحویل / ثبت', recordDate: 'تاریخ ثبت', recordTime: 'ساعت ثبت',
             dailyStat: 'آمار روزانه', recordEndDateTime: 'تاریخ و زمان پایان', recordWorkDuration: 'مدت زمان تحویل کار'
         };
@@ -3156,7 +3145,7 @@
         const DEFAULT_APP_SETTINGS = {
             workdayMinutes: 495, shiftStart: '08:00', shiftEnd: '18:00', shiftBreaks: null, formLabels: {}, 
             schemaVersion: 1,
-            shopName: 'سامانه آمار دوخت لباس',
+            shopName: 'سامانه آمار کار',
             currency: 'تومان',
             defaultStatus: 'به موقع',
             onTimeToleranceMinutes: 5,
@@ -4457,7 +4446,7 @@
                     const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
                     return `${monthName} ${formatYearDigits(year)}`;
                 })();
-            const shopName = (appSettings.shopName || 'سامانه آمار دوخت لباس');
+            const shopName = (appSettings.shopName || 'سامانه آمار کار');
             const currency = appSettings.currency || 'تومان';
             const totalAmountSum = sumTotalPrice(records);
             const unknownPriceCount = countUnknownPriceRecords(records);
@@ -4832,7 +4821,7 @@
                 removePhotoBtn.classList.add('hidden');
             }
 
-            document.getElementById('settingShopName').value = appSettings.shopName || 'سامانه آمار دوخت لباس';
+            document.getElementById('settingShopName').value = appSettings.shopName || 'سامانه آمار کار';
             document.getElementById('settingCurrency').value = appSettings.currency || 'تومان';
             document.getElementById('settingDefaultStatus').value = appSettings.defaultStatus || 'به موقع';
             document.getElementById('settingOnTimeTolerance').value = formatNumber(getOnTimeTolerance()).replace(/,/g, '');
@@ -4896,7 +4885,7 @@
             const ownerAddressVal = document.getElementById('settingOwnerAddress').value.trim();
             // اگر نام فروشگاه خالی گذاشته شود، از مقدار پیش‌فرض استفاده می‌شود؛ قبلاً در این حالت
             // کل فرم (از جمله تم، فونت، رنگ‌ها و واحد پول) بدون هیچ پیام خطایی ذخیره نمی‌شد.
-            const shopNameVal = document.getElementById('settingShopName').value.trim() || appSettings.shopName || 'سامانه آمار دوخت لباس';
+            const shopNameVal = document.getElementById('settingShopName').value.trim() || appSettings.shopName || 'سامانه آمار کار';
             const currencyVal = document.getElementById('settingCurrency').value;
             const defaultStatusVal = document.getElementById('settingDefaultStatus').value;
             const themeVal = document.getElementById('settingTheme').value;
@@ -5435,7 +5424,7 @@
             renderTodayDateBar();
             const titleElement = document.getElementById('mainAppTitle');
             if (titleElement) {
-                const customShopName = appSettings.shopName || 'سامانه آمار دوخت لباس';
+                const customShopName = appSettings.shopName || 'سامانه آمار کار';
                 titleElement.innerText = `${customShopName} - گزارش ماه ${currentJalali.monthName} ${formatYearDigits(currentJalali.yearEn)}`;
             }
             const ownerLine = document.getElementById('ownerInfoLine');
@@ -5573,7 +5562,7 @@
                 const shopName = shopInput ? shopInput.value.trim() : (appSettings.shopName || '');
 
                 nameEl.innerText = ownerName || 'کاربر مهمان';
-                subEl.innerText = shopName || 'سامانه آمار دوخت لباس';
+                subEl.innerText = shopName || 'سامانه آمار کار';
 
                 if (currentOwnerPhotoData) {
                     imgEl.src = currentOwnerPhotoData;
@@ -6888,21 +6877,7 @@
             infoBox.classList.remove('hidden');
         }
 
-        // [بهینه‌سازی سرعت] مثل updateShiftPreview/updateSettingsProfilePreview، اجرای واقعی روی
-        // requestAnimationFrame موکول می‌شود تا هنگام تایپ سریع در فیلدهای فرم (تعداد دریافتی، ساعت،
-        // آمار روزانه)، این محاسبه فقط یک‌بار در هر فریم انجام شود، نه به ازای هر ضربه‌کلید.
-        let _autoCalcScheduled = false;
-        let _autoCalcKeepStatus = false;
         function runAutoDeliveryCalculation(keepStatus) {
-            _autoCalcKeepStatus = !!keepStatus;
-            if (_autoCalcScheduled) return;
-            _autoCalcScheduled = true;
-            requestAnimationFrame(() => {
-                _autoCalcScheduled = false;
-                runAutoDeliveryCalculationNow(_autoCalcKeepStatus);
-            });
-        }
-        function runAutoDeliveryCalculationNow(keepStatus) {
             const infoBox = document.getElementById('autoCalcInfoBox');
             const infoText = document.getElementById('autoCalcInfoText');
             const endDateTimeField = document.getElementById('recordEndDateTime');

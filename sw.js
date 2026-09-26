@@ -6,14 +6,15 @@
  * عدد VERSION را فقط وقتی زیاد کنید که خودِ sw.js، لیست فایل‌های کش‌شده یا آیکون‌ها را عوض کرده‌اید؛
  * تغییر همین فایل باعث می‌شود بنر «نسخه جدید آماده است» در برنامه ظاهر شود.
  */
-const VERSION = 'v3';
+const VERSION = 'v4';
 const CACHE_PREFIX = 'work-stats-';
 const OLD_CACHE_PREFIXES = ['sewing-stats-']; // برای پاکسازی کش نسخه‌های قبلی، هنگام مهاجرت به نام عمومی
 const CACHE = CACHE_PREFIX + VERSION;
 const SCOPE = self.registration.scope;
 const INDEX_URL = new URL('index.html', SCOPE).href;
+const OFFLINE_URL = new URL('offline.html', SCOPE).href;
 
-const LOCAL_ASSETS = ['index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png']
+const LOCAL_ASSETS = ['index.html', 'manifest.json', 'offline.html', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png']
   .map(p => new URL(p, SCOPE).href);
 
 // منابع خارجیِ ضروری؛ در نصب دانلود می‌شوند تا اولین بار هم آفلاین کار کند.
@@ -74,7 +75,9 @@ async function handleNavigation(event) {
     return res;
   } catch (e) {
     const cached = await cache.match(INDEX_URL) || await cache.match(SCOPE);
-    return cached || new Response('برنامه آفلاین است و هنوز کش نشده؛ یک‌بار با اینترنت باز کنید.', {
+    if (cached) return cached;
+    const offlinePage = await cache.match(OFFLINE_URL);
+    return offlinePage || new Response('برنامه آفلاین است و هنوز کش نشده؛ یک‌بار با اینترنت باز کنید.', {
       status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' }
     });
   }

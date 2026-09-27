@@ -469,7 +469,7 @@
                                 <i class="fa-solid fa-database"></i> داده‌ها
                             </button>
                             <button type="button" onclick="switchToolsTab('device', event)" data-tools-tab="device" class="tools-tab-btn shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-t-xl text-[11px] font-bold transition-colors" title="دستگاه">
-                                <i class="fa-solid fa-folder-open"></i> دستگاه
+                                <i class="fa-solid fa-mobile-screen-button"></i> دستگاه
                             </button>
                         </div>
 
@@ -540,6 +540,19 @@
                                         <span class="block text-[9px] text-slate-400">گوگل‌درایو، آی‌کلود و...</span>
                                     </span>
                                 </button>
+                                <button onclick="document.getElementById('importFile').click(); closeToolsDropdown();" class="tactile-btn col-span-2 flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-upload text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بارگذاری پشتیبان</span>
+                                        <span class="block text-[9px] text-slate-400">وارد کردن فایل JSON</span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 px-0.5">خروجی و گزارش‌گیری</p>
+                            <div class="grid grid-cols-2 gap-1.5 mb-3">
                                 <button onclick="runIfPremium('خروجی گزارش رسمی', exportToHtmlReport); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
                                     <span class="w-9 h-9 shrink-0 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                                         <i class="fa-solid fa-file-arrow-down text-xs"></i>
@@ -547,15 +560,6 @@
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">خروجی HTML</span>
                                         <span class="block text-[9px] text-slate-400">چاپ گزارش</span>
-                                    </span>
-                                </button>
-                                <button onclick="document.getElementById('importFile').click(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-upload text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بارگذاری پشتیبان</span>
-                                        <span class="block text-[9px] text-slate-400">وارد کردن JSON</span>
                                     </span>
                                 </button>
                                 <button onclick="runIfPremium('خروجی CSV اکسل', exportRecordsToCSV); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -569,7 +573,7 @@
                                 </button>
                             </div>
 
-                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 px-0.5">پوشه دستگاه</p>
+                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 px-0.5">پوشه ذخیره‌سازی</p>
                             <div class="grid grid-cols-2 gap-1.5">
                                 <button onclick="manualRotatingBackupNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
                                     <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
@@ -1867,12 +1871,34 @@
                 <div class="space-y-2 pb-4 border-b border-slate-300 dark:border-slate-600">
                     <h4 class="text-[11px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">امکانات کلیدی</h4>
                     <ul class="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed space-y-1.5">
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>ثبت سریع کارکرد روزانه با کد، عنوان، تعداد و قیمت هر کد کار، به‌همراه عکس اختیاری نمونه کار</span></li>
                         <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>محاسبه‌ی خودکار زمان تحویل با احتساب ساعات کاری، استراحت‌ها و تعطیلی جمعه‌ها</span></li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>اعلان‌های هوشمند پلکانی (۲۵٪ تا ۹۰٪) برای پیشرفت کار جاری</span></li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>پشتیبان‌گیری خودکار JSON، اتصال به پوشه دستگاه و پشتیبان چرخشی</span></li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>سطل بازیافت (۳۰ روزه)، بررسی سلامت داده، جستجوی پیشرفته و گزارش‌گیری چاپی</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>تعیین خودکار وضعیت «به‌موقع / تاخیر / زودتر از موعد» برای هر رکورد</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>ویجت دایره‌ای پیشرفت کار جاری و اعلان‌های هوشمند پلکانی (۲۵٪ تا ۹۰٪)</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>یادداشت‌های خاص روزانه (عادی، یادآوری، تعطیلی) برای هر تاریخ</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>لیست کارکردها با نمای جدولی/کارتی، فیلتر ماهانه، جستجوی پیشرفته و نمایش تمام‌صفحه</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>گزارش کلی و نمای کلی ماهانه از آمار کار، همراه هدف‌گذاری درآمد هفتگی/ماهانه</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>پشتیبان‌گیری خودکار و دستی JSON، ارسال به فضای ابری و پشتیبان چرخشی در پوشه دستگاه</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>خروجی گزارش رسمی HTML قابل چاپ و خروجی CSV اکسل از رکوردها</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>سطل بازیافت (۳۰ روزه)، بررسی سلامت داده و لاگ کامل رویدادهای سیستم</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>شخصی‌سازی کامل: پروفایل کاربری، ظاهر روشن/تاریک، رنگ‌بندی و نوار متن انگیزشی</span></li>
                         <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>قفل ورود با رمز عبور، کد امنیتی حذف داده‌ها و ذخیره‌سازی کاملاً محلی و آفلاین</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>قابل نصب روی موبایل به‌صورت PWA، با اعلان‌های دستگاه حتی در پس‌زمینه</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>شمارنده‌ی روزهای متوالی استفاده و اشتراک‌گذاری آسان برنامه با دیگران</span></li>
                     </ul>
+                </div>
+                <div class="space-y-2 pb-4 border-b border-slate-300 dark:border-slate-600">
+                    <h4 class="text-[11px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">راه‌های ارتباط با تیم سازنده</h4>
+                    <div class="space-y-1.5">
+                        <a href="https://t.me/Freedom_Phoenix_Tabriz" target="_blank" rel="noopener" class="flex items-center gap-2 text-[12px] text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                            <i class="fa-brands fa-telegram text-sky-500 w-4 text-center"></i>
+                            <span>تلگرام: Freedom_Phoenix_Tabriz@</span>
+                        </a>
+                        <a href="mailto:gognooooos@gmail.com" class="flex items-center gap-2 text-[12px] text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                            <i class="fa-solid fa-envelope text-amber-500 w-4 text-center"></i>
+                            <span>ایمیل: gognooooos@gmail.com</span>
+                        </a>
+                    </div>
                 </div>
                 <div class="pb-4 border-b border-slate-300 dark:border-slate-600">
                     <button type="button" onclick="closeSettingsModal(); toggleLogBox();" class="w-full flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-right">

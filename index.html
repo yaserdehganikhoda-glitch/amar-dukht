@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه آمار کار</title>
+    <title>سامانه ی کارگاه هوشمند</title>
     
     <!-- تنظیمات PWA و مانیفست -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="آمار کار">
+    <meta name="apple-mobile-web-app-title" content="کارگاه هوشمند">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="apple-touch-icon" href="icon-192.png">
     
@@ -404,7 +404,7 @@
             <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-4">
                 <i class="fa-solid fa-lock text-2xl"></i>
             </div>
-            <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-1">ورود به سامانه آمار کار</h2>
+            <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-1">ورود به سامانه ی کارگاه هوشمند</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mb-5">برای مشاهده اطلاعات، رمز عبور را وارد کنید.</p>
             <form onsubmit="attemptUnlock(event)" class="space-y-3">
                 <input type="password" id="pinLockInput" inputmode="numeric" required autocomplete="off" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-center text-lg tracking-[0.3em] bg-slate-50 dark:bg-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" placeholder="رمز عبور">
@@ -695,7 +695,7 @@
                 <img src="icon-192.png" alt="لوگوی سامانه" class="w-11 h-11 object-contain rounded-lg">
             </div>
             <h1 id="mainAppTitle" class="text-2xl md:text-3xl font-bold text-white tracking-tight relative z-10">
-                سامانه آمار کار
+                سامانه ی کارگاه هوشمند
             </h1>
             <p id="mainAppSubtitle" class="text-sm text-indigo-100 mt-2 font-normal relative z-10">سیستم هوشمند آمار و مدیریت کار</p>
             <p id="ownerInfoLine" class="hidden text-xs text-indigo-100/80 mt-1 relative z-10"></p>
@@ -1368,7 +1368,7 @@
                     </div>
                     <div class="min-w-0">
                         <p id="settingsProfilePreviewName" class="text-sm font-bold truncate">کاربر مهمان</p>
-                        <p id="settingsProfilePreviewSub" class="text-[11px] text-white/70 truncate">سامانه آمار کار</p>
+                        <p id="settingsProfilePreviewSub" class="text-[11px] text-white/70 truncate">سامانه ی کارگاه هوشمند</p>
                     </div>
                 </div>
             </div>
@@ -1849,7 +1849,7 @@
 
                 <div id="settingsTab-about" class="settings-tab-panel hidden space-y-4">
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
-                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> درباره سامانه آمار کار</h3>
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> درباره سامانه ی کارگاه هوشمند</h3>
                     <p class="text-[12px] leading-relaxed text-slate-600 dark:text-slate-300">این سامانه یک ابزار آفلاین (PWA) برای ثبت و مدیریت کارکرد روزانه‌ی هر شغل کارمزدی یا پروژه‌ای است: هر کد کار با عنوان، رنگ/مشخصات، تعداد و قیمت ثبت می‌شود، مدت‌زمان تحویل به‌صورت خودکار از روی آمار روزانه محاسبه می‌شود و وضعیت «به‌موقع / تاخیر / زودتر از موعد» خودکار تعیین می‌گردد.</p>
                 </div>
                 <div class="space-y-2 pb-4 border-b border-slate-300 dark:border-slate-600">
@@ -1861,7 +1861,7 @@
                         <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>ویجت دایره‌ای پیشرفت کار جاری و اعلان‌های هوشمند پلکانی (۲۵٪ تا ۹۰٪)</span></li>
                         <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>یادداشت‌های خاص روزانه (عادی، یادآوری، تعطیلی) برای هر تاریخ</span></li>
                         <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>لیست کارکردها با نمای جدولی/کارتی، فیلتر ماهانه، جستجوی پیشرفته و نمایش تمام‌صفحه</span></li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>گزارش کلی و نمای کلی ماهانه از آمار کار، همراه هدف‌گذاری درآمد هفتگی/ماهانه</span></li>
+                        <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>گزارش کلی و نمای کلی ماهانه از کارگاه هوشمند، همراه هدف‌گذاری درآمد هفتگی/ماهانه</span></li>
                         <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>پشتیبان‌گیری خودکار و دستی JSON، ارسال به فضای ابری و پشتیبان چرخشی در پوشه دستگاه</span></li>
                         <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>خروجی گزارش رسمی HTML قابل چاپ و خروجی CSV اکسل از رکوردها</span></li>
                         <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>سطل بازیافت (۳۰ روزه)، بررسی سلامت داده و لاگ کامل رویدادهای سیستم</span></li>
@@ -1896,7 +1896,7 @@
                     <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-2 shadow-inner overflow-hidden">
                         <img src="icon-192.png" alt="لوگوی سامانه" class="w-10 h-10 object-contain rounded-lg">
                     </div>
-                    <p class="text-sm font-bold text-slate-800 dark:text-white">سامانه آمار کار</p>
+                    <p class="text-sm font-bold text-slate-800 dark:text-white">سامانه ی کارگاه هوشمند</p>
                     <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">نسخه ۱۳.۰</p>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">طراحی و توسعه توسط تیم <span class="font-bold text-indigo-600 dark:text-indigo-400">Phoenix.Yaser</span></p>
                 </div>
@@ -2245,7 +2245,7 @@
             if (navigator.share) {
                 try {
                     await navigator.share({
-                        title: 'سامانه آمار کار',
+                        title: 'سامانه ی کارگاه هوشمند',
                         text: 'این سامانه‌ی هوشمند آمار و مدیریت کار رو ببین:',
                         url: shareUrl
                     });
@@ -3492,7 +3492,7 @@
         const DEFAULT_APP_SETTINGS = {
             workdayMinutes: 495, shiftStart: '08:00', shiftEnd: '18:00', shiftBreaks: null, formLabels: {}, optionalFields: {}, 
             schemaVersion: 1,
-            shopName: 'سامانه آمار کار',
+            shopName: 'سامانه ی کارگاه هوشمند',
             currency: 'تومان',
             defaultStatus: 'به موقع',
             onTimeToleranceMinutes: 5,
@@ -3735,7 +3735,7 @@
 
         /*
          * ذخیره‌ی فایل پشتیبان:
-         * - تا پایان هر ماه شمسی فقط «یک» فایل پشتیبان وجود دارد (آمار_کار_پشتیبان_<ماه>_<سال>.json) و هر بار
+         * - تا پایان هر ماه شمسی فقط «یک» فایل پشتیبان وجود دارد (کارگاه_هوشمند_پشتیبان_<ماه>_<سال>.json) و هر بار
          *   همان فایل به‌روزرسانی (بازنویسی) می‌شود؛ با شروع ماه جدید، خودکار فایل ماه جدید ساخته می‌شود.
          * - مسیر ذخیره فقط از «تنظیمات ← حافظه ← پوشه پشتیبان» تعیین/تغییر می‌کند. در صفحه‌ی اصلی هیچ‌وقت
          *   پنجره‌ی انتخاب مسیر نمایش داده نمی‌شود.
@@ -3746,7 +3746,7 @@
         let backupPermissionState = 'unknown';
 
         function getMonthlyBackupFileName() {
-            return `آمار_کار_پشتیبان_${currentJalali.monthName}_${currentJalali.yearEn}.json`;
+            return `کارگاه_هوشمند_پشتیبان_${currentJalali.monthName}_${currentJalali.yearEn}.json`;
         }
 
         async function saveBackupFile(filename, jsonString, { onSuccess } = {}) {
@@ -4172,7 +4172,7 @@
             // به‌روزرسانی که هر ماه را به پوشه‌ی مخصوص خودش منتقل می‌کند)، همچنان خوانده می‌شود تا داده‌ای
             // گم نشود؛ در ذخیره‌ی بعدی به‌طور خودکار به پوشه‌ی همان ماه منتقل و از ریشه حذف خواهد شد.
             for await (const [name, handle] of appDirHandle.entries()) {
-                if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name.startsWith('آمار_کار_پشتیبان_') || name.startsWith('آمار_دوخت_پشتیبان_')) continue;
+                if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name.startsWith('کارگاه_هوشمند_پشتیبان_') || name.startsWith('آمار_کار_پشتیبان_') || name.startsWith('آمار_دوخت_پشتیبان_')) continue;
                 try {
                     const file = await handle.getFile();
                     absorbParsedFile(JSON.parse(await file.text()));
@@ -4809,7 +4809,7 @@
                     const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
                     return `${monthName} ${formatYearDigits(year)}`;
                 })();
-            const shopName = (appSettings.shopName || 'سامانه آمار کار');
+            const shopName = (appSettings.shopName || 'سامانه ی کارگاه هوشمند');
             const currency = appSettings.currency || 'تومان';
             const totalAmountSum = sumTotalPrice(records);
             const unknownPriceCount = countUnknownPriceRecords(records);
@@ -5210,7 +5210,7 @@
                 removePhotoBtn.classList.add('hidden');
             }
 
-            document.getElementById('settingShopName').value = appSettings.shopName || 'سامانه آمار کار';
+            document.getElementById('settingShopName').value = appSettings.shopName || 'سامانه ی کارگاه هوشمند';
             document.getElementById('settingCurrency').value = appSettings.currency || 'تومان';
             document.getElementById('settingDefaultStatus').value = appSettings.defaultStatus || 'به موقع';
             document.getElementById('settingOnTimeTolerance').value = formatNumber(getOnTimeTolerance()).replace(/,/g, '');
@@ -5274,7 +5274,7 @@
             const ownerAddressVal = document.getElementById('settingOwnerAddress').value.trim();
             // اگر نام فروشگاه خالی گذاشته شود، از مقدار پیش‌فرض استفاده می‌شود؛ قبلاً در این حالت
             // کل فرم (از جمله تم، فونت، رنگ‌ها و واحد پول) بدون هیچ پیام خطایی ذخیره نمی‌شد.
-            const shopNameVal = document.getElementById('settingShopName').value.trim() || appSettings.shopName || 'سامانه آمار کار';
+            const shopNameVal = document.getElementById('settingShopName').value.trim() || appSettings.shopName || 'سامانه ی کارگاه هوشمند';
             const currencyVal = document.getElementById('settingCurrency').value;
             const defaultStatusVal = document.getElementById('settingDefaultStatus').value;
             const themeVal = document.getElementById('settingTheme').value;
@@ -5783,7 +5783,7 @@
             try {
                 await navigator.share({
                     files: [file],
-                    title: 'پشتیبان سامانه آمار کار',
+                    title: 'پشتیبان سامانه ی کارگاه هوشمند',
                     text: `فایل پشتیبان ماه جاری (${jsonFilename}) — محتوای آن JSON است؛ به‌دلیل محدودیت اشتراک‌گذاری فایل در مرورگر با پسوند txt ارسال شده است.`
                 });
                 addLog('فایل پشتیبان از طریق منوی اشتراک‌گذاری سیستم ارسال شد.', 'success');
@@ -5920,7 +5920,7 @@
             renderTodayDateBar();
             const titleElement = document.getElementById('mainAppTitle');
             if (titleElement) {
-                const customShopName = appSettings.shopName || 'سامانه آمار کار';
+                const customShopName = appSettings.shopName || 'سامانه ی کارگاه هوشمند';
                 titleElement.innerText = `${customShopName} - گزارش ماه ${currentJalali.monthName} ${formatYearDigits(currentJalali.yearEn)}`;
             }
             const ownerLine = document.getElementById('ownerInfoLine');
@@ -6058,7 +6058,7 @@
                 const shopName = shopInput ? shopInput.value.trim() : (appSettings.shopName || '');
 
                 nameEl.innerText = ownerName || 'کاربر مهمان';
-                subEl.innerText = shopName || 'سامانه آمار کار';
+                subEl.innerText = shopName || 'سامانه ی کارگاه هوشمند';
 
                 if (currentOwnerPhotoData) {
                     imgEl.src = currentOwnerPhotoData;
@@ -8524,7 +8524,7 @@
     </style>
 </head>
 <body>
-    <h1>${escapeHTML(appSettings.shopName || 'سامانه آمار کار')} - گزارش عملکرد ${periodLabel}</h1>
+    <h1>${escapeHTML(appSettings.shopName || 'سامانه ی کارگاه هوشمند')} - گزارش عملکرد ${periodLabel}</h1>
     <p>${getOwnerInfoLineText() ? escapeHTML(getOwnerInfoLineText()) + ' &nbsp;|&nbsp; ' : ''}تاریخ تهیه گزارش: ${formatDateDigits(currentJalali.fullDateStr)}</p>
     <table>
         <tr>

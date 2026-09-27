@@ -497,13 +497,13 @@
                                 </button>
                             </div>
                             <div class="grid grid-cols-2 gap-1.5">
-                                <button onclick="toggleLogBox(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center">
-                                        <i class="fa-solid fa-terminal text-xs"></i>
+                                <button onclick="openSettingsModal('about'); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-crown text-xs"></i>
                                     </span>
                                     <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">رویدادها</span>
-                                        <span class="block text-[9px] text-slate-400">لاگ سیستم</span>
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نسخه ویژه</span>
+                                        <span class="block text-[9px] text-slate-400">وضعیت و ارتقا</span>
                                     </span>
                                 </button>
                                 <button onclick="lockAppNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
@@ -558,43 +558,40 @@
                                         <span class="block text-[9px] text-slate-400">وارد کردن JSON</span>
                                     </span>
                                 </button>
-                            </div>
-
-                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 px-0.5">ذخیره و بارگذاری در پوشه دستگاه</p>
-                            <div class="grid grid-cols-2 gap-1.5 mb-2">
-                                <button onclick="handleFolderMenuButtonClick()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
-                                        <i id="folderMenuBtnIcon" class="fa-solid fa-folder-plus text-xs"></i>
+                                <button onclick="runIfPremium('خروجی CSV اکسل', exportRecordsToCSV); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-lime-50 dark:bg-lime-950/40 text-lime-600 dark:text-lime-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-file-csv text-xs"></i>
                                     </span>
                                     <span class="min-w-0">
-                                        <span id="folderMenuBtnLabel" class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پوشه دستگاه</span>
-                                        <span class="block text-[9px] text-slate-400">مسیر در تنظیمات</span>
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">خروجی CSV اکسل</span>
+                                        <span class="block text-[9px] text-slate-400">جدول رکوردهای دوره جاری</span>
                                     </span>
                                 </button>
+                            </div>
+
+                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 px-0.5">پوشه دستگاه</p>
+                            <div class="grid grid-cols-2 gap-1.5">
                                 <button onclick="manualRotatingBackupNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
                                     <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                                         <i class="fa-solid fa-clock-rotate-left text-xs"></i>
                                     </span>
                                     <span class="min-w-0">
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پشتیبان چرخشی الان</span>
-                                        <span class="block text-[9px] text-slate-400">در پوشه دستگاه</span>
+                                        <span class="block text-[9px] text-slate-400">در پوشه متصل‌شده</span>
+                                    </span>
+                                </button>
+                                <button onclick="openSettingsModal('storage'); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-folder-tree text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">مدیریت پوشه‌ها</span>
+                                        <span class="block text-[9px] text-slate-400">اتصال/قطع در تنظیمات</span>
                                     </span>
                                 </button>
                             </div>
-                            <!-- اقدامات فرعی پوشه دستگاه -->
-                            <div class="flex items-center justify-between gap-2 px-1.5 pt-1 pb-2 border-t border-slate-100 dark:border-slate-800 flex-wrap">
-                                <button id="folderDisconnectBtn" onclick="disconnectStorageFolder(); closeToolsDropdown();" class="hidden text-[10px] text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors">
-                                    <i class="fa-solid fa-link-slash"></i> قطع اتصال پوشه
-                                </button>
-                                <button onclick="manualSaveToFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 transition-colors mr-auto">
-                                    <i class="fa-solid fa-floppy-disk"></i> ذخیره دستی در پوشه
-                                </button>
-                                <button onclick="manualLoadFromFolder(); closeToolsDropdown();" class="text-[10px] text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 flex items-center gap-1 transition-colors">
-                                    <i class="fa-solid fa-rotate"></i> بارگذاری دستی از پوشه
-                                </button>
-                            </div>
 
-                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 px-0.5 pt-1 border-t border-slate-100 dark:border-slate-800">مدیریت داده</p>
+                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 px-0.5 pt-2 border-t border-slate-100 dark:border-slate-800 mt-1.5">مدیریت داده</p>
                             <div class="grid grid-cols-2 gap-1.5">
                                 <button onclick="openTrashBinModal()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
                                     <span class="w-9 h-9 shrink-0 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center">
@@ -619,16 +616,78 @@
 
                         <!-- تب دستگاه -->
                         <div id="toolsTab-device" class="tools-tab-panel hidden">
-                            <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="tactile-btn hidden w-full items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right flex">
-                                <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
-                                    <i class="fa-solid fa-mobile-screen-button text-xs"></i>
-                                </span>
-                                <span class="min-w-0">
-                                    <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نصب برنامه</span>
-                                    <span class="block text-[9px] text-slate-400">روی دستگاه</span>
-                                </span>
-                            </button>
-                            <p id="deviceTabEmptyHint" class="text-xs text-slate-400 dark:text-slate-500 text-center py-4">در حال حاضر امکانی برای نمایش نیست. ابزارهای ذخیره و بارگذاری در تب «داده‌ها» قرار دارند.</p>
+                            <!-- کارت وضعیت دستگاه -->
+                            <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-2.5 mb-2.5 text-[11px] space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-500 dark:text-slate-400">حالت اجرا</span>
+                                    <span id="deviceRunModeText" class="font-bold text-slate-700 dark:text-slate-200">—</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-500 dark:text-slate-400">وضعیت اتصال</span>
+                                    <span id="deviceNetStatusText" class="font-bold">—</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <button id="installAppBtn" onclick="promptInstallApp(); closeToolsDropdown();" class="tactile-btn hidden items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-mobile-screen-button text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نصب برنامه</span>
+                                        <span class="block text-[9px] text-slate-400">روی دستگاه</span>
+                                    </span>
+                                </button>
+                                <button id="iosInstallGuideBtn" onclick="toggleIosInstallGuide()" class="tactile-btn hidden items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-arrow-up-from-bracket text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نصب روی آیفون/آیپد</span>
+                                        <span class="block text-[9px] text-slate-400">راهنمای افزودن</span>
+                                    </span>
+                                </button>
+                                <button onclick="checkForAppUpdateManually()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">بررسی به‌روزرسانی</span>
+                                        <span class="block text-[9px] text-slate-400">آخرین نسخه برنامه</span>
+                                    </span>
+                                </button>
+                                <button onclick="shareAppLink(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-share-nodes text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">اشتراک‌گذاری برنامه</span>
+                                        <span class="block text-[9px] text-slate-400">معرفی به دیگران</span>
+                                    </span>
+                                </button>
+                                <button id="deviceNotifyBtn" onclick="requestDeviceNotifications()" class="tactile-btn col-span-2 flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-bell text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span id="deviceNotifyBtnLabel" class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">فعال‌سازی اعلان‌های دستگاه</span>
+                                        <span id="deviceNotifyBtnSub" class="block text-[9px] text-slate-400">هشدار موعد تحویل حتی در پس‌زمینه</span>
+                                    </span>
+                                </button>
+                                <button onclick="clearAppCacheAndReload()" class="tactile-btn col-span-2 flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                                        <i class="fa-solid fa-broom text-xs"></i>
+                                    </span>
+                                    <span class="min-w-0">
+                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پاکسازی حافظه پنهان برنامه</span>
+                                        <span class="block text-[9px] text-slate-400">رفع مشکلات نمایشی؛ داده‌های شما دست‌نخورده می‌ماند</span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <p id="iosInstallGuideText" class="hidden text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 rounded-xl p-2.5 mt-2">
+                                در Safari: روی دکمه‌ی <i class="fa-solid fa-arrow-up-from-bracket"></i> «اشتراک‌گذاری» در نوار پایین یا بالای صفحه بزنید، سپس گزینه‌ی «Add to Home Screen» (افزودن به صفحه اصلی) را انتخاب کنید.
+                            </p>
                         </div>
                         </div>
                     </div>
@@ -1815,6 +1874,14 @@
                         <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-0.5"></i><span>قفل ورود با رمز عبور، کد امنیتی حذف داده‌ها و ذخیره‌سازی کاملاً محلی و آفلاین</span></li>
                     </ul>
                 </div>
+                <div class="pb-4 border-b border-slate-300 dark:border-slate-600">
+                    <button type="button" onclick="closeSettingsModal(); toggleLogBox();" class="w-full flex items-center justify-between gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-right">
+                        <span class="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300">
+                            <i class="fa-solid fa-terminal text-slate-400"></i> نمایش رویدادها و لاگ سیستم
+                        </span>
+                        <i class="fa-solid fa-chevron-left text-[10px] text-slate-400"></i>
+                    </button>
+                </div>
                 <div class="text-center pt-2">
                     <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-2 shadow-inner overflow-hidden">
                         <img src="icon-192.png" alt="لوگوی سامانه" class="w-10 h-10 object-contain rounded-lg">
@@ -2079,20 +2146,11 @@
         /* ==================== نصب برنامه روی دستگاه (PWA Install Prompt) ==================== */
         let deferredInstallPrompt = null;
 
-        // تب «دستگاه» فقط دکمه‌ی نصب برنامه را دارد؛ وقتی این دکمه مخفی است (نصب ممکن نیست یا قبلاً
-        // نصب شده)، به‌جای تب خالی یک متن راهنما نمایش داده می‌شود.
-        function syncDeviceTabEmptyHint() {
-            const btn = document.getElementById('installAppBtn');
-            const hint = document.getElementById('deviceTabEmptyHint');
-            if (hint) hint.classList.toggle('hidden', !!(btn && !btn.classList.contains('hidden')));
-        }
-
         window.addEventListener('beforeinstallprompt', (event) => {
             event.preventDefault();
             deferredInstallPrompt = event;
             const btn = document.getElementById('installAppBtn');
             if (btn) btn.classList.remove('hidden');
-            syncDeviceTabEmptyHint();
         });
 
         function promptInstallApp() {
@@ -2108,7 +2166,6 @@
                 deferredInstallPrompt = null;
                 const btn = document.getElementById('installAppBtn');
                 if (btn) btn.classList.add('hidden');
-                syncDeviceTabEmptyHint();
             });
         }
 
@@ -2117,16 +2174,202 @@
             if (btn) btn.classList.add('hidden');
             deferredInstallPrompt = null;
             addLog('برنامه با موفقیت روی دستگاه نصب شد.', 'success');
-            syncDeviceTabEmptyHint();
+            renderDeviceStatusCard();
         });
-        syncDeviceTabEmptyHint();
         /* ==================== پایان نصب برنامه ==================== */
+
+        /* ==================== امکانات تب «دستگاه» ==================== */
+        function isStandalonePWA() {
+            return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+        }
+        function isIOSDevice() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+
+        // کارت وضعیت بالای تب «دستگاه»: حالت اجرا (نصب‌شده/داخل مرورگر) و وضعیت اتصال اینترنت
+        function renderDeviceStatusCard() {
+            const modeEl = document.getElementById('deviceRunModeText');
+            if (modeEl) modeEl.innerText = isStandalonePWA() ? 'نصب‌شده روی دستگاه' : 'در حال اجرا داخل مرورگر';
+            const netEl = document.getElementById('deviceNetStatusText');
+            if (netEl) {
+                netEl.innerText = navigator.onLine ? 'آنلاین' : 'آفلاین';
+                netEl.className = 'font-bold ' + (navigator.onLine ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400');
+            }
+        }
+
+        function toggleIosInstallGuide() {
+            const el = document.getElementById('iosInstallGuideText');
+            if (el) el.classList.toggle('hidden');
+        }
+
+        // بررسی دستی وجود نسخه‌ی جدیدتر برنامه (علاوه بر بررسی خودکار پس‌زمینه)
+        async function checkForAppUpdateManually() {
+            if (!('serviceWorker' in navigator)) {
+                showFeedbackBanner('این مرورگر از بررسی خودکار به‌روزرسانی برنامه پشتیبانی نمی‌کند.', 'warn');
+                return;
+            }
+            if (newWorkerWaiting) {
+                showAppUpdateBanner();
+                showFeedbackBanner('نسخه‌ی جدیدی از قبل آماده است؛ از نوار بالای صفحه برای به‌روزرسانی استفاده کنید.', 'info');
+                return;
+            }
+            try {
+                const reg = await navigator.serviceWorker.getRegistration();
+                if (!reg) { showFeedbackBanner('سرویس آفلاین برنامه هنوز آماده نیست؛ کمی بعد دوباره امتحان کنید.', 'warn'); return; }
+                await reg.update();
+                addLog('بررسی دستی به‌روزرسانی برنامه انجام شد.', 'info');
+                setTimeout(() => {
+                    if (newWorkerWaiting) {
+                        showFeedbackBanner('نسخه‌ی جدیدی از برنامه پیدا شد؛ از نوار بالای صفحه برای به‌روزرسانی استفاده کنید.', 'success');
+                    } else {
+                        showFeedbackBanner('برنامه از قبل به‌روز است.', 'success');
+                    }
+                }, 1500);
+            } catch (e) {
+                console.warn('خطا در بررسی به‌روزرسانی برنامه:', e);
+                showFeedbackBanner('بررسی به‌روزرسانی با خطا مواجه شد.', 'warn');
+            }
+        }
+
+        // اشتراک‌گذاری لینک برنامه (نه فایل داده) برای معرفی برنامه به دیگران
+        async function shareAppLink() {
+            const shareUrl = window.location.href.split('#')[0];
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'سامانه آمار کار',
+                        text: 'این سامانه‌ی هوشمند آمار و مدیریت کار رو ببین:',
+                        url: shareUrl
+                    });
+                    addLog('لینک برنامه با موفقیت به اشتراک گذاشته شد.', 'success');
+                    return;
+                } catch (err) {
+                    if (err && err.name === 'AbortError') return; // کاربر از پنجره‌ی اشتراک‌گذاری صرف‌نظر کرد
+                    console.warn('اشتراک‌گذاری لینک برنامه ناموفق بود:', err);
+                }
+            }
+            copyAppLinkFallback(shareUrl);
+        }
+
+        function copyAppLinkFallback(url) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showFeedbackBanner('لینک برنامه در کلیپ‌بورد کپی شد.', 'success');
+                }).catch(() => {
+                    showFeedbackBanner(`این مرورگر امکان اشتراک‌گذاری مستقیم را ندارد. لینک برنامه: ${url}`, 'info');
+                });
+            } else {
+                showFeedbackBanner(`این مرورگر امکان اشتراک‌گذاری مستقیم را ندارد. لینک برنامه: ${url}`, 'info');
+            }
+        }
+
+        // پاکسازی حافظه پنهان (کش) و Service Worker برنامه برای رفع مشکلات نمایشی؛ فقط فایل‌های ظاهری
+        // برنامه از سرور دوباره دریافت می‌شوند و به داده‌های ذخیره‌شده‌ی کاربر (رکوردها/یادداشت‌ها/تنظیمات) کاری ندارد
+        function clearAppCacheAndReload() {
+            showCustomConfirm('حافظه‌ی پنهان (کش) برنامه پاک و صفحه دوباره بارگذاری شود؟ داده‌های ثبت‌شده‌ی شما (رکوردها، یادداشت‌ها، تنظیمات) دست‌نخورده می‌ماند؛ فقط فایل‌های ظاهری برنامه دوباره از سرور دریافت می‌شوند.', async (confirmed) => {
+                if (!confirmed) return;
+                closeToolsDropdown();
+                try {
+                    if ('caches' in window) {
+                        const keys = await caches.keys();
+                        await Promise.all(keys.map(k => caches.delete(k)));
+                    }
+                    if ('serviceWorker' in navigator) {
+                        const regs = await navigator.serviceWorker.getRegistrations();
+                        await Promise.all(regs.map(r => r.unregister()));
+                    }
+                } catch (e) {
+                    console.warn('خطا در پاکسازی حافظه پنهان برنامه:', e);
+                } finally {
+                    window.location.reload();
+                }
+            });
+        }
+
+        function initDeviceTabFeatures() {
+            renderDeviceStatusCard();
+            const iosBtn = document.getElementById('iosInstallGuideBtn');
+            if (iosBtn) iosBtn.classList.toggle('hidden', !(isIOSDevice() && !isStandalonePWA()));
+            updateDeviceNotificationStatusUI();
+        }
+
+        /* ---------- اعلان‌های بومی دستگاه: هشدار رسیدن به موعد تحویل حتی وقتی برنامه در پس‌زمینه است ---------- */
+        function isNotificationSupported() { return 'Notification' in window; }
+
+        function updateDeviceNotificationStatusUI() {
+            const btn = document.getElementById('deviceNotifyBtn');
+            const label = document.getElementById('deviceNotifyBtnLabel');
+            const sub = document.getElementById('deviceNotifyBtnSub');
+            if (!btn || !label || !sub) return;
+            if (!isNotificationSupported()) { btn.classList.add('hidden'); return; }
+            btn.classList.remove('hidden');
+            const perm = Notification.permission;
+            if (perm === 'granted') {
+                label.innerText = 'اعلان‌های دستگاه فعال است';
+                sub.innerText = 'هشدار موعد تحویل حتی در پس‌زمینه';
+            } else if (perm === 'denied') {
+                label.innerText = 'اعلان‌های دستگاه مسدود است';
+                sub.innerText = 'از تنظیمات مرورگر مجاز کنید';
+            } else {
+                label.innerText = 'فعال‌سازی اعلان‌های دستگاه';
+                sub.innerText = 'هشدار موعد تحویل حتی در پس‌زمینه';
+            }
+        }
+
+        async function requestDeviceNotifications() {
+            if (!isNotificationSupported()) {
+                showFeedbackBanner('این مرورگر/دستگاه از اعلان‌های سیستمی پشتیبانی نمی‌کند.', 'warn');
+                return;
+            }
+            if (Notification.permission === 'denied') {
+                showFeedbackBanner('اعلان‌ها قبلاً مسدود شده‌اند؛ برای فعال‌سازی باید از تنظیمات مرورگر/سایت اجازه دهید.', 'warn');
+                return;
+            }
+            if (Notification.permission === 'granted') {
+                showFeedbackBanner('اعلان‌های دستگاه از قبل فعال است.', 'success');
+                return;
+            }
+            try {
+                const perm = await Notification.requestPermission();
+                updateDeviceNotificationStatusUI();
+                if (perm === 'granted') {
+                    addLog('کاربر اعلان‌های دستگاه را فعال کرد.', 'success');
+                    showFeedbackBanner('اعلان‌های دستگاه فعال شد؛ با رسیدن کار جاری به موعد تحویل، اعلان دریافت می‌کنید.', 'success');
+                } else {
+                    addLog('کاربر اعلان‌های دستگاه را رد کرد.', 'warn');
+                }
+            } catch (e) {
+                console.warn('خطا در درخواست اجازه اعلان:', e);
+            }
+        }
+
+        // وقتی کار جاری برای اولین‌بار در همان روز از موعد می‌گذرد و تب برنامه مخفی/پس‌زمینه است، یک اعلان
+        // واقعیِ سیستم‌عامل نمایش می‌دهد (علاوه بر کارت پیشرفتِ داخل‌برنامه‌ای)؛ برای هر رکورد فقط یک‌بار در روز.
+        function maybeSendOverdueDeviceNotification(rec, progress) {
+            if (!isNotificationSupported() || Notification.permission !== 'granted') return;
+            if (!rec || !progress || progress.percent < 100) return;
+            if (!document.hidden) return; // کاربر همین الان برنامه را می‌بیند؛ کارت داخل‌برنامه‌ای کافی است
+            const todayStr = currentJalali.fullDateStr;
+            const flagKey = `sewing_overdue_notified_${rec.id}_${todayStr}`;
+            if (localStorage.getItem(flagKey) === '1') return;
+            try {
+                new Notification('موعد تحویل رسید', {
+                    body: `کد ${rec.itemCode || '-'} — ${rec.itemTitle || '-'} به موعد تحویل رسید.`,
+                    icon: 'icon-192.png',
+                    tag: 'sewing-overdue'
+                });
+                localStorage.setItem(flagKey, '1');
+            } catch (e) { console.warn('خطا در نمایش اعلان دستگاه:', e); }
+        }
+        /* ==================== پایان امکانات تب «دستگاه» ==================== */
 
         window.addEventListener('offline', () => {
             showFeedbackBanner('اتصال اینترنت قطع شد؛ برنامه در حالت آفلاین ادامه می‌دهد و همه داده‌ها به‌صورت محلی ذخیره می‌شوند.', 'warn');
+            renderDeviceStatusCard();
         });
         window.addEventListener('online', () => {
             showFeedbackBanner('اتصال اینترنت دوباره برقرار شد.', 'success');
+            renderDeviceStatusCard();
         });
 
         const PERSIAN_MONTHS = [
@@ -4916,7 +5159,7 @@
         }
         /* ============ پایان نام فیلدها و ساعات کاری ============ */
 
-        function openSettingsModal() {
+        function openSettingsModal(initialTab) {
             document.getElementById('settingOwnerName').value = appSettings.ownerName || '';
             document.getElementById('settingOwnerPhone').value = appSettings.ownerPhone || '';
             document.getElementById('settingOwnerAddress').value = appSettings.ownerAddress || '';
@@ -4975,7 +5218,7 @@
             updateStorageQuotaUI();
 
             updateSettingsProfilePreview();
-            switchSettingsTab('profile');
+            switchSettingsTab(initialTab || 'profile');
             updateBackupFolderStatusUI();
             updateDataFolderSettingsUI();
             loadWorkSettingsIntoForm();
@@ -5501,6 +5744,52 @@
                 console.warn('ارسال فایل پشتیبان به فضای ابری ناموفق بود:', err);
                 showFeedbackBanner('ارسال فایل پشتیبان انجام نشد. می‌توانید از گزینه «پشتیبان‌گیری» فایل را دانلود و سپس دستی در فضای ابری بارگذاری کنید.', 'warn');
             }
+        }
+
+        /*
+         * خروجی CSV از رکوردهای همین دوره‌ی انتخاب‌شده (همان رکوردهایی که در گزارش HTML هم می‌آیند)؛
+         * برخلاف پشتیبان JSON (که برای بازیابی کامل برنامه است)، این خروجی برای بازکردن سریع در اکسل/Sheets
+         * و تحلیل جدولی داده‌هاست.
+         */
+        function exportRecordsToCSV() {
+            const records = getFilteredRecords();
+            if (records.length === 0) {
+                showFeedbackBanner('رکوردی برای خروجی گرفتن وجود ندارد.', 'warn');
+                return;
+            }
+            const periodLabel = advancedSearchFilters
+                ? 'نتیجه جستجوی پیشرفته'
+                : (() => {
+                    const [year, monthNum] = selectedMonthFilter.split('-');
+                    const monthName = PERSIAN_MONTHS[parseInt(monthNum, 10) - 1] || '';
+                    return `${monthName}_${formatYearDigits(year)}`;
+                })();
+
+            const csvCell = (v) => {
+                const s = (v === null || v === undefined) ? '' : String(v);
+                return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+            };
+            const headers = ['تاریخ', 'ساعت', 'کد کالا', 'عنوان', 'رنگ/مشخصات', 'تعداد', 'قیمت واحد', 'قیمت کل', 'وضعیت', 'مدت زمان'];
+            const lines = [headers.map(csvCell).join(',')];
+            records.forEach(r => {
+                lines.push([
+                    r.date, r.time, r.itemCode, r.itemTitle, r.itemColor,
+                    r.quantity, (r.unitPrice === null ? '' : r.unitPrice), (r.totalPrice === null ? '' : r.totalPrice),
+                    getDisplayStatus(r), r.durationTime
+                ].map(csvCell).join(','));
+            });
+            // BOM ابتدای فایل برای نمایش صحیح حروف فارسی در اکسل ویندوز ضروری است
+            const csvContent = '\uFEFF' + lines.join('\r\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `رکوردهای_آمار_دوخت_${periodLabel.replace(/\s+/g, '_')}.csv`;
+            link.click();
+            setTimeout(() => URL.revokeObjectURL(link.href), 10000);
+
+            addLog('خروجی CSV رکوردها استخراج شد.', 'success');
+            showFeedbackBanner('فایل CSV آماده شد؛ می‌توانید آن را در اکسل یا Google Sheets باز کنید.', 'success');
         }
 
         function importSmartBackup(event) {
@@ -7795,6 +8084,7 @@
             const progress = computeRecordProgress(rec);
             if (!progress) { updateAppBadge(0); return; }
             updateAppBadge(progress.percent >= 100 ? 1 : 0);
+            maybeSendOverdueDeviceNotification(rec, progress);
             renderActiveProgressWidget();
         }
 
@@ -8347,6 +8637,7 @@
         initDataStore();
         updateStorageQuotaUI();
         initStorageFolderConnection();
+        initDeviceTabFeatures();
         handleStartupShortcutAction();
 
         // بررسی دوره‌ای پیشرفت کار جاری (هر ۱ دقیقه یک‌بار)،

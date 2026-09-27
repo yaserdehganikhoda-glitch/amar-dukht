@@ -496,16 +496,7 @@
                                     </span>
                                 </button>
                             </div>
-                            <div class="grid grid-cols-2 gap-1.5">
-                                <button onclick="openSettingsModal('about'); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
-                                    <span class="w-9 h-9 shrink-0 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                                        <i class="fa-solid fa-crown text-xs"></i>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نسخه ویژه</span>
-                                        <span class="block text-[9px] text-slate-400">وضعیت و ارتقا</span>
-                                    </span>
-                                </button>
+                            <div class="grid grid-cols-1 gap-1.5">
                                 <button onclick="lockAppNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
                                     <span class="w-9 h-9 shrink-0 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                                         <i class="fa-solid fa-lock text-xs"></i>
@@ -963,7 +954,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">عکس لباس / نمونه کار (اختیاری)</label>
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">عکس / نمونه کار (اختیاری)</label>
                     <div class="flex items-center gap-3 flex-wrap">
                         <label for="itemPhotoInput" class="tactile-btn cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-400 dark:border-slate-500">
                             <i class="fa-solid fa-camera"></i> <span>انتخاب / گرفتن عکس</span>
@@ -1443,7 +1434,7 @@
                             <input type="text" inputmode="tel" id="settingOwnerPhone" placeholder="مثلاً ۰۹۱۲۱۲۳۴۵۶۷" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">آدرس کارگاه (اختیاری)</label>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">آدرس کارگاه / محل کار (اختیاری)</label>
                             <input type="text" id="settingOwnerAddress" placeholder="مثلاً تهران، ..." class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
                         </div>
                     </div>
@@ -1857,13 +1848,6 @@
                 </div>
 
                 <div id="settingsTab-about" class="settings-tab-panel hidden space-y-4">
-                <div id="premiumStatusCard" class="rounded-xl p-3 border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50 dark:bg-indigo-950/30 flex items-center justify-between gap-3">
-                    <div>
-                        <p class="text-xs font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5"><i class="fa-solid fa-crown"></i> نسخه ویژه</p>
-                        <p id="premiumStatusText" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">در حال بررسی وضعیت...</p>
-                    </div>
-                    <button id="premiumUpgradeBtn" onclick="runIfPremium('نسخه ویژه', () => showFeedbackBanner('نسخه ویژه از قبل فعال است.', 'success'))" class="shrink-0 text-xs font-bold px-3 py-2 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">فعال‌سازی</button>
-                </div>
                 <div class="space-y-3 pb-4 border-b border-slate-300 dark:border-slate-600">
                     <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> درباره سامانه آمار کار</h3>
                     <p class="text-[12px] leading-relaxed text-slate-600 dark:text-slate-300">این سامانه یک ابزار آفلاین (PWA) برای ثبت و مدیریت کارکرد روزانه‌ی هر شغل کارمزدی یا پروژه‌ای است: هر کد کار با عنوان، رنگ/مشخصات، تعداد و قیمت ثبت می‌شود، مدت‌زمان تحویل به‌صورت خودکار از روی آمار روزانه محاسبه می‌شود و وضعیت «به‌موقع / تاخیر / زودتر از موعد» خودکار تعیین می‌گردد.</p>
@@ -2058,10 +2042,8 @@
         }
 
         function isPremiumUnlocked() {
-            const native = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
-            if (!native || !window.SewingPremium) return true;
-            if (isTrialActive()) return true;
-            return window.SewingPremium.isUnlocked();
+            // نسخه ویژه غیرفعال شده: همه‌ی امکانات برای همه‌ی کاربران رایگان است.
+            return true;
         }
 
         function updatePremiumStatusUI() {
@@ -3729,7 +3711,7 @@
 
         /*
          * ذخیره‌ی فایل پشتیبان:
-         * - تا پایان هر ماه شمسی فقط «یک» فایل پشتیبان وجود دارد (آمار_دوخت_پشتیبان_<ماه>_<سال>.json) و هر بار
+         * - تا پایان هر ماه شمسی فقط «یک» فایل پشتیبان وجود دارد (آمار_کار_پشتیبان_<ماه>_<سال>.json) و هر بار
          *   همان فایل به‌روزرسانی (بازنویسی) می‌شود؛ با شروع ماه جدید، خودکار فایل ماه جدید ساخته می‌شود.
          * - مسیر ذخیره فقط از «تنظیمات ← حافظه ← پوشه پشتیبان» تعیین/تغییر می‌کند. در صفحه‌ی اصلی هیچ‌وقت
          *   پنجره‌ی انتخاب مسیر نمایش داده نمی‌شود.
@@ -3740,7 +3722,7 @@
         let backupPermissionState = 'unknown';
 
         function getMonthlyBackupFileName() {
-            return `آمار_دوخت_پشتیبان_${currentJalali.monthName}_${currentJalali.yearEn}.json`;
+            return `آمار_کار_پشتیبان_${currentJalali.monthName}_${currentJalali.yearEn}.json`;
         }
 
         async function saveBackupFile(filename, jsonString, { onSuccess } = {}) {
@@ -4166,7 +4148,7 @@
             // به‌روزرسانی که هر ماه را به پوشه‌ی مخصوص خودش منتقل می‌کند)، همچنان خوانده می‌شود تا داده‌ای
             // گم نشود؛ در ذخیره‌ی بعدی به‌طور خودکار به پوشه‌ی همان ماه منتقل و از ریشه حذف خواهد شد.
             for await (const [name, handle] of appDirHandle.entries()) {
-                if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name.startsWith('آمار_دوخت_پشتیبان_')) continue;
+                if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name.startsWith('آمار_کار_پشتیبان_') || name.startsWith('آمار_دوخت_پشتیبان_')) continue;
                 try {
                     const file = await handle.getFile();
                     absorbParsedFile(JSON.parse(await file.text()));
@@ -5810,7 +5792,7 @@
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `رکوردهای_آمار_دوخت_${periodLabel.replace(/\s+/g, '_')}.csv`;
+            link.download = `رکوردهای_آمار_کار_${periodLabel.replace(/\s+/g, '_')}.csv`;
             link.click();
             setTimeout(() => URL.revokeObjectURL(link.href), 10000);
 
@@ -8501,7 +8483,7 @@
     </style>
 </head>
 <body>
-    <h1>گزارش عملکرد کارگاه - ${periodLabel}</h1>
+    <h1>${escapeHTML(appSettings.shopName || 'سامانه آمار کار')} - گزارش عملکرد ${periodLabel}</h1>
     <p>${getOwnerInfoLineText() ? escapeHTML(getOwnerInfoLineText()) + ' &nbsp;|&nbsp; ' : ''}تاریخ تهیه گزارش: ${formatDateDigits(currentJalali.fullDateStr)}</p>
     <table>
         <tr>
@@ -8540,7 +8522,7 @@
             const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `گزارش_آمار_دوخت_${periodLabel.replace(/\s+/g, '_')}.html`;
+            link.download = `گزارش_آمار_کار_${periodLabel.replace(/\s+/g, '_')}.html`;
             link.click();
             
             addLog('گزارش HTML استخراج شد.', 'success');

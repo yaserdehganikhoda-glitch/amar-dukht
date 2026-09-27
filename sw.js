@@ -14,7 +14,7 @@ const SCOPE = self.registration.scope;
 const INDEX_URL = new URL('index.html', SCOPE).href;
 const OFFLINE_URL = new URL('offline.html', SCOPE).href;
 
-const LOCAL_ASSETS = ['index.html', 'manifest.json', 'offline.html', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png']
+const LOCAL_ASSETS = ['index.html', 'manifest.json', 'offline.html', 'motivations-db.js', 'premium.js', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png']
   .map(p => new URL(p, SCOPE).href);
 
 // منابع خارجیِ ضروری؛ در نصب دانلود می‌شوند تا اولین بار هم آفلاین کار کند.

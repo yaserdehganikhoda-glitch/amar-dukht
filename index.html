@@ -688,7 +688,7 @@
                     </div>
                 </div>
 
-                <input type="file" id="importFile" accept=".json" class="hidden" onchange="importSmartBackup(event)">
+                <input type="file" id="importFile" accept=".json,.txt" class="hidden" onchange="importSmartBackup(event)">
             </div>
 
             <div id="appHeaderLogoRing" class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-3 overflow-hidden relative z-10">
@@ -5722,12 +5722,22 @@
                 showFeedbackBanner('داده‌ای برای ارسال پشتیبان وجود ندارد.', 'warn');
                 return;
             }
-            const filename = getMonthlyBackupFileName();
+            const jsonFilename = getMonthlyBackupFileName();
             const jsonString = JSON.stringify(buildBackupPayload(), null, 2);
+
+            /*
+             * نکته مهم: Web Share API روی کروم/اندروید فقط اشتراک‌گذاری فایل با پسوند/نوع MIME
+             * مشخصی رو مجاز می‌کنه (لیست سفید امنیتی داخل خود مرورگر) و «application/json» و
+             * پسوند «.json» توی این لیست نیستن؛ یعنی اشتراک‌گذاری فایل JSON با هر آدرس/دستگاهی
+             * همیشه رد می‌شه، نه به‌خاطر مشکل هاست یا نصب برنامه. برای عبور از این محدودیت، فقط
+             * برای همین ارسالِ اشتراک‌گذاری، همون محتوای JSON رو با پسوند .txt و نوع text/plain
+             * می‌فرستیم (که توی لیست مجاز مرورگره)؛ فایل «پشتیبان‌گیری» معمولی همچنان .json می‌مونه.
+             */
+            const shareFilename = jsonFilename.replace(/\.json$/i, '.txt');
 
             let file;
             try {
-                file = new File([jsonString], filename, { type: 'application/json' });
+                file = new File([jsonString], shareFilename, { type: 'text/plain' });
             } catch (e) {
                 showFeedbackBanner('این مرورگر امکان ساخت فایل برای اشتراک‌گذاری را ندارد.', 'warn');
                 return;
@@ -5735,7 +5745,14 @@
 
             const canUseShare = !!(navigator.share && navigator.canShare && navigator.canShare({ files: [file] }));
             if (!canUseShare) {
-                showFeedbackBanner('این مرورگر یا دستگاه از ارسال مستقیم فایل به فضای ابری پشتیبانی نمی‌کند (این قابلیت روی گوشی‌های اندروید و آیفون در دسترس است). به‌جای آن از گزینه «پشتیبان‌گیری» فایل را دانلود کنید و سپس در برنامه‌ی فضای ابری بارگذاری کنید.', 'warn');
+                // تشخیص دقیق‌تر علت عدم پشتیبانی، به‌جای پیام کلی گمراه‌کننده
+                if (!window.isSecureContext || location.protocol === 'file:') {
+                    console.warn('اشتراک‌گذاری فایل غیرفعال است چون صفحه از یک منبع امن (https) بارگذاری نشده. protocol:', location.protocol);
+                    showFeedbackBanner('اشتراک‌گذاری مستقیم فایل نیاز به بارگذاری برنامه از یک آدرس امن (https) دارد؛ باز کردن مستقیم فایل روی گوشی (یا میان‌بر ساخته‌شده از آن) این قابلیت را غیرفعال می‌کند، حتی روی اندروید/آیفون. برنامه را روی یک آدرس https میزبانی کنید یا از گزینه «پشتیبان‌گیری» فایل را دانلود و در فضای ابری بارگذاری کنید.', 'warn');
+                } else {
+                    console.warn('navigator.share/canShare(files) در این مرورگر در دسترس نیست.', { hasShare: !!navigator.share, hasCanShare: !!navigator.canShare });
+                    showFeedbackBanner('این مرورگر از ارسال مستقیم فایل به فضای ابری پشتیبانی نمی‌کند (این قابلیت روی گوشی‌های اندروید و آیفون با مرورگر به‌روز در دسترس است). به‌جای آن از گزینه «پشتیبان‌گیری» فایل را دانلود کنید و سپس در برنامه‌ی فضای ابری بارگذاری کنید.', 'warn');
+                }
                 return;
             }
 
@@ -5743,7 +5760,7 @@
                 await navigator.share({
                     files: [file],
                     title: 'پشتیبان سامانه آمار کار',
-                    text: `فایل پشتیبان ماه جاری (${filename})`
+                    text: `فایل پشتیبان ماه جاری (${jsonFilename}) — محتوای آن JSON است؛ به‌دلیل محدودیت اشتراک‌گذاری فایل در مرورگر با پسوند txt ارسال شده است.`
                 });
                 addLog('فایل پشتیبان از طریق منوی اشتراک‌گذاری سیستم ارسال شد.', 'success');
                 showFeedbackBanner('پنجره‌ی اشتراک‌گذاری سیستم باز شد؛ برنامه‌ی فضای ابری دلخواه (گوگل‌درایو، آی‌کلود، وان‌درایو و...) را برای ذخیره‌ی فایل انتخاب کنید.', 'success');

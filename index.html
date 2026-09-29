@@ -15,16 +15,18 @@
     <link rel="apple-touch-icon" href="icon-192.png">
     
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- اول نسخه‌ی محلی (vendor/)، در صورت نبودنِ آن CDN؛ تا برنامه از همان اولین اجرا هم آفلاین کار کند -->
+    <script src="vendor/tailwind.js"></script>
+    <script>if (!window.tailwind) document.write('<script src="https://cdn.tailwindcss.com"><\/script>');</script>
     <script>
         tailwind.config = {
             darkMode: 'class',
         }
     </script>
     <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css" onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'">
     <!-- فونت‌های فارسی -->
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link href="vendor/vazirmatn/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css'" />
     <style id="customColorStyle"></style>
     <style>
         body {
@@ -404,8 +406,8 @@
         <div class="flex flex-col items-center">
             <img src="icon-192.png" alt="لوگوی سامانه ی کارگاه هوشمند" class="w-24 h-24 rounded-2xl shadow-lg mb-5">
             <h1 class="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight">سامانه‌ی کارگاه هوشمند</h1>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">مدیریت هوشمند کارگاه  </p>
-            <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">ساخته‌شده برای <span class="font-medium">تمامی صنف های کارگاهی</span></p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">مدیریت هوشمند کارگاه</p>
+            <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">ساخته‌شده برای تمامی صنف‌های کارگاهی</p>
             <div class="mt-6 flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style="animation-delay:0ms"></span>
                 <span class="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style="animation-delay:150ms"></span>
@@ -415,7 +417,7 @@
         <div class="text-[11px] leading-relaxed text-slate-400 dark:text-slate-500">
             <p>نسخه ۱.۰.۰</p>
             <p class="mt-1">تیم پروژه و سازنده: <span class="font-medium text-slate-500 dark:text-slate-400">Phoenix.Yaser</span></p>
-            <p class="mt-1">پشتیبانی: <span class="font-medium text-slate-500 dark:text-slate-400" dir="ltr">[@Freedom_Phoenix_Tabrizدی پشتیبانی]</span></p>
+            <p class="mt-1">پشتیبانی: <span class="font-medium text-slate-500 dark:text-slate-400" dir="ltr">@Freedom_Phoenix_Tabriz</span></p>
             <p class="mt-1">تمامی حقوق محفوظ است © <span id="splashYear"></span></p>
         </div>
     </div>
@@ -519,6 +521,10 @@
                                         <span class="block text-[9px] text-slate-400">خلاصه آمار</span>
                                     </span>
                                 </button>
+                                <button id="mgrToolsBtn" onclick="openManagerPanel(); closeToolsDropdown();" class="hidden tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center"><i class="fa-solid fa-user-tie text-xs"></i></span>
+                                    <span class="min-w-0"><span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پنل کارفرما</span></span>
+                                </button>
                                 <button onclick="openSettingsModal(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
                                     <span class="w-9 h-9 shrink-0 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                                         <i class="fa-solid fa-gear text-xs"></i>
@@ -529,6 +535,33 @@
                                     </span>
                                 </button>
                             </div>
+                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 px-0.5">کار روزانه</p>
+                            <div class="grid grid-cols-2 gap-1.5 mb-2.5">
+                                <button  onclick="bottomNavGoAddRecord(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"><i class="fa-solid fa-plus text-xs"></i></span>
+                                    <span class="min-w-0"><span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">ثبت کار جدید</span><span class="block text-[9px] text-slate-400">رفتن به فرم ثبت</span></span>
+                                </button>
+                                <button  onclick="openTodayReport(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center"><i class="fa-solid fa-sun text-xs"></i></span>
+                                    <span class="min-w-0"><span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">گزارش امروز</span><span class="block text-[9px] text-slate-400">خلاصه و ارسال</span></span>
+                                </button>
+                                <button  onclick="openAdvancedSearchModal(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 flex items-center justify-center"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
+                                    <span class="min-w-0"><span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">جستجوی پیشرفته</span><span class="block text-[9px] text-slate-400">کد، عنوان، مشخصات</span></span>
+                                </button>
+                                <button  onclick="bottomNavGoNotes(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 flex items-center justify-center"><i class="fa-solid fa-note-sticky text-xs"></i></span>
+                                    <span class="min-w-0"><span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">یادداشت‌های روز</span><span class="block text-[9px] text-slate-400">تعطیلی، سفارش خاص</span></span>
+                                </button>
+                                <button  onclick="openWageCalculator(); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center"><i class="fa-solid fa-calculator text-xs"></i></span>
+                                    <span class="min-w-0"><span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">ماشین‌حساب مزد</span><span class="block text-[9px] text-slate-400">تعداد × نرخ واحد</span></span>
+                                </button>
+                                <button  onclick="openSettingsModal('work'); closeToolsDropdown();" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center"><i class="fa-solid fa-briefcase text-xs"></i></span>
+                                    <span class="min-w-0"><span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">نوع کسب‌وکار</span><span class="block text-[9px] text-slate-400">نام فیلدها و صنف</span></span>
+                                </button>
+                                </div>
                             <div class="grid grid-cols-1 gap-1.5">
                                 <button onclick="lockAppNow()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
                                     <span class="w-9 h-9 shrink-0 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
@@ -654,6 +687,9 @@
                                     <span class="text-slate-500 dark:text-slate-400">وضعیت اتصال</span>
                                     <span id="deviceNetStatusText" class="font-bold">—</span>
                                 </div>
+                                <div class="flex items-center justify-between"><span class="text-slate-500 dark:text-slate-400">حافظه مصرفی</span><span id="deviceStorageText" class="font-bold text-slate-700 dark:text-slate-200">—</span></div>
+                                <div class="flex items-center justify-between"><span class="text-slate-500 dark:text-slate-400">رکوردهای ذخیره‌شده</span><span id="deviceRecordsText" class="font-bold text-slate-700 dark:text-slate-200">—</span></div>
+                                <div id="deviceBatteryRow" class="hidden flex items-center justify-between"><span class="text-slate-500 dark:text-slate-400">باتری</span><span id="deviceBatteryText" class="font-bold text-slate-700 dark:text-slate-200">—</span></div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-1.5">
@@ -710,6 +746,22 @@
                                         <span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">پاکسازی حافظه پنهان برنامه</span>
                                         <span class="block text-[9px] text-slate-400">رفع مشکلات نمایشی؛ داده‌های شما دست‌نخورده می‌ماند</span>
                                     </span>
+                                </button>
+                                <button id="deviceWakeBtn" onclick="toggleKeepAwake()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 flex items-center justify-center"><i class="fa-solid fa-display text-xs"></i></span>
+                                    <span class="min-w-0"><span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">روشن ماندن صفحه</span><span class="block text-[9px] text-slate-400">مناسب کار پشت میز</span></span>
+                                </button>
+                                <button id="deviceFullscreenBtn" onclick="toggleAppFullscreen()" class="tactile-btn flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center"><i class="fa-solid fa-expand text-xs"></i></span>
+                                    <span class="min-w-0"><span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">تمام‌صفحه</span><span class="block text-[9px] text-slate-400">نمایش بدون نوار مرورگر</span></span>
+                                </button>
+                                <button id="devicePersistBtn" onclick="requestPersistentStorage()" class="tactile-btn col-span-2 flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"><i class="fa-solid fa-shield-halved text-xs"></i></span>
+                                    <span class="min-w-0"><span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">محافظت از داده‌ها</span><span class="block text-[9px] text-slate-400">جلوگیری از پاک‌شدن خودکار</span></span>
+                                </button>
+                                <button  onclick="openTodayReport(); closeToolsDropdown();" class="tactile-btn col-span-2 flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-right">
+                                    <span class="w-9 h-9 shrink-0 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center"><i class="fa-solid fa-file-lines text-xs"></i></span>
+                                    <span class="min-w-0"><span class="block text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate">گزارش امروز</span><span class="block text-[9px] text-slate-400">ارسال در پیام‌رسان</span></span>
                                 </button>
                             </div>
 
@@ -861,15 +913,15 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemCode">کد لباس / قطعه</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemCode">کد کار / قطعه</label>
                         <input type="text" inputmode="numeric" id="itemCode" required class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemTitle">عنوان لباس / قطعه</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemTitle">عنوان کار / قطعه</label>
                         <input type="text" id="itemTitle" required class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-xs bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemColor">رنگ</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" data-field-label="itemColor">رنگ / مشخصات</label>
                         <input type="text" id="itemColor" required class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                     <div>
@@ -884,6 +936,11 @@
                             <span>قیمت نامعلوم (هنوز تعیین نشده)</span>
                         </label>
                     </div>
+                </div>
+
+                <div id="workerFieldWrap" class="hidden">
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5" for="recordWorker"><i class="fa-solid fa-user-gear text-indigo-500 ml-1"></i>کارگر مسئول (ارجاع کار)</label>
+                    <select id="recordWorker" class="w-full p-3 border border-slate-400 dark:border-slate-500 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 transition-all"></select>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -1144,9 +1201,10 @@
                         <tr>
                             <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">#</th>
                             <th class="sticky top-0 z-10 p-3.5 no-print bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">عکس</th>
+                            <th id="thWorker" class="hidden sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">کارگر</th>
                             <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="itemCode">کد</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="itemTitle">عنوان لباس</th>
-                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="itemColor">رنگ</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="itemTitle">عنوان کار</th>
+                            <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="itemColor">رنگ / مشخصات</th>
                             <th class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm" data-field-label="receivedQuantity">تعداد دریافتی</th>
                             <th id="thUnitPrice" class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">قیمت واحد (تومان)</th>
                             <th id="thTotalPrice" class="sticky top-0 z-10 p-3.5 bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-400 dark:border-slate-500 shadow-sm">مبلغ کل (تومان)</th>
@@ -1258,6 +1316,18 @@
     </div>
 
     <!-- مدال جستجوی پیشرفته در کل داده‌ها -->
+    <div id="managerModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto no-print">
+        <div class="bg-white dark:bg-slate-900 pro-modal rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-300 dark:border-slate-600 my-8 overflow-hidden">
+            <div class="bg-gradient-to-l from-indigo-700 to-purple-700 px-6 py-4 text-white relative">
+                <button onclick="closeManagerPanel()" class="absolute top-4 left-4 text-white/80 hover:text-white p-1.5 rounded-xl hover:bg-white/10"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <h2 class="text-base font-bold flex items-center gap-2"><i class="fa-solid fa-user-tie"></i> پنل کارفرما</h2>
+                <p id="mgrHeaderSub" class="text-[11px] text-white/75 mt-1"></p>
+            </div>
+            <div id="mgrTabs" class="flex items-center gap-1 px-4 pt-3 overflow-x-auto border-b border-slate-200 dark:border-slate-700"></div>
+            <div id="mgrBody" class="p-5 max-h-[68vh] overflow-y-auto space-y-4"></div>
+        </div>
+    </div>
+
     <div id="advancedSearchModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white dark:bg-slate-900 pro-modal rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-5 my-8 transition-all">
             <div class="flex items-center justify-between pb-4 border-b border-slate-300 dark:border-slate-600">
@@ -1276,7 +1346,7 @@
 
             <div class="space-y-4 max-h-[60vh] overflow-y-auto pl-1">
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">جستجو در کد / عنوان / رنگ</label>
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">جستجو در کد / عنوان / مشخصات</label>
                     <input type="text" id="advSearchText" placeholder="بخشی از متن مورد نظر..." class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                 </div>
 
@@ -1412,6 +1482,9 @@
                 </button>
                 <button type="button" onclick="switchSettingsTab('work')" data-settings-tab="work" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
                     <i class="fa-solid fa-clock"></i> ساعات کاری و فرم
+                </button>
+                <button type="button" onclick="switchSettingsTab('manager')" data-settings-tab="manager" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
+                    <i class="fa-solid fa-user-tie"></i> کارفرما
                 </button>
                 <button type="button" onclick="switchSettingsTab('appearance')" data-settings-tab="appearance" class="settings-tab-btn shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold transition-colors">
                     <i class="fa-solid fa-palette"></i> ظاهری
@@ -1568,6 +1641,11 @@
                         <i id="formLabelsSectionIcon" class="fa-solid fa-chevron-up text-[10px] text-slate-400 shrink-0 transition-transform"></i>
                     </button>
                     <div id="formLabelsSectionBody" class="space-y-3">
+                    <div>
+                        <label for="settingBusinessType" class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">نوع کسب‌وکار / صنف</label>
+                        <select id="settingBusinessType" onchange="applyBusinessPreset(this.value)" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 outline-none"></select>
+                        <p class="text-[10px] text-slate-400 mt-1">با انتخاب صنف، نام فیلدها متناسب با آن پر می‌شود؛ بعد از آن هر نامی را می‌توانید دستی تغییر دهید و در پایان «ذخیره» را بزنید.</p>
+                    </div>
                     <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">هر فیلد را که خالی بگذارید، نام پیش‌فرض نمایش داده می‌شود. واحد پول به‌طور خودکار کنار «قیمت واحد» می‌آید.</p>
                     <div id="formLabelsFields" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
                     <button type="button" onclick="resetFormLabelsFields()" class="text-xs text-slate-500 dark:text-slate-400 underline hover:text-purple-600">پاک کردن همه‌ی نام‌های سفارشی</button>
@@ -1577,6 +1655,17 @@
                     <span class="text-[11px] text-slate-500 dark:text-slate-400">رکورد کدهای متوالی به‌موقع:</span>
                     <span class="text-xs font-bold text-orange-600 dark:text-orange-400"><i class="fa-solid fa-fire"></i> جاری: <span id="settingCurrentStreakVal">۰</span> &nbsp;|&nbsp; بهترین: <span id="settingBestStreakVal">۰</span></span>
                 </div>
+                </div>
+
+                <div id="settingsTab-manager" class="settings-tab-panel hidden space-y-4">
+                    <h3 class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-user-tie"></i> قابلیت کارفرما (مدیر کارگاه)</h3>
+                    <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">کارفرما مدیر کارگاه است و همه‌ی بخش‌ها و کارگران را مدیریت می‌کند: تعریف بخش‌ها و کارگران، ارجاع کار به کارگر، حضور و غیاب، و محاسبه‌ی حقوق و مزد ماهانه. غیرفعال‌سازی هیچ داده‌ای را پاک نمی‌کند و فقط بخش‌های مربوط پنهان می‌شوند.</p>
+                    <label class="flex items-center justify-between gap-3 cursor-pointer bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 border border-slate-300 dark:border-slate-600">
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-200">فعال‌سازی قابلیت کارفرما</span>
+                        <input type="checkbox" id="settingManagerEnabled" onchange="mgrToggle(this.checked)" class="w-5 h-5 accent-purple-600 cursor-pointer">
+                    </label>
+                    <p id="mgrSettingsNote" class="text-[11px] text-slate-500 dark:text-slate-400"></p>
+                    <button type="button" id="mgrOpenBtn" onclick="closeSettingsModal(); openManagerPanel();" class="hidden tactile-btn w-full px-4 py-2.5 bg-purple-600 text-white rounded-xl text-xs font-medium hover:bg-purple-700"><i class="fa-solid fa-user-tie ml-1"></i> باز کردن پنل کارفرما</button>
                 </div>
 
                 <div id="settingsTab-appearance" class="settings-tab-panel hidden space-y-4">
@@ -2023,7 +2112,7 @@
                                 <th class="p-3">#</th>
                                 <th class="p-3" data-field-label="itemCode">کد</th>
                                 <th class="p-3" data-field-label="itemTitle">عنوان</th>
-                                <th class="p-3" data-field-label="itemColor">رنگ</th>
+                                <th class="p-3" data-field-label="itemColor">رنگ / مشخصات</th>
                                 <th class="p-3" data-field-label="receivedQuantity">تعداد دریافتی</th>
                                 <th class="p-3" data-field-label="unitPrice">قیمت واحد</th>
                                 <th class="p-3">مبلغ کل</th>
@@ -2327,8 +2416,125 @@
             });
         }
 
+
+        /* ============ ابزارهای منوی «اصلی» و «دستگاه» ============ */
+        function openToolOverlay(title, bodyHtml) {
+            closeToolOverlay();
+            const o = document.createElement('div');
+            o.id = 'toolOverlay';
+            o.className = 'no-print fixed inset-0 z-[70] bg-black/50 flex items-center justify-center p-4';
+            o.innerHTML = `<div class="w-full max-w-sm max-h-[85vh] overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 shadow-xl p-4 text-right" onclick="event.stopPropagation()">
+                <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">${escapeHTML(title)}</h3>
+                <button type="button" onclick="closeToolOverlay()" class="w-8 h-8 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="بستن"><i class="fa-solid fa-xmark"></i></button></div>${bodyHtml}</div>`;
+            o.addEventListener('click', closeToolOverlay);
+            document.body.appendChild(o);
+        }
+        function closeToolOverlay() { const o = document.getElementById('toolOverlay'); if (o) o.remove(); }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeToolOverlay(); });
+
+        function buildTodayReportData() {
+            const today = toEnglishDigits(currentJalali.fullDateStr);
+            const recs = allRecords.filter(r => toEnglishDigits(r.date) === today);
+            const cur = appSettings.currency || 'تومان';
+            const sum = (f) => recs.reduce((a, r) => a + (Number(f(r)) || 0), 0);
+            const st = k => recs.filter(r => r.status === k).length;
+            const lines = [
+                `📋 ${appSettings.shopName || 'گزارش کار'} — ${currentJalali.fullDateStr}`,
+                `تعداد کار ثبت‌شده: ${formatNumber(recs.length)}`,
+                `مجموع تعداد: ${formatNumber(sum(r => r.quantity))}`,
+                `مجموع مبلغ: ${formatNumber(sum(r => r.totalPrice))} ${cur}`,
+                `به موقع: ${formatNumber(st('به موقع'))} | تاخیر: ${formatNumber(st('تاخیر'))} | زودتر: ${formatNumber(st('زودتر از موعد'))}`
+            ];
+            if (recs.length) {
+                lines.push('', 'کارها:');
+                recs.slice(0, 15).forEach(r => lines.push(`• ${r.itemCode || '-'} ${r.itemTitle || ''} × ${formatNumber(r.quantity)}`));
+                if (recs.length > 15) lines.push(`… و ${formatNumber(recs.length - 15)} مورد دیگر`);
+            }
+            return { text: lines.join('\n'), count: recs.length };
+        }
+        function openTodayReport() {
+            const d = buildTodayReportData();
+            openToolOverlay('گزارش امروز', `<pre class="whitespace-pre-wrap text-xs leading-6 text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 mb-3 font-[inherit]">${escapeHTML(d.text)}</pre>
+                <div class="flex gap-2"><button type="button" onclick="shareTodayReport()" class="tactile-btn flex-1 py-2.5 rounded-xl bg-purple-600 text-white text-xs font-bold"><i class="fa-solid fa-share-nodes ml-1"></i>ارسال / اشتراک</button>
+                <button type="button" onclick="copyTodayReport()" class="tactile-btn px-4 py-2.5 rounded-xl border border-slate-400 text-xs text-slate-600 dark:text-slate-300">کپی</button></div>`);
+        }
+        async function copyTodayReport() {
+            const t = buildTodayReportData().text;
+            try { await navigator.clipboard.writeText(t); showFeedbackBanner('گزارش امروز کپی شد.', 'success'); }
+            catch (e) { showFeedbackBanner('کپی انجام نشد؛ متن را دستی انتخاب کنید.', 'warn'); }
+        }
+        async function shareTodayReport() {
+            const t = buildTodayReportData().text;
+            if (navigator.share) {
+                try { await navigator.share({ text: t }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
+            }
+            copyTodayReport();
+        }
+
+        function openWageCalculator() {
+            const cur = escapeHTML(appSettings.currency || 'تومان');
+            const inp = 'w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 dark:text-slate-100 outline-none';
+            openToolOverlay('ماشین‌حساب مزد', `<div class="space-y-3">
+                <div><label class="block text-[11px] text-slate-500 mb-1">تعداد / مقدار</label><input id="calcQty" inputmode="decimal" oninput="runWageCalc()" class="${inp}"></div>
+                <div><label class="block text-[11px] text-slate-500 mb-1">نرخ واحد (${cur})</label><input id="calcPrice" inputmode="numeric" oninput="runWageCalc()" class="${inp}"></div>
+                <div><label class="block text-[11px] text-slate-500 mb-1">کسر / پیش‌پرداخت (${cur}، اختیاری)</label><input id="calcDeduct" inputmode="numeric" oninput="runWageCalc()" class="${inp}"></div>
+                <div class="rounded-xl bg-emerald-50 dark:bg-emerald-950/30 p-3 text-center"><p class="text-[11px] text-slate-500">مبلغ قابل پرداخت</p><p id="calcResult" class="text-lg font-bold text-emerald-700 dark:text-emerald-400">۰</p></div></div>`);
+            setTimeout(() => { const q = document.getElementById('calcQty'); if (q) q.focus(); }, 50);
+        }
+        function runWageCalc() {
+            const n = id => { const v = parseFloat(toEnglishDigits((document.getElementById(id).value || '').replace(/[,٬،\s]/g, ''))); return Number.isFinite(v) ? v : 0; };
+            const total = Math.max(0, Math.round(n('calcQty') * n('calcPrice') - n('calcDeduct')));
+            document.getElementById('calcResult').innerText = `${formatNumber(total)} ${appSettings.currency || 'تومان'}`;
+        }
+
+        let _wakeLock = null;
+        async function toggleKeepAwake() {
+            if (!('wakeLock' in navigator)) { showFeedbackBanner('این دستگاه از «روشن ماندن صفحه» پشتیبانی نمی‌کند.', 'warn'); return; }
+            try {
+                if (_wakeLock) { await _wakeLock.release(); _wakeLock = null; }
+                else { _wakeLock = await navigator.wakeLock.request('screen'); _wakeLock.addEventListener('release', () => { _wakeLock = null; renderDeviceExtras(); }); }
+            } catch (e) { showFeedbackBanner('فعال‌سازی ممکن نشد (ممکن است باتری کم باشد).', 'warn'); }
+            renderDeviceExtras();
+        }
+        document.addEventListener('visibilitychange', async () => {
+            if (!document.hidden && _wakeLock === null && window._wantWake) { try { _wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {} renderDeviceExtras(); }
+        });
+        function toggleAppFullscreen() {
+            const el = document.documentElement;
+            if (document.fullscreenElement) { document.exitFullscreen(); }
+            else if (el.requestFullscreen) { el.requestFullscreen().catch(() => showFeedbackBanner('تمام‌صفحه در این دستگاه ممکن نشد.', 'warn')); }
+            else showFeedbackBanner('تمام‌صفحه در این دستگاه پشتیبانی نمی‌شود.', 'warn');
+            setTimeout(renderDeviceExtras, 300);
+        }
+        async function requestPersistentStorage() {
+            if (!navigator.storage || !navigator.storage.persist) { showFeedbackBanner('این مرورگر از این قابلیت پشتیبانی نمی‌کند.', 'warn'); return; }
+            const ok = await navigator.storage.persist();
+            showFeedbackBanner(ok ? 'داده‌ها محافظت شدند و به‌صورت خودکار پاک نمی‌شوند.' : 'مرورگر درخواست را نپذیرفت؛ پشتیبان‌گیری منظم را فراموش نکنید.', ok ? 'success' : 'warn');
+            renderDeviceExtras();
+        }
+        async function renderDeviceExtras() {
+            const set = (id, t) => { const e = document.getElementById(id); if (e) e.innerText = t; };
+            set('deviceRecordsText', formatNumber((typeof allRecords !== 'undefined' ? allRecords.length : 0)));
+            try {
+                if (navigator.storage && navigator.storage.estimate) {
+                    const { usage, quota } = await navigator.storage.estimate();
+                    set('deviceStorageText', quota ? `${(usage / 1048576).toFixed(1)} از ${Math.round(quota / 1048576)} مگابایت` : '—');
+                } else set('deviceStorageText', 'نامشخص');
+            } catch (e) { set('deviceStorageText', 'نامشخص'); }
+            if (navigator.getBattery) {
+                try { const b = await navigator.getBattery(); const row = document.getElementById('deviceBatteryRow'); if (row) row.classList.remove('hidden'); set('deviceBatteryText', `${formatNumber(Math.round(b.level * 100))}٪${b.charging ? ' (در حال شارژ)' : ''}`); } catch (e) {}
+            }
+            window._wantWake = !!_wakeLock || window._wantWake;
+            const w = document.querySelector('#deviceWakeBtn .text-slate-400'); if (w) w.innerText = _wakeLock ? 'فعال است؛ برای غیرفعال‌سازی بزنید' : 'مناسب کار پشت میز';
+            const f = document.querySelector('#deviceFullscreenBtn .text-slate-400'); if (f) f.innerText = document.fullscreenElement ? 'فعال است؛ برای خروج بزنید' : 'نمایش بدون نوار مرورگر';
+            if (navigator.storage && navigator.storage.persisted) {
+                try { const ps = await navigator.storage.persisted(); const t = document.querySelector('#devicePersistBtn .text-slate-400'); if (t) t.innerText = ps ? 'فعال است؛ داده‌ها پاک نمی‌شوند' : 'جلوگیری از پاک‌شدن خودکار'; } catch (e) {}
+            }
+        }
+
         function initDeviceTabFeatures() {
             renderDeviceStatusCard();
+            renderDeviceExtras();
             const iosBtn = document.getElementById('iosInstallGuideBtn');
             if (iosBtn) iosBtn.classList.toggle('hidden', !(isIOSDevice() && !isStandalonePWA()));
             updateDeviceNotificationStatusUI();
@@ -2621,7 +2827,7 @@
             }
         }
 
-        // یکسان‌سازی رقم فارسی/عربی/انگلیسی و حروف ی/ک عربی، برای کد لباس و جستجو
+        // یکسان‌سازی رقم فارسی/عربی/انگلیسی و حروف ی/ک عربی، برای کد کار و جستجو
         function normalizeCodeValue(v) {
             return toEnglishDigits(String(v == null ? '' : v)).replace(/\u064A/g, '\u06CC').replace(/\u0643/g, '\u06A9').trim();
         }
@@ -2695,6 +2901,7 @@
                 hasPhoto: !!r.hasPhoto || isSafeImageDataUrl(r.photo),
                 monthKey, monthName, year,
                 streakCounted: !!r.streakCounted,
+                workerId: optStr(r.workerId, 40), workerName: str(r.workerName, 100),
                 // رکوردهای قدیمی updatedAt نداشتند؛ id (زمان ساخت) جایگزین منطقی آن است
                 updatedAt: (Number.isFinite(upd) && upd > 0) ? upd : id
             };
@@ -2774,7 +2981,36 @@
             const srcOptional = (s.optionalFields && typeof s.optionalFields === 'object' && !Array.isArray(s.optionalFields)) ? s.optionalFields : {};
             s.optionalFields = {};
             FIELD_REQUIRED_KEYS.forEach(k => { if (srcOptional[k]) s.optionalFields[k] = true; });
+            s.businessType = (typeof BUSINESS_PRESETS !== 'undefined' && BUSINESS_PRESETS[s.businessType]) ? s.businessType : 'general';
             s.bestStreak = Math.max(0, Number(s.bestStreak) || 0);
+            const m = (s.manager && typeof s.manager === 'object' && !Array.isArray(s.manager)) ? s.manager : {};
+            const A = v => Array.isArray(v) ? v : [];
+            const T = (v, n) => String(v == null ? '' : v).trim().slice(0, n);
+            const I = v => String(v == null ? '' : v).replace(/[^\w-]/g, '').slice(0, 40);
+            const N = v => { const n = Number(v); return (Number.isFinite(n) && n > 0) ? Math.min(n, 1e13) : 0; };
+            const dk = v => { const p = toEnglishDigits(String(v || '')).split('/').map(Number); return (p.length === 3 && p.every(Number.isFinite)) ? `${p[0]}/${String(p[1]).padStart(2, '0')}/${String(p[2]).padStart(2, '0')}` : ''; };
+            const att = {};
+            if (m.attendance && typeof m.attendance === 'object') Object.keys(m.attendance).forEach(k => {
+                const key = dk(k), day = m.attendance[k];
+                if (!key || !day || typeof day !== 'object') return;
+                att[key] = att[key] || {};
+                Object.keys(day).forEach(w => { if (['p', 'a', 'l', 'h'].includes(day[w])) att[key][I(w)] = day[w]; });
+            });
+            const ot = {};
+            if (m.overtime && typeof m.overtime === 'object') Object.keys(m.overtime).forEach(k => {
+                const key = dk(k), day = m.overtime[k];
+                if (!key || !day || typeof day !== 'object') return;
+                Object.keys(day).forEach(w => { const h = Math.round(Number(day[w]) * 4) / 4; if (Number.isFinite(h) && h > 0 && h <= 16) (ot[key] = ot[key] || {})[I(w)] = h; });
+            });
+            const mulRaw = Number(m.otMultiplier), dhRaw = Number(m.dayHours);
+            s.manager = {
+                enabled: !!m.enabled,
+                sections: A(m.sections).map(x => x && { id: I(x.id) || mgrId('s'), name: T(x.name, 60) }).filter(x => x && x.name).slice(0, 50),
+                workers: A(m.workers).map(x => x && { id: I(x.id) || mgrId('w'), name: T(x.name, 100), phone: T(x.phone, 40), sectionId: I(x.sectionId), role: T(x.role, 60), payType: ['daily', 'monthly', 'piece'].includes(x.payType) ? x.payType : 'daily', rate: N(x.rate), otRate: N(x.otRate), note: T(x.note, 300), active: x.active !== false }).filter(x => x && x.name).slice(0, 500),
+                attendance: att, overtime: ot,
+                otMultiplier: (mulRaw >= 1 && mulRaw <= 5) ? mulRaw : 1.4, dayHours: (dhRaw >= 1 && dhRaw <= 24) ? dhRaw : 8,
+                txns: A(m.txns).map(x => x && { id: I(x.id) || mgrId('t'), workerId: I(x.workerId), date: dk(x.date), type: ['advance', 'bonus', 'deduction'].includes(x.type) ? x.type : 'advance', amount: N(x.amount), note: T(x.note, 200) }).filter(x => x && x.workerId && x.date && x.amount > 0).slice(0, 5000)
+            };
             return s;
         }
 
@@ -3377,7 +3613,7 @@
             if (missingPhotoCount) issues.push({ key: 'missing_photo', severity: 'info', text: `${formatNumber(missingPhotoCount)} رکورد به عکسی اشاره می‌کند که پیدا نشد.`, fixable: true });
 
             const invalidCoreCount = allRecords.filter(r => !r.itemCode || !(r.quantity > 0)).length;
-            if (invalidCoreCount) issues.push({ key: 'invalid_core', severity: 'error', text: `${formatNumber(invalidCoreCount)} رکورد فاقد کد لباس یا با تعداد نامعتبر.`, fixable: false });
+            if (invalidCoreCount) issues.push({ key: 'invalid_core', severity: 'error', text: `${formatNumber(invalidCoreCount)} رکورد فاقد کد کار یا با تعداد نامعتبر.`, fixable: false });
 
             return issues;
         }
@@ -3507,10 +3743,54 @@
         let dailyNotes = (() => { const raw = safeLoadJSON('sewing_daily_notes_v13', []); return Array.isArray(raw) ? raw.map(sanitizeNote).filter(Boolean) : []; })();
 
         const FORM_LABEL_DEFAULTS = {
-            itemCode: 'کد کار / قطعه', itemTitle: 'عنوان کار / قطعه', itemColor: 'رنگ', receivedQuantity: 'تعداد دریافتی',
+            itemCode: 'کد کار / قطعه', itemTitle: 'عنوان کار / قطعه', itemColor: 'رنگ / مشخصات', receivedQuantity: 'تعداد دریافتی',
             unitPrice: 'قیمت واحد', itemStatus: 'وضعیت تحویل / ثبت', recordDate: 'تاریخ ثبت', recordTime: 'ساعت ثبت',
             dailyStat: 'آمار روزانه', recordEndDateTime: 'تاریخ و زمان پایان', recordWorkDuration: 'مدت زمان تحویل کار'
         };
+
+        /* ============ نوع کسب‌وکار / صنف (پیش‌تنظیم نام فیلدها و نمونه‌ها) ============ */
+        const BUSINESS_PRESETS = {
+            general: { name: 'عمومی (همه‌ی مشاغل)', labels: {}, optional: { itemColor: true },
+                hints: { role: 'مثلاً استادکار، شاگرد، راننده', section: 'مثلاً تولید، انبار، فروش، خدمات' } },
+            tailor: { name: 'خیاطی و تولیدی پوشاک', labels: { itemCode: 'کد لباس', itemTitle: 'عنوان لباس / مدل', itemColor: 'رنگ', receivedQuantity: 'تعداد دریافتی' }, optional: {},
+                hints: { role: 'مثلاً خیاط، اتوکار', section: 'مثلاً برش، دوخت، اتو، بسته‌بندی' } },
+            repair: { name: 'تعمیرگاه (لوازم برقی، موبایل و...)', labels: { itemCode: 'شماره پذیرش', itemTitle: 'دستگاه / قطعه', itemColor: 'عیب / توضیح', receivedQuantity: 'تعداد', unitPrice: 'دستمزد', itemStatus: 'وضعیت تحویل' }, optional: { itemColor: true },
+                hints: { role: 'مثلاً تعمیرکار، تکنسین', section: 'مثلاً پذیرش، تعمیر، تست، تحویل' } },
+            auto: { name: 'مکانیکی و خدمات خودرو', labels: { itemCode: 'شماره پلاک / پذیرش', itemTitle: 'خودرو / نوع خدمت', itemColor: 'مشخصات', receivedQuantity: 'تعداد', unitPrice: 'دستمزد / قیمت واحد' }, optional: { itemColor: true },
+                hints: { role: 'مثلاً مکانیک، برقکار خودرو', section: 'مثلاً موتور، برق، کارواش، صافکاری' } },
+            carpentry: { name: 'نجاری، کابینت و مبلمان', labels: { itemCode: 'کد سفارش', itemTitle: 'نوع کار (درب، کابینت، مبل...)', itemColor: 'جنس / رنگ', receivedQuantity: 'تعداد' }, optional: { itemColor: true },
+                hints: { role: 'مثلاً نجار، رنگ‌کار، نصاب', section: 'مثلاً برش، مونتاژ، رنگ، نصب' } },
+            construction: { name: 'ساختمان و نصب', labels: { itemCode: 'کد پروژه', itemTitle: 'شرح کار', itemColor: 'محل / توضیح', receivedQuantity: 'مقدار (متر / عدد)', unitPrice: 'نرخ واحد' }, optional: { itemColor: true },
+                hints: { role: 'مثلاً بنّا، برقکار، لوله‌کش', section: 'مثلاً اسکلت، برق، لوله‌کشی، نازک‌کاری' } },
+            salon: { name: 'آرایشگاه و خدمات زیبایی', labels: { itemCode: 'کد پذیرش', itemTitle: 'نوع خدمت', itemColor: 'توضیح', receivedQuantity: 'تعداد', unitPrice: 'تعرفه', itemStatus: 'وضعیت ثبت' }, optional: { itemColor: true },
+                hints: { role: 'مثلاً آرایشگر، پدیکور، شاگرد', section: 'مثلاً مو، پوست، ناخن، پذیرش' } },
+            food: { name: 'آشپزخانه، قنادی و نانوایی', labels: { itemCode: 'کد سفارش', itemTitle: 'نام محصول', itemColor: 'مشخصات', receivedQuantity: 'تعداد', unitPrice: 'قیمت واحد' }, optional: { itemColor: true },
+                hints: { role: 'مثلاً آشپز، شاطر، کمک‌آشپز', section: 'مثلاً آماده‌سازی، پخت، بسته‌بندی، ارسال' } },
+            print: { name: 'چاپ و تبلیغات', labels: { itemCode: 'شماره سفارش', itemTitle: 'عنوان سفارش', itemColor: 'سایز / رنگ', receivedQuantity: 'تیراژ', unitPrice: 'قیمت واحد' }, optional: { itemColor: true },
+                hints: { role: 'مثلاً طراح، اپراتور چاپ', section: 'مثلاً طراحی، چاپ، برش، بسته‌بندی' } }
+        };
+        function currentBusinessHints() {
+            const p = BUSINESS_PRESETS[(typeof appSettings !== 'undefined' && appSettings && appSettings.businessType) || 'general'] || BUSINESS_PRESETS.general;
+            return p.hints;
+        }
+        function populateBusinessTypeSelect() {
+            const sel = document.getElementById('settingBusinessType');
+            if (!sel) return;
+            const cur = BUSINESS_PRESETS[appSettings.businessType] ? appSettings.businessType : 'general';
+            sel.innerHTML = Object.keys(BUSINESS_PRESETS).map(k => `<option value="${k}"${k === cur ? ' selected' : ''}>${escapeHTML(BUSINESS_PRESETS[k].name)}</option>`).join('');
+        }
+        function applyBusinessPreset(id) {
+            const p = BUSINESS_PRESETS[id];
+            if (!p) return;
+            Object.keys(FORM_LABEL_DEFAULTS).forEach(k => {
+                const el = document.getElementById('settingLabel_' + k);
+                if (el) el.value = (p.labels && p.labels[k]) || '';
+            });
+            FIELD_REQUIRED_KEYS.forEach(k => {
+                const cb = document.getElementById('settingRequired_' + k);
+                if (cb) cb.checked = !(p.optional && p.optional[k]);
+            });
+        }
         const FIELD_REQUIRED_KEYS = ['itemCode', 'itemTitle', 'itemColor', 'receivedQuantity', 'unitPrice', 'itemStatus', 'recordDate', 'recordTime'];
         const BREAK_META = [['breakfast', 'صبحانه'], ['tea1', 'چای اول'], ['lunch', 'ناهار'], ['tea2', 'چای دوم']];
         const BREAK_KEYS = BREAK_META.map(x => x[0]);
@@ -3523,7 +3803,7 @@
             }
         };
         const DEFAULT_APP_SETTINGS = {
-            workdayMinutes: 495, shiftStart: '08:00', shiftEnd: '18:00', shiftBreaks: null, formLabels: {}, optionalFields: {}, 
+            workdayMinutes: 495, shiftStart: '08:00', shiftEnd: '18:00', shiftBreaks: null, formLabels: {}, optionalFields: { itemColor: true }, businessType: 'general',
             schemaVersion: 1,
             shopName: 'سامانه ی کارگاه هوشمند',
             currency: 'تومان',
@@ -3554,7 +3834,8 @@
             ownerName: '',
             ownerPhone: '',
             ownerAddress: '',
-            ownerPhoto: null
+            ownerPhoto: null,
+            manager: null
         };
         let appSettings = sanitizeSettings(safeLoadJSON('sewing_app_settings_v13', null));
         let saveTimeout = null;
@@ -3716,7 +3997,7 @@
                 appSettings.pinEnabled = false;
                 appSettings.updatedAt = new Date().toISOString();
                 localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-                if (appDirHandle) saveAllMonthFilesToDirectory();
+                if (storageFolderIsActive()) saveAllMonthFilesToDirectory();
                 updatePinLockStatusUI();
                 addLog('قفل ورود به برنامه غیرفعال شد.', 'warn');
                 showFeedbackBanner('قفل ورود به برنامه غیرفعال شد.', 'info');
@@ -3731,7 +4012,7 @@
                 appSettings.pinEnabled = true;
                 appSettings.updatedAt = new Date().toISOString();
                 localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-                if (appDirHandle) saveAllMonthFilesToDirectory();
+                if (storageFolderIsActive()) saveAllMonthFilesToDirectory();
                 updatePinLockStatusUI();
                 addLog('قفل ورود به برنامه فعال شد.', 'success');
                 showFeedbackBanner('قفل ورود به برنامه فعال شد.', 'success');
@@ -3751,7 +4032,7 @@
             appSettings.pinEnabled = true;
             appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-            if (appDirHandle) saveAllMonthFilesToDirectory();
+            if (storageFolderIsActive()) saveAllMonthFilesToDirectory();
             document.getElementById('settingNewPin').value = '';
             document.getElementById('settingConfirmPin').value = '';
             updatePinLockStatusUI();
@@ -3763,8 +4044,27 @@
         /* ============ مدیریت ذخیره‌سازی خودکار در پوشه‌ی دستگاه (پوشه‌ی جدا برای هر ماه) ============ */
         let appDirHandle = null;
         let dirHandlePermissionState = 'unknown'; // 'granted' | 'prompt' | 'denied' | 'unknown'
-        const supportsFileSystemAccess = 'showDirectoryPicker' in window;
-        const supportsSaveFilePicker = 'showSaveFilePicker' in window;
+        // در اپ نصب‌شده (Capacitor/WebView اندروید)، ورودی «showDirectoryPicker» و «navigator.share» با فایل
+        // ممکن است در پنجره وجود داشته باشند اما هر بار با خطا مواجه شوند؛ چون این دو قابلیت فقط داخل
+        // مرورگر واقعی (کروم/اج) کار می‌کنند، نه داخل پوسته‌ی WebView برنامه‌ی نصب‌شده. برای همین این دو
+        // قابلیت را در اپ نصب‌شده از همان ابتدا غیرفعال در نظر می‌گیریم تا پیام درست و دکمه‌ی درست نمایش داده شود.
+        function isRunningInInstalledApp() {
+            return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+        }
+        function getNativePlugin(name) {
+            return (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins[name]) || null;
+        }
+        const supportsFileSystemAccess = ('showDirectoryPicker' in window) && !isRunningInInstalledApp();
+        const supportsSaveFilePicker = ('showSaveFilePicker' in window) && !isRunningInInstalledApp();
+
+        // پوشه ذخیره داده در اپ نصب‌شده (Capacitor/WebView اندروید): چون انتخاب پوشه‌ی دلخواه
+        // (showDirectoryPicker) در WebView کار نمی‌کند، از همان الگوی «پوشه پشتیبان» استفاده می‌شود:
+        // یک پوشه‌ی ثابت داخل حافظه‌ی دستگاه (Documents) با پلاگین Filesystem، بدون نیاز به انتخاب دستی.
+        let nativeStorageFolderActive = false;
+        const NATIVE_STORAGE_FOLDER_BASE = 'کارگاه_هوشمند_ذخیره_داده';
+        function storageFolderIsActive() {
+            return isRunningInInstalledApp() ? nativeStorageFolderActive : !!appDirHandle;
+        }
 
         /*
          * ذخیره‌ی فایل پشتیبان:
@@ -3783,6 +4083,25 @@
         }
 
         async function saveBackupFile(filename, jsonString, { onSuccess } = {}) {
+            if (isRunningInInstalledApp()) {
+                const FS = getNativePlugin('Filesystem');
+                if (FS) {
+                    try {
+                        const monthFolder = filename.replace(/\.json$/i, '');
+                        const path = `کارگاه_هوشمند_پشتیبان/${monthFolder}/${filename}`;
+                        await FS.writeFile({ path, data: jsonString, directory: 'DOCUMENTS', encoding: 'utf8', recursive: true });
+                        updateBackupFolderStatusUI();
+                        if (onSuccess) onSuccess('native-documents');
+                        return true;
+                    } catch (err) {
+                        console.warn('ذخیره پشتیبان با پلاگین Filesystem ناموفق بود:', err);
+                        showFeedbackBanner('ذخیره پشتیبان در حافظه دستگاه ناموفق بود: ' + (err && err.message ? err.message : err), 'warn');
+                        return false;
+                    }
+                }
+                showFeedbackBanner('پلاگین ذخیره‌سازی (Filesystem) در این نسخه از اپ فعال نیست؛ پشتیبان ذخیره نشد.', 'warn');
+                return false;
+            }
             if (backupDirHandle) {
                 try {
                     let perm = await backupDirHandle.queryPermission({ mode: 'readwrite' });
@@ -3836,7 +4155,9 @@
 
         async function chooseBackupFolder() {
             if (!supportsFileSystemAccess) {
-                showFeedbackBanner('مرورگر شما از انتخاب پوشه پشتیبان پشتیبانی نمی‌کند (فقط Chrome/Edge روی رایانه یا اندروید). فایل پشتیبان در پوشه دانلودها ذخیره می‌شود.', 'warn');
+                showFeedbackBanner(isRunningInInstalledApp()
+                    ? 'انتخاب پوشه پشتیبان در اپ نصب‌شده پشتیبانی نمی‌شود (محدودیت پوسته‌ی WebView اندروید، نه مشکل برنامه). به‌جای آن از دکمه «پشتیبان‌گیری» فایل را دانلود کنید و با مدیریت فایل گوشی یا برنامه‌ی فضای ابری، آن را منتقل کنید.'
+                    : 'مرورگر شما از انتخاب پوشه پشتیبان پشتیبانی نمی‌کند (فقط Chrome/Edge روی رایانه یا اندروید). فایل پشتیبان در پوشه دانلودها ذخیره می‌شود.', 'warn');
                 return;
             }
             try {
@@ -3882,6 +4203,15 @@
             const chooseBtn = document.getElementById('backupFolderChooseBtn');
             const disconnectBtn = document.getElementById('backupFolderDisconnectBtn');
             if (!statusEl) return;
+            if (isRunningInInstalledApp()) {
+                statusEl.innerText = getNativePlugin('Filesystem')
+                    ? `وضعیت: فعال — ذخیره خودکار در حافظه دستگاه (Documents/کارگاه_هوشمند_پشتیبان/${getMonthlyBackupFileName().replace(/\.json$/i, '')})`
+                    : 'پلاگین ذخیره‌سازی در این نسخه از اپ فعال نیست؛ پشتیبان ذخیره نمی‌شود.';
+                statusEl.className = getNativePlugin('Filesystem') ? 'text-xs font-semibold text-emerald-600 dark:text-emerald-400' : 'text-xs font-semibold text-rose-600 dark:text-rose-400';
+                if (chooseBtn) chooseBtn.classList.add('hidden');
+                if (disconnectBtn) disconnectBtn.classList.add('hidden');
+                return;
+            }
             if (!supportsFileSystemAccess) {
                 statusEl.innerText = 'این مرورگر از انتخاب پوشه پشتیبانی نمی‌کند؛ پشتیبان‌ها در پوشه دانلودها ذخیره می‌شوند.';
                 statusEl.className = 'text-xs font-semibold text-slate-400';
@@ -3910,6 +4240,7 @@
         // جدا (snapshot) در زیرپوشه‌ی «backups» ذخیره می‌شود و فقط N نسخه‌ی اخیر نگه داشته می‌شود؛
         // این یعنی حتی اگر داده‌ی زنده خراب/حذف شود، چند روز اخیر همیشه قابل بازیابی است.
         async function saveRotatingBackupToFolder(force) {
+            if (isRunningInInstalledApp()) return saveRotatingBackupNative(force);
             if (!appDirHandle) return false;
             try {
                 const perm = await appDirHandle.queryPermission({ mode: 'readwrite' });
@@ -3949,9 +4280,53 @@
             }
         }
 
+        /* ---- نسخه‌ی اپ نصب‌شده: همان نسخه‌ی چرخشی روزانه، اما در Documents/<پوشه‌ی ذخیره داده>/backups
+           با پلاگین Filesystem ---- */
+        async function saveRotatingBackupNative(force) {
+            const FS = getNativePlugin('Filesystem');
+            if (!FS) return false;
+            try {
+                const todayStr = currentJalali.fullDateStr;
+                const lastRotatingDate = localStorage.getItem('sewing_last_rotating_backup_date');
+                if (!force && lastRotatingDate === todayStr) return false; // حداکثر یک بار در روز (به‌صورت خودکار)
+
+                const backupsPath = `${NATIVE_STORAGE_FOLDER_BASE}/backups`;
+                const monthTag = toEnglishDigits(currentJalali.yearEn) + '-' + String(currentJalali.monthNum).padStart(2, '0');
+                const fileName = `نسخه_${monthTag}.json`;
+                await FS.writeFile({
+                    path: `${backupsPath}/${fileName}`, directory: 'DOCUMENTS', encoding: 'utf8', recursive: true,
+                    data: JSON.stringify({
+                        version: "13.0", app: "sewing_statistics", timestamp: new Date().toISOString(),
+                        settings: appSettings, records: allRecords, notes: dailyNotes,
+                        installSalt: getOrCreateInstallSalt(), tombstones: tombstones
+                    }, null, 2)
+                });
+
+                // نگه‌داشتن فقط N نسخه‌ی اخیر
+                try {
+                    const res = await FS.readdir({ path: backupsPath, directory: 'DOCUMENTS' });
+                    const files = ((res && res.files) ? res.files : [])
+                        .map(e => typeof e === 'string' ? e : (e && e.name))
+                        .filter(name => name && name.startsWith('نسخه_') && name.endsWith('.json'))
+                        .sort();
+                    const toDelete = files.slice(0, Math.max(0, files.length - ROTATING_BACKUP_KEEP_COUNT));
+                    for (const name of toDelete) {
+                        try { await FS.deleteFile({ path: `${backupsPath}/${name}`, directory: 'DOCUMENTS' }); } catch (e) { /* بی‌اهمیت */ }
+                    }
+                } catch (e) { /* بی‌اهمیت؛ پوشه‌ی backups تازه ساخته شده */ }
+
+                localStorage.setItem('sewing_last_rotating_backup_date', todayStr);
+                addLog(`نسخه پشتیبان ماه جاری در پوشه ذخیره داده (backups) به‌روزرسانی شد (نسخه‌ی ${ROTATING_BACKUP_KEEP_COUNT} ماه اخیر نگه‌داری می‌شود).`, 'success');
+                return true;
+            } catch (e) {
+                console.warn('خطا در ذخیره‌ی نسخه پشتیبان چرخشی (اپ نصب‌شده):', e);
+                return false;
+            }
+        }
+
         async function manualRotatingBackupNow() {
             closeToolsDropdown();
-            if (!appDirHandle) { showFeedbackBanner('ابتدا از «تنظیمات ← حافظه» یک پوشه ذخیره‌سازی متصل کنید.', 'warn'); return; }
+            if (!storageFolderIsActive()) { showFeedbackBanner('ابتدا از «تنظیمات ← حافظه» یک پوشه ذخیره‌سازی متصل کنید.', 'warn'); return; }
             const ok = await saveRotatingBackupToFolder(true);
             showFeedbackBanner(ok ? 'نسخه پشتیبان چرخشی جدید در زیرپوشه‌ی «backups» ذخیره شد.' : 'ذخیره‌ی نسخه پشتیبان چرخشی ناموفق بود.', ok ? 'success' : 'warn');
         }
@@ -4017,6 +4392,7 @@
 
         function resetFolderWriteCache() {
             folderWrittenSig.clear();
+            mgrWrittenSig.clear(); mgrKnown.clear(); mgrPending = []; mgrFolderOk = false;
             folderSettingsSig = null;
             folderStaleScanDone = false;
         }
@@ -4029,7 +4405,7 @@
         }
 
         function saveAllMonthFilesToDirectory() {
-            if (!appDirHandle) return Promise.resolve();
+            if (!storageFolderIsActive()) return Promise.resolve();
             if (folderSaveRunning) {
                 folderSaveQueued = true;
                 return folderSavePromise;
@@ -4039,13 +4415,119 @@
                 try {
                     do {
                         folderSaveQueued = false;
-                        await saveAllMonthFilesToDirectoryImpl();
+                        await (isRunningInInstalledApp() ? saveAllMonthFilesNative() : saveAllMonthFilesToDirectoryImpl());
                     } while (folderSaveQueued);
                 } finally {
                     folderSaveRunning = false;
                 }
             })();
             return folderSavePromise;
+        }
+
+        /* ---- نسخه‌ی اپ نصب‌شده (Capacitor): همان ساختار «یک پوشه برای هر ماه + فایل تنظیمات»،
+           اما با پلاگین Filesystem به‌جای FileSystemDirectoryHandle مرورگر ---- */
+        async function saveAllMonthFilesNative() {
+            const FS = getNativePlugin('Filesystem');
+            if (!FS) { nativeStorageFolderActive = false; updateStorageFolderStatusUI(); return; }
+            try {
+                const recordsSnapshot = allRecords.slice();
+                const notesSnapshot = dailyNotes.slice();
+                const monthKeys = new Set(recordsSnapshot.map(r => r.monthKey));
+                monthKeys.add(currentJalali.monthKey);
+
+                for (const monthKey of monthKeys) {
+                    const monthRecords = recordsSnapshot.filter(r => r.monthKey === monthKey);
+                    const sig = monthRecordsSignature(monthRecords);
+                    if (folderWrittenSig.get(monthKey) === sig) continue;
+                    const [year, monthNumStr] = String(monthKey).split('-');
+                    const monthNum = parseInt(monthNumStr, 10);
+                    const monthName = PERSIAN_MONTHS[monthNum - 1] || 'نامشخص';
+                    const path = `${NATIVE_STORAGE_FOLDER_BASE}/${getMonthFolderName(monthKey)}/${getMonthFileName(monthKey)}`;
+                    await FS.writeFile({
+                        path, directory: 'DOCUMENTS', encoding: 'utf8', recursive: true,
+                        data: JSON.stringify({ app: 'sewing_statistics', monthKey, monthName, year, updatedAt: new Date().toISOString(), records: monthRecords }, null, 2)
+                    });
+                    folderWrittenSig.set(monthKey, sig);
+                }
+
+                mgrFolderOk = await mgrSyncWorkerFiles(FS);
+                const settingsPayload = { notes: notesSnapshot, settings: mgrSettingsForFolder(), installSalt: getOrCreateInstallSalt(), tombstones: tombstones };
+                const settingsSig = JSON.stringify(settingsPayload);
+                if (settingsSig !== folderSettingsSig) {
+                    await FS.writeFile({
+                        path: `${NATIVE_STORAGE_FOLDER_BASE}/${SETTINGS_FILE_NAME}`, directory: 'DOCUMENTS', encoding: 'utf8', recursive: true,
+                        data: JSON.stringify({ app: 'sewing_statistics', updatedAt: new Date().toISOString(), ...settingsPayload }, null, 2)
+                    });
+                    folderSettingsSig = settingsSig;
+                }
+
+                nativeStorageFolderActive = true;
+                dirHandlePermissionState = 'granted';
+                updateStorageFolderStatusUI();
+                saveRotatingBackupToFolder();
+            } catch (err) {
+                console.error('خطا در ذخیره فایل‌های پوشه ذخیره داده (اپ نصب‌شده):', err);
+                addLog('خطا در ذخیره‌سازی خودکار در پوشه ذخیره داده (حافظه دستگاه).', 'warn');
+            }
+        }
+
+        async function loadAllMonthFilesNative() {
+            const result = { records: [], notes: null, settings: null, salt: null, tombstones: null, hasAnyFile: false };
+            const FS = getNativePlugin('Filesystem');
+            if (!FS) return result;
+
+            function absorbParsedFile(parsed) {
+                if (!parsed || parsed.app !== 'sewing_statistics') return;
+                result.hasAnyFile = true;
+                if (parsed.kind === 'worker') { mgrCollectWorkerFile(parsed); return; }
+                if (Array.isArray(parsed.records)) parsed.records.forEach(rr => { const clean = sanitizeRecord(rr); if (clean) result.records.push(clean); });
+                if (parsed.notes || parsed.settings) {
+                    result.notes = parsed.notes || result.notes;
+                    result.settings = parsed.settings || result.settings;
+                    if (parsed.installSalt) result.salt = parsed.installSalt;
+                    if (parsed.tombstones) { const tb = normalizeTombstones(parsed.tombstones); result.tombstones = result.tombstones ? mergeTombstones(result.tombstones, tb) : tb; }
+                }
+            }
+            async function readJsonSafe(path) {
+                try {
+                    const res = await FS.readFile({ path, directory: 'DOCUMENTS', encoding: 'utf8' });
+                    return JSON.parse(res.data);
+                } catch (e) { return null; }
+            }
+
+            let topEntries = [];
+            try {
+                const res = await FS.readdir({ path: NATIVE_STORAGE_FOLDER_BASE, directory: 'DOCUMENTS' });
+                topEntries = (res && res.files) ? res.files : [];
+            } catch (e) {
+                return result; // پوشه هنوز ساخته نشده؛ یعنی هنوز چیزی ذخیره نشده است
+            }
+
+            for (const entry of topEntries) {
+                const name = typeof entry === 'string' ? entry : (entry && entry.name);
+                if (!name) continue;
+                if (name.toLowerCase().endsWith('.json')) {
+                    absorbParsedFile(await readJsonSafe(`${NATIVE_STORAGE_FOLDER_BASE}/${name}`));
+                    continue;
+                }
+                // احتمالاً پوشه‌ی مخصوص یک ماه است
+                try {
+                    const inner = await FS.readdir({ path: `${NATIVE_STORAGE_FOLDER_BASE}/${name}`, directory: 'DOCUMENTS' });
+                    const innerFiles = (inner && inner.files) ? inner.files : [];
+                    for (const innerEntry of innerFiles) {
+                        const innerName = typeof innerEntry === 'string' ? innerEntry : (innerEntry && innerEntry.name);
+                        if (!innerName || !innerName.toLowerCase().endsWith('.json')) continue;
+                        absorbParsedFile(await readJsonSafe(`${NATIVE_STORAGE_FOLDER_BASE}/${name}/${innerName}`));
+                    }
+                } catch (e) { /* فایل بود نه پوشه، یا قابل خواندن نبود؛ نادیده گرفته می‌شود */ }
+            }
+
+            result.settings = mgrFinishLoad(result.settings);
+            const newest = new Map();
+            result.records.forEach(r => { const cur = newest.get(r.id); if (!cur || r.updatedAt > cur.updatedAt) newest.set(r.id, r); });
+            result.records = [...newest.values()];
+            if (Array.isArray(result.notes)) result.notes = result.notes.map(sanitizeNote).filter(Boolean);
+            return result;
         }
 
         async function saveAllMonthFilesToDirectoryImpl() {
@@ -4133,9 +4615,10 @@
                     try { await appDirHandle.removeEntry(getMonthFileName(monthKey)); } catch (e) { /* از قبل وجود نداشت؛ بی‌اهمیت */ }
                 }
 
+                mgrFolderOk = await mgrSyncWorkerFiles(null);
                 const settingsPayload = {
                     notes: notesSnapshot,
-                    settings: appSettings,
+                    settings: mgrSettingsForFolder(),
                     installSalt: getOrCreateInstallSalt(),
                     tombstones: tombstones
                 };
@@ -4162,6 +4645,7 @@
         }
 
         async function loadAllMonthFilesFromDirectory() {
+            if (isRunningInInstalledApp()) return loadAllMonthFilesNative();
             const collectedRecords = [];
             let collectedNotes = null;
             let collectedSettings = null;
@@ -4172,6 +4656,7 @@
             function absorbParsedFile(parsed) {
                 if (!parsed || parsed.app !== 'sewing_statistics') return;
                 hasAnyFile = true;
+                if (parsed.kind === 'worker') { mgrCollectWorkerFile(parsed); return; }
                 if (Array.isArray(parsed.records)) {
                     parsed.records.forEach(rr => { const clean = sanitizeRecord(rr); if (clean) collectedRecords.push(clean); });
                 }
@@ -4214,6 +4699,7 @@
                 }
             }
 
+            collectedSettings = mgrFinishLoad(collectedSettings);
             const newest = new Map();
             collectedRecords.forEach(r => { const cur = newest.get(r.id); if (!cur || r.updatedAt > cur.updatedAt) newest.set(r.id, r); });
             return { records: [...newest.values()], notes: Array.isArray(collectedNotes) ? collectedNotes.map(sanitizeNote).filter(Boolean) : null, settings: collectedSettings, salt: collectedSalt, tombstones: collectedTombstones, hasAnyFile };
@@ -4260,7 +4746,9 @@
 
         async function chooseStorageFolder() {
             if (!supportsFileSystemAccess) {
-                showFeedbackBanner('مرورگر شما از ذخیره‌سازی مستقیم در پوشه دستگاه پشتیبانی نمی‌کند (این قابلیت فقط در Chrome/Edge روی رایانه یا اندروید در دسترس است). می‌توانید از گزینه «پشتیبان‌گیری» برای ذخیره دستی فایل استفاده کنید.', 'warn');
+                showFeedbackBanner(isRunningInInstalledApp()
+                    ? 'در اپ نصب‌شده، پوشه ذخیره داده به‌صورت خودکار در حافظه دستگاه فعال است و نیازی به انتخاب دستی پوشه نیست.'
+                    : 'مرورگر شما از ذخیره‌سازی مستقیم در پوشه دستگاه پشتیبانی نمی‌کند (این قابلیت فقط در Chrome/Edge روی رایانه یا اندروید در دسترس است). می‌توانید از گزینه «پشتیبان‌گیری» برای ذخیره دستی فایل استفاده کنید.', 'warn');
                 return;
             }
             try {
@@ -4302,6 +4790,17 @@
         // در هر لحظه با یک لمس، نوشتن فوریِ همه‌ی فایل‌های ماه/تنظیمات را در پوشه‌ی متصل‌شده تضمین کند
         // (مثلاً درست قبل از بستن برنامه یا خاموش کردن دستگاه، برای خیالِ راحت).
         async function manualSaveToFolder() {
+            if (isRunningInInstalledApp()) {
+                if (!nativeStorageFolderActive) {
+                    showFeedbackBanner('پلاگین ذخیره‌سازی (Filesystem) در این نسخه از اپ فعال نیست؛ ذخیره در پوشه دستگاه انجام نشد.', 'warn');
+                    return;
+                }
+                resetFolderWriteCache(); // تا حتی بدون تغییرِ تازه هم، همه‌ی فایل‌ها همین الان بازنویسی و تضمین شوند
+                await saveAllMonthFilesToDirectory();
+                addLog('ذخیره دستی در پوشه ذخیره داده (حافظه دستگاه) انجام شد.', 'success');
+                showFeedbackBanner(`داده‌ها همین الان در پوشه «Documents/${NATIVE_STORAGE_FOLDER_BASE}» ذخیره شد.`, 'success');
+                return;
+            }
             if (!supportsFileSystemAccess) {
                 showFeedbackBanner('مرورگر شما از این قابلیت پشتیبانی نمی‌کند (فقط در Chrome/Edge روی رایانه یا اندروید در دسترس است).', 'warn');
                 return;
@@ -4340,6 +4839,39 @@
         // متصل‌شده (همان پوشه‌ای که مجوزش معمولاً هر بار موقع ورود گرفته می‌شود، مثلاً در اندروید)
         // داده‌ها را بخواند و با داده‌های فعلی برنامه ادغام کند.
         async function manualLoadFromFolder() {
+            if (isRunningInInstalledApp()) {
+                if (!nativeStorageFolderActive) {
+                    showFeedbackBanner('پلاگین ذخیره‌سازی (Filesystem) در این نسخه از اپ فعال نیست.', 'warn');
+                    return;
+                }
+                try {
+                    const loaded = await loadAllMonthFilesNative();
+                    if (!loaded.hasAnyFile) {
+                        showFeedbackBanner('هیچ فایل داده‌ای در پوشه ذخیره داده پیدا نشد.', 'warn');
+                        return;
+                    }
+                    allRecords = mergeById(allRecords, loaded.records, 'records', loaded.tombstones);
+                    if (loaded.notes) dailyNotes = mergeById(dailyNotes, loaded.notes, 'notes', null);
+                    if (loaded.settings) {
+                        const localUpdatedAt = appSettings.updatedAt ? new Date(appSettings.updatedAt).getTime() : 0;
+                        const folderUpdatedAt = loaded.settings.updatedAt ? new Date(loaded.settings.updatedAt).getTime() : 0;
+                        if (folderUpdatedAt > localUpdatedAt) {
+                            appSettings = sanitizeSettings(adoptExternalSettings(loaded.settings, loaded.salt));
+                            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+                            applyAppSettingsToUI();
+                        }
+                    }
+                    saveRecords();
+                    renderDashboard();
+                    updateStorageFolderStatusUI();
+                    addLog('بارگذاری دستی از پوشه ذخیره داده (حافظه دستگاه) انجام شد.', 'success');
+                    showFeedbackBanner(`بارگذاری از پوشه ذخیره داده با موفقیت انجام شد. تعداد کل رکوردها اکنون: ${formatNumber(allRecords.length)}`, 'success');
+                } catch (err) {
+                    console.error(err);
+                    showFeedbackBanner('خطا در بارگذاری از پوشه ذخیره داده.', 'warn');
+                }
+                return;
+            }
             if (!supportsFileSystemAccess) {
                 showFeedbackBanner('مرورگر شما از این قابلیت پشتیبانی نمی‌کند (فقط در Chrome/Edge روی رایانه یا اندروید در دسترس است).', 'warn');
                 return;
@@ -4425,10 +4957,19 @@
             const chooseBtn = document.getElementById('dataFolderChooseBtn');
             const disconnectBtn = document.getElementById('dataFolderDisconnectBtn');
             const loadBtn = document.getElementById('dataFolderLoadBtn');
-            if (loadBtn) loadBtn.classList.toggle('hidden', !appDirHandle || !supportsFileSystemAccess);
             const saveBtn = document.getElementById('dataFolderSaveBtn');
-            if (saveBtn) saveBtn.classList.toggle('hidden', !appDirHandle || !supportsFileSystemAccess);
+            if (loadBtn) loadBtn.classList.toggle('hidden', !storageFolderIsActive());
+            if (saveBtn) saveBtn.classList.toggle('hidden', !storageFolderIsActive());
             if (!statusEl) return;
+            if (isRunningInInstalledApp()) {
+                statusEl.innerText = nativeStorageFolderActive
+                    ? `وضعیت: فعال — ذخیره خودکار در حافظه دستگاه (Documents/${NATIVE_STORAGE_FOLDER_BASE})`
+                    : 'پلاگین ذخیره‌سازی (Filesystem) در این نسخه از اپ فعال نیست؛ داده فقط داخل برنامه ذخیره می‌شود.';
+                statusEl.className = nativeStorageFolderActive ? 'text-xs font-semibold text-emerald-600 dark:text-emerald-400' : 'text-xs font-semibold text-rose-600 dark:text-rose-400';
+                if (chooseBtn) chooseBtn.classList.add('hidden');
+                if (disconnectBtn) disconnectBtn.classList.add('hidden');
+                return;
+            }
             if (!supportsFileSystemAccess) {
                 statusEl.innerText = 'این مرورگر از انتخاب پوشه پشتیبانی نمی‌کند؛ فقط ذخیره‌ی مرورگر فعال است.';
                 statusEl.className = 'text-xs font-semibold text-slate-400';
@@ -4457,6 +4998,23 @@
             const menuIcon = document.getElementById('folderMenuBtnIcon');
             const disconnectBtn = document.getElementById('folderDisconnectBtn');
             if (!line) return;
+
+            if (isRunningInInstalledApp()) {
+                if (nativeStorageFolderActive) {
+                    line.className = "inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-100 dark:border-emerald-900";
+                    line.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ذخیره خودکار در پوشه دستگاه فعال است`;
+                    line.onclick = null;
+                    if (menuLabel) menuLabel.innerText = 'تنظیمات پوشه دستگاه';
+                    if (menuIcon) menuIcon.className = 'fa-solid fa-folder-open text-teal-600 dark:text-teal-400 text-xs';
+                    line.classList.remove('hidden');
+                } else {
+                    line.classList.add('hidden');
+                    if (menuLabel) menuLabel.innerText = 'اتصال پوشه دستگاه (در این نسخه از اپ فعال نیست)';
+                    if (menuIcon) menuIcon.className = 'fa-solid fa-folder-open text-slate-400 text-xs';
+                }
+                if (disconnectBtn) disconnectBtn.classList.add('hidden');
+                return;
+            }
 
             if (!supportsFileSystemAccess) {
                 line.classList.add('hidden');
@@ -4492,6 +5050,10 @@
         }
 
         async function initStorageFolderConnection() {
+            if (isRunningInInstalledApp()) {
+                await initNativeStorageFolder();
+                return;
+            }
             updateStorageFolderStatusUI();
             if (!supportsFileSystemAccess) return;
             try {
@@ -4509,6 +5071,34 @@
                 console.error('خطا در بازیابی پوشه ذخیره‌سازی:', err);
                 updateStorageFolderStatusUI();
             }
+        }
+        async function initNativeStorageFolder() {
+            const FS = getNativePlugin('Filesystem');
+            if (!FS) { nativeStorageFolderActive = false; updateStorageFolderStatusUI(); return; }
+            nativeStorageFolderActive = true;
+            dirHandlePermissionState = 'granted';
+            try {
+                const loaded = await loadAllMonthFilesNative();
+                if (loaded.hasAnyFile) {
+                    allRecords = mergeById(allRecords, loaded.records, 'records', loaded.tombstones);
+                    if (loaded.notes) dailyNotes = mergeById(dailyNotes, loaded.notes, 'notes', null);
+                    if (loaded.settings) {
+                        const localUpdatedAt = appSettings.updatedAt ? new Date(appSettings.updatedAt).getTime() : 0;
+                        const folderUpdatedAt = loaded.settings.updatedAt ? new Date(loaded.settings.updatedAt).getTime() : 0;
+                        if (folderUpdatedAt > localUpdatedAt) {
+                            appSettings = sanitizeSettings(adoptExternalSettings(loaded.settings, loaded.salt));
+                            localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
+                            applyAppSettingsToUI();
+                        }
+                    }
+                    saveRecords();
+                    renderDashboard();
+                }
+                await saveAllMonthFilesToDirectory();
+            } catch (err) {
+                console.warn('خطا در اتصال اولیه به پوشه ذخیره داده (اپ نصب‌شده):', err);
+            }
+            updateStorageFolderStatusUI();
         }
         /* ============ پایان مدیریت ذخیره‌سازی در پوشه‌ی دستگاه ============ */
 
@@ -4676,6 +5266,7 @@
         // جابه‌جایی بین تب‌های منوی ابزار (اصلی، داده‌ها، دستگاه، خطرناک)
         function switchToolsTab(tabName, event) {
             if (event) event.stopPropagation();
+            if (tabName === 'device' && typeof renderDeviceExtras === 'function') renderDeviceExtras();
             document.querySelectorAll('.tools-tab-panel').forEach(panel => {
                 panel.classList.toggle('hidden', panel.id !== `toolsTab-${tabName}`);
             });
@@ -4956,6 +5547,7 @@
                 input.value = formatJalaliDate(jy, jm, day);
                 if (targetId === 'recordDate') { recordDateTouched = true; runAutoDeliveryCalculation(); }
                 if (targetId === 'manualEndDate') { syncManualEndDateTime(); }
+                if (targetId === 'mgrAttDate' || targetId === 'mgrTxDate') mgrDateChosen(targetId, input.value);
             }
             closeDatePicker();
         }
@@ -4967,6 +5559,7 @@
                 input.value = currentJalali.fullDateStr;
                 if (targetId === 'recordDate') { recordDateTouched = true; runAutoDeliveryCalculation(); }
                 if (targetId === 'manualEndDate') { syncManualEndDateTime(); }
+                if (targetId === 'mgrAttDate' || targetId === 'mgrTxDate') mgrDateChosen(targetId, input.value);
             }
             closeDatePicker();
         }
@@ -5152,6 +5745,7 @@
                 </div>`;
             }).join('');
             updateShiftPreview();
+            populateBusinessTypeSelect();
         }
 
         function loadWorkSettingsIntoForm() {
@@ -5220,7 +5814,9 @@
                 const el = document.getElementById('settingRequired_' + k);
                 if (el && !el.checked) optionalFields[k] = true;
             });
-            return { data: { workdayMinutes, shiftStart: v.start, shiftEnd: v.end, shiftBreaks: breaks, formLabels: labels, optionalFields } };
+            const btEl = document.getElementById('settingBusinessType');
+            const businessType = (btEl && BUSINESS_PRESETS[btEl.value]) ? btEl.value : 'general';
+            return { data: { workdayMinutes, shiftStart: v.start, shiftEnd: v.end, shiftBreaks: breaks, formLabels: labels, optionalFields, businessType } };
         }
         /* ============ پایان نام فیلدها و ساعات کاری ============ */
 
@@ -5283,6 +5879,7 @@
             updateStorageQuotaUI();
 
             updateSettingsProfilePreview();
+            mgrRenderSettings();
             switchSettingsTab(initialTab || 'profile');
             updateBackupFolderStatusUI();
             updateDataFolderSettingsUI();
@@ -5355,7 +5952,7 @@
 
             appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-            if (appDirHandle) saveAllMonthFilesToDirectory(); // تا فایل تنظیمات در پوشه‌ی متصل هم بلافاصله به‌روز شود
+            if (storageFolderIsActive()) saveAllMonthFilesToDirectory(); // تا فایل تنظیمات در پوشه‌ی متصل هم بلافاصله به‌روز شود
             applyAppSettingsToUI();
             runAutoDeliveryCalculation(true);
             renderDashboard();
@@ -5380,7 +5977,7 @@
             appSettings.delaySummaryVisible = isOpen;
             appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-            if (typeof appDirHandle !== 'undefined' && appDirHandle) saveAllMonthFilesToDirectory();
+            if (storageFolderIsActive()) saveAllMonthFilesToDirectory();
             if (isOpen) body.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
@@ -5404,7 +6001,7 @@
             appSettings.duplicateCodesVisible = isOpen;
             appSettings.updatedAt = new Date().toISOString();
             localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-            if (typeof appDirHandle !== 'undefined' && appDirHandle) saveAllMonthFilesToDirectory();
+            if (storageFolderIsActive()) saveAllMonthFilesToDirectory();
             if (isOpen) body.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
@@ -5421,7 +6018,11 @@
             Vazir: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css',
             Sahel: 'https://cdn.jsdelivr.net/gh/rastikerdar/sahel-font@v3.4.0/dist/font-face.css',
             Samim: 'https://cdn.jsdelivr.net/gh/rastikerdar/samim-font@v3.0.0/dist/font-face.css',
-            Shabnam: 'https://cdn.jsdelivr.net/gh/rastikerdar/shabnam-font@v4.0.1/dist/font-face.css'
+            Shabnam: 'https://cdn.jsdelivr.net/gh/rastikerdar/shabnam-font@latest/dist/font-face.css'
+        };
+        const FONT_LOCAL_URLS = {
+            Vazir: 'vendor/vazir/dist/font-face.css', Sahel: 'vendor/sahel/dist/font-face.css',
+            Samim: 'vendor/samim/dist/font-face.css', Shabnam: 'vendor/shabnam/dist/font-face.css'
         };
         // فقط فونتی که کاربر انتخاب کرده بارگذاری می‌شود (وزیرمتن پیش‌فرض همیشه در head هست)
         function ensureFontLoaded(family) {
@@ -5429,13 +6030,15 @@
             if (!url || document.querySelector('link[data-font-family="' + family + '"]')) return;
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = url;
+            link.href = FONT_LOCAL_URLS[family] || url;
+            link.onerror = () => { link.onerror = null; link.href = url; }; // نسخه‌ی محلی نبود → CDN
             link.setAttribute('data-font-family', family);
             document.head.appendChild(link);
         }
 
         function applyAppSettingsToUI() {
             applyShiftSettings();
+            applyManagerToUI();
             const currency = appSettings.currency || 'تومان';
             document.getElementById('kpiPriceLabel').innerText = `ارزش کل کارکرد (${currency})`;
             document.getElementById('unitPriceLabel').innerText = `${getFormLabel('unitPrice')} (${currency})`;
@@ -5699,7 +6302,7 @@
                     broadcastLocalDataChange();
                     updateStorageQuotaUI();
 
-                    if (appDirHandle) {
+                    if (storageFolderIsActive()) {
                         saveAllMonthFilesToDirectory();
                     }
 
@@ -5782,6 +6385,34 @@
             const jsonFilename = getMonthlyBackupFileName();
             const jsonString = JSON.stringify(buildBackupPayload(), null, 2);
 
+            if (isRunningInInstalledApp()) {
+                const FS = getNativePlugin('Filesystem');
+                const ShareApi = getNativePlugin('Share');
+                if (FS && ShareApi) {
+                    try {
+                        const path = `پشتیبان_موقت_اشتراک‌گذاری/${jsonFilename}`;
+                        await FS.writeFile({ path, data: jsonString, directory: 'CACHE', encoding: 'utf8', recursive: true });
+                        const uriResult = await FS.getUri({ path, directory: 'CACHE' });
+                        await ShareApi.share({
+                            title: 'پشتیبان سامانه ی کارگاه هوشمند',
+                            text: `فایل پشتیبان ماه جاری (${jsonFilename})`,
+                            url: uriResult.uri,
+                            dialogTitle: 'ارسال فایل پشتیبان'
+                        });
+                        addLog('فایل پشتیبان از طریق منوی اشتراک‌گذاری سیستم ارسال شد.', 'success');
+                        showFeedbackBanner('پنجره‌ی اشتراک‌گذاری سیستم باز شد؛ برنامه‌ی فضای ابری دلخواه را برای ذخیره‌ی فایل انتخاب کنید.', 'success');
+                    } catch (err) {
+                        const msg = (err && err.message) ? err.message : '';
+                        if (/cancel/i.test(msg)) return; // کاربر از پنجره‌ی اشتراک‌گذاری صرف‌نظر کرد
+                        console.warn('ارسال فایل پشتیبان (اپ نصب‌شده) ناموفق بود:', err);
+                        showFeedbackBanner('ارسال فایل پشتیبان انجام نشد. می‌توانید از گزینه «پشتیبان‌گیری» فایل را دانلود و سپس دستی در فضای ابری بارگذاری کنید.', 'warn');
+                    }
+                    return;
+                }
+                showFeedbackBanner('ارسال مستقیم فایل به فضای ابری در این نسخه از اپ فعال نیست (پلاگین‌های Filesystem/Share به پروژه اضافه نشده‌اند).', 'warn');
+                return;
+            }
+
             /*
              * نکته مهم: Web Share API روی کروم/اندروید فقط اشتراک‌گذاری فایل با پسوند/نوع MIME
              * مشخصی رو مجاز می‌کنه (لیست سفید امنیتی داخل خود مرورگر) و «application/json» و
@@ -5800,10 +6431,12 @@
                 return;
             }
 
-            const canUseShare = !!(navigator.share && navigator.canShare && navigator.canShare({ files: [file] }));
+            const canUseShare = !!(navigator.share && navigator.canShare && navigator.canShare({ files: [file] }) && !isRunningInInstalledApp());
             if (!canUseShare) {
                 // تشخیص دقیق‌تر علت عدم پشتیبانی، به‌جای پیام کلی گمراه‌کننده
-                if (!window.isSecureContext || location.protocol === 'file:') {
+                if (isRunningInInstalledApp()) {
+                    showFeedbackBanner('ارسال مستقیم فایل به فضای ابری در اپ نصب‌شده فعال نیست (محدودیت پوسته‌ی WebView اندروید). به‌جای آن از گزینه «پشتیبان‌گیری» فایل را دانلود کنید و از طریق مدیریت فایل گوشی یا برنامه‌ی فضای ابری آن را بارگذاری کنید.', 'warn');
+                } else if (!window.isSecureContext || location.protocol === 'file:') {
                     console.warn('اشتراک‌گذاری فایل غیرفعال است چون صفحه از یک منبع امن (https) بارگذاری نشده. protocol:', location.protocol);
                     showFeedbackBanner('اشتراک‌گذاری مستقیم فایل نیاز به بارگذاری برنامه از یک آدرس امن (https) دارد؛ باز کردن مستقیم فایل روی گوشی (یا میان‌بر ساخته‌شده از آن) این قابلیت را غیرفعال می‌کند، حتی روی اندروید/آیفون. برنامه را روی یک آدرس https میزبانی کنید یا از گزینه «پشتیبان‌گیری» فایل را دانلود و در فضای ابری بارگذاری کنید.', 'warn');
                 } else {
@@ -5851,11 +6484,12 @@
                 const s = (v === null || v === undefined) ? '' : String(v);
                 return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
             };
-            const headers = ['تاریخ', 'ساعت', 'کد کالا', 'عنوان', 'رنگ/مشخصات', 'تعداد', 'قیمت واحد', 'قیمت کل', 'وضعیت', 'مدت زمان'];
+            const withW = mgrOn();
+            const headers = ['تاریخ', 'ساعت', ...(withW ? ['کارگر'] : []), 'کد کالا', 'عنوان', 'رنگ/مشخصات', 'تعداد', 'قیمت واحد', 'قیمت کل', 'وضعیت', 'مدت زمان'];
             const lines = [headers.map(csvCell).join(',')];
             records.forEach(r => {
                 lines.push([
-                    r.date, r.time, r.itemCode, r.itemTitle, r.itemColor,
+                    r.date, r.time, ...(withW ? [mgrRecWorker(r)] : []), r.itemCode, r.itemTitle, r.itemColor,
                     r.quantity, (r.unitPrice === null ? '' : r.unitPrice), (r.totalPrice === null ? '' : r.totalPrice),
                     getDisplayStatus(r), r.durationTime
                 ].map(csvCell).join(','));
@@ -6479,6 +7113,7 @@
             // استثنا: وقتی «تاریخ ثبت» عمداً به ماه قبل (یا قدیمی‌تر) برده شده، رکورد فقط زیر «ماه جاری» ثبت و نمایش
             // داده می‌شود (نه زیر ماه قبل)؛ در این حالت به‌جای ماهِ خودِ تاریخ، از ماه جاری سیستم استفاده می‌شود.
             const dateInfo = isRecordDateInPastMonth(date) ? info : (getMonthInfoFromDateStr(date) || info);
+            const workerFields = mgrOn() ? mgrReadFormWorker(editingId ? allRecords.find(r => r.id === editingId) : null) : null;
 
             if (editingId) {
                 const targetIndex = allRecords.findIndex(r => r.id === editingId);
@@ -6496,7 +7131,7 @@
                         status: status, date: date, time: time, durationTime: durationTime,
                         dailyStat: dailyStat, receivedQuantity: receivedQuantity, endDateTime: endDateTime,
                         workDuration: workDuration,
-                        photo: currentPhotoData, hasPhoto: !!currentPhotoData,
+                        photo: currentPhotoData, hasPhoto: !!currentPhotoData, ...(workerFields || {}),
                         monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year,
                         updatedAt: Date.now()
                     };
@@ -6543,7 +7178,7 @@
                     status: status, date: date, time: time, durationTime: durationTime,
                     dailyStat: dailyStat, receivedQuantity: receivedQuantity, endDateTime: endDateTime,
                     workDuration: workDuration,
-                    photo: currentPhotoData, hasPhoto: !!currentPhotoData,
+                    photo: currentPhotoData, hasPhoto: !!currentPhotoData, ...(workerFields || {}),
                     monthKey: dateInfo.monthKey, monthName: dateInfo.monthName, year: dateInfo.year
                 };
                 // پیش از افزودن رکورد جدید، اگر رکورد قبلی (از نظر زمانی) هنوز «تاریخ/ساعت شروع کد بعد»
@@ -6574,6 +7209,7 @@
             document.getElementById('itemCode').value = record.itemCode || '';
             document.getElementById('itemTitle').value = record.itemTitle || '';
             document.getElementById('itemColor').value = record.itemColor || '';
+            mgrSetFormWorker(record);
             document.getElementById('priceUnknownCheckbox').checked = (record.unitPrice === null || record.unitPrice === undefined);
             document.getElementById('unitPrice').value = (record.unitPrice === null || record.unitPrice === undefined) ? '' : record.unitPrice;
             togglePriceUnknown();
@@ -6638,6 +7274,7 @@
         function resetFormState() {
             const info = getCurrentJalaliInfo();
             document.getElementById('stitchingForm').reset();
+            mgrSetFormWorker(null);
             document.getElementById('editingRecordId').value = '';
             document.getElementById('recordDate').value = info.fullDateStr;
             recordTimeTouched = false;
@@ -6759,7 +7396,7 @@
             if (changed) {
                 appSettings.updatedAt = new Date().toISOString();
                 localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-                if (appDirHandle) saveAllMonthFilesToDirectory();
+                if (storageFolderIsActive()) saveAllMonthFilesToDirectory();
             }
 
             const mode = appSettings.incomeGoalMode === 'monthly' ? 'monthly' : 'weekly';
@@ -7156,7 +7793,8 @@
                 if (!searchQuery) return true;
                 return normalizeSearchText(r.itemCode).includes(searchQuery) ||
                        normalizeSearchText(r.itemTitle).includes(searchQuery) ||
-                       normalizeSearchText(r.itemColor).includes(searchQuery);
+                       normalizeSearchText(r.itemColor).includes(searchQuery) ||
+                       (mgrOn() && normalizeSearchText(mgrRecWorker(r)).includes(searchQuery));
             });
             return sortRecords(filtered);
         }
@@ -7768,7 +8406,7 @@
         function getStaleOverdueMinutes() { return 3 * SHIFT_MINUTES; }
 
         // رکورد «در حال انجام» فعلی: جدیدترین رکوردی که هنوز «شروع کد بعد» برایش ثبت نشده؛
-        // یعنی همان کدی که خیاط همین الان روی آن مشغول است.
+        // یعنی همان کدی که کارگر همین الان روی آن مشغول است.
         function getCurrentActiveRecord() {
             const openRecords = allRecords.filter(r => !r.nextCodeStartDate && !r.finishedDate && r.workDuration && r.date && r.time);
             if (openRecords.length === 0) return null;
@@ -7899,7 +8537,7 @@
                 appSettings.bestStreak = best;
                 appSettings.updatedAt = new Date().toISOString();
                 localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings));
-                if (appDirHandle) saveAllMonthFilesToDirectory();
+                if (storageFolderIsActive()) saveAllMonthFilesToDirectory();
             }
         }
 
@@ -8315,7 +8953,7 @@
                                     ${renderColorSwatchDot(r.itemColor)}
                                     <span>${escapeHTML(r.itemColor) || '-'}</span>
                                     <span class="opacity-40">•</span>
-                                    <span>#${formatNumber(index + 1)}</span>
+                                    <span>#${formatNumber(index + 1)}</span>${(mgrOn() && mgrRecWorker(r)) ? `<span class="opacity-40">•</span><span class="text-indigo-600 dark:text-indigo-300"><i class="fa-solid fa-user-gear text-[10px] ml-1"></i>${escapeHTML(mgrRecWorker(r))}</span>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -8354,6 +8992,411 @@
             if (!container) return;
             container.innerHTML = records.map((r, index) => buildRecordCardHTML(r, index)).join('');
         }
+
+        /* ==================== قابلیت کارفرما (مدیر کارگاه): بخش‌ها، کارگران، ارجاع کار، حضور و غیاب، حقوق ==================== */
+        var mgrTab = 'dash', mgrEditW = '', mgrEditS = '', mgrAttDate = '', mgrTxDate = '';
+        const MGR_TABS = [['dash', 'fa-gauge', 'خلاصه'], ['workers', 'fa-users', 'کارگران'], ['sections', 'fa-sitemap', 'بخش‌ها'], ['att', 'fa-calendar-check', 'حضور و غیاب'], ['pay', 'fa-money-bill-wave', 'حقوق و مزد']];
+        const MGR_PAY = { daily: 'روزمزد', monthly: 'ماهانه (ثابت)', piece: 'کارمزدی (هر قطعه)' };
+        const MGR_ATT = [['p', 'حاضر', 'emerald'], ['h', 'نیم‌روز', 'sky'], ['l', 'مرخصی', 'amber'], ['a', 'غایب', 'rose']];
+        const MGR_TX = { advance: 'مساعده', bonus: 'پاداش', deduction: 'کسورات' };
+        const MI = 'w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all';
+        function mgrId(p) { return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+        function mgrOn() { return !!(appSettings && appSettings.manager && appSettings.manager.enabled); }
+        function mgr() { return appSettings.manager; }
+        function mgrWorker(id) { return id ? (mgr().workers.find(w => w.id === String(id)) || null) : null; }
+        function mgrSection(id) { return id ? (mgr().sections.find(x => x.id === String(id)) || null) : null; }
+        function mgrRecWorker(r) { const w = mgrWorker(r && r.workerId); return w ? w.name : ((r && r.workerName) || ''); }
+        function mgrDK(d) { const p = toEnglishDigits(String(d || '')).split('/').map(Number); return (p.length === 3 && p.every(Number.isFinite)) ? `${p[0]}/${String(p[1]).padStart(2, '0')}/${String(p[2]).padStart(2, '0')}` : ''; }
+        function mgrMK(dk) { const p = dk.split('/').map(Number); return `${p[0]}-${p[1]}`; }
+        function mgrToday() { return getCurrentJalaliInfo().fullDateStr; }
+        function mgrSave() {
+            appSettings.updatedAt = new Date().toISOString();
+            try { localStorage.setItem('sewing_app_settings_v13', JSON.stringify(appSettings)); }
+            catch (e) { showFeedbackBanner('حافظه‌ی مرورگر پر است؛ ذخیره انجام نشد.', 'warn'); }
+            if (storageFolderIsActive()) saveAllMonthFilesToDirectory();
+        }
+        function mgrMonthLabel() { const [y, m] = selectedMonthFilter.split('-'); return `${PERSIAN_MONTHS[parseInt(m, 10) - 1] || ''} ${toPersianDigits(y)}`; }
+
+        function applyManagerToUI() {
+            const on = mgrOn();
+            ['workerFieldWrap', 'thWorker'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.toggle('hidden', !on); });
+            const b = document.getElementById('mgrToolsBtn'); if (b) b.classList.toggle('hidden', !on);
+            if (!on) { const md = document.getElementById('managerModal'); if (md) md.classList.add('hidden'); return; }
+            const sel = document.getElementById('recordWorker'); if (!sel) return;
+            const cur = sel.value;
+            sel.innerHTML = '<option value="">— بدون ارجاع —</option>' + mgr().workers.filter(w => w.active).map(w => {
+                const sc = mgrSection(w.sectionId);
+                return `<option value="${escapeHTML(w.id)}">${escapeHTML(w.name)}${sc ? ' — ' + escapeHTML(sc.name) : ''}</option>`;
+            }).join('');
+            if (cur && [...sel.options].some(o => o.value === cur)) sel.value = cur;
+        }
+        function mgrSetFormWorker(r) {
+            const sel = document.getElementById('recordWorker'); if (!sel) return;
+            sel.querySelectorAll('option[data-temp]').forEach(o => o.remove());
+            let v = (r && r.workerId) ? String(r.workerId) : '';
+            const w = mgrWorker(v);
+            if (v && (!w || ![...sel.options].some(o => o.value === v))) {
+                const o = document.createElement('option'); o.dataset.temp = '1';
+                o.value = w ? w.id : '__snap'; o.textContent = (w ? w.name : (r.workerName || 'کارگر حذف‌شده')) + (w ? ' (غیرفعال)' : ' (حذف‌شده)');
+                sel.appendChild(o); v = o.value;
+            } else if (!v && r && r.workerName) {
+                const o = document.createElement('option'); o.dataset.temp = '1'; o.value = '__snap'; o.textContent = r.workerName + ' (حذف‌شده)';
+                sel.appendChild(o); v = '__snap';
+            }
+            sel.value = v;
+        }
+        function mgrReadFormWorker(existing) {
+            const v = (document.getElementById('recordWorker') || {}).value || '';
+            if (v === '__snap') return { workerId: null, workerName: existing ? (existing.workerName || '') : '' };
+            const w = mgrWorker(v);
+            return w ? { workerId: w.id, workerName: w.name } : { workerId: null, workerName: '' };
+        }
+
+        function mgrRenderSettings() {
+            const cb = document.getElementById('settingManagerEnabled'); if (!cb) return;
+            cb.checked = mgrOn();
+            document.getElementById('mgrOpenBtn').classList.toggle('hidden', !mgrOn());
+            document.getElementById('mgrSettingsNote').innerText = mgrOn()
+                ? `فعال است — ${formatNumber(mgr().workers.length)} کارگر، ${formatNumber(mgr().sections.length)} بخش.`
+                : 'غیرفعال است؛ اطلاعات ثبت‌شده حفظ می‌شود.';
+        }
+        function mgrToggle(on) {
+            mgr().enabled = !!on; mgrSave();
+            applyManagerToUI(); mgrRenderSettings(); renderDashboard();
+            addLog(on ? 'قابلیت کارفرما فعال شد.' : 'قابلیت کارفرما غیرفعال شد.', 'info');
+            showFeedbackBanner(on ? 'قابلیت کارفرما فعال شد. از منوی ابزارها «پنل کارفرما» را باز کنید.' : 'قابلیت کارفرما غیرفعال شد؛ اطلاعات حفظ شده است.', 'success');
+        }
+        function openManagerPanel() {
+            if (!mgrOn()) return;
+            mgrAttDate = mgrAttDate || mgrToday(); mgrTxDate = mgrTxDate || mgrToday();
+            document.getElementById('managerModal').classList.remove('hidden');
+            mgrRender();
+        }
+        function closeManagerPanel() { document.getElementById('managerModal').classList.add('hidden'); }
+        function mgrDateChosen(id, v) { if (id === 'mgrAttDate') { mgrAttDate = v; mgrRender(); } else mgrTxDate = v; }
+
+        function mgrOtRate(w) {
+            const M = mgr(), dh = M.dayHours || 8, k = M.otMultiplier || 1.4;
+            if (w.otRate > 0) return w.otRate;
+            if (w.payType === 'daily') return w.rate / dh * k;
+            if (w.payType === 'monthly') return w.rate / (30 * dh) * k;
+            return 0;
+        }
+        function mgrPayroll(mk) {
+            const M = mgr(), days = {}, qty = {}, tx = {}, oh = {};
+            Object.keys(M.attendance).forEach(k => {
+                if (mgrMK(k) !== mk) return;
+                Object.entries(M.attendance[k]).forEach(([w, st]) => { days[w] = (days[w] || 0) + (st === 'p' ? 1 : st === 'h' ? 0.5 : 0); });
+            });
+            Object.keys(M.overtime).forEach(k => {
+                if (mgrMK(k) !== mk) return;
+                Object.entries(M.overtime[k]).forEach(([w, h]) => { oh[w] = (oh[w] || 0) + h; });
+            });
+            allRecords.forEach(r => { if (r.workerId && r.monthKey === mk) qty[r.workerId] = (qty[r.workerId] || 0) + (Number(r.quantity) || 0); });
+            M.txns.forEach(t => { if (mgrMK(t.date) === mk) { tx[t.workerId] = tx[t.workerId] || { advance: 0, bonus: 0, deduction: 0 }; tx[t.workerId][t.type] += t.amount; } });
+            return M.workers.map(w => {
+                const d = days[w.id] || 0, q = qty[w.id] || 0, h = oh[w.id] || 0, t = tx[w.id] || { advance: 0, bonus: 0, deduction: 0 };
+                const base = w.payType === 'monthly' ? w.rate : (w.payType === 'piece' ? q * w.rate : d * w.rate);
+                const otPay = Math.round(h * mgrOtRate(w));
+                return { w, days: d, qty: q, base, oh: h, otPay, bonus: t.bonus, advance: t.advance, deduction: t.deduction, net: base + otPay + t.bonus - t.advance - t.deduction, used: d > 0 || q > 0 || h > 0 || t.bonus + t.advance + t.deduction > 0 };
+            }).filter(x => x.w.active || x.used);
+        }
+
+        function mgrRender() {
+            document.getElementById('mgrHeaderSub').innerText = `دوره‌ی گزارش: ${mgrMonthLabel()}`;
+            document.getElementById('mgrTabs').innerHTML = MGR_TABS.map(([k, ic, t]) => `<button type="button" data-mgr="tab" data-k="${k}" class="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold ${k === mgrTab ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-b-2 border-purple-600' : 'text-slate-400 dark:text-slate-500'}"><i class="fa-solid ${ic}"></i> ${t}</button>`).join('');
+            const fn = { dash: mgrHtmlDash, workers: mgrHtmlWorkers, sections: mgrHtmlSections, att: mgrHtmlAtt, pay: mgrHtmlPay }[mgrTab];
+            document.getElementById('mgrBody').innerHTML = fn();
+            document.querySelectorAll('#mgrBody [data-thousands]').forEach(el => { if (el.value) el.value = formatNumber(parsePersianInt(el.value)); });
+        }
+        const mgrStat = (t, v, c) => `<div class="rounded-xl border border-slate-300 dark:border-slate-600 p-3 text-center"><p class="text-[11px] text-slate-500 dark:text-slate-400">${t}</p><p class="text-lg font-bold ${c || 'text-slate-800 dark:text-slate-100'} mt-1">${v}</p></div>`;
+        const mgrEmpty = t => `<p class="text-[11px] text-slate-400 text-center py-4">${t}</p>`;
+
+        function mgrHtmlDash() {
+            const M = mgr(), cur = appSettings.currency || 'تومان', mk = selectedMonthFilter, td = mgrDK(mgrToday()), day = M.attendance[td] || {};
+            const act = M.workers.filter(w => w.active);
+            const cnt = st => act.filter(w => day[w.id] === st).length;
+            const pr = mgrPayroll(mk), recs = allRecords.filter(r => r.monthKey === mk);
+            const secRows = M.sections.map(sc => {
+                const ws = act.filter(w => w.sectionId === sc.id);
+                const q = recs.reduce((a, r) => { const w = mgrWorker(r.workerId); return a + ((w && w.sectionId === sc.id) ? (Number(r.quantity) || 0) : 0); }, 0);
+                return `<tr><td class="p-2">${escapeHTML(sc.name)}</td><td class="p-2 text-center">${formatNumber(ws.length)}</td><td class="p-2 text-center">${formatNumber(q)}</td></tr>`;
+            }).join('');
+            return `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                ${mgrStat('کارگران فعال', formatNumber(act.length))}
+                ${mgrStat('حاضر امروز', formatNumber(cnt('p') + cnt('h')), 'text-emerald-600')}
+                ${mgrStat('غایب / مرخصی امروز', formatNumber(cnt('a') + cnt('l')), 'text-rose-600')}
+                ${mgrStat('بدون ثبت حضور امروز', formatNumber(act.filter(w => !day[w.id]).length), 'text-amber-600')}
+                ${mgrStat('کارکردهای ماه', formatNumber(recs.length))}
+                ${mgrStat('بدون ارجاع به کارگر', formatNumber(recs.filter(r => !r.workerId).length), 'text-amber-600')}
+                ${mgrStat('تعداد ارجاع‌شده', formatNumber(recs.filter(r => r.workerId).reduce((a, r) => a + (Number(r.quantity) || 0), 0)))}
+                ${mgrStat('جمع خالص حقوق ماه', formatNumber(pr.reduce((a, x) => a + x.net, 0)) + ' ' + escapeHTML(cur), 'text-indigo-600')}
+                ${mgrStat('اضافه‌کاری ماه (ساعت)', formatNumber(pr.reduce((a, x) => a + x.oh, 0)), 'text-sky-600')}
+                ${mgrStat('مبلغ اضافه‌کاری ماه', formatNumber(pr.reduce((a, x) => a + x.otPay, 0)) + ' ' + escapeHTML(cur), 'text-sky-600')}
+            </div>
+            <div class="rounded-xl border border-slate-300 dark:border-slate-600 overflow-hidden"><table class="w-full text-xs text-right"><thead class="bg-slate-100 dark:bg-slate-800"><tr><th class="p-2">بخش</th><th class="p-2 text-center">کارگر فعال</th><th class="p-2 text-center">تعداد کار ماه</th></tr></thead><tbody>${secRows || `<tr><td colspan="3">${mgrEmpty('هنوز بخشی تعریف نشده است.')}</td></tr>`}</tbody></table></div>`;
+        }
+
+        function mgrHtmlWorkers() {
+            const M = mgr(), e = M.workers.find(w => w.id === mgrEditW) || {};
+            const secOpts = '<option value="">— بدون بخش —</option>' + M.sections.map(x => `<option value="${escapeHTML(x.id)}" ${e.sectionId === x.id ? 'selected' : ''}>${escapeHTML(x.name)}</option>`).join('');
+            const payOpts = Object.entries(MGR_PAY).map(([k, t]) => `<option value="${k}" ${(e.payType || 'daily') === k ? 'selected' : ''}>${t}</option>`).join('');
+            const list = M.workers.map(w => {
+                const sc = mgrSection(w.sectionId);
+                return `<div class="rounded-xl border border-slate-300 dark:border-slate-600 p-3 flex items-start justify-between gap-2 ${w.active ? '' : 'opacity-60'}">
+                    <div class="min-w-0"><p class="text-sm font-bold text-slate-800 dark:text-slate-100">${escapeHTML(w.name)} ${w.active ? '' : '<span class="text-[10px] text-rose-500">(غیرفعال)</span>'}</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">${[sc ? escapeHTML(sc.name) : '', escapeHTML(w.role), MGR_PAY[w.payType] + ': ' + formatNumber(w.rate), escapeHTML(w.phone)].filter(Boolean).join(' • ')}</p>
+                    ${w.note ? `<p class="text-[11px] text-slate-400">${escapeHTML(w.note)}</p>` : ''}</div>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <button type="button" data-mgr="w-dl" data-id="${escapeHTML(w.id)}" title="دانلود فایل این کارگر" class="w-8 h-8 rounded-full text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40"><i class="fa-solid fa-file-arrow-down text-xs"></i></button>
+                        <button type="button" data-mgr="w-edit" data-id="${escapeHTML(w.id)}" title="ویرایش" class="w-8 h-8 rounded-full text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40"><i class="fa-solid fa-pen text-xs"></i></button>
+                        <button type="button" data-mgr="w-toggle" data-id="${escapeHTML(w.id)}" title="${w.active ? 'غیرفعال کردن' : 'فعال کردن'}" class="w-8 h-8 rounded-full text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/40"><i class="fa-solid ${w.active ? 'fa-user-slash' : 'fa-user-check'} text-xs"></i></button>
+                        <button type="button" data-mgr="w-del" data-id="${escapeHTML(w.id)}" title="حذف" class="w-8 h-8 rounded-full text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40"><i class="fa-solid fa-trash text-xs"></i></button></div></div>`;
+            }).join('');
+            return `<div class="flex flex-wrap gap-2"><button type="button" data-mgr="w-dl-all" class="tactile-btn px-3 py-2 rounded-xl border border-indigo-500 text-indigo-600 dark:text-indigo-300 text-xs"><i class="fa-solid fa-file-arrow-down ml-1"></i> دانلود فایل جداگانه‌ی هر کارگر</button>
+                <label class="tactile-btn cursor-pointer px-3 py-2 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-600 dark:text-slate-300 text-xs"><i class="fa-solid fa-file-arrow-up ml-1"></i> بازیابی از فایل کارگر<input type="file" accept=".json,application/json" multiple class="hidden" onchange="mgrImportFiles(event)"></label></div>
+                <div class="space-y-2 bg-slate-50 dark:bg-slate-800/40 rounded-xl p-3 border border-slate-300 dark:border-slate-600">
+                <h4 class="text-xs font-bold text-slate-700 dark:text-slate-200">${e.id ? 'ویرایش کارگر' : 'افزودن کارگر'}</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <input id="mgrWName" maxlength="100" placeholder="نام و نام خانوادگی (الزامی)" value="${escapeHTML(e.name || '')}" class="${MI}">
+                    <input id="mgrWPhone" inputmode="tel" maxlength="40" placeholder="شماره تماس" value="${escapeHTML(e.phone || '')}" class="${MI}">
+                    <select id="mgrWSection" class="${MI}">${secOpts}</select>
+                    <input id="mgrWRole" maxlength="60" placeholder="سمت / مهارت (${escapeHTML(currentBusinessHints().role)})" value="${escapeHTML(e.role || '')}" class="${MI}">
+                    <select id="mgrWPay" class="${MI}">${payOpts}</select>
+                    <input id="mgrWRate" inputmode="numeric" data-thousands="1" placeholder="مبلغ (روزانه / ماهانه / هر قطعه)" value="${e.rate || ''}" class="${MI}">
+                    <input id="mgrWOt" inputmode="numeric" data-thousands="1" placeholder="نرخ هر ساعت اضافه‌کاری (خالی = خودکار)" value="${e.otRate || ''}" class="${MI}">
+                </div>
+                <input id="mgrWNote" maxlength="300" placeholder="توضیحات" value="${escapeHTML(e.note || '')}" class="${MI}">
+                <div class="flex gap-2"><button type="button" data-mgr="w-save" class="tactile-btn px-4 py-2 bg-purple-600 text-white rounded-xl text-xs font-medium">${e.id ? 'ذخیره' : 'افزودن'}</button>
+                ${e.id ? '<button type="button" data-mgr="w-cancel" class="px-4 py-2 border border-slate-400 rounded-xl text-xs text-slate-600 dark:text-slate-300">انصراف</button>' : ''}</div></div>
+                <div class="space-y-2">${list || mgrEmpty('هنوز کارگری ثبت نشده است.')}</div>`;
+        }
+
+        function mgrHtmlSections() {
+            const M = mgr(), e = M.sections.find(x => x.id === mgrEditS) || {};
+            const list = M.sections.map(x => `<div class="rounded-xl border border-slate-300 dark:border-slate-600 p-3 flex items-center justify-between gap-2"><div><p class="text-sm font-bold text-slate-800 dark:text-slate-100">${escapeHTML(x.name)}</p><p class="text-[11px] text-slate-500">${formatNumber(M.workers.filter(w => w.sectionId === x.id).length)} کارگر</p></div>
+                <div class="flex gap-1"><button type="button" data-mgr="s-edit" data-id="${escapeHTML(x.id)}" class="w-8 h-8 rounded-full text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40"><i class="fa-solid fa-pen text-xs"></i></button>
+                <button type="button" data-mgr="s-del" data-id="${escapeHTML(x.id)}" class="w-8 h-8 rounded-full text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40"><i class="fa-solid fa-trash text-xs"></i></button></div></div>`).join('');
+            return `<div class="flex gap-2"><input id="mgrSName" maxlength="60" placeholder="نام بخش (${escapeHTML(currentBusinessHints().section)})" value="${escapeHTML(e.name || '')}" class="${MI}" onkeydown="if(event.key==='Enter'){event.preventDefault();mgrAct('s-save');}">
+                <button type="button" data-mgr="s-save" class="tactile-btn shrink-0 px-4 bg-purple-600 text-white rounded-xl text-xs font-medium">${e.id ? 'ذخیره' : 'افزودن'}</button>
+                ${e.id ? '<button type="button" data-mgr="s-cancel" class="shrink-0 px-3 border border-slate-400 rounded-xl text-xs">انصراف</button>' : ''}</div>
+                <div class="space-y-2">${list || mgrEmpty('هنوز بخشی تعریف نشده است.')}</div>`;
+        }
+
+        function mgrHtmlAtt() {
+            const M = mgr(), dk = mgrDK(mgrAttDate), day = M.attendance[dk] || {}, ot = (M.overtime[dk] || {}), act = M.workers.filter(w => w.active);
+            const rows = act.map(w => `<div class="rounded-xl border border-slate-300 dark:border-slate-600 p-3 flex flex-wrap items-center justify-between gap-2"><span class="text-xs font-bold text-slate-800 dark:text-slate-100">${escapeHTML(w.name)}</span>
+                <div class="flex gap-1">${MGR_ATT.map(([k, t, c]) => `<button type="button" data-mgr="att" data-id="${escapeHTML(w.id)}" data-st="${k}" class="px-2.5 py-1.5 rounded-lg text-[11px] border ${day[w.id] === k ? `bg-${c}-600 text-white border-${c}-600` : 'border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-300'}">${t}</button>`).join('')}</div>
+                <label class="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">اضافه‌کاری <input data-mgr-change="ot" data-id="${escapeHTML(w.id)}" inputmode="decimal" value="${ot[w.id] || ''}" placeholder="۰" class="w-14 p-1 text-center border border-slate-300 dark:border-slate-600 rounded-lg text-xs bg-white dark:bg-slate-800 dark:text-slate-100"> ساعت</label></div>`).join('');
+            return `<div class="flex flex-wrap items-center gap-2"><div class="relative w-44"><input id="mgrAttDate" readonly value="${escapeHTML(mgrAttDate)}" onclick="openDatePicker('mgrAttDate', event)" class="${MI} cursor-pointer pr-9"><span class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400"><i class="fa-solid fa-calendar-days"></i></span></div>
+                <button type="button" data-mgr="att-all" class="tactile-btn px-3 py-2 rounded-xl border border-emerald-500 text-emerald-600 text-xs">همه حاضر</button></div>
+                <div class="space-y-2">${rows || mgrEmpty('ابتدا کارگر فعال ثبت کنید.')}</div>`;
+        }
+
+        function mgrHtmlPay() {
+            const M = mgr(), cur = escapeHTML(appSettings.currency || 'تومان'), mk = selectedMonthFilter, rows = mgrPayroll(mk);
+            const f = v => formatNumber(v), sum = k => rows.reduce((a, x) => a + x[k], 0);
+            const body = rows.map(x => `<tr class="border-t border-slate-200 dark:border-slate-700"><td class="p-2 font-semibold whitespace-nowrap">${escapeHTML(x.w.name)}</td><td class="p-2 text-center">${f(x.days)}</td><td class="p-2 text-center">${f(x.qty)}</td><td class="p-2 text-center">${f(x.base)}</td><td class="p-2 text-center text-sky-600">${f(x.oh)}</td><td class="p-2 text-center text-sky-600">${f(x.otPay)}</td><td class="p-2 text-center text-emerald-600">${f(x.bonus)}</td><td class="p-2 text-center text-amber-600">${f(x.advance)}</td><td class="p-2 text-center text-rose-600">${f(x.deduction)}</td><td class="p-2 text-center font-bold text-indigo-600">${f(x.net)}</td></tr>`).join('');
+            const tx = M.txns.filter(t => mgrMK(t.date) === mk).sort((a, b) => b.date.localeCompare(a.date));
+            const wOpts = M.workers.filter(w => w.active).map(w => `<option value="${escapeHTML(w.id)}">${escapeHTML(w.name)}</option>`).join('');
+            const cfg = 'w-14 p-1 text-center border border-slate-300 dark:border-slate-600 rounded-lg text-xs bg-white dark:bg-slate-800 dark:text-slate-100';
+            return `<p class="text-[11px] text-slate-500 dark:text-slate-400">حقوق ${mgrMonthLabel()} (ماه را از «دوره گزارش فعال» در تنظیمات ← پروفایل تغییر دهید). روزمزد = روزهای حضور × مبلغ؛ کارمزدی = مجموع تعداد ارجاع‌شده × مبلغ هر قطعه؛ ماهانه = مبلغ ثابت.</p>
+                <div class="flex flex-wrap items-center gap-4 text-[11px] text-slate-600 dark:text-slate-300 bg-sky-50/60 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/40 rounded-xl p-3">
+                    <label class="flex items-center gap-1">ضریب اضافه‌کاری <input data-mgr-change="ot-cfg" data-id="mul" inputmode="decimal" value="${M.otMultiplier}" class="${cfg}"></label>
+                    <label class="flex items-center gap-1">ساعت کار عادی روزانه <input data-mgr-change="ot-cfg" data-id="dh" inputmode="decimal" value="${M.dayHours}" class="${cfg}"></label>
+                    <span class="basis-full text-slate-500 dark:text-slate-400">نرخ ساعتی خودکار: روزمزد ÷ ساعت روزانه × ضریب؛ ماهانه ÷ (۳۰ × ساعت روزانه) × ضریب؛ کارمزدی فقط با نرخ دستیِ کارگر. ساعت اضافه‌کاری در تب «حضور و غیاب» ثبت می‌شود.</span>
+                </div>
+                <div class="overflow-x-auto rounded-xl border border-slate-300 dark:border-slate-600"><table class="w-full text-xs text-right"><thead class="bg-slate-100 dark:bg-slate-800"><tr><th class="p-2">کارگر</th><th class="p-2 text-center">روز کارکرد</th><th class="p-2 text-center">تعداد کار</th><th class="p-2 text-center">پایه (${cur})</th><th class="p-2 text-center">اضافه‌کاری (ساعت)</th><th class="p-2 text-center">مبلغ اضافه‌کاری</th><th class="p-2 text-center">پاداش</th><th class="p-2 text-center">مساعده</th><th class="p-2 text-center">کسورات</th><th class="p-2 text-center">خالص</th></tr></thead>
+                <tbody>${body || `<tr><td colspan="10">${mgrEmpty('داده‌ای برای این ماه نیست.')}</td></tr>`}</tbody>
+                <tfoot class="bg-slate-50 dark:bg-slate-800/60 font-bold"><tr class="border-t-2 border-slate-300"><td class="p-2">جمع</td><td class="p-2 text-center">${f(sum('days'))}</td><td class="p-2 text-center">${f(sum('qty'))}</td><td class="p-2 text-center">${f(sum('base'))}</td><td class="p-2 text-center">${f(sum('oh'))}</td><td class="p-2 text-center">${f(sum('otPay'))}</td><td class="p-2 text-center">${f(sum('bonus'))}</td><td class="p-2 text-center">${f(sum('advance'))}</td><td class="p-2 text-center">${f(sum('deduction'))}</td><td class="p-2 text-center text-indigo-600">${f(sum('net'))}</td></tr></tfoot></table></div>
+                <div class="space-y-2 bg-slate-50 dark:bg-slate-800/40 rounded-xl p-3 border border-slate-300 dark:border-slate-600"><h4 class="text-xs font-bold text-slate-700 dark:text-slate-200">ثبت مساعده / پاداش / کسورات</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2"><select id="mgrTxW" class="${MI}">${wOpts}</select>
+                <select id="mgrTxType" class="${MI}">${Object.entries(MGR_TX).map(([k, t]) => `<option value="${k}">${t}</option>`).join('')}</select>
+                <input id="mgrTxAmount" inputmode="numeric" data-thousands="1" placeholder="مبلغ" class="${MI}">
+                <input id="mgrTxDate" readonly value="${escapeHTML(mgrTxDate)}" onclick="openDatePicker('mgrTxDate', event)" class="${MI} cursor-pointer"></div>
+                <div class="flex gap-2"><input id="mgrTxNote" maxlength="200" placeholder="توضیحات" class="${MI}"><button type="button" data-mgr="tx-add" class="tactile-btn shrink-0 px-4 bg-purple-600 text-white rounded-xl text-xs font-medium">ثبت</button></div></div>
+                <div class="space-y-1">${tx.map(t => `<div class="flex items-center justify-between gap-2 text-[11px] rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2"><span>${escapeHTML((mgrWorker(t.workerId) || { name: '—' }).name)} • ${MGR_TX[t.type]} • <b>${formatNumber(t.amount)}</b> • ${escapeHTML(formatDateDigits(t.date))}${t.note ? ' • ' + escapeHTML(t.note) : ''}</span><button type="button" data-mgr="tx-del" data-id="${escapeHTML(t.id)}" class="text-rose-500"><i class="fa-solid fa-trash"></i></button></div>`).join('')}</div>`;
+        }
+
+        function mgrAct(a, id, st) {
+            const M = mgr(), val = i => (document.getElementById(i) || {}).value || '';
+            if (a === 'tab') { mgrTab = id; return mgrRender(); }
+            if (a === 'w-dl') return mgrDownloadWorker(id);
+            if (a === 'w-dl-all') return mgrDownloadAll();
+            if (a === 'w-save') {
+                const name = val('mgrWName').trim();
+                if (!name) return showFeedbackBanner('نام کارگر را وارد کنید.', 'warn');
+                if (M.workers.some(w => w.id !== mgrEditW && normalizeSearchText(w.name) === normalizeSearchText(name))) return showFeedbackBanner('کارگری با این نام قبلاً ثبت شده است.', 'warn');
+                const d = { name: name.slice(0, 100), phone: val('mgrWPhone').trim().slice(0, 40), sectionId: val('mgrWSection'), role: val('mgrWRole').trim().slice(0, 60), payType: val('mgrWPay'), rate: parsePersianInt(val('mgrWRate')) || 0, otRate: parsePersianInt(val('mgrWOt')) || 0, note: val('mgrWNote').trim().slice(0, 300) };
+                if (mgrEditW) {
+                    const w = mgrWorker(mgrEditW); Object.assign(w, d);
+                    let ch = false; allRecords.forEach(r => { if (r.workerId === w.id && r.workerName !== w.name) { r.workerName = w.name; r.updatedAt = Date.now(); ch = true; } });
+                    if (ch) saveRecords();
+                } else M.workers.push({ id: mgrId('w'), active: true, ...d });
+                mgrEditW = ''; showFeedbackBanner('اطلاعات کارگر ذخیره شد.', 'success');
+            } else if (a === 'w-edit') { mgrEditW = id; return mgrRender(); }
+            else if (a === 'w-cancel') { mgrEditW = ''; return mgrRender(); }
+            else if (a === 'w-toggle') { const w = mgrWorker(id); if (w) w.active = !w.active; }
+            else if (a === 'w-del') {
+                const w = mgrWorker(id); if (!w) return;
+                return showCustomConfirm(`کارگر «${w.name}» حذف شود؟ حضور و غیاب و مساعده‌های او هم پاک می‌شود (برای حفظ سوابق، به‌جای حذف «غیرفعال» کنید). کارکردهای ارجاع‌شده فقط نامش را نگه می‌دارند.`, ok => {
+                    if (!ok) return;
+                    let ch = false; allRecords.forEach(r => { if (r.workerId === id) { r.workerName = w.name; r.workerId = null; r.updatedAt = Date.now(); ch = true; } });
+                    if (ch) saveRecords();
+                    M.workers = M.workers.filter(x => x.id !== id); M.txns = M.txns.filter(t => t.workerId !== id);
+                    Object.keys(M.attendance).forEach(k => { delete M.attendance[k][id]; });
+                    Object.keys(M.overtime).forEach(k => { delete M.overtime[k][id]; });
+                    mgrSave(); applyManagerToUI(); mgrRender(); renderDashboard();
+                });
+            }
+            else if (a === 's-save') {
+                const name = val('mgrSName').trim().slice(0, 60);
+                if (!name) return showFeedbackBanner('نام بخش را وارد کنید.', 'warn');
+                if (M.sections.some(x => x.id !== mgrEditS && normalizeSearchText(x.name) === normalizeSearchText(name))) return showFeedbackBanner('این بخش قبلاً تعریف شده است.', 'warn');
+                if (mgrEditS) mgrSection(mgrEditS).name = name; else M.sections.push({ id: mgrId('s'), name });
+                mgrEditS = '';
+            } else if (a === 's-edit') { mgrEditS = id; return mgrRender(); }
+            else if (a === 's-cancel') { mgrEditS = ''; return mgrRender(); }
+            else if (a === 's-del') {
+                const x = mgrSection(id); if (!x) return;
+                return showCustomConfirm(`بخش «${x.name}» حذف شود؟ کارگران آن بدون بخش می‌شوند.`, ok => {
+                    if (!ok) return;
+                    M.sections = M.sections.filter(y => y.id !== id); M.workers.forEach(w => { if (w.sectionId === id) w.sectionId = ''; });
+                    mgrSave(); applyManagerToUI(); mgrRender();
+                });
+            }
+            else if (a === 'att') {
+                const dk = mgrDK(mgrAttDate); if (!dk) return;
+                const day = M.attendance[dk] = M.attendance[dk] || {};
+                if (day[id] === st) delete day[id]; else day[id] = st;
+                if (!Object.keys(day).length) delete M.attendance[dk];
+            } else if (a === 'ot') {
+                const dk = mgrDK(mgrAttDate); if (!dk) return;
+                const h = Math.round(parseFloat(toEnglishDigits(String(st || '')).replace(/[٫,،]/g, '.')) * 4) / 4;
+                const d = M.overtime[dk] = M.overtime[dk] || {};
+                if (Number.isFinite(h) && h > 0 && h <= 16) d[id] = h; else delete d[id];
+                if (!Object.keys(d).length) delete M.overtime[dk];
+            } else if (a === 'ot-cfg') {
+                const v = parseFloat(toEnglishDigits(String(st || '')).replace(/[٫,،]/g, '.'));
+                if (id === 'mul' && v >= 1 && v <= 5) M.otMultiplier = v;
+                else if (id === 'dh' && v >= 1 && v <= 24) M.dayHours = v;
+                else { showFeedbackBanner('مقدار نامعتبر است (ضریب ۱ تا ۵، ساعت روزانه ۱ تا ۲۴).', 'warn'); return mgrRender(); }
+            } else if (a === 'att-all') {
+                const dk = mgrDK(mgrAttDate); if (!dk) return;
+                const day = M.attendance[dk] = M.attendance[dk] || {};
+                M.workers.filter(w => w.active).forEach(w => { if (!day[w.id]) day[w.id] = 'p'; });
+            } else if (a === 'tx-add') {
+                const amount = parsePersianInt(val('mgrTxAmount')), dk = mgrDK(val('mgrTxDate')), w = val('mgrTxW');
+                if (!w) return showFeedbackBanner('ابتدا کارگر فعال ثبت کنید.', 'warn');
+                if (!(amount > 0) || !dk) return showFeedbackBanner('مبلغ و تاریخ را درست وارد کنید.', 'warn');
+                M.txns.push({ id: mgrId('t'), workerId: w, date: dk, type: val('mgrTxType'), amount, note: val('mgrTxNote').trim().slice(0, 200) });
+            } else if (a === 'tx-del') { M.txns = M.txns.filter(t => t.id !== id); }
+            else return;
+            mgrSave(); applyManagerToUI(); mgrRender(); renderDashboard();
+        }
+        document.addEventListener('change', function (e) {
+            const el = e.target.closest('#managerModal [data-mgr-change]');
+            if (el) mgrAct(el.dataset.mgrChange, el.dataset.id, el.value);
+        });
+        document.addEventListener('click', function (e) {
+            const b = e.target.closest('#managerModal [data-mgr]');
+            if (b) mgrAct(b.dataset.mgr, b.dataset.id || b.dataset.k, b.dataset.st);
+        });
+
+        /* ---- ذخیره‌ی فایل جداگانه برای هر کارگر (پوشه‌ی «کارگران» کنار فایل‌های ماه) ---- */
+        const MGR_DIR = 'کارگران';
+        var mgrWrittenSig = new Map(), mgrKnown = new Map(), mgrPending = [], mgrFolderOk = false;
+        function mgrWorkerFileName(w) { return `کارگر_${String(w.name).replace(/[\\/:*?"<>|\s\u200c]+/g, '_').slice(0, 40)}_${w.id}.json`; }
+        function mgrWorkerFileData(w) {
+            const M = mgr(), att = {}, ot = {}, sc = mgrSection(w.sectionId);
+            Object.keys(M.attendance).forEach(k => { if (M.attendance[k][w.id]) att[k] = M.attendance[k][w.id]; });
+            Object.keys(M.overtime).forEach(k => { if (M.overtime[k][w.id]) ot[k] = M.overtime[k][w.id]; });
+            return {
+                app: 'sewing_statistics', kind: 'worker', version: 1, fileName: mgrWorkerFileName(w),
+                worker: w, sectionName: sc ? sc.name : '', attendance: att, overtime: ot,
+                txns: M.txns.filter(t => t.workerId === w.id),
+                assignedRecords: allRecords.filter(r => r.workerId === w.id).map(r => ({ id: r.id, date: r.date, code: r.itemCode, title: r.itemTitle, quantity: r.quantity }))
+            };
+        }
+        async function mgrSyncWorkerFiles(FS) {
+            try {
+                const M = mgr(), cur = M.workers.map(w => ({ w, name: mgrWorkerFileName(w) }));
+                const curNames = new Set(cur.map(c => c.name)), curIds = new Set(cur.map(c => c.w.id));
+                const dir = FS ? null : await appDirHandle.getDirectoryHandle(MGR_DIR, { create: true });
+                const path = n => `${NATIVE_STORAGE_FOLDER_BASE}/${MGR_DIR}/${n}`;
+                const put = async (n, text) => {
+                    if (FS) await FS.writeFile({ path: path(n), directory: 'DOCUMENTS', encoding: 'utf8', recursive: true, data: text });
+                    else { const fh = await dir.getFileHandle(n, { create: true }); const wr = await fh.createWritable(); await wr.write(text); await wr.close(); }
+                };
+                const del = async n => { try { if (FS) await FS.deleteFile({ path: path(n), directory: 'DOCUMENTS' }); else await dir.removeEntry(n); } catch (e) { /* از قبل نبود */ } };
+                for (const c of cur) {
+                    const data = mgrWorkerFileData(c.w), sig = JSON.stringify(data);
+                    mgrKnown.set(c.name, c.w.id);
+                    if (mgrWrittenSig.get(c.name) === sig) continue;
+                    await put(c.name, JSON.stringify({ ...data, updatedAt: new Date().toISOString() }, null, 2));
+                    mgrWrittenSig.set(c.name, sig);
+                }
+                for (const [name, id] of [...mgrKnown]) {
+                    if (curNames.has(name)) continue;
+                    if (curIds.has(id)) await del(name); // تغییر نام کارگر: فایل قدیمی حذف می‌شود
+                    else await put(name, JSON.stringify({ app: 'sewing_statistics', kind: 'worker', deleted: true, workerId: id, fileName: name, updatedAt: new Date().toISOString() }));
+                    mgrKnown.delete(name); mgrWrittenSig.delete(name);
+                }
+                return true;
+            } catch (e) { console.error('خطا در ذخیره‌ی فایل کارگران:', e); return false; }
+        }
+        // در فایل تنظیمات پوشه، اطلاعات کارگران تکرار نمی‌شود (فقط اگر فایل‌های کارگران با موفقیت نوشته شده باشند)
+        function mgrSettingsForFolder() {
+            if (!mgrFolderOk || !appSettings.manager) return appSettings;
+            return { ...appSettings, manager: { ...appSettings.manager, workers: [], attendance: {}, overtime: {}, txns: [], splitToWorkerFiles: true } };
+        }
+        function mgrCollectWorkerFile(p) { mgrPending.push(p); if (p.fileName && !p.deleted && p.worker) mgrKnown.set(p.fileName, p.worker.id); }
+        function mgrFinishLoad(settings) {
+            const files = mgrPending; mgrPending = [];
+            if (!files.length || !settings) return settings;
+            const base = (settings.manager && typeof settings.manager === 'object') ? settings.manager : {};
+            const workers = new Map((Array.isArray(base.workers) ? base.workers : []).filter(w => w && w.id).map(w => [w.id, w]));
+            const att = JSON.parse(JSON.stringify(base.attendance || {})), ot = JSON.parse(JSON.stringify(base.overtime || {}));
+            const tx = new Map((Array.isArray(base.txns) ? base.txns : []).filter(t => t && t.id).map(t => [t.id, t]));
+            files.forEach(f => {
+                if (f.deleted) {
+                    const id = f.workerId; workers.delete(id);
+                    Object.values(att).forEach(d => { delete d[id]; }); Object.values(ot).forEach(d => { delete d[id]; });
+                    tx.forEach((t, k) => { if (t.workerId === id) tx.delete(k); });
+                    return;
+                }
+                if (!f.worker || !f.worker.id) return;
+                const id = f.worker.id; workers.set(id, f.worker);
+                Object.entries(f.attendance || {}).forEach(([k, v]) => { (att[k] = att[k] || {})[id] = v; });
+                Object.entries(f.overtime || {}).forEach(([k, v]) => { (ot[k] = ot[k] || {})[id] = v; });
+                (f.txns || []).forEach(t => { if (t && t.id) tx.set(t.id, t); });
+            });
+            return { ...settings, manager: { ...base, workers: [...workers.values()], attendance: att, overtime: ot, txns: [...tx.values()] } };
+        }
+        function mgrDownloadBlob(name, obj) {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' }));
+            a.download = name; document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        }
+        function mgrDownloadWorker(id) { const w = mgrWorker(id); if (w) mgrDownloadBlob(mgrWorkerFileName(w), { ...mgrWorkerFileData(w), updatedAt: new Date().toISOString() }); }
+        function mgrDownloadAll() {
+            const ws = mgr().workers;
+            if (!ws.length) return showFeedbackBanner('کارگری برای دانلود وجود ندارد.', 'warn');
+            ws.forEach((w, i) => setTimeout(() => mgrDownloadWorker(w.id), i * 350));
+        }
+        async function mgrImportFiles(e) {
+            let n = 0;
+            for (const f of [...e.target.files]) {
+                try { const p = JSON.parse(await f.text()); if (p && p.app === 'sewing_statistics' && p.kind === 'worker' && !p.deleted && p.worker) { mgrPending.push(p); n++; } } catch (err) { /* فایل نامعتبر */ }
+            }
+            e.target.value = '';
+            if (!n) { mgrPending = []; return showFeedbackBanner('فایل معتبر کارگر پیدا نشد.', 'warn'); }
+            appSettings.manager = sanitizeSettings({ manager: mgrFinishLoad({ manager: appSettings.manager }).manager }).manager;
+            mgrSave(); applyManagerToUI(); mgrRender(); renderDashboard();
+            showFeedbackBanner(`${formatNumber(n)} فایل کارگر بازیابی شد.`, 'success');
+        }
+        /* ==================== پایان قابلیت کارفرما ==================== */
 
         function renderDashboard() {
             applyAppSettingsToUI();
@@ -8420,6 +9463,7 @@
                             : `<span class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-300 dark:text-slate-600"><i class="fa-solid fa-image text-xs"></i></span>`
                         }
                     </td>
+                    ${mgrOn() ? `<td class="p-3.5 text-xs text-slate-700 dark:text-slate-200 whitespace-nowrap">${mgrRecWorker(r) ? `<i class="fa-solid fa-user-gear text-indigo-400 text-[10px] ml-1"></i>${escapeHTML(mgrRecWorker(r))}` : '<span class="text-slate-300 dark:text-slate-600">-</span>'}</td>` : ''}
                     <td class="p-3.5">
                         <span class="font-mono text-[11px] text-slate-600 dark:text-slate-300 font-semibold bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 whitespace-nowrap">${escapeHTML(r.itemCode) || '-'}</span>
                     </td>

@@ -6,7 +6,7 @@
  * عدد VERSION را فقط وقتی زیاد کنید که خودِ sw.js، لیست فایل‌های کش‌شده یا آیکون‌ها را عوض کرده‌اید؛
  * تغییر همین فایل باعث می‌شود بنر «نسخه جدید آماده است» در برنامه ظاهر شود.
  */
-const VERSION = 'v4';
+const VERSION = 'v5';
 const CACHE_PREFIX = 'work-stats-';
 const OLD_CACHE_PREFIXES = ['sewing-stats-']; // برای پاکسازی کش نسخه‌های قبلی، هنگام مهاجرت به نام عمومی
 const CACHE = CACHE_PREFIX + VERSION;
@@ -14,16 +14,17 @@ const SCOPE = self.registration.scope;
 const INDEX_URL = new URL('index.html', SCOPE).href;
 const OFFLINE_URL = new URL('offline.html', SCOPE).href;
 
-const LOCAL_ASSETS = ['index.html', 'manifest.json', 'offline.html', 'motivations-db.js', 'premium.js', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png']
+const LOCAL_ASSETS = ['index.html', 'manifest.json', 'offline.html', 'motivations-db.js', 'premium.js', 'native-notify.js', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png']
   .map(p => new URL(p, SCOPE).href);
 
-// منابع خارجیِ ضروری؛ در نصب دانلود می‌شوند تا اولین بار هم آفلاین کار کند.
-// فونت‌های اختیاری (وزیر، ساحل، صمیم، شبنم) فقط وقتی کاربر انتخاب کند بارگذاری و خودکار کش می‌شوند.
-const CDN_ASSETS = [
-  'https://cdn.tailwindcss.com',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css'
+// منابع ضروریِ ظاهر برنامه: اول نسخه‌ی محلی (پوشه‌ی vendor، ساخته‌شده با fetch-vendor.mjs)؛
+// فقط اگر محلی نبود از CDN گرفته می‌شود. فایل‌های فونتِ داخل CSS هم همراهش کش می‌شوند.
+const VENDOR = [
+  { local: 'vendor/tailwind.js', cdn: 'https://cdn.tailwindcss.com' },
+  { local: 'vendor/fontawesome/css/all.min.css', cdn: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' },
+  { local: 'vendor/vazirmatn/Vazirmatn-font-face.css', cdn: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css' }
 ];
+// فونت‌های اختیاری (وزیر، ساحل، صمیم، شبنم) فقط وقتی کاربر انتخاب کند بارگذاری و خودکار کش می‌شوند.
 
 // اول با CORS (تا وضعیت پاسخ قابل بررسی باشد و فضای اضافه‌ی «opaque» مصرف نشود)، در صورت رد شدن با no-cors
 async function fetchCdn(url) {
@@ -34,14 +35,36 @@ async function fetchCdn(url) {
   try { return await fetch(new Request(url, { mode: 'no-cors' })); } catch (e) { return null; }
 }
 
+// فایل‌های url(...) داخل یک CSS (فونت‌ها) را هم کش می‌کند؛ بدون این‌ها آیکون‌ها و فونت فارسی آفلاین نمایش داده نمی‌شوند
+async function precacheCssAssets(cache, cssUrl, res) {
+  try {
+    const text = await res.clone().text();
+    const abs = [...new Set([...text.matchAll(/url\(\s*['"]?([^'")]+?)['"]?\s*\)/g)].map(m => {
+      try { const u = new URL(m[1], cssUrl); u.hash = ''; return u.protocol.startsWith('http') ? u.href : null; } catch (e) { return null; }
+    }).filter(Boolean))];
+    const w2 = abs.filter(u => /\.woff2(\?|$)/.test(u));
+    await Promise.all((w2.length ? w2 : abs).map(async u => {
+      if (await cache.match(u)) return;
+      const r = await withTimeout(fetchCdn(u), 15000).catch(() => null);
+      if (r && (r.ok || r.type === 'opaque')) { try { await cache.put(u, r); } catch (e) { /* بی‌اهمیت */ } }
+    }));
+  } catch (e) { /* بی‌اهمیت */ }
+}
+
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
     // نبودن یک فایل نباید نصب را خراب کند
     await Promise.all(LOCAL_ASSETS.map(u => cache.add(new Request(u, { cache: 'reload' })).catch(() => {})));
-    await Promise.all(CDN_ASSETS.map(async u => {
-      const res = await fetchCdn(u);
-      if (res && (res.ok || res.type === 'opaque')) { try { await cache.put(u, res); } catch (e) { /* بی‌اهمیت */ } }
+    await Promise.all(VENDOR.map(async v => {
+      const localUrl = new URL(v.local, SCOPE).href;
+      let url = localUrl, res = await cache.match(localUrl);
+      if (!res) {
+        url = v.cdn;
+        res = await withTimeout(fetchCdn(v.cdn), 12000).catch(() => null);
+        if (res && (res.ok || res.type === 'opaque')) { try { await cache.put(url, res.clone()); } catch (e) { /* بی‌اهمیت */ } } else res = null;
+      }
+      if (res && /\.css(\?|$)/.test(url)) await precacheCssAssets(cache, url, res);
     }));
     // skipWaiting عمداً اینجا صدا زده نمی‌شود: برنامه خودش با بنر به‌روزرسانی (پیام SKIP_WAITING) تصمیم می‌گیرد
   })());

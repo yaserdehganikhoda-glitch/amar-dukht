@@ -392,6 +392,10 @@
         }
         .dark #bottomNavBar { background-color: rgba(2,6,23,0.82) !important; }
         #bottomNavBar .bottom-nav-item { position: relative; }
+        /* دکمه‌ای که کادرش پنهان است کمی کم‌رنگ می‌شود */
+        #bottomNavBar [data-box-hidden="1"] { opacity: 0.45; }
+        /* پنهان‌سازیِ کادرها با دکمه‌های نوار پایین (مستقل از کلاس hidden و تب‌ها) */
+        .box-off { display: none !important; }
         #bottomNavBar .bottom-nav-item.text-indigo-600::after,
         #bottomNavBar .bottom-nav-item.dark\:text-indigo-400::after {
             content: '';
@@ -509,6 +513,79 @@
         @keyframes mgrLatePulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(225,29,72,0); } 50% { box-shadow: 0 0 0 4px rgba(225,29,72,.14); } }
         body.modal-anim-paused .mgr-panel *, body.modal-anim-paused .mgr-panel { animation: none !important; transition: none !important; }
         @media (prefers-reduced-motion: reduce) { .mgr-panel *, .mgr-panel { animation: none !important; transition: none !important; } }
+
+        /* ============ عکس پرسنل ============ */
+        .mgr-photo { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: inherit; }
+        .mgr-avatar .mgr-photo { position: relative; }
+        #activeProgressCard .mgr-head { padding: 12px 16px; }
+        #activeProgressCard .mgr-page .mgr-job-title { white-space: normal; }
+
+        /* ============ جلوه‌های بصریِ ویجت پیشرفت، روی کادرهای دیگر (از تنظیمات > ظاهر) ============ */
+        body[data-cardfx="on"] { --fx1: #4f46e5; --fx2: #a855f7; }
+        body[data-cardfx="on"][data-fxscheme="emerald"] { --fx1: #059669; --fx2: #2dd4bf; }
+        body[data-cardfx="on"][data-fxscheme="sky"]     { --fx1: #0284c7; --fx2: #6366f1; }
+        body[data-cardfx="on"][data-fxscheme="amber"]   { --fx1: #f59e0b; --fx2: #ef4444; }
+        body[data-cardfx="on"][data-fxscheme="rose"]    { --fx1: #e11d48; --fx2: #ec4899; }
+        body[data-cardfx="on"][data-fxscheme="slate"]   { --fx1: #475569; --fx2: #94a3b8; }
+        body[data-cardfx="on"][data-fxscheme="multi"] #kpiCardWrap > div { --fx1: #4f46e5; --fx2: #a855f7; }
+        body[data-cardfx="on"][data-fxscheme="multi"] #recordFormCard    { --fx1: #059669; --fx2: #2dd4bf; }
+        body[data-cardfx="on"][data-fxscheme="multi"] #dailyNotesSection { --fx1: #f59e0b; --fx2: #ef4444; }
+        body[data-cardfx="on"][data-fxscheme="multi"] #recordsTableCard  { --fx1: #0284c7; --fx2: #6366f1; }
+        body[data-cardfx="on"] #kpiCardWrap > div,
+        body[data-cardfx="on"] #recordFormCard,
+        body[data-cardfx="on"] #dailyNotesSection,
+        body[data-cardfx="on"] #recordsTableCard {
+            isolation: isolate;
+            border-radius: 1.25rem;
+            box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 10px 26px -14px var(--fx1) !important;
+        }
+        body[data-cardfx="on"] #kpiCardWrap > div:not(.fixed),
+        body[data-cardfx="on"] #recordFormCard:not(.fixed),
+        body[data-cardfx="on"] #dailyNotesSection:not(.fixed),
+        body[data-cardfx="on"] #recordsTableCard:not(.fixed) { position: relative; }
+        @supports (color: color-mix(in srgb, red, blue)) {
+            body[data-cardfx="on"] #kpiCardWrap > div,
+        body[data-cardfx="on"] #recordFormCard,
+        body[data-cardfx="on"] #dailyNotesSection,
+        body[data-cardfx="on"] #recordsTableCard { border-color: color-mix(in srgb, var(--fx1) 38%, rgb(203 213 225)); }
+            .dark body[data-cardfx="on"] #kpiCardWrap > div,
+        body[data-cardfx="on"] #recordFormCard,
+        body[data-cardfx="on"] #dailyNotesSection,
+        body[data-cardfx="on"] #recordsTableCard { border-color: color-mix(in srgb, var(--fx1) 45%, rgb(71 85 105)); }
+            body[data-cardfx="on"] #kpiCardWrap > div::before,
+        body[data-cardfx="on"] #recordFormCard::before,
+        body[data-cardfx="on"] #dailyNotesSection::before,
+        body[data-cardfx="on"] #recordsTableCard::before {
+                content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+                background: radial-gradient(circle at 12% -10%, color-mix(in srgb, var(--fx1) 16%, transparent), transparent 55%),
+                            radial-gradient(circle at 100% 120%, color-mix(in srgb, var(--fx2) 12%, transparent), transparent 50%);
+            }
+        }
+        body[data-cardfx="on"] #kpiCardWrap > div::after,
+        body[data-cardfx="on"] #recordFormCard::after,
+        body[data-cardfx="on"] #dailyNotesSection::after,
+        body[data-cardfx="on"] #recordsTableCard::after {
+            content: ""; position: absolute; top: 0; left: 14px; right: 14px; height: 4px; z-index: 1;
+            border-radius: 0 0 6px 6px; pointer-events: none;
+            background: linear-gradient(90deg, var(--fx1), var(--fx2));
+        }
+        body[data-cardfx="on"][data-fxmotion="on"] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard) { animation: mgrUp .45s ease; }
+        body[data-cardfx="on"][data-fxmotion="on"] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard):hover {
+            box-shadow: 0 1px 2px rgba(15,23,42,.05), 0 18px 34px -14px var(--fx1) !important;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body[data-cardfx="on"] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard) { animation: none !important; }
+        }
+        @media print {
+            body[data-cardfx="on"] #kpiCardWrap > div::before,
+        body[data-cardfx="on"] #recordFormCard::before,
+        body[data-cardfx="on"] #dailyNotesSection::before,
+        body[data-cardfx="on"] #recordsTableCard::before,
+            body[data-cardfx="on"] #kpiCardWrap > div::after,
+        body[data-cardfx="on"] #recordFormCard::after,
+        body[data-cardfx="on"] #dailyNotesSection::after,
+        body[data-cardfx="on"] #recordsTableCard::after { display: none !important; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen pb-28 font-normal-size" id="appBody">
@@ -565,25 +642,25 @@
     <!-- نوار ناوبری پایین صفحه: نسخه‌ی شیشه‌ای شناور -->
     <div id="bottomNavBar" class="no-print fixed bottom-0 inset-x-0 z-30 border-t border-slate-200/70 dark:border-slate-700/60">
         <div class="max-w-5xl mx-auto px-4 flex items-end justify-around pt-2" style="padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));">
-            <button type="button" onclick="bottomNavGoHome()" class="bottom-nav-item flex flex-col items-center gap-1 text-indigo-600 dark:text-indigo-400 py-1 px-2">
+            <button type="button" data-nav="home" onclick="bottomNavToggleBox('home')" class="bottom-nav-item flex flex-col items-center gap-1 text-indigo-600 dark:text-indigo-400 py-1 px-2">
                 <i class="fa-solid fa-house text-base"></i>
                 <span class="text-[10px] font-medium">خانه</span>
             </button>
-            <button type="button" onclick="bottomNavGoNotes()" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
+            <button type="button" data-nav="notes" onclick="bottomNavToggleBox('notes')" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
                 <i class="fa-solid fa-note-sticky text-base"></i>
                 <span class="text-[10px] font-medium">یادداشت‌ها</span>
             </button>
-            <button type="button" onclick="bottomNavGoAddRecord()" class="flex flex-col items-center -mt-6">
+            <button type="button" data-nav="add" onclick="bottomNavToggleBox('add')" class="flex flex-col items-center -mt-6">
                 <span class="w-13 h-13 rounded-full flex items-center justify-center transition-transform active:scale-95" style="width:3.25rem;height:3.25rem;background:var(--brand-gradient);box-shadow:0 8px 18px -6px rgba(79,70,229,0.55);">
                     <i class="fa-solid fa-plus text-lg text-white"></i>
                 </span>
                 <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 mt-1">ثبت</span>
             </button>
-            <button type="button" onclick="bottomNavGoRecords()" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
+            <button type="button" data-nav="records" onclick="bottomNavToggleBox('records')" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
                 <i class="fa-solid fa-table-list text-base"></i>
                 <span class="text-[10px] font-medium">رکوردها</span>
             </button>
-            <button type="button" onclick="bottomNavOpenMore(event)" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
+            <button type="button" data-nav="more" onclick="bottomNavOpenMore(event)" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
                 <i class="fa-solid fa-ellipsis text-base"></i>
                 <span class="text-[10px] font-medium">بیشتر</span>
             </button>
@@ -962,32 +1039,25 @@
             </div>
         </div>
 
-        <!-- کارت پیشرفت کار جاری و اعلان‌های هوشمند تحویل -->
-        <div id="activeProgressCard" class="hidden bg-white dark:bg-slate-900 p-5 pro-card rounded-2xl shadow-sm border border-slate-300 dark:border-slate-600 mb-6 transition-all">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                    <i class="fa-solid fa-stopwatch text-indigo-600 dark:text-indigo-400"></i>
-                    ویجت پیشرفت کار جاری
-                </h2>
-                <span id="activeProgressPercentBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">—</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="relative shrink-0" style="width:86px;height:86px;">
-                    <svg viewBox="0 0 88 88" class="w-full h-full -rotate-90">
-                        <circle cx="44" cy="44" r="38" fill="none" stroke-width="7" class="stroke-slate-100 dark:stroke-slate-800"></circle>
-                        <circle id="progressRingArc" cx="44" cy="44" r="38" fill="none" stroke-width="7" stroke-linecap="round" stroke="#10b981" stroke-dasharray="238.76" stroke-dashoffset="238.76" class="transition-all duration-700 ease-out"></circle>
-                    </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span id="progressRingPercentText" class="text-base font-extrabold text-slate-700 dark:text-slate-100">۰٪</span>
-                        <i id="progressRingStatusIcon" class="fa-solid fa-stopwatch text-[10px] text-slate-400 dark:text-slate-500 mt-0.5"></i>
+        <!-- کارت پیشرفت کار جاری (حالت پرسنل) با همان جلوه‌های بصری ویجت حالت کارفرما -->
+        <div id="activeProgressCard" class="hidden mgr-panel bg-white dark:bg-slate-900 mb-6" style="--mgr-c:#10b981">
+            <div class="mgr-head">
+                <div class="flex items-center justify-between gap-2 relative z-10">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mgr-head-ico"><i class="fa-solid fa-stopwatch"></i></span>
+                        <div class="min-w-0">
+                            <h2 class="text-sm font-extrabold">ویجت پیشرفت کار جاری</h2>
+                            <p id="activeProgressSub" class="text-[11px] opacity-80 truncate">—</p>
+                        </div>
                     </div>
+                    <span id="activeProgressPercentBadge" class="mgr-head-btn">—</span>
                 </div>
-                <div id="activeProgressList" class="flex-1 min-w-0"></div>
             </div>
+            <div id="activeProgressList" class="mgr-body mgr-page"></div>
         </div>
 
         <!-- تب‌بندیِ اصلیِ صفحه: فرم ثبت / لیست کارکردها، برای کوتاه‌تر شدن درازای صفحه -->
-        <div class="mb-4 bg-white dark:bg-slate-900 pro-card rounded-2xl border border-slate-300 dark:border-slate-600 p-1.5 flex gap-1.5 sticky top-2 z-20">
+        <div id="mainTabBar" class="mb-4 bg-white dark:bg-slate-900 pro-card rounded-2xl border border-slate-300 dark:border-slate-600 p-1.5 flex gap-1.5 sticky top-2 z-20">
             <button type="button" onclick="switchMainTab('entry')" data-main-tab="entry" class="main-tab-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-colors">
                 <i class="fa-solid fa-circle-plus"></i> ثبت رکورد جدید
             </button>
@@ -1996,6 +2066,39 @@
                         <i class="fa-solid fa-circle-info ml-1"></i>
                         اگر رنگ پس‌زمینه یا متن سفارشی انتخاب شود، همان رنگ برای همه‌ی حالت‌های نوار انگیزشی (عادی، تاخیر، رشته‌ی موفق و ...) به‌کار می‌رود؛ گزینه «پیش‌فرض» رنگ‌بندیِ خودکار بر اساس وضعیت را برمی‌گرداند.
                     </p>
+                </div>
+
+                <div class="space-y-3 pt-4 border-t border-slate-300 dark:border-slate-600">
+                    <h3 class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> جلوه‌های بصری کادرها
+                    </h3>
+                    <label class="flex items-start gap-2 cursor-pointer">
+                        <input type="checkbox" id="settingCardFx" onchange="previewCardFx()" class="w-4 h-4 mt-0.5 rounded accent-purple-600">
+                        <span class="text-sm text-slate-700 dark:text-slate-200">اعمال جلوه‌های ویجت پیشرفت کار (سایه‌ی رنگی، نوار و درخشش گرادینتی) روی کادرهای دیگر
+                            <span class="block text-[11px] text-slate-400 dark:text-slate-500">کارت آمار کلیدی، فرم ثبت رکورد، یادداشت‌ها و جدول کارکردها</span></span>
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">رنگ‌بندی</label>
+                            <select id="settingCardFxScheme" onchange="previewCardFx()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                                <option value="indigo">بنفش/نیلی (هم‌رنگ ویجت)</option>
+                                <option value="emerald">سبز زمردی</option>
+                                <option value="sky">آبی آسمانی</option>
+                                <option value="amber">نارنجی/کهربایی</option>
+                                <option value="rose">قرمز/صورتی</option>
+                                <option value="slate">خاکستری</option>
+                                <option value="multi">رنگارنگ (هر کادر یک رنگ)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">حرکت و انیمیشن</label>
+                            <select id="settingCardFxMotion" onchange="previewCardFx()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                                <option value="on">روشن (ورود نرم و درخشش هنگام نگه‌داشتن)</option>
+                                <option value="off">خاموش</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="cardFxPreview" class="h-3 rounded-full" style="background:linear-gradient(90deg,#4f46e5,#a855f7)"></div>
                 </div>
                 </div>
 
@@ -3058,6 +3161,9 @@
             s.motivationFontFamily = pick(s.motivationFontFamily, ['inherit', 'Vazirmatn', 'Vazir', 'Sahel', 'Samim', 'Shabnam'], 'inherit');
             s.motivationFontSize = pick(s.motivationFontSize, ['small', 'normal', 'large', 'xlarge'], 'normal');
             ['motivationBgColor', 'motivationTextColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
+            s.cardFx = !!s.cardFx;
+            s.cardFxScheme = pick(s.cardFxScheme, ['indigo', 'emerald', 'sky', 'amber', 'rose', 'slate', 'multi'], 'indigo');
+            s.cardFxMotion = s.cardFxMotion !== false;
             s.shopName = String(s.shopName || DEFAULT_APP_SETTINGS.shopName).slice(0, 120);
             ['ownerName', 'ownerPhone', 'ownerAddress'].forEach(k => { s[k] = String(s[k] == null ? '' : s[k]).slice(0, 200); });
             s.ownerPhoto = isSafeImageDataUrl(s.ownerPhoto) ? s.ownerPhoto : null;
@@ -3103,7 +3209,7 @@
             s.manager = {
                 enabled: !!m.enabled,
                 sections: A(m.sections).map(x => x && { id: I(x.id) || mgrId('s'), name: T(x.name, 60) }).filter(x => x && x.name).slice(0, 50),
-                workers: A(m.workers).map(x => x && { id: I(x.id) || mgrId('w'), name: T(x.name, 100), phone: T(x.phone, 40), sectionId: I(x.sectionId), role: T(x.role, 60), note: T(x.note, 300), startDate: dk(x.startDate), endDate: dk(x.endDate), active: x.active !== false }).filter(x => x && x.name).slice(0, 500),
+                workers: A(m.workers).map(x => x && { id: I(x.id) || mgrId('w'), name: T(x.name, 100), phone: T(x.phone, 40), sectionId: I(x.sectionId), role: T(x.role, 60), note: T(x.note, 300), startDate: dk(x.startDate), endDate: dk(x.endDate), active: x.active !== false, photo: (isSafeImageDataUrl(x.photo) && x.photo.length <= 60000) ? x.photo : null }).filter(x => x && x.name).slice(0, 500),
                 schema: 3
             };
             return s;
@@ -3930,6 +4036,9 @@
             ownerPhone: '',
             ownerAddress: '',
             ownerPhoto: null,
+            cardFx: false,
+            cardFxScheme: 'indigo',
+            cardFxMotion: true,
             manager: null
         };
         let appSettings = sanitizeSettings(safeLoadJSON('sewing_app_settings_v13', null));
@@ -5417,6 +5526,7 @@
             switchMainTab('entry');
             const section = document.getElementById('dailyNotesSection');
             if (!section) return;
+            navReveal(['dailyNotesSection']);
             if (section.classList.contains('hidden')) {
                 toggleDailyNotesSection();
             } else {
@@ -5427,6 +5537,8 @@
         function bottomNavGoAddRecord() {
             switchMainTab('entry');
             const card = document.getElementById('recordFormCard');
+            navReveal(['recordFormCard']);
+            bottomNavSyncState();
             if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
             setTimeout(() => {
                 const el = document.getElementById('itemCode');
@@ -5437,6 +5549,8 @@
         function bottomNavGoRecords() {
             switchMainTab('list');
             const card = document.getElementById('recordsTableCard');
+            navReveal(['recordsTableCard']);
+            bottomNavSyncState();
             if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
@@ -5466,11 +5580,99 @@
             }, 300);
         }
 
+        // ===== دکمه‌های نوار پایین: هر دکمه کادرهای مربوط به خودش را پنهان/آشکار می‌کند =====
+        // خانه  ← همه‌ی کادرهای صفحه‌ی اصلی به‌جز هدر و منوی ابزار
+        // ثبت   ← فرم ثبت رکورد + نوار انتخاب «لیست کارکردها» + جدول لیست رکوردها
+        // یادداشت‌ها ← کادر یادداشت‌ها | رکوردها ← جدول لیست کارکردها
+        const NAV_HOME_IDS = ['kpiCardWrap', 'activeProgressCard', 'mainTabBar', 'mainTabPanel-entry', 'mainTabPanel-list'];
+        const NAV_ADD_IDS  = ['recordFormCard', 'mainTabBar', 'recordsTableCard'];
+
+        function navEl(id) { return document.getElementById(id); }
+        function navOff(el) { return !!el && !!el.closest('.box-off'); }
+        function navSet(ids, off) {
+            ids.forEach(id => { const el = navEl(id); if (el) el.classList.toggle('box-off', off); });
+        }
+        // نمایش کادرها (و هر والدی که با این سازوکار پنهان شده باشد)
+        function navReveal(ids) {
+            navSet(ids, false);
+            ids.forEach(id => {
+                let p = navEl(id) && navEl(id).parentElement;
+                while (p && p !== document.body) { p.classList.remove('box-off'); p = p.parentElement; }
+            });
+        }
+        function navTabPanelShown(tab) {
+            const panel = navEl('mainTabPanel-' + tab);
+            return !!panel && !panel.classList.contains('hidden');
+        }
+
+        function bottomNavSyncState() {
+            const dim = {
+                home:    navOff(navEl('kpiCardWrap')),
+                notes:   (() => { const n = navEl('dailyNotesSection'); return !!n && (n.classList.contains('hidden') || navOff(n)); })(),
+                add:     navOff(navEl('recordFormCard')),
+                records: navOff(navEl('recordsTableCard'))
+            };
+            document.querySelectorAll('#bottomNavBar [data-nav]').forEach(btn => {
+                if (dim[btn.dataset.nav]) btn.setAttribute('data-box-hidden', '1');
+                else btn.removeAttribute('data-box-hidden');
+            });
+        }
+
+        function bottomNavToggleBox(key) {
+            if (key === 'home') {
+                if (!navOff(navEl('kpiCardWrap'))) {
+                    navSet(NAV_HOME_IDS, true);            // همه پنهان (هدر و ابزارها می‌مانند)
+                } else {
+                    navSet(NAV_HOME_IDS.concat(['recordFormCard', 'recordsTableCard']), false);   // همه آشکار
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            } else if (key === 'add') {
+                const form = navEl('recordFormCard');
+                if (!form) return;
+                if (!navOff(form) && navTabPanelShown('entry')) {
+                    navSet(NAV_ADD_IDS, true);
+                } else {
+                    navReveal(NAV_ADD_IDS);
+                    switchMainTab('entry');
+                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } else if (key === 'records') {
+                const card = navEl('recordsTableCard');
+                if (!card) return;
+                if (!navOff(card) && navTabPanelShown('list')) {
+                    navSet(['recordsTableCard'], true);
+                } else {
+                    navReveal(['recordsTableCard']);
+                    switchMainTab('list');
+                    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } else if (key === 'notes') {
+                const section = navEl('dailyNotesSection');
+                if (!section) return;
+                const visible = !section.classList.contains('hidden') && !navOff(section) && navTabPanelShown('entry');
+                if (visible) {
+                    toggleDailyNotesSection();             // پنهان (و ذخیره در localStorage)
+                } else {
+                    navReveal(['dailyNotesSection']);
+                    switchMainTab('entry');
+                    if (section.classList.contains('hidden')) toggleDailyNotesSection();
+                    else section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+            bottomNavSyncState();
+        }
+
         function bottomNavOpenMore(event) {
             if (event) event.stopPropagation();
             const menu = document.getElementById('toolsDropdownMenu');
-            if (menu) menu.classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (!menu) return;
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                if (typeof switchToolsTab === 'function') switchToolsTab('main');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                menu.classList.add('hidden');
+            }
         }
 
         let isOverviewFullScreen = false;
@@ -5952,6 +6154,10 @@
             document.getElementById('settingMotivationFontSize').value = appSettings.motivationFontSize || 'normal';
             document.getElementById('settingMotivationBgColor').value = appSettings.motivationBgColor || 'default';
             document.getElementById('settingMotivationTextColor').value = appSettings.motivationTextColor || 'default';
+            document.getElementById('settingCardFx').checked = !!appSettings.cardFx;
+            document.getElementById('settingCardFxScheme').value = appSettings.cardFxScheme || 'indigo';
+            document.getElementById('settingCardFxMotion').value = appSettings.cardFxMotion === false ? 'off' : 'on';
+            updateCardFxPreviewStrip();
             document.getElementById('settingNewPin').value = '';
             document.getElementById('settingConfirmPin').value = '';
             updatePinLockStatusUI();
@@ -5983,6 +6189,33 @@
 
         function closeSettingsModal() {
             document.getElementById('settingsModal').classList.add('hidden');
+            applyCardFx(); // پیش‌نمایشِ ذخیره‌نشده‌ی جلوه‌ها برگردانده می‌شود
+        }
+
+        /* ---- جلوه‌های بصریِ کادرها (هم‌سبک ویجت پیشرفت کار) ---- */
+        const CARD_FX_COLORS = {
+            indigo: ['#4f46e5', '#a855f7'], emerald: ['#059669', '#2dd4bf'], sky: ['#0284c7', '#6366f1'],
+            amber: ['#f59e0b', '#ef4444'], rose: ['#e11d48', '#ec4899'], slate: ['#475569', '#94a3b8'],
+            multi: ['#4f46e5', '#059669', '#f59e0b', '#0284c7']
+        };
+        function setCardFxAttrs(on, scheme, motion) {
+            const b = document.body;
+            if (on) { b.dataset.cardfx = 'on'; b.dataset.fxscheme = scheme; b.dataset.fxmotion = motion ? 'on' : 'off'; }
+            else { delete b.dataset.cardfx; delete b.dataset.fxscheme; delete b.dataset.fxmotion; }
+        }
+        function applyCardFx() {
+            setCardFxAttrs(!!appSettings.cardFx, appSettings.cardFxScheme || 'indigo', appSettings.cardFxMotion !== false);
+        }
+        function updateCardFxPreviewStrip() {
+            const el = document.getElementById('cardFxPreview'), sc = document.getElementById('settingCardFxScheme');
+            if (!el || !sc) return;
+            const c = CARD_FX_COLORS[sc.value] || CARD_FX_COLORS.indigo;
+            el.style.background = `linear-gradient(90deg, ${c.join(', ')})`;
+            el.style.opacity = document.getElementById('settingCardFx').checked ? '1' : '.35';
+        }
+        function previewCardFx() {
+            updateCardFxPreviewStrip();
+            setCardFxAttrs(document.getElementById('settingCardFx').checked, document.getElementById('settingCardFxScheme').value, document.getElementById('settingCardFxMotion').value !== 'off');
         }
 
         function saveAppSettings(event) {
@@ -6014,6 +6247,9 @@
             const motivationFontSizeVal = document.getElementById('settingMotivationFontSize').value;
             const motivationBgColorVal = document.getElementById('settingMotivationBgColor').value;
             const motivationTextColorVal = document.getElementById('settingMotivationTextColor').value;
+            appSettings.cardFx = document.getElementById('settingCardFx').checked;
+            appSettings.cardFxScheme = document.getElementById('settingCardFxScheme').value;
+            appSettings.cardFxMotion = document.getElementById('settingCardFxMotion').value !== 'off';
 
             appSettings.ownerName = ownerNameVal;
             appSettings.ownerPhone = ownerPhoneVal;
@@ -6169,6 +6405,7 @@
             appBody.style.fontFamily = `'${fontFamilyVal}', 'Vazirmatn', Tahoma, sans-serif`;
 
             applyCustomColors();
+            applyCardFx();
 
             updateAppHeader();
             applyDelaySummaryVisibilityFromSettings();
@@ -7373,6 +7610,8 @@
             document.getElementById('cancelEditBtn').classList.remove('hidden');
             document.getElementById('cancelEditBtn').classList.add('flex');
             switchMainTab('entry');
+            navReveal(['recordFormCard']);
+            bottomNavSyncState();
             document.getElementById('recordFormCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
             setTimeout(() => {
                 const firstField = document.getElementById('itemCode');
@@ -7441,6 +7680,7 @@
             if (!isHidden) {
                 section.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
+            if (typeof bottomNavSyncState === 'function') bottomNavSyncState();
         }
 
         /* ==================== هدف درآمد هفتگی/ماهانه (کادر ارزش کل کارکرد) ==================== */
@@ -8922,14 +9162,28 @@
             renderActiveProgressWidget();
         }
 
-        // نمایش نوار پیشرفتِ زنده‌ی کار جاری در بالای صفحه
+        // وضعیتِ کار جاریِ حالت پرسنل، هم‌شکل با mgrWorkerState تا از همان اجزای بصریِ ویجت کارفرما استفاده شود
+        function personalProgressState(rec, p) {
+            const pct = Math.max(0, p.percent);
+            const key = pct >= 100 ? 'late' : pct >= 90 ? 'urgent' : pct >= 50 ? 'warn' : 'ok';
+            const hex = { ok: '#10b981', warn: '#f59e0b', urgent: '#f97316', late: '#e11d48' }[key];
+            const my = allRecords.filter(r => r.monthKey === selectedMonthFilter && recOwnerKey(r) === '');
+            const judged = my.filter(r => r.status === 'به موقع' || r.status === 'تاخیر' || r.status === 'زودتر از موعد');
+            const lateCnt = judged.filter(r => r.status === 'تاخیر').length;
+            return {
+                w: { id: 'owner', name: String(appSettings.ownerName || '').trim(), photo: appSettings.ownerPhoto || null },
+                rec, p, pct, key, hex, lateCnt,
+                cnt: my.length, qty: my.reduce((a, r) => a + (Number(r.quantity) || 0), 0),
+                onTime: judged.length ? Math.round((judged.length - lateCnt) / judged.length * 100) : null
+            };
+        }
+
+        // نمایش نوار پیشرفتِ زنده‌ی کار جاری در بالای صفحه (با همان جلوه‌های بصری ویجت حالت کارفرما)
         function renderActiveProgressWidget() {
             const card = document.getElementById('activeProgressCard');
             const list = document.getElementById('activeProgressList');
             const badge = document.getElementById('activeProgressPercentBadge');
-            const ring = document.getElementById('progressRingArc');
-            const ringText = document.getElementById('progressRingPercentText');
-            const ringIcon = document.getElementById('progressRingStatusIcon');
+            const sub = document.getElementById('activeProgressSub');
             if (!card || !list) return;
 
             renderStreakBadge(); // متن کادر انگیزشیِ بالا هم با پیشرفتِ کارِ جاری (نزدیک شدن به موعد) هماهنگ بماند
@@ -8940,44 +9194,23 @@
             if (!progress) { card.classList.add('hidden'); updateAttentionIndicators(); return; }
 
             card.classList.remove('hidden');
-            const isOverdue = progress.percent >= 100;
-            const isUrgent = progress.percent >= 90 && progress.percent < 100;
-            const isWarn = progress.percent >= 50 && progress.percent < 90;
-            const statusHex = isOverdue ? '#e11d48' : (isUrgent ? '#f97316' : (isWarn ? '#f59e0b' : '#10b981'));
-            const badgeColor = isOverdue ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300' : (isUrgent ? 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300' : (isWarn ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300' : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300'));
+            const st = personalProgressState(rec, progress), f = formatNumber;
+            const isOverdue = st.key === 'late';
             const isStale = isOverdue && (-progress.remainingMinutes > getStaleOverdueMinutes());
+            const first = !list.firstElementChild;
 
-            // به‌روزرسانی ویجت رینگ دایره‌ای: هر چه پیشرفت بیشتر، کمانِ رنگی کامل‌تر می‌شود
-            if (ring) {
-                const circumference = 2 * Math.PI * 38;
-                const ratio = Math.max(0, Math.min(1, progress.percent / 100));
-                ring.setAttribute('stroke-dasharray', circumference.toFixed(2));
-                ring.style.strokeDashoffset = (circumference * (1 - ratio)).toFixed(2);
-                ring.setAttribute('stroke', statusHex);
-                ring.classList.toggle('animate-pulse', isOverdue);
-            }
-            if (ringText) ringText.innerText = `${formatNumber(Math.min(999, progress.percent))}٪`;
-            if (ringIcon) ringIcon.className = `fa-solid ${isOverdue ? 'fa-triangle-exclamation' : 'fa-stopwatch'} text-[10px] mt-0.5 ${isOverdue ? 'text-rose-500' : 'text-slate-400 dark:text-slate-500'}`;
+            card.style.setProperty('--mgr-c', st.hex);
+            if (badge) { badge.style.color = st.hex; badge.innerText = `${f(Math.min(999, progress.percent))}٪`; }
+            if (sub) sub.innerText = `${mgrMonthLabel()} • ${f(st.cnt)} کارکرد ثبت‌شده`;
 
-            if (badge) {
-                badge.className = `text-xs font-bold px-2.5 py-1 rounded-full ${badgeColor}`;
-                badge.innerText = `${formatNumber(Math.min(999, progress.percent))}٪`;
-            }
+            const hasWho = !!(st.w.name || st.w.photo);
+            const who = `<div class="flex items-center gap-2.5 mb-3">${hasWho ? mgrAvatar(st, 42) : ''}<div class="min-w-0 flex-1"><div class="mgr-name">${escapeHTML(st.w.name || 'وضعیت کار جاری')}</div><div class="mgr-sub">${escapeHTML(appSettings.shopName || '') || '&nbsp;'}</div></div>${mgrBadge(st)}</div>`;
+            const extra = (isOverdue ? `<div class="text-[11px] leading-relaxed text-amber-700 dark:text-amber-300">${escapeHTML(pickLateMotivation(Number(rec.id) + todayMotivationSeed()))}</div>` : '')
+                + (isStale ? '<div class="text-[10px] text-amber-600 dark:text-amber-400">این کار بیش از ۳ روز کاری معوق است؛ اگر تمام شده، «کار تمام شد» را بزنید.</div>' : '');
 
-            const remainingText = isOverdue
-                ? `<span class="text-rose-600 dark:text-rose-400 font-bold">${formatMinutesDuration(progress.remainingMinutes)} تاخیر از موعد</span>`
-                : `<span class="text-slate-500 dark:text-slate-400">${formatMinutesDuration(progress.remainingMinutes)} تا موعد باقی مانده</span>`;
-
-            list.innerHTML = `
-                <div class="text-xs">
-                    <div class="font-bold text-slate-700 dark:text-slate-200 truncate">کد ${escapeHTML(rec.itemCode) || '-'} — ${escapeHTML(rec.itemTitle) || '-'}</div>
-                    <div class="mt-1">${remainingText}</div>
-                    ${isOverdue ? `<div class="mt-1 text-[11px] leading-relaxed text-amber-700 dark:text-amber-300">${escapeHTML(pickLateMotivation(Number(rec.id) + todayMotivationSeed()))}</div>` : ''}
-                    ${isStale ? '<div class="text-[10px] text-amber-600 dark:text-amber-400 mt-1">این کار بیش از ۳ روز کاری معوق است؛ اگر تمام شده، «کار تمام شد» را بزنید.</div>' : ''}
-                    <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">شروع: ${escapeHTML(rec.date)} - ${escapeHTML(rec.time)} &nbsp;|&nbsp; مهلت هدف: ${escapeHTML(rec.workDuration)}</div>
-                    <button type="button" data-action="finish-active" data-id="${Number(rec.id)}" class="no-print mt-2 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition-colors"><i class="fa-solid fa-circle-check"></i> کار تمام شد</button>
-                </div>
-            `;
+            list.className = 'mgr-body mgr-page' + (first ? ' mgr-enter' : '');
+            list.innerHTML = `<div class="mgr-jobpanel">${who}<div class="flex items-center gap-4">${mgrRing(st, 84)}<div class="min-w-0 flex-1">${mgrJobInfo(st, true)}</div></div>${mgrBar(st)}${extra}${mgrFinishBtn(st)}</div>`
+                + `<div class="mgr-stats mt-3"><div class="mgr-stat"><b>${f(st.cnt)}</b><span>کارکرد ماه</span></div><div class="mgr-stat"><b>${f(st.qty)}</b><span>تعداد</span></div><div class="mgr-stat"><b>${st.onTime === null ? '—' : f(st.onTime) + '٪'}</b><span>به‌موقع</span></div></div>`;
             updateAttentionIndicators();
         }
         /* ==================== پایان ویجت پیشرفت کار جاری ==================== */
@@ -9109,6 +9342,7 @@
 
         /* ==================== قابلیت کارفرما (مدیر کارگاه): بخش‌ها، پرسنل و ارجاع کار ==================== */
         var mgrTab = 'workers', mgrEditW = '', mgrEditS = '', mgrLastTab = '';
+        var mgrFormPhoto; // undefined = بدون تغییر نسبت به عکس ذخیره‌شده؛ null = حذف؛ رشته = عکس جدید
         const MGR_TABS = [['workers', 'fa-users', 'پرسنل'], ['sections', 'fa-sitemap', 'بخش‌ها']];
         const MI = 'w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all';
         var mgrVer = 0;
@@ -9251,10 +9485,17 @@
             const m = { idle: ['fa-mug-hot', 'بدون کار جاری'], ok: ['fa-bolt', 'در حال کار'], warn: ['fa-bolt', 'در حال کار'], urgent: ['fa-hourglass-half', 'نزدیک موعد'], late: ['fa-triangle-exclamation', 'دارای تاخیر'] }[st.key];
             return `<span class="mgr-badge mgr-b-${st.key}"><i class="fa-solid ${m[0]}"></i>${m[1]}</span>`;
         }
+        function mgrPhotoOf(w) { return (w && w.photo && isSafeImageDataUrl(w.photo)) ? w.photo : ''; }
         function mgrAvatar(st, sz, onHero) {
-            const g = mgrGrad(st.w);
-            const bg = onHero ? 'background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.6)' : `background:linear-gradient(135deg,${g[0]},${g[1]})`;
-            return `<span class="mgr-avatar" style="width:${sz}px;height:${sz}px;font-size:${Math.round(sz * 0.36)}px;${bg};--mgr-c:${st.hex}">${escapeHTML(mgrInitials(st.w.name))}${onHero ? '' : `<i class="mgr-dot mgr-dot-${st.key}"></i>`}</span>`;
+            const g = mgrGrad(st.w), ph = mgrPhotoOf(st.w);
+            const bg = onHero ? 'background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.6)' : (ph ? 'background:#e2e8f0' : `background:linear-gradient(135deg,${g[0]},${g[1]})`);
+            const inner = ph ? `<img class="mgr-photo" src="${ph}" alt="" decoding="async" draggable="false">` : escapeHTML(mgrInitials(st.w.name));
+            return `<span class="mgr-avatar" style="width:${sz}px;height:${sz}px;font-size:${Math.round(sz * 0.36)}px;${bg};--mgr-c:${st.hex}">${inner}${onHero ? '' : `<i class="mgr-dot mgr-dot-${st.key}"></i>`}</span>`;
+        }
+        // آواتار کوچک (بدون نقطه‌ی وضعیت) برای لیست پرسنل در پنل کارفرما
+        function mgrMiniAvatar(w, sz) {
+            const g = mgrGrad(w), ph = mgrPhotoOf(w);
+            return `<span class="mgr-avatar" style="width:${sz}px;height:${sz}px;font-size:${Math.round(sz * 0.36)}px;background:${ph ? '#e2e8f0' : `linear-gradient(135deg,${g[0]},${g[1]})`}">${ph ? `<img class="mgr-photo" src="${ph}" alt="" decoding="async" draggable="false">` : escapeHTML(mgrInitials(w.name))}</span>`;
         }
         function mgrRing(st, sz) {
             const C = 2 * Math.PI * 18, ratio = Math.max(0, Math.min(1, st.pct / 100)), off = (C * (1 - ratio)).toFixed(2);
@@ -9417,15 +9658,54 @@
         const mgrEmpty = t => `<p class="text-[11px] text-slate-400 text-center py-4">${t}</p>`;
 
 
+        function mgrPhotoBoxInner(photo) {
+            return (photo && isSafeImageDataUrl(photo)) ? `<img class="mgr-photo" src="${photo}" alt="" decoding="async">` : '<i class="fa-solid fa-user text-2xl text-slate-300 dark:text-slate-600"></i>';
+        }
+        function mgrPaintPhotoBox() {
+            const cur = mgrFormPhoto !== undefined ? mgrFormPhoto : ((mgrWorker(mgrEditW) || {}).photo || null);
+            const box = document.getElementById('mgrWPhotoBox'), rm = document.getElementById('mgrWPhotoRemove');
+            if (box) box.innerHTML = mgrPhotoBoxInner(cur);
+            if (rm) rm.classList.toggle('hidden', !cur);
+        }
+        // برش مربعیِ وسط تصویر و کوچک‌سازی برای ذخیره در تنظیمات (حجم کم)
+        function squarePhotoFromFile(file, size, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onerror = () => reject(reader.error);
+                reader.onload = () => {
+                    const img = new Image();
+                    img.onerror = () => reject(new Error('تصویر نامعتبر است.'));
+                    img.onload = () => {
+                        const side = Math.min(img.width, img.height);
+                        const canvas = document.createElement('canvas');
+                        canvas.width = size; canvas.height = size;
+                        canvas.getContext('2d').drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, size, size);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        async function mgrPickPhoto(ev) {
+            const file = ev.target.files && ev.target.files[0];
+            if (!file) return;
+            if (!/^image\//.test(file.type)) { ev.target.value = ''; return showFeedbackBanner('لطفاً یک فایل تصویری معتبر انتخاب کنید.', 'warn'); }
+            try { mgrFormPhoto = await squarePhotoFromFile(file, 160, 0.72); mgrPaintPhotoBox(); }
+            catch (err) { console.error(err); showFeedbackBanner('خطا در پردازش عکس پرسنل.', 'warn'); }
+            finally { ev.target.value = ''; }
+        }
+        function mgrRemovePhoto() { mgrFormPhoto = null; mgrPaintPhotoBox(); }
+
         function mgrHtmlWorkers() {
             const M = mgr(), e = M.workers.find(w => w.id === mgrEditW) || {};
             const secOpts = '<option value="">— بدون بخش —</option>' + M.sections.map(x => `<option value="${escapeHTML(x.id)}" ${e.sectionId === x.id ? 'selected' : ''}>${escapeHTML(x.name)}</option>`).join('');
             const list = M.workers.map(w => {
                 const sc = mgrSection(w.sectionId);
                 return `<div class="rounded-xl border border-slate-300 dark:border-slate-600 p-3 flex items-start justify-between gap-2 ${w.active ? '' : 'opacity-60'}">
-                    <div class="min-w-0"><p class="text-sm font-bold text-slate-800 dark:text-slate-100">${escapeHTML(w.name)} ${w.active ? '' : '<span class="text-[10px] text-rose-500">(غیرفعال)</span>'}</p>
+                    <div class="flex items-start gap-2.5 min-w-0">${mgrMiniAvatar(w, 40)}<div class="min-w-0"><p class="text-sm font-bold text-slate-800 dark:text-slate-100">${escapeHTML(w.name)} ${w.active ? '' : '<span class="text-[10px] text-rose-500">(غیرفعال)</span>'}</p>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400">${[sc ? escapeHTML(sc.name) : '', escapeHTML(w.role), w.startDate ? 'از ' + escapeHTML(w.startDate) : '', w.endDate ? 'تا ' + escapeHTML(w.endDate) : '', escapeHTML(w.phone)].filter(Boolean).join(' • ')}</p>
-                    ${w.note ? `<p class="text-[11px] text-slate-400">${escapeHTML(w.note)}</p>` : ''}</div>
+                    ${w.note ? `<p class="text-[11px] text-slate-400">${escapeHTML(w.note)}</p>` : ''}</div></div>
                     <div class="flex items-center gap-1 shrink-0">
                         <button type="button" data-mgr="w-dl" data-id="${escapeHTML(w.id)}" title="دانلود فایل این پرسنل" class="w-8 h-8 rounded-full text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40"><i class="fa-solid fa-file-arrow-down text-xs"></i></button>
                         <button type="button" data-mgr="w-edit" data-id="${escapeHTML(w.id)}" title="ویرایش" class="w-8 h-8 rounded-full text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40"><i class="fa-solid fa-pen text-xs"></i></button>
@@ -9436,6 +9716,13 @@
                 <label class="tactile-btn cursor-pointer px-3 py-2 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-600 dark:text-slate-300 text-xs"><i class="fa-solid fa-file-arrow-up ml-1"></i> بازیابی از فایل پرسنل<input type="file" accept=".json,application/json" multiple class="hidden" onchange="mgrImportFiles(event)"></label></div>
                 <div class="space-y-2 bg-slate-50 dark:bg-slate-800/40 rounded-xl p-3 border border-slate-300 dark:border-slate-600">
                 <h4 class="text-xs font-bold text-slate-700 dark:text-slate-200">${e.id ? 'ویرایش پرسنل' : 'افزودن پرسنل'}</h4>
+                <div class="flex items-center gap-3">
+                    <span id="mgrWPhotoBox" class="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center shrink-0 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600">${mgrPhotoBoxInner(mgrFormPhoto !== undefined ? mgrFormPhoto : (e.photo || null))}</span>
+                    <div class="flex flex-wrap gap-2">
+                        <label class="tactile-btn cursor-pointer px-3 py-2 rounded-xl border border-purple-500 text-purple-700 dark:text-purple-300 text-xs"><i class="fa-solid fa-camera ml-1"></i> انتخاب عکس پرسنل<input type="file" accept="image/*" class="hidden" onchange="mgrPickPhoto(event)"></label>
+                        <button type="button" id="mgrWPhotoRemove" onclick="mgrRemovePhoto()" class="tactile-btn px-3 py-2 rounded-xl border border-rose-400 text-rose-600 dark:text-rose-300 text-xs ${(mgrFormPhoto !== undefined ? mgrFormPhoto : e.photo) ? '' : 'hidden'}"><i class="fa-solid fa-trash-can ml-1"></i> حذف عکس</button>
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <input id="mgrWName" maxlength="100" placeholder="نام و نام خانوادگی (الزامی)" value="${escapeHTML(e.name || '')}" class="${MI}">
                     <input id="mgrWPhone" inputmode="tel" maxlength="40" placeholder="شماره تماس" value="${escapeHTML(e.phone || '')}" class="${MI}">
@@ -9477,15 +9764,16 @@
                 const sd = mgrDK(val('mgrWStart')), ed = mgrDK(val('mgrWEnd'));
                 if ((val('mgrWStart').trim() && !sd) || (val('mgrWEnd').trim() && !ed)) return showFeedbackBanner('تاریخ شروع/پایان همکاری را به شکل ۱۴۰۵/۰۱/۱۵ وارد کنید.', 'warn');
                 if (sd && ed && sd > ed) return showFeedbackBanner('تاریخ پایان همکاری نباید قبل از شروع باشد.', 'warn');
-                const d = { name: name.slice(0, 100), phone: val('mgrWPhone').trim().slice(0, 40), sectionId: val('mgrWSection'), role: val('mgrWRole').trim().slice(0, 60), startDate: mgrDK(val('mgrWStart')), endDate: mgrDK(val('mgrWEnd')), note: val('mgrWNote').trim().slice(0, 300) };
+                const d = { name: name.slice(0, 100), phone: val('mgrWPhone').trim().slice(0, 40), sectionId: val('mgrWSection'), role: val('mgrWRole').trim().slice(0, 60), startDate: mgrDK(val('mgrWStart')), endDate: mgrDK(val('mgrWEnd')), note: val('mgrWNote').trim().slice(0, 300),
+                    photo: mgrFormPhoto !== undefined ? mgrFormPhoto : ((mgrWorker(mgrEditW) || {}).photo || null) };
                 if (mgrEditW) {
                     const w = mgrWorker(mgrEditW); Object.assign(w, d);
                     let ch = false; allRecords.forEach(r => { if (r.workerId === w.id && r.workerName !== w.name) { r.workerName = w.name; r.updatedAt = Date.now(); ch = true; } });
                     if (ch) saveRecords();
                 } else M.workers.push({ id: mgrId('w'), active: true, ...d });
-                mgrEditW = ''; showFeedbackBanner('اطلاعات پرسنل ذخیره شد.', 'success');
-            } else if (a === 'w-edit') { mgrEditW = id; return mgrRender(); }
-            else if (a === 'w-cancel') { mgrEditW = ''; return mgrRender(); }
+                mgrEditW = ''; mgrFormPhoto = undefined; showFeedbackBanner('اطلاعات پرسنل ذخیره شد.', 'success');
+            } else if (a === 'w-edit') { mgrEditW = id; mgrFormPhoto = undefined; return mgrRender(); }
+            else if (a === 'w-cancel') { mgrEditW = ''; mgrFormPhoto = undefined; return mgrRender(); }
             else if (a === 'w-toggle') { const w = mgrWorker(id); if (w) w.active = !w.active; }
             else if (a === 'w-del') {
                 const w = mgrWorker(id); if (!w) return;
@@ -10034,6 +10322,7 @@
             try { savedTab = localStorage.getItem('sewing_main_tab_v1') || 'entry'; } catch (e) { /* بی‌اهمیت */ }
             switchMainTab(savedTab === 'list' ? 'list' : 'entry');
         })();
+        bottomNavSyncState();
 
         updatePremiumStatusUI();
         recomputeAppStreak();

@@ -527,6 +527,12 @@
         body[data-cardfx="on"][data-fxscheme="amber"]   { --fx1: #f59e0b; --fx2: #ef4444; }
         body[data-cardfx="on"][data-fxscheme="rose"]    { --fx1: #e11d48; --fx2: #ec4899; }
         body[data-cardfx="on"][data-fxscheme="slate"]   { --fx1: #475569; --fx2: #94a3b8; }
+        body[data-cardfx="on"][data-fxscheme="teal"]    { --fx1: #0d9488; --fx2: #22d3ee; }
+        body[data-cardfx="on"][data-fxscheme="fuchsia"] { --fx1: #c026d3; --fx2: #f472b6; }
+        body[data-cardfx="on"][data-fxscheme="lime"]    { --fx1: #65a30d; --fx2: #22c55e; }
+        body[data-cardfx="on"][data-fxscheme="gold"]    { --fx1: #d97706; --fx2: #facc15; }
+        body[data-cardfx="on"][data-fxscheme="sunset"]  { --fx1: #f97316; --fx2: #db2777; }
+        body[data-cardfx="on"][data-fxscheme="royal"]   { --fx1: #4338ca; --fx2: #fbbf24; }
         body[data-cardfx="on"][data-fxscheme="multi"] #kpiCardWrap > div { --fx1: #4f46e5; --fx2: #a855f7; }
         body[data-cardfx="on"][data-fxscheme="multi"] #recordFormCard    { --fx1: #059669; --fx2: #2dd4bf; }
         body[data-cardfx="on"][data-fxscheme="multi"] #dailyNotesSection { --fx1: #f59e0b; --fx2: #ef4444; }
@@ -576,6 +582,165 @@
         @media (prefers-reduced-motion: reduce) {
             body[data-cardfx="on"] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard) { animation: none !important; }
         }
+
+        /* ============ جلوه‌های بصریِ کادر سامانه (هدر) و متن انگیزشی، با رنگی جدا از کادرهای دیگر ============ */
+        body[data-hdrfx="on"] { --hx1: #0d9488; --hx2: #22d3ee; }
+        body[data-hdrfx="on"][data-hdrfxc="orange"]  { --hx1: #ea580c; --hx2: #fbbf24; }
+        body[data-hdrfx="on"][data-hdrfxc="fuchsia"] { --hx1: #c026d3; --hx2: #f472b6; }
+        body[data-hdrfx="on"][data-hdrfxc="lime"]    { --hx1: #65a30d; --hx2: #22c55e; }
+        body[data-hdrfx="on"][data-hdrfxc="crimson"] { --hx1: #be123c; --hx2: #f97316; }
+        body[data-hdrfx="on"][data-hdrfxc="ocean"]    { --hx1: #0ea5e9; --hx2: #6366f1; }
+        body[data-hdrfx="on"][data-hdrfxc="violet"]   { --hx1: #7c3aed; --hx2: #ec4899; }
+        body[data-hdrfx="on"][data-hdrfxc="gold"]     { --hx1: #d97706; --hx2: #facc15; }
+        body[data-hdrfx="on"][data-hdrfxc="forest"]   { --hx1: #16a34a; --hx2: #a3e635; }
+        body[data-hdrfx="on"][data-hdrfxc="royal"]    { --hx1: #4338ca; --hx2: #fbbf24; }
+        body[data-hdrfx="on"][data-hdrfxc="graphite"] { --hx1: #334155; --hx2: #f59e0b; }
+        body[data-hdrfx="on"] #appHeaderBox {
+            border-color: var(--hx1);
+            box-shadow: 0 1px 2px rgba(15,23,42,.05), 0 14px 30px -12px var(--hx1) !important;
+        }
+        body[data-hdrfx="on"] #appHeaderBox::after {
+            content: ""; position: absolute; bottom: 0; left: 18px; right: 18px; height: 4px; z-index: 1;
+            border-radius: 6px 6px 0 0; pointer-events: none;
+            background: linear-gradient(90deg, var(--hx1), var(--hx2));
+        }
+        @keyframes fxFlowBar { to { background-position: -300% 0; } }
+
+        /* ---- انواع جلوه‌ی کادرها ---- */
+        body[data-cardfx="on"][data-fxstyle]:not([data-fxstyle="classic"]) :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::before,
+        body[data-cardfx="on"][data-fxstyle]:not([data-fxstyle="classic"]) :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::after { content: none; }
+        body[data-cardfx="on"][data-fxstyle]:not([data-fxstyle="classic"]) :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard) { border-color: rgb(203 213 225); box-shadow: 0 1px 2px rgba(15,23,42,.06) !important; }
+        .dark body[data-cardfx="on"][data-fxstyle]:not([data-fxstyle="classic"]) :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard) { border-color: rgb(71 85 105); }
+        body[data-cardfx="on"][data-fxstyle="glow"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard) { border-color: var(--fx1); box-shadow: 0 0 0 1px var(--fx1), 0 12px 32px -8px var(--fx1) !important; }
+        body[data-cardfx="on"][data-fxstyle="neon"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard) { border-color: var(--fx1); box-shadow: 0 0 0 1px var(--fx1), 0 0 14px var(--fx1), 0 0 30px -4px var(--fx2) !important; }
+        body[data-cardfx="on"][data-fxstyle="border"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard) { outline: 3px solid var(--fx1); outline-offset: 0; border-color: var(--fx1); }
+        body[data-cardfx="on"][data-fxstyle="dashed"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard) { outline: 2px dashed var(--fx1); outline-offset: 3px; border-color: var(--fx2); }
+        body[data-cardfx="on"][data-fxstyle="offset"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard) { border-color: var(--fx1); box-shadow: -6px 6px 0 var(--fx1) !important; }
+        body[data-cardfx="on"][data-fxstyle="gradborder"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::before { content: ""; position: absolute; inset: -2px; padding: 2px; border-radius: inherit; pointer-events: none; z-index: 1;
+            background: linear-gradient(135deg, var(--fx1), var(--fx2));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude; }
+        body[data-cardfx="on"][data-fxstyle="sidebar"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::after { content: ""; position: absolute; top: 14px; bottom: 14px; right: 0; width: 5px; border-radius: 6px 0 0 6px; pointer-events: none; z-index: 1;
+            background: linear-gradient(180deg, var(--fx1), var(--fx2)); }
+        body[data-cardfx="on"][data-fxstyle="topbar"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::after { content: ""; position: absolute; top: 0; left: 14px; right: 14px; height: 4px; border-radius: 0 0 6px 6px; pointer-events: none; z-index: 1;
+            background: linear-gradient(90deg, var(--fx1), var(--fx2)); }
+        body[data-cardfx="on"][data-fxstyle="bottombar"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::after { content: ""; position: absolute; bottom: 0; left: 14px; right: 14px; height: 4px; border-radius: 6px 6px 0 0; pointer-events: none; z-index: 1;
+            background: linear-gradient(90deg, var(--fx1), var(--fx2)); }
+        body[data-cardfx="on"][data-fxstyle="corners"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::before { content: ""; position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; border-top: 3px solid var(--fx1); border-right: 3px solid var(--fx1); border-top-right-radius: 10px; pointer-events: none; z-index: 1; }
+        body[data-cardfx="on"][data-fxstyle="corners"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::after { content: ""; position: absolute; bottom: -5px; left: -5px; width: 18px; height: 18px; border-bottom: 3px solid var(--fx2); border-left: 3px solid var(--fx2); border-bottom-left-radius: 10px; pointer-events: none; z-index: 1; }
+        body[data-cardfx="on"][data-fxstyle="tint"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard) { isolation: isolate; border-color: var(--fx1); }
+        @supports (color: color-mix(in srgb, red, blue)) {
+            body[data-cardfx="on"][data-fxstyle="tint"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+                background: linear-gradient(135deg, color-mix(in srgb, var(--fx1) 14%, transparent), color-mix(in srgb, var(--fx2) 10%, transparent)); }
+        }
+        body[data-cardfx="on"][data-fxstyle="flowbar"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::after { content: ""; position: absolute; top: 0; left: 14px; right: 14px; height: 4px; border-radius: 0 0 6px 6px; pointer-events: none; z-index: 1;
+            background: linear-gradient(90deg, var(--fx1), var(--fx2), var(--fx1)); background-size: 300% 100%; animation: fxFlowBar 3s linear infinite; }
+        body[data-cardfx="on"][data-fxstyle]:not([data-fxstyle="classic"]) :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard):not(.fixed) { position: relative; }
+        @media (prefers-reduced-motion: reduce) { body[data-cardfx="on"][data-fxstyle="flowbar"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::after { animation: none !important; } }
+        body.modal-anim-paused body[data-cardfx="on"][data-fxstyle="flowbar"][data-fxstyle] :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::after { animation: none !important; }
+        @media print { body[data-cardfx="on"][data-fxstyle]:not([data-fxstyle="classic"]) :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::before, body[data-cardfx="on"][data-fxstyle]:not([data-fxstyle="classic"]) :is(#kpiCardWrap > div, #recordFormCard, #dailyNotesSection, #recordsTableCard)::after { display: none !important; } }
+
+        /* ---- انواع جلوه‌ی کادر سامانه ---- */
+        body[data-hdrfx="on"][data-hdrstyle]:not([data-hdrstyle="classic"]) #appHeaderBox::before,
+        body[data-hdrfx="on"][data-hdrstyle]:not([data-hdrstyle="classic"]) #appHeaderBox::after { content: none; }
+        body[data-hdrfx="on"][data-hdrstyle]:not([data-hdrstyle="classic"]) #appHeaderBox { border-color: rgb(203 213 225); box-shadow: 0 1px 2px rgba(15,23,42,.06) !important; }
+        .dark body[data-hdrfx="on"][data-hdrstyle]:not([data-hdrstyle="classic"]) #appHeaderBox { border-color: rgb(71 85 105); }
+        body[data-hdrfx="on"][data-hdrstyle="glow"][data-hdrstyle] #appHeaderBox { border-color: var(--hx1); box-shadow: 0 0 0 1px var(--hx1), 0 12px 32px -8px var(--hx1) !important; }
+        body[data-hdrfx="on"][data-hdrstyle="neon"][data-hdrstyle] #appHeaderBox { border-color: var(--hx1); box-shadow: 0 0 0 1px var(--hx1), 0 0 14px var(--hx1), 0 0 30px -4px var(--hx2) !important; }
+        body[data-hdrfx="on"][data-hdrstyle="border"][data-hdrstyle] #appHeaderBox { outline: 3px solid var(--hx1); outline-offset: 0; border-color: var(--hx1); }
+        body[data-hdrfx="on"][data-hdrstyle="dashed"][data-hdrstyle] #appHeaderBox { outline: 2px dashed var(--hx1); outline-offset: 3px; border-color: var(--hx2); }
+        body[data-hdrfx="on"][data-hdrstyle="offset"][data-hdrstyle] #appHeaderBox { border-color: var(--hx1); box-shadow: -6px 6px 0 var(--hx1) !important; }
+        body[data-hdrfx="on"][data-hdrstyle="gradborder"][data-hdrstyle] #appHeaderBox::before { content: ""; position: absolute; inset: -2px; padding: 2px; border-radius: inherit; pointer-events: none; z-index: 20;
+            background: linear-gradient(135deg, var(--hx1), var(--hx2));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude; }
+        body[data-hdrfx="on"][data-hdrstyle="sidebar"][data-hdrstyle] #appHeaderBox::after { content: ""; position: absolute; top: 14px; bottom: 14px; right: 0; width: 5px; border-radius: 6px 0 0 6px; pointer-events: none; z-index: 20;
+            background: linear-gradient(180deg, var(--hx1), var(--hx2)); }
+        body[data-hdrfx="on"][data-hdrstyle="topbar"][data-hdrstyle] #appHeaderBox::after { content: ""; position: absolute; top: 0; left: 14px; right: 14px; height: 4px; border-radius: 0 0 6px 6px; pointer-events: none; z-index: 20;
+            background: linear-gradient(90deg, var(--hx1), var(--hx2)); }
+        body[data-hdrfx="on"][data-hdrstyle="bottombar"][data-hdrstyle] #appHeaderBox::after { content: ""; position: absolute; bottom: 0; left: 14px; right: 14px; height: 4px; border-radius: 6px 6px 0 0; pointer-events: none; z-index: 20;
+            background: linear-gradient(90deg, var(--hx1), var(--hx2)); }
+        body[data-hdrfx="on"][data-hdrstyle="corners"][data-hdrstyle] #appHeaderBox::before { content: ""; position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; border-top: 3px solid var(--hx1); border-right: 3px solid var(--hx1); border-top-right-radius: 10px; pointer-events: none; z-index: 20; }
+        body[data-hdrfx="on"][data-hdrstyle="corners"][data-hdrstyle] #appHeaderBox::after { content: ""; position: absolute; bottom: -5px; left: -5px; width: 18px; height: 18px; border-bottom: 3px solid var(--hx2); border-left: 3px solid var(--hx2); border-bottom-left-radius: 10px; pointer-events: none; z-index: 20; }
+        body[data-hdrfx="on"][data-hdrstyle="tint"][data-hdrstyle] #appHeaderBox { isolation: isolate; border-color: var(--hx1); }
+        @supports (color: color-mix(in srgb, red, blue)) {
+            body[data-hdrfx="on"][data-hdrstyle="tint"][data-hdrstyle] #appHeaderBox::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+                background: linear-gradient(135deg, color-mix(in srgb, var(--hx1) 14%, transparent), color-mix(in srgb, var(--hx2) 10%, transparent)); }
+        }
+        body[data-hdrfx="on"][data-hdrstyle="flowbar"][data-hdrstyle] #appHeaderBox::after { content: ""; position: absolute; top: 0; left: 14px; right: 14px; height: 4px; border-radius: 0 0 6px 6px; pointer-events: none; z-index: 20;
+            background: linear-gradient(90deg, var(--hx1), var(--hx2), var(--hx1)); background-size: 300% 100%; animation: fxFlowBar 3s linear infinite; }
+        body[data-hdrfx="on"][data-hdrstyle]:not([data-hdrstyle="classic"]) #appHeaderBox:not(.fixed) { position: relative; }
+        @media (prefers-reduced-motion: reduce) { body[data-hdrfx="on"][data-hdrstyle="flowbar"][data-hdrstyle] #appHeaderBox::after { animation: none !important; } }
+        body.modal-anim-paused body[data-hdrfx="on"][data-hdrstyle="flowbar"][data-hdrstyle] #appHeaderBox::after { animation: none !important; }
+        @media print { body[data-hdrfx="on"][data-hdrstyle]:not([data-hdrstyle="classic"]) #appHeaderBox::before, body[data-hdrfx="on"][data-hdrstyle]:not([data-hdrstyle="classic"]) #appHeaderBox::after { display: none !important; } }
+        /* جلوه‌های مجزای متن انگیزشی */
+        body[data-mfx="on"] { --mx1: #7c3aed; --mx2: #ec4899; }
+        body[data-mfx="on"][data-mfxc="cyan"]   { --mx1: #0891b2; --mx2: #34d399; }
+        body[data-mfx="on"][data-mfxc="gold"]   { --mx1: #d97706; --mx2: #facc15; }
+        body[data-mfx="on"][data-mfxc="red"]    { --mx1: #dc2626; --mx2: #fb923c; }
+        body[data-mfx="on"][data-mfxc="blue"]   { --mx1: #2563eb; --mx2: #38bdf8; }
+        body[data-mfx="on"][data-mfxc="sunset"] { --mx1: #f97316; --mx2: #db2777; }
+        body[data-mfx="on"][data-mfxc="ocean"]  { --mx1: #0ea5e9; --mx2: #6366f1; }
+        body[data-mfx="on"][data-mfxc="forest"] { --mx1: #16a34a; --mx2: #a3e635; }
+        body[data-mfx="on"][data-mfxc="candy"]  { --mx1: #14b8a6; --mx2: #f43f5e; }
+        body[data-mfx="on"][data-mfxc="royal"]  { --mx1: #4338ca; --mx2: #fbbf24; }
+        body[data-mfx="on"][data-mfxc="graphite"] { --mx1: #334155; --mx2: #f59e0b; }
+        body[data-mfx="on"] #streakBadgeText.motivation-badge { position: relative; }
+        body[data-mfx="on"][data-mfxs="ring"] #streakBadgeText.motivation-badge {
+            outline: 2px solid var(--mx1); outline-offset: 2px; filter: drop-shadow(0 4px 10px var(--mx1));
+        }
+        body[data-mfx="on"][data-mfxs="double"] #streakBadgeText.motivation-badge {
+            box-shadow: 0 0 0 2px var(--mx1), 0 0 0 5px var(--mx2);
+        }
+        body[data-mfx="on"][data-mfxs="neon"] #streakBadgeText.motivation-badge {
+            box-shadow: 0 0 6px var(--mx1), 0 0 18px var(--mx1), inset 0 0 8px var(--mx2);
+            text-shadow: 0 0 8px var(--mx2);
+        }
+        body[data-mfx="on"][data-mfxs="gradient"] #streakBadgeText.motivation-badge::before {
+            content: ""; position: absolute; inset: -3px; padding: 3px; border-radius: 1.25rem; pointer-events: none;
+            background: linear-gradient(135deg, var(--mx1), var(--mx2));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+        }
+        body[data-mfx="on"][data-mfxs="shimmer"] #streakBadgeText.motivation-badge { overflow: hidden; box-shadow: 0 0 0 2px var(--mx1); }
+        body[data-mfx="on"][data-mfxs="shimmer"] #streakBadgeText.motivation-badge::after {
+            content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%; pointer-events: none;
+            background: linear-gradient(100deg, transparent, var(--mx2), transparent); opacity: .45;
+            animation: mfxSweep 2.8s ease-in-out infinite;
+        }
+        @keyframes mfxSweep { to { left: 120%; } }
+        body[data-mfx="on"][data-mfxs="dashed"] #streakBadgeText.motivation-badge {
+            outline: 2px dashed var(--mx1); outline-offset: 4px; box-shadow: 0 0 0 2px var(--mx2);
+        }
+        body[data-mfx="on"][data-mfxs="underline"] #streakBadgeText.motivation-badge { padding-bottom: .7rem; }
+        body[data-mfx="on"][data-mfxs="underline"] #streakBadgeText.motivation-badge::after {
+            content: ""; position: absolute; bottom: 6px; left: 18%; right: 18%; height: 4px; border-radius: 4px; pointer-events: none;
+            background: linear-gradient(90deg, var(--mx1), var(--mx2));
+        }
+        body[data-mfx="on"][data-mfxs="pulse"] #streakBadgeText.motivation-badge { box-shadow: 0 0 0 2px var(--mx1), 0 0 12px var(--mx2); }
+        body[data-mfx="on"][data-mfxs="pulse"] #streakBadgeText.motivation-badge::before {
+            content: ""; position: absolute; inset: -2px; border-radius: inherit; pointer-events: none;
+            box-shadow: 0 0 0 0 var(--mx1); animation: mfxPulse 2s ease-out infinite;
+        }
+        @keyframes mfxPulse { 0% { box-shadow: 0 0 0 0 var(--mx1); opacity: .9; } 100% { box-shadow: 0 0 0 14px transparent; opacity: 0; } }
+        body[data-mfx="on"][data-mfxs="corners"] #streakBadgeText.motivation-badge::before,
+        body[data-mfx="on"][data-mfxs="corners"] #streakBadgeText.motivation-badge::after {
+            content: ""; position: absolute; width: 16px; height: 16px; pointer-events: none;
+        }
+        body[data-mfx="on"][data-mfxs="corners"] #streakBadgeText.motivation-badge::before { top: -5px; right: -5px; border-top: 3px solid var(--mx1); border-right: 3px solid var(--mx1); border-top-right-radius: 8px; }
+        body[data-mfx="on"][data-mfxs="corners"] #streakBadgeText.motivation-badge::after { bottom: -5px; left: -5px; border-bottom: 3px solid var(--mx2); border-left: 3px solid var(--mx2); border-bottom-left-radius: 8px; }
+        body[data-mfx="on"][data-mfxs="flow"] #streakBadgeText.motivation-badge::before {
+            content: ""; position: absolute; inset: -3px; padding: 3px; border-radius: 1.25rem; pointer-events: none;
+            background: linear-gradient(90deg, var(--mx1), var(--mx2), var(--mx1)); background-size: 300% 100%;
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            animation: mfxFlow 3s linear infinite;
+        }
+        @keyframes mfxFlow { to { background-position: -300% 0; } }
+        body[data-mfx="on"][data-mfxs="offset"] #streakBadgeText.motivation-badge { box-shadow: -4px 4px 0 var(--mx1), -8px 8px 0 var(--mx2); margin-bottom: 8px; }
+        @media (prefers-reduced-motion: reduce) { body[data-mfx="on"] #streakBadgeText.motivation-badge::before, body[data-mfx="on"] #streakBadgeText.motivation-badge::after { animation: none !important; } }
+        body.modal-anim-paused[data-mfx="on"] #streakBadgeText.motivation-badge::before, body.modal-anim-paused[data-mfx="on"] #streakBadgeText.motivation-badge::after { animation: none !important; }
+        @media print { body[data-hdrfx="on"] #appHeaderBox::after { display: none !important; } }
         @media print {
             body[data-cardfx="on"] #kpiCardWrap > div::before,
         body[data-cardfx="on"] #recordFormCard::before,
@@ -670,7 +835,7 @@
     <div class="max-w-5xl mx-auto px-4 pt-6">
 
         <!-- هدر اصلی برنامه: نوار برندِ گرادینتی + بخش اطلاعات روز -->
-        <header class="pro-card bg-white dark:bg-slate-900 rounded-2xl mb-6 border border-slate-300 dark:border-slate-600 relative transition-all">
+        <header id="appHeaderBox" class="pro-card bg-white dark:bg-slate-900 rounded-2xl mb-6 border border-slate-300 dark:border-slate-600 relative transition-all">
         <div id="appHeaderBrandBar" class="px-6 pt-6 pb-8 text-center relative rounded-t-2xl">
 
             <!-- منوی ابزار و عملیات در گوشه بالا سمت چپ -->
@@ -2087,6 +2252,12 @@
                                 <option value="amber">نارنجی/کهربایی</option>
                                 <option value="rose">قرمز/صورتی</option>
                                 <option value="slate">خاکستری</option>
+                                <option value="teal">فیروزه‌ای</option>
+                                <option value="fuchsia">سرخابی</option>
+                                <option value="lime">سبز لیمویی</option>
+                                <option value="gold">طلایی</option>
+                                <option value="sunset">غروب (نارنجی/سرخابی)</option>
+                                <option value="royal">سلطنتی (نیلی/طلایی)</option>
                                 <option value="multi">رنگارنگ (هر کادر یک رنگ)</option>
                             </select>
                         </div>
@@ -2098,7 +2269,109 @@
                             </select>
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">نوع جلوه‌ی کادرها</label>
+                        <select id="settingCardFxStyle" onchange="previewCardFx()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all">
+                            <option value="classic">کلاسیک (سایه و نوار بالا)</option>
+                            <option value="glow">سایه‌ی درخشان</option>
+                            <option value="neon">نئونی</option>
+                            <option value="border">حاشیه‌ی ضخیم رنگی</option>
+                            <option value="gradborder">حاشیه‌ی گرادینتی</option>
+                            <option value="dashed">قاب نقطه‌چین</option>
+                            <option value="offset">سایه‌ی پلکانی سه‌بعدی</option>
+                            <option value="sidebar">نوار کناری</option>
+                            <option value="topbar">نوار بالا</option>
+                            <option value="bottombar">نوار پایین</option>
+                            <option value="corners">گوشه‌های قاب</option>
+                            <option value="tint">پس‌زمینه‌ی رنگی ملایم</option>
+                            <option value="flowbar">نوار گرادینتی متحرک</option>
+                        </select>
+                    </div>
                     <div id="cardFxPreview" class="h-3 rounded-full" style="background:linear-gradient(90deg,#4f46e5,#a855f7)"></div>
+                    <div class="pt-3 mt-1 border-t border-slate-200 dark:border-slate-700 space-y-3">
+                        <label class="flex items-start gap-2 cursor-pointer">
+                            <input type="checkbox" id="settingHeaderFx" onchange="previewCardFx()" class="w-4 h-4 mt-0.5 rounded accent-teal-600">
+                            <span class="text-sm text-slate-700 dark:text-slate-200">اعمال جلوه‌های بصری روی کادر سامانه
+                                <span class="block text-[11px] text-slate-400 dark:text-slate-500">با رنگی متفاوت از رنگ کادرهای دیگر</span></span>
+                        </label>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">رنگ جلوه‌ی کادر سامانه</label>
+                            <select id="settingHeaderFxColor" onchange="previewCardFx()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all">
+                                <option value="teal">سبزآبی / فیروزه‌ای</option>
+                                <option value="orange">نارنجی / زرد</option>
+                                <option value="fuchsia">سرخابی / صورتی</option>
+                                <option value="lime">سبز لیمویی</option>
+                                <option value="crimson">زرشکی / نارنجی</option>
+                                <option value="ocean">اقیانوس (آبی / نیلی)</option>
+                                <option value="violet">بنفش / صورتی</option>
+                                <option value="gold">طلایی</option>
+                                <option value="forest">جنگل (سبز / لیمویی)</option>
+                                <option value="royal">سلطنتی (نیلی / طلایی)</option>
+                                <option value="graphite">گرافیتی (خاکستری / کهربایی)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">نوع جلوه‌ی کادر سامانه</label>
+                            <select id="settingHeaderFxStyle" onchange="previewCardFx()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all">
+                                <option value="classic">کلاسیک (سایه و نوار پایین)</option>
+                                <option value="glow">سایه‌ی درخشان</option>
+                                <option value="neon">نئونی</option>
+                                <option value="border">حاشیه‌ی ضخیم رنگی</option>
+                                <option value="gradborder">حاشیه‌ی گرادینتی</option>
+                                <option value="dashed">قاب نقطه‌چین</option>
+                                <option value="offset">سایه‌ی پلکانی سه‌بعدی</option>
+                                <option value="sidebar">نوار کناری</option>
+                                <option value="topbar">نوار بالا</option>
+                                <option value="bottombar">نوار پایین</option>
+                                <option value="corners">گوشه‌های قاب</option>
+                                <option value="tint">پس‌زمینه‌ی رنگی ملایم</option>
+                                <option value="flowbar">نوار گرادینتی متحرک</option>
+                            </select>
+                        </div>
+                        <div id="headerFxPreview" class="h-3 rounded-full" style="background:linear-gradient(90deg,#0d9488,#22d3ee)"></div>
+                    </div>
+                    <div class="pt-3 mt-1 border-t border-slate-200 dark:border-slate-700 space-y-3">
+                        <label class="flex items-start gap-2 cursor-pointer">
+                            <input type="checkbox" id="settingMotivFx" onchange="previewCardFx()" class="w-4 h-4 mt-0.5 rounded accent-violet-600">
+                            <span class="text-sm text-slate-700 dark:text-slate-200">اعمال جلوه‌های بصری روی متن انگیزشی
+                                <span class="block text-[11px] text-slate-400 dark:text-slate-500">مستقل از کادر سامانه و کادرهای دیگر</span></span>
+                        </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">نوع جلوه</label>
+                                <select id="settingMotivFxStyle" onchange="previewCardFx()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all">
+                                    <option value="ring">حلقه‌ی درخشان</option>
+                                    <option value="double">قاب دوگانه</option>
+                                    <option value="neon">نئونی</option>
+                                    <option value="gradient">حاشیه‌ی گرادینتی</option>
+                                    <option value="shimmer">درخشش متحرک</option>
+                                    <option value="dashed">قاب نقطه‌چین</option>
+                                    <option value="underline">خط گرادینتی زیر متن</option>
+                                    <option value="pulse">ضربان موجی</option>
+                                    <option value="corners">گوشه‌های قاب</option>
+                                    <option value="flow">حاشیه‌ی گرادینتیِ روان</option>
+                                    <option value="offset">سایه‌ی پلکانی سه‌بعدی</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1.5">رنگ جلوه</label>
+                                <select id="settingMotivFxColor" onchange="previewCardFx()" class="w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 outline-none transition-all">
+                                    <option value="violet">بنفش / صورتی</option>
+                                    <option value="cyan">فیروزه‌ای / سبز</option>
+                                    <option value="gold">طلایی</option>
+                                    <option value="red">قرمز / نارنجی</option>
+                                    <option value="blue">آبی / آسمانی</option>
+                                    <option value="sunset">غروب (نارنجی / سرخابی)</option>
+                                    <option value="ocean">اقیانوس (آبی / نیلی)</option>
+                                    <option value="forest">جنگل (سبز / لیمویی)</option>
+                                    <option value="candy">آبنباتی (فیروزه‌ای / قرمز)</option>
+                                    <option value="royal">سلطنتی (نیلی / طلایی)</option>
+                                    <option value="graphite">گرافیتی (خاکستری / کهربایی)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="motivFxPreview" class="h-3 rounded-full" style="background:linear-gradient(90deg,#7c3aed,#ec4899)"></div>
+                    </div>
                 </div>
                 </div>
 
@@ -3162,8 +3435,15 @@
             s.motivationFontSize = pick(s.motivationFontSize, ['small', 'normal', 'large', 'xlarge'], 'normal');
             ['motivationBgColor', 'motivationTextColor'].forEach(k => { if (!colorOk(s[k])) s[k] = 'default'; });
             s.cardFx = !!s.cardFx;
-            s.cardFxScheme = pick(s.cardFxScheme, ['indigo', 'emerald', 'sky', 'amber', 'rose', 'slate', 'multi'], 'indigo');
+            s.cardFxScheme = pick(s.cardFxScheme, ['indigo', 'emerald', 'sky', 'amber', 'rose', 'slate', 'teal', 'fuchsia', 'lime', 'gold', 'sunset', 'royal', 'multi'], 'indigo');
+            s.cardFxStyle = pick(s.cardFxStyle, ['classic', 'glow', 'neon', 'border', 'gradborder', 'dashed', 'offset', 'sidebar', 'topbar', 'bottombar', 'corners', 'tint', 'flowbar'], 'classic');
+            s.headerFxStyle = pick(s.headerFxStyle, ['classic', 'glow', 'neon', 'border', 'gradborder', 'dashed', 'offset', 'sidebar', 'topbar', 'bottombar', 'corners', 'tint', 'flowbar'], 'classic');
             s.cardFxMotion = s.cardFxMotion !== false;
+            s.headerFx = !!s.headerFx;
+            s.headerFxColor = pick(s.headerFxColor, ['teal', 'orange', 'fuchsia', 'lime', 'crimson', 'ocean', 'violet', 'gold', 'forest', 'royal', 'graphite'], 'teal');
+            s.motivFx = !!s.motivFx;
+            s.motivFxStyle = pick(s.motivFxStyle, ['ring', 'double', 'neon', 'gradient', 'shimmer', 'dashed', 'underline', 'pulse', 'corners', 'flow', 'offset'], 'ring');
+            s.motivFxColor = pick(s.motivFxColor, ['violet', 'cyan', 'gold', 'red', 'blue', 'sunset', 'ocean', 'forest', 'candy', 'royal', 'graphite'], 'violet');
             s.shopName = String(s.shopName || DEFAULT_APP_SETTINGS.shopName).slice(0, 120);
             ['ownerName', 'ownerPhone', 'ownerAddress'].forEach(k => { s[k] = String(s[k] == null ? '' : s[k]).slice(0, 200); });
             s.ownerPhoto = isSafeImageDataUrl(s.ownerPhoto) ? s.ownerPhoto : null;
@@ -3209,7 +3489,38 @@
             s.manager = {
                 enabled: !!m.enabled,
                 sections: A(m.sections).map(x => x && { id: I(x.id) || mgrId('s'), name: T(x.name, 60) }).filter(x => x && x.name).slice(0, 50),
-                workers: A(m.workers).map(x => x && { id: I(x.id) || mgrId('w'), name: T(x.name, 100), phone: T(x.phone, 40), sectionId: I(x.sectionId), role: T(x.role, 60), note: T(x.note, 300), startDate: dk(x.startDate), endDate: dk(x.endDate), active: x.active !== false, photo: (isSafeImageDataUrl(x.photo) && x.photo.length <= 60000) ? x.photo : null }).filter(x => x && x.name).slice(0, 500),
+                workers: A(m.workers).map(x => x && { id: I(x.id) || mgrId('w'), name: T(x.name, 100), phone: T(x.phone, 40), sectionId: I(x.sectionId), role: T(x.role, 60), wageType: ['piece', 'daily', 'monthly'].includes(x.wageType) ? x.wageType : '', rate: N(x.rate), note: T(x.note, 300), startDate: dk(x.startDate), endDate: dk(x.endDate), active: x.active !== false, photo: (isSafeImageDataUrl(x.photo) && x.photo.length <= 60000) ? x.photo : null }).filter(x => x && x.name).slice(0, 500),
+                attendance: (() => {
+                    const a = (m.attendance && typeof m.attendance === 'object' && !Array.isArray(m.attendance)) ? m.attendance : {}, out = {};
+                    Object.keys(a).slice(0, 4000).forEach(d => {
+                        const k = dk(d), day = a[d];
+                        if (!k || k !== d || !day || typeof day !== 'object') return;
+                        const o = {};
+                        Object.keys(day).slice(0, 600).forEach(w => { const id = I(w); if (id && ['p', 't', 'l', 'a'].includes(day[w])) o[id] = day[w]; });
+                        if (Object.keys(o).length) out[k] = o;
+                    });
+                    return out;
+                })(),
+                attMin: (() => {
+                    const a = (m.attMin && typeof m.attMin === 'object' && !Array.isArray(m.attMin)) ? m.attMin : {}, out = {};
+                    Object.keys(a).slice(0, 4000).forEach(d => {
+                        const k = dk(d), day = a[d];
+                        if (!k || k !== d || !day || typeof day !== 'object') return;
+                        const o = {};
+                        Object.keys(day).slice(0, 600).forEach(w => { const id = I(w), n = Math.floor(Number(day[w])); if (id && Number.isFinite(n) && n > 0 && n <= 1440) o[id] = n; });
+                        if (Object.keys(o).length) out[k] = o;
+                    });
+                    return out;
+                })(),
+                finance: (() => {
+                    const f = (m.finance && typeof m.finance === 'object' && !Array.isArray(m.finance)) ? m.finance : {};
+                    const days = {};
+                    if (f.days && typeof f.days === 'object' && !Array.isArray(f.days)) Object.keys(f.days).slice(0, 5000).forEach(k => { const n = Math.floor(Number(f.days[k])); if (/^[\w-]{1,40}\|\d{4}-\d{1,2}$/.test(k) && Number.isFinite(n) && n >= 0 && n <= 31) days[k] = n; });
+                    return {
+                        txns: A(f.txns).map(t => t && { id: I(t.id) || mgrId('f'), workerId: I(t.workerId), type: ['advance', 'bonus', 'deduction', 'payment'].includes(t.type) ? t.type : '', amount: N(t.amount), date: dk(t.date), monthKey: /^\d{4}-\d{1,2}$/.test(String(t.monthKey)) ? String(t.monthKey) : '', note: T(t.note, 200) }).filter(t => t && t.type && t.amount > 0 && t.workerId && t.monthKey).slice(0, 20000),
+                        days
+                    };
+                })(),
                 schema: 3
             };
             return s;
@@ -4039,6 +4350,13 @@
             cardFx: false,
             cardFxScheme: 'indigo',
             cardFxMotion: true,
+            cardFxStyle: 'classic',
+            headerFxStyle: 'classic',
+            headerFx: false,
+            headerFxColor: 'teal',
+            motivFx: false,
+            motivFxStyle: 'ring',
+            motivFxColor: 'violet',
             manager: null
         };
         let appSettings = sanitizeSettings(safeLoadJSON('sewing_app_settings_v13', null));
@@ -6157,6 +6475,13 @@
             document.getElementById('settingCardFx').checked = !!appSettings.cardFx;
             document.getElementById('settingCardFxScheme').value = appSettings.cardFxScheme || 'indigo';
             document.getElementById('settingCardFxMotion').value = appSettings.cardFxMotion === false ? 'off' : 'on';
+            document.getElementById('settingCardFxStyle').value = appSettings.cardFxStyle || 'classic';
+            document.getElementById('settingHeaderFxStyle').value = appSettings.headerFxStyle || 'classic';
+            document.getElementById('settingHeaderFx').checked = !!appSettings.headerFx;
+            document.getElementById('settingHeaderFxColor').value = appSettings.headerFxColor || 'teal';
+            document.getElementById('settingMotivFx').checked = !!appSettings.motivFx;
+            document.getElementById('settingMotivFxStyle').value = appSettings.motivFxStyle || 'ring';
+            document.getElementById('settingMotivFxColor').value = appSettings.motivFxColor || 'violet';
             updateCardFxPreviewStrip();
             document.getElementById('settingNewPin').value = '';
             document.getElementById('settingConfirmPin').value = '';
@@ -6196,15 +6521,30 @@
         const CARD_FX_COLORS = {
             indigo: ['#4f46e5', '#a855f7'], emerald: ['#059669', '#2dd4bf'], sky: ['#0284c7', '#6366f1'],
             amber: ['#f59e0b', '#ef4444'], rose: ['#e11d48', '#ec4899'], slate: ['#475569', '#94a3b8'],
+            teal: ['#0d9488', '#22d3ee'], fuchsia: ['#c026d3', '#f472b6'], lime: ['#65a30d', '#22c55e'], gold: ['#d97706', '#facc15'], sunset: ['#f97316', '#db2777'], royal: ['#4338ca', '#fbbf24'],
             multi: ['#4f46e5', '#059669', '#f59e0b', '#0284c7']
         };
-        function setCardFxAttrs(on, scheme, motion) {
+        function setCardFxAttrs(on, scheme, motion, style) {
             const b = document.body;
-            if (on) { b.dataset.cardfx = 'on'; b.dataset.fxscheme = scheme; b.dataset.fxmotion = motion ? 'on' : 'off'; }
-            else { delete b.dataset.cardfx; delete b.dataset.fxscheme; delete b.dataset.fxmotion; }
+            if (on) { b.dataset.cardfx = 'on'; b.dataset.fxscheme = scheme; b.dataset.fxmotion = motion ? 'on' : 'off'; b.dataset.fxstyle = style || 'classic'; }
+            else { delete b.dataset.cardfx; delete b.dataset.fxscheme; delete b.dataset.fxmotion; delete b.dataset.fxstyle; }
+        }
+        const HEADER_FX_COLORS = { teal: ['#0d9488', '#22d3ee'], orange: ['#ea580c', '#fbbf24'], fuchsia: ['#c026d3', '#f472b6'], lime: ['#65a30d', '#22c55e'], crimson: ['#be123c', '#f97316'], ocean: ['#0ea5e9', '#6366f1'], violet: ['#7c3aed', '#ec4899'], gold: ['#d97706', '#facc15'], forest: ['#16a34a', '#a3e635'], royal: ['#4338ca', '#fbbf24'], graphite: ['#334155', '#f59e0b'] };
+        function setHeaderFxAttrs(on, color, style) {
+            const b = document.body;
+            if (on) { b.dataset.hdrfx = 'on'; b.dataset.hdrfxc = color; b.dataset.hdrstyle = style || 'classic'; }
+            else { delete b.dataset.hdrfx; delete b.dataset.hdrfxc; delete b.dataset.hdrstyle; }
+        }
+        const MOTIV_FX_COLORS = { violet: ['#7c3aed', '#ec4899'], cyan: ['#0891b2', '#34d399'], gold: ['#d97706', '#facc15'], red: ['#dc2626', '#fb923c'], blue: ['#2563eb', '#38bdf8'], sunset: ['#f97316', '#db2777'], ocean: ['#0ea5e9', '#6366f1'], forest: ['#16a34a', '#a3e635'], candy: ['#14b8a6', '#f43f5e'], royal: ['#4338ca', '#fbbf24'], graphite: ['#334155', '#f59e0b'] };
+        function setMotivFxAttrs(on, style, color) {
+            const b = document.body;
+            if (on) { b.dataset.mfx = 'on'; b.dataset.mfxs = style; b.dataset.mfxc = color; }
+            else { delete b.dataset.mfx; delete b.dataset.mfxs; delete b.dataset.mfxc; }
         }
         function applyCardFx() {
-            setCardFxAttrs(!!appSettings.cardFx, appSettings.cardFxScheme || 'indigo', appSettings.cardFxMotion !== false);
+            setCardFxAttrs(!!appSettings.cardFx, appSettings.cardFxScheme || 'indigo', appSettings.cardFxMotion !== false, appSettings.cardFxStyle || 'classic');
+            setHeaderFxAttrs(!!appSettings.headerFx, appSettings.headerFxColor || 'teal', appSettings.headerFxStyle || 'classic');
+            setMotivFxAttrs(!!appSettings.motivFx, appSettings.motivFxStyle || 'ring', appSettings.motivFxColor || 'violet');
         }
         function updateCardFxPreviewStrip() {
             const el = document.getElementById('cardFxPreview'), sc = document.getElementById('settingCardFxScheme');
@@ -6212,10 +6552,22 @@
             const c = CARD_FX_COLORS[sc.value] || CARD_FX_COLORS.indigo;
             el.style.background = `linear-gradient(90deg, ${c.join(', ')})`;
             el.style.opacity = document.getElementById('settingCardFx').checked ? '1' : '.35';
+            const hp = document.getElementById('headerFxPreview'), hc = document.getElementById('settingHeaderFxColor');
+            if (hp && hc) {
+                hp.style.background = `linear-gradient(90deg, ${(HEADER_FX_COLORS[hc.value] || HEADER_FX_COLORS.teal).join(', ')})`;
+                hp.style.opacity = document.getElementById('settingHeaderFx').checked ? '1' : '.35';
+            }
+            const mp = document.getElementById('motivFxPreview'), mc = document.getElementById('settingMotivFxColor');
+            if (mp && mc) {
+                mp.style.background = `linear-gradient(90deg, ${(MOTIV_FX_COLORS[mc.value] || MOTIV_FX_COLORS.violet).join(', ')})`;
+                mp.style.opacity = document.getElementById('settingMotivFx').checked ? '1' : '.35';
+            }
         }
         function previewCardFx() {
             updateCardFxPreviewStrip();
-            setCardFxAttrs(document.getElementById('settingCardFx').checked, document.getElementById('settingCardFxScheme').value, document.getElementById('settingCardFxMotion').value !== 'off');
+            setCardFxAttrs(document.getElementById('settingCardFx').checked, document.getElementById('settingCardFxScheme').value, document.getElementById('settingCardFxMotion').value !== 'off', document.getElementById('settingCardFxStyle').value);
+            setHeaderFxAttrs(document.getElementById('settingHeaderFx').checked, document.getElementById('settingHeaderFxColor').value, document.getElementById('settingHeaderFxStyle').value);
+            setMotivFxAttrs(document.getElementById('settingMotivFx').checked, document.getElementById('settingMotivFxStyle').value, document.getElementById('settingMotivFxColor').value);
         }
 
         function saveAppSettings(event) {
@@ -6250,6 +6602,13 @@
             appSettings.cardFx = document.getElementById('settingCardFx').checked;
             appSettings.cardFxScheme = document.getElementById('settingCardFxScheme').value;
             appSettings.cardFxMotion = document.getElementById('settingCardFxMotion').value !== 'off';
+            appSettings.cardFxStyle = document.getElementById('settingCardFxStyle').value;
+            appSettings.headerFxStyle = document.getElementById('settingHeaderFxStyle').value;
+            appSettings.headerFx = document.getElementById('settingHeaderFx').checked;
+            appSettings.headerFxColor = document.getElementById('settingHeaderFxColor').value;
+            appSettings.motivFx = document.getElementById('settingMotivFx').checked;
+            appSettings.motivFxStyle = document.getElementById('settingMotivFxStyle').value;
+            appSettings.motivFxColor = document.getElementById('settingMotivFxColor').value;
 
             appSettings.ownerName = ownerNameVal;
             appSettings.ownerPhone = ownerPhoneVal;
@@ -9343,7 +9702,7 @@
         /* ==================== قابلیت کارفرما (مدیر کارگاه): بخش‌ها، پرسنل و ارجاع کار ==================== */
         var mgrTab = 'workers', mgrEditW = '', mgrEditS = '', mgrLastTab = '';
         var mgrFormPhoto; // undefined = بدون تغییر نسبت به عکس ذخیره‌شده؛ null = حذف؛ رشته = عکس جدید
-        const MGR_TABS = [['workers', 'fa-users', 'پرسنل'], ['sections', 'fa-sitemap', 'بخش‌ها']];
+        const MGR_TABS = [['workers', 'fa-users', 'پرسنل'], ['sections', 'fa-sitemap', 'بخش‌ها'], ['attendance', 'fa-calendar-check', 'حضور و غیاب'], ['finance', 'fa-coins', 'مالی']];
         const MI = 'w-full p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-sm bg-white dark:bg-slate-800 field-box-bg dark:text-slate-100 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all';
         var mgrVer = 0;
         function mgrId(p) { return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
@@ -9646,7 +10005,7 @@
         function mgrRender() {
             document.getElementById('mgrHeaderSub').innerText = `دوره‌ی گزارش: ${mgrMonthLabel()}`;
             document.getElementById('mgrTabs').innerHTML = MGR_TABS.map(([k, ic, t]) => `<button type="button" data-mgr="tab" data-k="${k}" class="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-bold ${k === mgrTab ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-b-2 border-purple-600' : 'text-slate-400 dark:text-slate-500'}"><i class="fa-solid ${ic}"></i> ${t}</button>`).join('');
-            const fn = { workers: mgrHtmlWorkers, sections: mgrHtmlSections }[mgrTab];
+            const fn = { workers: mgrHtmlWorkers, sections: mgrHtmlSections, finance: mgrHtmlFinance, attendance: mgrHtmlAttendance }[mgrTab];
             const bodyEl = document.getElementById('mgrBody'), keepTop = (mgrLastTab === mgrTab) ? bodyEl.scrollTop : 0;
             bodyEl.innerHTML = fn(); bodyEl.scrollTop = keepTop; mgrLastTab = mgrTab; mgrApplyMainView();
             const tabs = document.getElementById('mgrTabs'); tabs.setAttribute('role', 'tablist');
@@ -9697,6 +10056,8 @@
         }
         function mgrRemovePhoto() { mgrFormPhoto = null; mgrPaintPhotoBox(); }
 
+        const MGR_WAGE_TYPES = [['', '— نوع دستمزد —'], ['piece', 'کارمزدی'], ['daily', 'روزمزدی'], ['monthly', 'ماهانه (ثابت)']];
+        const mgrWageLabel = k => (MGR_WAGE_TYPES.find(x => x[0] === k && k) || [])[1] || '';
         function mgrHtmlWorkers() {
             const M = mgr(), e = M.workers.find(w => w.id === mgrEditW) || {};
             const secOpts = '<option value="">— بدون بخش —</option>' + M.sections.map(x => `<option value="${escapeHTML(x.id)}" ${e.sectionId === x.id ? 'selected' : ''}>${escapeHTML(x.name)}</option>`).join('');
@@ -9704,7 +10065,7 @@
                 const sc = mgrSection(w.sectionId);
                 return `<div class="rounded-xl border border-slate-300 dark:border-slate-600 p-3 flex items-start justify-between gap-2 ${w.active ? '' : 'opacity-60'}">
                     <div class="flex items-start gap-2.5 min-w-0">${mgrMiniAvatar(w, 40)}<div class="min-w-0"><p class="text-sm font-bold text-slate-800 dark:text-slate-100">${escapeHTML(w.name)} ${w.active ? '' : '<span class="text-[10px] text-rose-500">(غیرفعال)</span>'}</p>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400">${[sc ? escapeHTML(sc.name) : '', escapeHTML(w.role), w.startDate ? 'از ' + escapeHTML(w.startDate) : '', w.endDate ? 'تا ' + escapeHTML(w.endDate) : '', escapeHTML(w.phone)].filter(Boolean).join(' • ')}</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">${[sc ? escapeHTML(sc.name) : '', escapeHTML(w.role), mgrWageLabel(w.wageType) + (w.rate && w.wageType !== 'piece' ? ' ' + formatNumber(w.rate) : ''), w.startDate ? 'از ' + escapeHTML(w.startDate) : '', w.endDate ? 'تا ' + escapeHTML(w.endDate) : '', escapeHTML(w.phone)].filter(Boolean).join(' • ')}</p>
                     ${w.note ? `<p class="text-[11px] text-slate-400">${escapeHTML(w.note)}</p>` : ''}</div></div>
                     <div class="flex items-center gap-1 shrink-0">
                         <button type="button" data-mgr="w-dl" data-id="${escapeHTML(w.id)}" title="دانلود فایل این پرسنل" class="w-8 h-8 rounded-full text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/40"><i class="fa-solid fa-file-arrow-down text-xs"></i></button>
@@ -9728,6 +10089,8 @@
                     <input id="mgrWPhone" inputmode="tel" maxlength="40" placeholder="شماره تماس" value="${escapeHTML(e.phone || '')}" class="${MI}">
                     <select id="mgrWSection" class="${MI}">${secOpts}</select>
                     <input id="mgrWRole" maxlength="60" placeholder="سمت / مهارت (${escapeHTML(currentBusinessHints().role)})" value="${escapeHTML(e.role || '')}" class="${MI}">
+                    <input id="mgrWRate" data-thousands="1" inputmode="numeric" maxlength="15" placeholder="نرخ روزانه یا حقوق ماهانه (روزمزد/ماهانه)" value="${e.rate ? escapeHTML(formatNumber(e.rate)) : ''}" class="${MI}">
+                    <select id="mgrWWage" class="${MI}" aria-label="نوع دستمزد">${MGR_WAGE_TYPES.map(([k, t]) => `<option value="${k}" ${(e.wageType || '') === k ? 'selected' : ''}>${t}</option>`).join('')}</select>
                     <input id="mgrWStart" maxlength="10" inputmode="numeric" placeholder="شروع همکاری (مثلاً ۱۴۰۵/۰۱/۱۵)" value="${escapeHTML(e.startDate || '')}" class="${MI}">
                     <input id="mgrWEnd" maxlength="10" inputmode="numeric" placeholder="پایان همکاری (اختیاری)" value="${escapeHTML(e.endDate || '')}" class="${MI}">
                 </div>
@@ -9735,6 +10098,104 @@
                 <div class="flex gap-2"><button type="button" data-mgr="w-save" class="tactile-btn px-4 py-2 bg-purple-600 text-white rounded-xl text-xs font-medium">${e.id ? 'ذخیره' : 'افزودن'}</button>
                 ${e.id ? '<button type="button" data-mgr="w-cancel" class="px-4 py-2 border border-slate-400 rounded-xl text-xs text-slate-600 dark:text-slate-300">انصراف</button>' : ''}</div></div>
                 ${M.workers.length > 6 ? `<input placeholder="جستجوی پرسنل…" oninput="mgrFilterW(this.value)" class="${MI}">` : ''}<div id="mgrWList" class="space-y-2">${list || mgrEmpty('هنوز پرسنلی ثبت نشده است.')}</div>`;
+        }
+
+
+        /* ---------- حضور و غیاب پنل کارفرما ---------- */
+        const MGR_ATT = { p: ['حاضر', 'emerald'], t: ['تاخیر', 'amber'], l: ['مرخصی', 'sky'], a: ['غایب', 'rose'] };
+        const MGR_WEEKDAYS = ['دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه', 'یکشنبه'];
+        var mgrAttDate = '';
+        function mgrAtt() { const M = mgr(); if (!M.attendance) M.attendance = {}; return M.attendance; }
+        function mgrAttMinMap() { const M = mgr(); if (!M.attMin) M.attMin = {}; return M.attMin; }
+        function mgrAttMinGet(d, wid) { const m = mgr() && mgr().attMin; return (m && m[d] && m[d][wid]) || 0; }
+        function mgrAttMinSet(d, wid, n) {
+            const m = mgrAttMinMap(); n = Math.max(0, Math.min(1440, Math.floor(n) || 0));
+            if (n > 0) (m[d] || (m[d] = {}))[wid] = n;
+            else if (m[d]) { delete m[d][wid]; if (!Object.keys(m[d]).length) delete m[d]; }
+        }
+        function mgrJdnStr(j) { const d = d2j(j); return `${d.jy}/${String(d.jm).padStart(2, '0')}/${String(d.jd).padStart(2, '0')}`; }
+        function mgrAttCount(wid, mk) {
+            const c = { p: 0, t: 0, l: 0, a: 0, tMin: 0, lMin: 0 }, A = (mgr() && mgr().attendance) || {};
+            Object.keys(A).forEach(d => { const [y, m] = d.split('/').map(Number); if (`${y}-${m}` === mk && A[d][wid]) { const k = A[d][wid]; c[k]++; if (k === 't') c.tMin += mgrAttMinGet(d, wid); if (k === 'l') c.lMin += mgrAttMinGet(d, wid); } });
+            return c;
+        }
+        function mgrHtmlAttendance() {
+            const M = mgr(), A = mgrAtt(), mk = selectedMonthFilter;
+            if (!mgrAttDate) mgrAttDate = mgrDK(getCurrentJalaliInfo().fullDateStr);
+            const day = A[mgrAttDate] || {}, jdn = parseJalaliDateToJdn(mgrAttDate), wd = MGR_WEEKDAYS[((jdn % 7) + 7) % 7], fri = wd === 'جمعه';
+            const ws = M.workers.filter(w => w.active);
+            const btn = (w, k) => { const on = day[w.id] === k, onCls = { p: 'bg-emerald-500 border-emerald-500', t: 'bg-amber-500 border-amber-500', l: 'bg-sky-500 border-sky-500', a: 'bg-rose-500 border-rose-500' }[k]; return `<button type="button" data-mgr="a-set" data-id="${escapeHTML(w.id)}" data-st="${k}" aria-pressed="${on}" class="flex-1 py-1.5 rounded-lg border text-[11px] ${on ? onCls + ' text-white font-bold' : 'border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400'}">${MGR_ATT[k][0]}</button>`; };
+            const durRow = w => {
+                const k = day[w.id]; if (k !== 't' && k !== 'l') return '';
+                const mins = mgrAttMinGet(mgrAttDate, w.id), h = Math.floor(mins / 60), mm = mins % 60, inp = 'w-14 p-1.5 border border-slate-400 dark:border-slate-500 rounded-lg text-center text-xs bg-white dark:bg-slate-800 dark:text-slate-100';
+                return `<div class="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400"><span>${k === 't' ? 'مدت تاخیر' : 'مدت مرخصی'}:</span>
+                    <input type="text" inputmode="numeric" maxlength="2" placeholder="ساعت" value="${h ? toPersianDigits(h) : ''}" data-mgr-change="a-minh" data-id="${escapeHTML(w.id)}" class="${inp}">
+                    <input type="text" inputmode="numeric" maxlength="2" placeholder="دقیقه" value="${mm ? toPersianDigits(mm) : ''}" data-mgr-change="a-minm" data-id="${escapeHTML(w.id)}" class="${inp}">
+                    ${k === 'l' && !mins ? '<span class="text-sky-600 dark:text-sky-400">(خالی = تمام روز)</span>' : mins ? `<span class="font-bold">${formatMinutesDuration(mins)}</span>` : ''}</div>`;
+            };
+            const rows = ws.map(w => `<div class="rounded-xl border border-slate-300 dark:border-slate-600 p-2.5 space-y-2"><div class="flex items-center gap-2">${mgrMiniAvatar(w, 30)}<p class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">${escapeHTML(w.name)}</p></div><div class="flex gap-1.5">${['p', 't', 'l', 'a'].map(k => btn(w, k)).join('')}</div>${durRow(w)}</div>`).join('');
+            const cnt = Object.keys(MGR_ATT).reduce((o, k) => (o[k] = ws.filter(w => day[w.id] === k).length, o), {});
+            const sumRows = ws.map(w => { const c = mgrAttCount(w.id, mk); return `<tr class="border-t border-slate-200 dark:border-slate-700"><td class="p-2 text-right">${escapeHTML(w.name)}</td><td class="p-2 text-emerald-600">${toPersianDigits(c.p)}</td><td class="p-2 text-amber-600">${toPersianDigits(c.t)}${c.tMin ? `<span class="block text-[10px] opacity-80">${formatMinutesDuration(c.tMin)}</span>` : ''}</td><td class="p-2 text-sky-600">${toPersianDigits(c.l)}${c.lMin ? `<span class="block text-[10px] opacity-80">${formatMinutesDuration(c.lMin)}</span>` : ''}</td><td class="p-2 text-rose-600">${toPersianDigits(c.a)}</td></tr>`; }).join('');
+            return `<div class="flex items-center gap-2">
+                    <button type="button" data-mgr="a-next" title="روز بعد" class="w-9 h-9 shrink-0 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-600 dark:text-slate-300"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+                    <input id="mgrADate" maxlength="10" inputmode="numeric" value="${escapeHTML(toPersianDigits(mgrAttDate))}" data-mgr-change="a-date" class="${MI} text-center">
+                    <button type="button" data-mgr="a-prev" title="روز قبل" class="w-9 h-9 shrink-0 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-600 dark:text-slate-300"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                    <button type="button" data-mgr="a-today" class="tactile-btn shrink-0 px-3 h-9 rounded-xl border border-purple-500 text-purple-700 dark:text-purple-300 text-xs">امروز</button></div>
+                <p class="text-[11px] text-center ${fri ? 'text-rose-500' : 'text-slate-500 dark:text-slate-400'}">${wd}${fri ? ' (تعطیل)' : ''} • حاضر ${toPersianDigits(cnt.p)} • تاخیر ${toPersianDigits(cnt.t)} • مرخصی ${toPersianDigits(cnt.l)} • غایب ${toPersianDigits(cnt.a)}</p>
+                ${ws.length ? `<button type="button" data-mgr="a-all" class="tactile-btn w-full py-2 rounded-xl bg-emerald-600 text-white text-xs font-medium">همه حاضر (بدون وضعیت قبلی)</button>` : ''}
+                <div class="space-y-2">${rows || mgrEmpty('ابتدا پرسنل فعال را در تب «پرسنل» اضافه کنید.')}</div>
+                ${ws.length ? `<h4 class="text-xs font-bold text-slate-700 dark:text-slate-200 pt-1">خلاصه‌ی ${mgrMonthLabel()}</h4><div class="overflow-x-auto rounded-xl border border-slate-300 dark:border-slate-600"><table class="w-full text-center text-[11px]"><thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"><tr><th class="p-2 text-right">پرسنل</th><th class="p-2">حاضر</th><th class="p-2">تاخیر</th><th class="p-2">مرخصی</th><th class="p-2">غایب</th></tr></thead><tbody>${sumRows}</tbody></table></div><p class="text-[11px] text-slate-400 text-center">برای روزمزدها، روز کارکرد در بخش مالی از روزهای «حاضر» و «تاخیر» محاسبه می‌شود.</p>` : ''}`;
+        }
+
+        /* ---------- بخش مالی پنل کارفرما ---------- */
+        const MGR_FIN_TYPES = { advance: ['مساعده', 'text-rose-600 dark:text-rose-400'], bonus: ['پاداش', 'text-emerald-600 dark:text-emerald-400'], deduction: ['کسری / جریمه', 'text-amber-600 dark:text-amber-400'], payment: ['پرداخت حقوق', 'text-indigo-600 dark:text-indigo-400'] };
+        function mgrFin() { const M = mgr(); if (!M.finance) M.finance = { txns: [], days: {} }; return M.finance; }
+        function mgrFinCalc(w, mk) {
+            const F = mgrFin(), sum = t => F.txns.filter(x => x.workerId === w.id && x.monthKey === mk && x.type === t).reduce((a, x) => a + x.amount, 0);
+            const at = mgrAttCount(w.id, mk), daysAuto = (at.p + at.t + at.l + at.a) > 0, days = daysAuto ? at.p + at.t : (F.days[w.id + '|' + mk] || 0);
+            let earn = 0;
+            if (w.wageType === 'daily') earn = (w.rate || 0) * days;
+            else if (w.wageType === 'monthly') earn = w.rate || 0;
+            else earn = allRecords.filter(r => String(r.workerId || '') === w.id && r.monthKey === mk).reduce((a, r) => a + (typeof r.totalPrice === 'number' ? r.totalPrice : 0), 0);
+            const bonus = sum('bonus'), deduction = sum('deduction'), advance = sum('advance'), payment = sum('payment');
+            return { earn, days, daysAuto, bonus, deduction, advance, payment, remain: earn + bonus - deduction - advance - payment };
+        }
+        function mgrHtmlFinance() {
+            const M = mgr(), F = mgrFin(), mk = selectedMonthFilter, cur = escapeHTML(appSettings.currency || 'تومان'), f = formatNumber;
+            const ws = M.workers.filter(w => w.active || F.txns.some(x => x.workerId === w.id && x.monthKey === mk));
+            const rows = ws.map(w => ({ w, c: mgrFinCalc(w, mk) }));
+            const tot = rows.reduce((a, r) => ({ earn: a.earn + r.c.earn + r.c.bonus - r.c.deduction, adv: a.adv + r.c.advance, pay: a.pay + r.c.payment, remain: a.remain + r.c.remain }), { earn: 0, adv: 0, pay: 0, remain: 0 });
+            const wOpts = ws.map(w => `<option value="${escapeHTML(w.id)}">${escapeHTML(w.name)}</option>`).join('');
+            const tOpts = Object.keys(MGR_FIN_TYPES).map(k => `<option value="${k}">${MGR_FIN_TYPES[k][0]}</option>`).join('');
+            const cards = rows.map(({ w, c }) => `<div class="rounded-xl border border-slate-300 dark:border-slate-600 p-3 space-y-2">
+                <div class="flex items-center justify-between gap-2"><div class="flex items-center gap-2 min-w-0">${mgrMiniAvatar(w, 34)}<div class="min-w-0"><p class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">${escapeHTML(w.name)}</p><p class="text-[11px] text-slate-500 dark:text-slate-400">${mgrWageLabel(w.wageType) || 'کارمزدی (از کارکردها)'}${w.wageType && w.wageType !== 'piece' ? (w.rate ? ' • ' + f(w.rate) + ' ' + cur : ' • نرخ ثبت نشده') : ''}</p></div></div>
+                ${w.wageType === 'daily' && c.daysAuto ? `<span class="text-[11px] text-slate-500 shrink-0">روز کارکرد: <b>${toPersianDigits(c.days)}</b> (از حضور و غیاب)</span>` : w.wageType === 'daily' ? `<label class="flex items-center gap-1 text-[11px] text-slate-500 shrink-0">روز کارکرد <input type="text" inputmode="numeric" maxlength="2" value="${c.days ? toPersianDigits(c.days) : ''}" data-mgr-change="f-days" data-id="${escapeHTML(w.id)}" class="w-14 p-1.5 border border-slate-400 dark:border-slate-500 rounded-lg text-center text-xs bg-white dark:bg-slate-800 dark:text-slate-100"></label>` : ''}</div>
+                <div class="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px] text-slate-600 dark:text-slate-300">
+                    <span>${w.wageType === 'daily' || w.wageType === 'monthly' ? 'حقوق' : 'کارکرد'}: <b>${f(c.earn)}</b></span><span>پاداش: <b>${f(c.bonus)}</b></span>
+                    <span>مساعده: <b>${f(c.advance)}</b></span><span>کسری: <b>${f(c.deduction)}</b></span>
+                    <span class="col-span-2">پرداخت‌شده: <b>${f(c.payment)}</b></span></div>
+                <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-slate-700"><span class="text-xs font-bold ${c.remain > 0 ? 'text-emerald-600 dark:text-emerald-400' : c.remain < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-500'}">مانده: ${f(Math.abs(c.remain))} ${cur}${c.remain < 0 ? ' (بدهکار)' : ''}</span>
+                ${c.remain > 0 ? `<button type="button" data-mgr="f-settle" data-id="${escapeHTML(w.id)}" class="tactile-btn px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-[11px]">تسویه‌ی مانده</button>` : ''}</div></div>`).join('');
+            const tx = F.txns.filter(x => x.monthKey === mk).slice().reverse().map(x => {
+                const w = mgrWorker(x.workerId), t = MGR_FIN_TYPES[x.type];
+                return `<div class="flex items-center justify-between gap-2 rounded-xl border border-slate-300 dark:border-slate-600 p-2.5"><div class="min-w-0"><p class="text-xs font-bold ${t[1]}">${t[0]} • ${f(x.amount)} ${cur}</p><p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${escapeHTML(w ? w.name : 'حذف‌شده')}${x.date ? ' • ' + escapeHTML(x.date) : ''}${x.note ? ' • ' + escapeHTML(x.note) : ''}</p></div>
+                    <button type="button" data-mgr="f-del" data-id="${escapeHTML(x.id)}" title="حذف" class="w-8 h-8 shrink-0 rounded-full text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40"><i class="fa-solid fa-trash text-xs"></i></button></div>`;
+            }).join('');
+            return `<div class="grid grid-cols-2 gap-2">${mgrStat('مجموع حقوق و کارکرد', f(tot.earn) + ' ' + cur, 'text-indigo-600 dark:text-indigo-400')}${mgrStat('مساعده‌ها', f(tot.adv) + ' ' + cur, 'text-rose-600 dark:text-rose-400')}${mgrStat('پرداخت‌شده', f(tot.pay) + ' ' + cur, 'text-slate-700 dark:text-slate-200')}${mgrStat('مانده‌ی قابل پرداخت', f(tot.remain) + ' ' + cur, 'text-emerald-600 dark:text-emerald-400')}</div>
+                <p class="text-[11px] text-slate-400 text-center">دوره‌ی مالی: ${mgrMonthLabel()}</p>
+                <div class="space-y-2 bg-slate-50 dark:bg-slate-800/40 rounded-xl p-3 border border-slate-300 dark:border-slate-600">
+                    <h4 class="text-xs font-bold text-slate-700 dark:text-slate-200">ثبت تراکنش</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <select id="mgrFWorker" class="${MI}"><option value="">— انتخاب پرسنل —</option>${wOpts}</select>
+                        <select id="mgrFType" class="${MI}">${tOpts}</select>
+                        <input id="mgrFAmount" data-thousands="1" inputmode="numeric" maxlength="15" placeholder="مبلغ (${cur})" class="${MI}">
+                        <input id="mgrFDate" maxlength="10" inputmode="numeric" value="${escapeHTML(getCurrentJalaliInfo().fullDateStr)}" class="${MI}">
+                    </div>
+                    <input id="mgrFNote" maxlength="200" placeholder="توضیحات (اختیاری)" class="${MI}">
+                    <button type="button" data-mgr="f-add" class="tactile-btn px-4 py-2 bg-purple-600 text-white rounded-xl text-xs font-medium">ثبت</button>
+                </div>
+                <div class="space-y-2">${cards || mgrEmpty('ابتدا پرسنل را در تب «پرسنل» اضافه کنید.')}</div>
+                ${tx ? `<h4 class="text-xs font-bold text-slate-700 dark:text-slate-200 pt-1">تراکنش‌های این ماه</h4><div class="space-y-2">${tx}</div>` : ''}`;
         }
 
         function mgrHtmlSections() {
@@ -9764,7 +10225,7 @@
                 const sd = mgrDK(val('mgrWStart')), ed = mgrDK(val('mgrWEnd'));
                 if ((val('mgrWStart').trim() && !sd) || (val('mgrWEnd').trim() && !ed)) return showFeedbackBanner('تاریخ شروع/پایان همکاری را به شکل ۱۴۰۵/۰۱/۱۵ وارد کنید.', 'warn');
                 if (sd && ed && sd > ed) return showFeedbackBanner('تاریخ پایان همکاری نباید قبل از شروع باشد.', 'warn');
-                const d = { name: name.slice(0, 100), phone: val('mgrWPhone').trim().slice(0, 40), sectionId: val('mgrWSection'), role: val('mgrWRole').trim().slice(0, 60), startDate: mgrDK(val('mgrWStart')), endDate: mgrDK(val('mgrWEnd')), note: val('mgrWNote').trim().slice(0, 300),
+                const d = { name: name.slice(0, 100), phone: val('mgrWPhone').trim().slice(0, 40), sectionId: val('mgrWSection'), role: val('mgrWRole').trim().slice(0, 60), wageType: ['piece', 'daily', 'monthly'].includes(val('mgrWWage')) ? val('mgrWWage') : '', rate: parsePersianInt(val('mgrWRate')), startDate: mgrDK(val('mgrWStart')), endDate: mgrDK(val('mgrWEnd')), note: val('mgrWNote').trim().slice(0, 300),
                     photo: mgrFormPhoto !== undefined ? mgrFormPhoto : ((mgrWorker(mgrEditW) || {}).photo || null) };
                 if (mgrEditW) {
                     const w = mgrWorker(mgrEditW); Object.assign(w, d);
@@ -9800,6 +10261,49 @@
                     M.sections = M.sections.filter(y => y.id !== id); M.workers.forEach(w => { if (w.sectionId === id) w.sectionId = ''; });
                     mgrSave(); applyManagerToUI(); mgrRender();
                 });
+            }
+            else if (a === 'a-set') {
+                const A = mgrAtt(), d = A[mgrAttDate] || (A[mgrAttDate] = {});
+                if (!mgrWorker(id) || !MGR_ATT[st]) return;
+                if (d[id] === st) delete d[id]; else d[id] = st;
+                if (d[id] !== 't' && d[id] !== 'l') mgrAttMinSet(mgrAttDate, id, 0);
+                if (!Object.keys(d).length) delete A[mgrAttDate];
+            }
+            else if (a === 'a-minh' || a === 'a-minm') {
+                const cur = mgrAttMinGet(mgrAttDate, id), v = parsePersianInt(st);
+                const n = a === 'a-minh' ? Math.min(v, 23) * 60 + cur % 60 : Math.floor(cur / 60) * 60 + Math.min(v, 59);
+                mgrAttMinSet(mgrAttDate, id, n);
+            }
+            else if (a === 'a-all') {
+                const A = mgrAtt(), d = A[mgrAttDate] || (A[mgrAttDate] = {});
+                M.workers.filter(w => w.active && !d[w.id]).forEach(w => { d[w.id] = 'p'; });
+                if (!Object.keys(d).length) delete A[mgrAttDate];
+            }
+            else if (a === 'a-prev' || a === 'a-next') { const j = parseJalaliDateToJdn(mgrAttDate); if (j) mgrAttDate = mgrJdnStr(j + (a === 'a-next' ? 1 : -1)); return mgrRender(); }
+            else if (a === 'a-today') { mgrAttDate = mgrDK(getCurrentJalaliInfo().fullDateStr); return mgrRender(); }
+            else if (a === 'a-date') {
+                const d = mgrDK(st);
+                if (!d) { showFeedbackBanner('تاریخ را به شکل ۱۴۰۵/۰۱/۱۵ وارد کنید.', 'warn'); return mgrRender(); }
+                mgrAttDate = d; return mgrRender();
+            }
+            else if (a === 'f-add') {
+                const F = mgrFin(), wid = val('mgrFWorker'), type = val('mgrFType'), amount = parsePersianInt(val('mgrFAmount')), ds = val('mgrFDate').trim(), date = mgrDK(ds);
+                if (!mgrWorker(wid)) return showFeedbackBanner('پرسنل را انتخاب کنید.', 'warn');
+                if (!MGR_FIN_TYPES[type]) return showFeedbackBanner('نوع تراکنش نامعتبر است.', 'warn');
+                if (amount <= 0) return showFeedbackBanner('مبلغ را وارد کنید.', 'warn');
+                if (ds && !date) return showFeedbackBanner('تاریخ را به شکل ۱۴۰۵/۰۱/۱۵ وارد کنید.', 'warn');
+                F.txns.push({ id: mgrId('f'), workerId: wid, type, amount, date, monthKey: selectedMonthFilter, note: val('mgrFNote').trim().slice(0, 200) });
+                showFeedbackBanner('تراکنش ثبت شد.', 'success');
+            }
+            else if (a === 'f-del') { const F = mgrFin(); F.txns = F.txns.filter(x => x.id !== id); }
+            else if (a === 'f-settle') {
+                const w = mgrWorker(id); if (!w) return;
+                const c = mgrFinCalc(w, selectedMonthFilter); if (c.remain <= 0) return;
+                mgrFin().txns.push({ id: mgrId('f'), workerId: w.id, type: 'payment', amount: c.remain, date: mgrDK(getCurrentJalaliInfo().fullDateStr), monthKey: selectedMonthFilter, note: 'تسویه‌ی مانده' });
+                showFeedbackBanner('مانده تسویه شد.', 'success');
+            }
+            else if (a === 'f-days') {
+                const n = Math.min(31, parsePersianInt(st)); mgrFin().days[id + '|' + selectedMonthFilter] = n;
             }
             else if (a === 'asg') {
                 const r = allRecords.find(x => String(x.id) === String(id)), w = mgrWorker(st); if (!r || !w) return;

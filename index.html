@@ -2438,7 +2438,7 @@
                         </div>
                     </div>
                     <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-300 dark:border-slate-600 space-y-2.5">
-                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">پوشه ذخیره داده (پوشه‌ی جدا برای هر ماه)</span>
+                        <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">پوشه ذخیره داده (زیرپوشه‌ی جدا برای «کارفرما» و «پرسنل»؛ در هرکدام پوشه‌ی جدا برای هر ماه)</span>
                         <p id="dataFolderStatusText" class="text-xs font-semibold leading-relaxed">در حال بررسی...</p>
                         <div class="flex flex-wrap gap-2">
                             <button type="button" id="dataFolderChooseBtn" onclick="chooseStorageFolder()" class="px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-medium transition-colors">انتخاب پوشه ذخیره داده</button>
@@ -2826,15 +2826,75 @@
         }
 
         // کارت وضعیت بالای تب «دستگاه»: حالت اجرا (نصب‌شده/داخل مرورگر) و وضعیت اتصال اینترنت
-        function renderDeviceStatusCard() {
+        /* وضعیت اتصال: navigator.onLine فقط می‌گوید دستگاه به «یک شبکه» وصل است (وای‌فای/دیتا/VPN)، نه اینکه
+           اینترنت واقعاً در دسترس است؛ برای همین با VPN روشن یا وای‌فای بدون اینترنت هم «true» می‌ماند.
+           پس اگر مرورگر خودش آنلاین گفت، یک درخواست سبک واقعی (بدون ذخیره، با مهلت ۴ ثانیه) هم زده می‌شود. */
+        const NET_PROBE_URLS = ['https://www.gstatic.com/generate_204', 'https://www.cloudflare.com/cdn-cgi/trace'];
+        let _netProbe = { at: 0, ok: null, nav: null, busy: null };
+        function _netPing(url) {
+            return new Promise(resolve => {
+                const ctl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+                const t = setTimeout(() => { if (ctl) ctl.abort(); resolve(false); }, 4000);
+                fetch(url + (url.indexOf('?') > -1 ? '&' : '?') + '_netprobe=1&_=' + Date.now(), { mode: 'no-cors', cache: 'no-store', signal: ctl ? ctl.signal : undefined })
+                    .then(() => { clearTimeout(t); resolve(true); }, () => { clearTimeout(t); resolve(false); });
+            });
+        }
+        // سرویس‌ورکر قدیمی هر درخواست را کش می‌کرد؛ بررسی دقیق فقط وقتی انجام می‌شود که SW فعلی بتواند آن را دست‌نخورده رد کند
+        let _swProbeOk = null;
+        function swAllowsProbe() {
+            if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return Promise.resolve(true);
+            if (_swProbeOk === true) return Promise.resolve(true);
+            return new Promise(resolve => {
+                let t = 0;
+                try {
+                    const ch = new MessageChannel();
+                    t = setTimeout(() => resolve(false), 700);
+                    ch.port1.onmessage = e => { clearTimeout(t); resolve(!!(e.data && e.data.netProbeBypass)); };
+                    navigator.serviceWorker.controller.postMessage({ type: 'GET_SW_FEATURES' }, [ch.port2]);
+                } catch (e) { clearTimeout(t); resolve(false); }
+            }).then(v => { if (v) _swProbeOk = true; return v; });
+        }
+        if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('controllerchange', () => { _swProbeOk = null; _netProbe.at = 0; });
+        // نتیجه: true = اینترنت هست، false = نیست، null = قابل بررسی دقیق نیست (SW قدیمی)
+        async function probeRealInternet() {
+            const nav = !!navigator.onLine;
+            if (!nav) { _netProbe = { at: Date.now(), ok: false, nav: false, busy: null }; return false; }
+            if (!(await swAllowsProbe())) return null;
+            return probeRealInternetNow(nav);
+        }
+        function probeRealInternetNow(nav) {
+            if (_netProbe.busy) return _netProbe.busy;
+            if (_netProbe.ok !== null && _netProbe.nav === nav && Date.now() - _netProbe.at < 8000) return Promise.resolve(_netProbe.ok);
+            _netProbe.busy = new Promise(resolve => {
+                let left = NET_PROBE_URLS.length, done = false;
+                NET_PROBE_URLS.forEach(u => _netPing(u).then(ok => {
+                    if (done) return;
+                    if (ok) { done = true; resolve(true); } else if (--left === 0) { done = true; resolve(false); }
+                }));
+            }).then(ok => { _netProbe = { at: Date.now(), ok, nav, busy: null }; return ok; });
+            return _netProbe.busy;
+        }
+        let _netRenderSeq = 0;
+        async function renderDeviceStatusCard() {
             const modeEl = document.getElementById('deviceRunModeText');
             if (modeEl) modeEl.innerText = isStandalonePWA() ? 'نصب‌شده روی دستگاه' : 'در حال اجرا داخل مرورگر';
             const netEl = document.getElementById('deviceNetStatusText');
-            if (netEl) {
-                netEl.innerText = navigator.onLine ? 'آنلاین' : 'آفلاین';
-                netEl.className = 'font-bold ' + (navigator.onLine ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400');
-            }
+            if (!netEl) return;
+            const seq = ++_netRenderSeq;
+            const show = (txt, cls) => { if (seq !== _netRenderSeq) return; netEl.innerText = txt; netEl.className = 'font-bold ' + cls; };
+            const RED = 'text-rose-600 dark:text-rose-400', GREEN = 'text-emerald-600 dark:text-emerald-400';
+            if (!navigator.onLine) { show('آفلاین', RED); probeRealInternet(); return; }
+            if (_netProbe.ok === null || _netProbe.nav !== true) show('در حال بررسی...', 'text-slate-400');
+            let ok = false;
+            try { ok = await probeRealInternet(); } catch (e) { ok = false; }
+            if (ok === null) { show('آنلاین (تأییدنشده)', 'text-amber-600 dark:text-amber-400'); return; }
+            show(ok ? 'آنلاین' : 'آفلاین (بدون دسترسی به اینترنت)', ok ? GREEN : RED);
         }
+        // وقتی تب «دستگاه» جلوی چشم است، وضعیت هر ۱۵ ثانیه دوباره بررسی می‌شود
+        setInterval(() => {
+            const el = document.getElementById('deviceNetStatusText');
+            if (el && el.offsetParent !== null && !document.hidden) renderDeviceStatusCard();
+        }, 15000);
 
         function toggleIosInstallGuide() {
             const el = document.getElementById('iosInstallGuideText');
@@ -4941,6 +5001,13 @@
         /* ============ مدیریت ذخیره‌سازی خودکار در پوشه‌ی دستگاه (پوشه‌ی جدا برای هر ماه) ============ */
         let appDirHandle = null;
         let dirHandlePermissionState = 'unknown'; // 'granted' | 'prompt' | 'denied' | 'unknown'
+        /* ---- پوشه‌ی جدا برای هر حالت ----
+         * داخل پوشه‌ی ریشه (پوشه‌ی انتخاب‌شده / Documents/<پوشه ذخیره داده>) دو پوشه ساخته می‌شود:
+         *   «کارفرما» ← فایل‌های حالت کارفرما،   «پرسنل» ← فایل‌های حالت پرسنل
+         * فایل‌های هر حالت (پوشه‌ی ماه‌ها، تنظیمات، backups، فایل‌های پرسنل) فقط داخل پوشه‌ی همان حالت نوشته می‌شود. */
+        const MODE_FOLDER_EMPLOYER = 'کارفرما';
+        const MODE_FOLDER_WORKER = 'پرسنل';
+        let folderModeName = null; // حالتی که آخرین بار فایل‌های پوشه برایش نوشته شده
         // در اپ نصب‌شده (Capacitor/WebView اندروید)، ورودی «showDirectoryPicker» و «navigator.share» با فایل
         // ممکن است در پنجره وجود داشته باشند اما هر بار با خطا مواجه شوند؛ چون این دو قابلیت فقط داخل
         // مرورگر واقعی (کروم/اج) کار می‌کنند، نه داخل پوسته‌ی WebView برنامه‌ی نصب‌شده. برای همین این دو
@@ -4961,6 +5028,17 @@
         const NATIVE_STORAGE_FOLDER_BASE = 'کارگاه_هوشمند_ذخیره_داده';
         function storageFolderIsActive() {
             return isRunningInInstalledApp() ? nativeStorageFolderActive : !!appDirHandle;
+        }
+        function currentModeFolderName() { return mgrOn() ? MODE_FOLDER_EMPLOYER : MODE_FOLDER_WORKER; }
+        function isModeFolderName(n) { return n === MODE_FOLDER_EMPLOYER || n === MODE_FOLDER_WORKER; }
+        function nativeModeBase() { return `${NATIVE_STORAGE_FOLDER_BASE}/${currentModeFolderName()}`; }
+        async function getModeDirHandle(create) { return appDirHandle.getDirectoryHandle(currentModeFolderName(), { create: create !== false }); }
+        function rotatingBackupDateKey() { return 'sewing_last_rotating_backup_date_' + (mgrOn() ? 'employer' : 'worker'); }
+        // با تغییر حالت (کارفرما ⇄ پرسنل) کش نوشتن پاک می‌شود تا همه‌ی فایل‌ها در پوشه‌ی حالت جدید نوشته شوند
+        function syncFolderModeCache() {
+            const m = currentModeFolderName();
+            if (folderModeName !== m) { if (folderModeName !== null) resetFolderWriteCache(); folderModeName = m; }
+            return m;
         }
 
         /*
@@ -4985,7 +5063,7 @@
                 if (FS) {
                     try {
                         const monthFolder = filename.replace(/\.json$/i, '');
-                        const path = `کارگاه_هوشمند_پشتیبان/${monthFolder}/${filename}`;
+                        const path = `کارگاه_هوشمند_پشتیبان/${currentModeFolderName()}/${monthFolder}/${filename}`;
                         await FS.writeFile({ path, data: jsonString, directory: 'DOCUMENTS', encoding: 'utf8', recursive: true });
                         updateBackupFolderStatusUI();
                         if (onSuccess) onSuccess('native-documents');
@@ -5007,7 +5085,8 @@
                     if (perm === 'granted') {
                         // از این پس فایل پشتیبان هر ماه داخل زیرپوشه‌ی مخصوص همان ماه نوشته می‌شود، نه در ریشه‌ی پوشه پشتیبان
                         const monthFolderName = filename.replace(/\.json$/i, '');
-                        const monthDirHandle = await backupDirHandle.getDirectoryHandle(monthFolderName, { create: true });
+                        const modeBackupDir = await backupDirHandle.getDirectoryHandle(currentModeFolderName(), { create: true });
+                        const monthDirHandle = await modeBackupDir.getDirectoryHandle(monthFolderName, { create: true });
                         const fileHandle = await monthDirHandle.getFileHandle(filename, { create: true });
                         const writable = await fileHandle.createWritable();
                         await writable.write(jsonString);
@@ -5143,10 +5222,10 @@
                 const perm = await appDirHandle.queryPermission({ mode: 'readwrite' });
                 if (perm !== 'granted') return false;
                 const todayStr = currentJalali.fullDateStr;
-                const lastRotatingDate = localStorage.getItem('sewing_last_rotating_backup_date');
+                const lastRotatingDate = localStorage.getItem(rotatingBackupDateKey());
                 if (!force && lastRotatingDate === todayStr) return false; // حداکثر یک بار در روز (به‌صورت خودکار)
 
-                const backupsDir = await appDirHandle.getDirectoryHandle('backups', { create: true });
+                const backupsDir = await (await getModeDirHandle(true)).getDirectoryHandle('backups', { create: true });
                 const monthTag = toEnglishDigits(currentJalali.yearEn) + '-' + String(currentJalali.monthNum).padStart(2, '0'); // یک فایل برای کل ماه؛ هر بار همان فایل به‌روزرسانی می‌شود
                 const fileHandle = await backupsDir.getFileHandle(`نسخه_${monthTag}.json`, { create: true });
                 const writable = await fileHandle.createWritable();
@@ -5168,7 +5247,7 @@
                     try { await backupsDir.removeEntry(name); } catch (e) { /* بی‌اهمیت */ }
                 }
 
-                localStorage.setItem('sewing_last_rotating_backup_date', todayStr);
+                localStorage.setItem(rotatingBackupDateKey(), todayStr);
                 addLog(`نسخه پشتیبان ماه جاری در پوشه «backups» به‌روزرسانی شد (نسخه‌ی ${ROTATING_BACKUP_KEEP_COUNT} ماه اخیر نگه‌داری می‌شود).`, 'success');
                 return true;
             } catch (e) {
@@ -5184,10 +5263,10 @@
             if (!FS) return false;
             try {
                 const todayStr = currentJalali.fullDateStr;
-                const lastRotatingDate = localStorage.getItem('sewing_last_rotating_backup_date');
+                const lastRotatingDate = localStorage.getItem(rotatingBackupDateKey());
                 if (!force && lastRotatingDate === todayStr) return false; // حداکثر یک بار در روز (به‌صورت خودکار)
 
-                const backupsPath = `${NATIVE_STORAGE_FOLDER_BASE}/backups`;
+                const backupsPath = `${nativeModeBase()}/backups`;
                 const monthTag = toEnglishDigits(currentJalali.yearEn) + '-' + String(currentJalali.monthNum).padStart(2, '0');
                 const fileName = `نسخه_${monthTag}.json`;
                 await FS.writeFile({
@@ -5212,7 +5291,7 @@
                     }
                 } catch (e) { /* بی‌اهمیت؛ پوشه‌ی backups تازه ساخته شده */ }
 
-                localStorage.setItem('sewing_last_rotating_backup_date', todayStr);
+                localStorage.setItem(rotatingBackupDateKey(), todayStr);
                 addLog(`نسخه پشتیبان ماه جاری در پوشه ذخیره داده (backups) به‌روزرسانی شد (نسخه‌ی ${ROTATING_BACKUP_KEEP_COUNT} ماه اخیر نگه‌داری می‌شود).`, 'success');
                 return true;
             } catch (e) {
@@ -5292,6 +5371,7 @@
             mgrWrittenSig.clear(); mgrKnown.clear(); mgrPending = []; mgrFolderOk = false;
             folderSettingsSig = null;
             folderStaleScanDone = false;
+            folderModeName = null;
         }
 
         function monthRecordsSignature(list) {
@@ -5327,6 +5407,8 @@
             const FS = getNativePlugin('Filesystem');
             if (!FS) { nativeStorageFolderActive = false; updateStorageFolderStatusUI(); return; }
             try {
+                syncFolderModeCache();
+                const modeBase = nativeModeBase();
                 const recordsSnapshot = allRecords.slice();
                 const notesSnapshot = dailyNotes.slice();
                 const monthKeys = new Set(recordsSnapshot.map(r => r.monthKey));
@@ -5339,7 +5421,7 @@
                     const [year, monthNumStr] = String(monthKey).split('-');
                     const monthNum = parseInt(monthNumStr, 10);
                     const monthName = PERSIAN_MONTHS[monthNum - 1] || 'نامشخص';
-                    const path = `${NATIVE_STORAGE_FOLDER_BASE}/${getMonthFolderName(monthKey)}/${getMonthFileName(monthKey)}`;
+                    const path = `${modeBase}/${getMonthFolderName(monthKey)}/${getMonthFileName(monthKey)}`;
                     await FS.writeFile({
                         path, directory: 'DOCUMENTS', encoding: 'utf8', recursive: true,
                         data: JSON.stringify({ app: 'sewing_statistics', monthKey, monthName, year, updatedAt: new Date().toISOString(), records: monthRecords }, null, 2)
@@ -5347,12 +5429,12 @@
                     folderWrittenSig.set(monthKey, sig);
                 }
 
-                mgrFolderOk = await mgrSyncWorkerFiles(FS);
+                mgrFolderOk = mgrOn() ? await mgrSyncWorkerFiles(FS) : false; // فایل‌های پرسنل فقط در پوشه‌ی «کارفرما»
                 const settingsPayload = { notes: notesSnapshot, settings: mgrSettingsForFolder(), installSalt: getOrCreateInstallSalt(), tombstones: tombstones };
                 const settingsSig = JSON.stringify(settingsPayload);
                 if (settingsSig !== folderSettingsSig) {
                     await FS.writeFile({
-                        path: `${NATIVE_STORAGE_FOLDER_BASE}/${SETTINGS_FILE_NAME}`, directory: 'DOCUMENTS', encoding: 'utf8', recursive: true,
+                        path: `${modeBase}/${SETTINGS_FILE_NAME}`, directory: 'DOCUMENTS', encoding: 'utf8', recursive: true,
                         data: JSON.stringify({ app: 'sewing_statistics', updatedAt: new Date().toISOString(), ...settingsPayload }, null, 2)
                     });
                     folderSettingsSig = settingsSig;
@@ -5393,28 +5475,36 @@
             }
 
             let topEntries = [];
+            let baseDir = nativeModeBase(); // پوشه‌ی حالت فعلی («کارفرما» یا «پرسنل»)
             try {
-                const res = await FS.readdir({ path: NATIVE_STORAGE_FOLDER_BASE, directory: 'DOCUMENTS' });
+                const res = await FS.readdir({ path: baseDir, directory: 'DOCUMENTS' });
                 topEntries = (res && res.files) ? res.files : [];
             } catch (e) {
-                return result; // پوشه هنوز ساخته نشده؛ یعنی هنوز چیزی ذخیره نشده است
+                // پوشه‌ی این حالت هنوز ساخته نشده: برای سازگاری با ساختار قبلی (فایل‌ها مستقیم در ریشه) از ریشه خوانده می‌شود
+                baseDir = NATIVE_STORAGE_FOLDER_BASE;
+                try {
+                    const res = await FS.readdir({ path: baseDir, directory: 'DOCUMENTS' });
+                    topEntries = (res && res.files) ? res.files : [];
+                } catch (e2) {
+                    return result; // پوشه هنوز ساخته نشده؛ یعنی هنوز چیزی ذخیره نشده است
+                }
             }
 
             for (const entry of topEntries) {
                 const name = typeof entry === 'string' ? entry : (entry && entry.name);
-                if (!name) continue;
+                if (!name || isModeFolderName(name)) continue;
                 if (name.toLowerCase().endsWith('.json')) {
-                    absorbParsedFile(await readJsonSafe(`${NATIVE_STORAGE_FOLDER_BASE}/${name}`));
+                    absorbParsedFile(await readJsonSafe(`${baseDir}/${name}`));
                     continue;
                 }
                 // احتمالاً پوشه‌ی مخصوص یک ماه است
                 try {
-                    const inner = await FS.readdir({ path: `${NATIVE_STORAGE_FOLDER_BASE}/${name}`, directory: 'DOCUMENTS' });
+                    const inner = await FS.readdir({ path: `${baseDir}/${name}`, directory: 'DOCUMENTS' });
                     const innerFiles = (inner && inner.files) ? inner.files : [];
                     for (const innerEntry of innerFiles) {
                         const innerName = typeof innerEntry === 'string' ? innerEntry : (innerEntry && innerEntry.name);
                         if (!innerName || !innerName.toLowerCase().endsWith('.json')) continue;
-                        absorbParsedFile(await readJsonSafe(`${NATIVE_STORAGE_FOLDER_BASE}/${name}/${innerName}`));
+                        absorbParsedFile(await readJsonSafe(`${baseDir}/${name}/${innerName}`));
                     }
                 } catch (e) { /* فایل بود نه پوشه، یا قابل خواندن نبود؛ نادیده گرفته می‌شود */ }
             }
@@ -5437,6 +5527,8 @@
                     return;
                 }
 
+                syncFolderModeCache();
+                const root = await getModeDirHandle(true); // پوشه‌ی حالت فعلی داخل ریشه: «کارفرما» یا «پرسنل»
                 const recordsSnapshot = allRecords.slice();
                 const notesSnapshot = dailyNotes.slice();
                 const monthKeys = new Set(recordsSnapshot.map(r => r.monthKey));
@@ -5450,7 +5542,7 @@
                 // فقط یک‌بار بعد از هر اتصال، کل پوشه برای یافتن فایل‌های قدیمیِ ماه‌های بدون رکورد اسکن می‌شود
                 // (قبلاً با هر ذخیره‌سازی همه‌ی فایل‌ها خوانده و parse می‌شدند).
                 if (!folderStaleScanDone) {
-                    for await (const [name, handle] of appDirHandle.entries()) {
+                    for await (const [name, handle] of root.entries()) {
                         if (handle.kind === 'directory') {
                             if (name === 'backups') continue;
                             try {
@@ -5496,7 +5588,7 @@
                     const [year, monthNumStr] = String(monthKey).split('-');
                     const monthNum = parseInt(monthNumStr, 10);
                     const monthName = PERSIAN_MONTHS[monthNum - 1] || 'نامشخص';
-                    const monthDirHandle = await appDirHandle.getDirectoryHandle(getMonthFolderName(monthKey), { create: true });
+                    const monthDirHandle = await root.getDirectoryHandle(getMonthFolderName(monthKey), { create: true });
                     const fileHandle = await monthDirHandle.getFileHandle(getMonthFileName(monthKey), { create: true });
                     const writable = await fileHandle.createWritable();
                     await writable.write(JSON.stringify({
@@ -5509,10 +5601,10 @@
                     folderWrittenSig.set(monthKey, sig);
                     // مهاجرت: اگر از نسخه‌ی قبل از این به‌روزرسانی فایل همین ماه در ریشه‌ی پوشه باقی مانده،
                     // بعد از نوشتن موفق در پوشه‌ی مخصوص خودش حذف می‌شود تا داده فقط در یک جا (پوشه‌ی ماه) بماند.
-                    try { await appDirHandle.removeEntry(getMonthFileName(monthKey)); } catch (e) { /* از قبل وجود نداشت؛ بی‌اهمیت */ }
+                    try { await root.removeEntry(getMonthFileName(monthKey)); } catch (e) { /* از قبل وجود نداشت؛ بی‌اهمیت */ }
                 }
 
-                mgrFolderOk = await mgrSyncWorkerFiles(null);
+                mgrFolderOk = mgrOn() ? await mgrSyncWorkerFiles(null) : false; // فایل‌های پرسنل فقط در پوشه‌ی «کارفرما»
                 const settingsPayload = {
                     notes: notesSnapshot,
                     settings: mgrSettingsForFolder(),
@@ -5521,7 +5613,7 @@
                 };
                 const settingsSig = JSON.stringify(settingsPayload);
                 if (settingsSig !== folderSettingsSig) {
-                    const settingsHandle = await appDirHandle.getFileHandle(SETTINGS_FILE_NAME, { create: true });
+                    const settingsHandle = await root.getFileHandle(SETTINGS_FILE_NAME, { create: true });
                     const settingsWritable = await settingsHandle.createWritable();
                     await settingsWritable.write(JSON.stringify({
                         app: 'sewing_statistics',
@@ -5565,9 +5657,14 @@
                 }
             }
 
+            // پوشه‌ی حالت فعلی («کارفرما» یا «پرسنل»)؛ اگر هنوز ساخته نشده، برای سازگاری با ساختار قبلی از خود ریشه خوانده می‌شود
+            let src;
+            try { src = await appDirHandle.getDirectoryHandle(currentModeFolderName(), { create: false }); }
+            catch (e) { src = appDirHandle; }
+
             // منبع اصلی: هر ماه فقط از پوشه‌ی مخصوص خودش خوانده می‌شود
-            for await (const [name, handle] of appDirHandle.entries()) {
-                if (handle.kind !== 'directory' || name === 'backups') continue;
+            for await (const [name, handle] of src.entries()) {
+                if (handle.kind !== 'directory' || name === 'backups' || isModeFolderName(name)) continue;
                 try {
                     for await (const [innerName, innerHandle] of handle.entries()) {
                         if (innerHandle.kind !== 'file' || !innerName.toLowerCase().endsWith('.json')) continue;
@@ -5586,7 +5683,7 @@
             // سازگاری با نسخه‌ی قبلی: اگر فایل ماهی هنوز مستقیم در ریشه‌ی پوشه مانده (از قبل از این
             // به‌روزرسانی که هر ماه را به پوشه‌ی مخصوص خودش منتقل می‌کند)، همچنان خوانده می‌شود تا داده‌ای
             // گم نشود؛ در ذخیره‌ی بعدی به‌طور خودکار به پوشه‌ی همان ماه منتقل و از ریشه حذف خواهد شد.
-            for await (const [name, handle] of appDirHandle.entries()) {
+            for await (const [name, handle] of src.entries()) {
                 if (handle.kind !== 'file' || !name.toLowerCase().endsWith('.json') || name.startsWith('کارگاه_هوشمند_پشتیبان_') || name.startsWith('آمار_کار_پشتیبان_') || name.startsWith('آمار_دوخت_پشتیبان_')) continue;
                 try {
                     const file = await handle.getFile();
@@ -5637,7 +5734,7 @@
 
             if (isFreshSelection) {
                 addLog(`پوشه ذخیره‌سازی «${handle.name}» با موفقیت متصل شد.`, 'success');
-                showFeedbackBanner(`از این پس داده‌ها به‌طور خودکار در پوشه «${handle.name}» نیز ذخیره می‌شوند (یک پوشه‌ی جدا برای هر ماه).`, 'success');
+                showFeedbackBanner(`از این پس داده‌ها به‌طور خودکار در پوشه «${handle.name}» نیز ذخیره می‌شوند (زیرپوشه‌ی جدا برای حالت «کارفرما» و «پرسنل»، و در هرکدام یک پوشه‌ی جدا برای هر ماه).`, 'success');
             }
         }
 
@@ -5695,7 +5792,7 @@
                 resetFolderWriteCache(); // تا حتی بدون تغییرِ تازه هم، همه‌ی فایل‌ها همین الان بازنویسی و تضمین شوند
                 await saveAllMonthFilesToDirectory();
                 addLog('ذخیره دستی در پوشه ذخیره داده (حافظه دستگاه) انجام شد.', 'success');
-                showFeedbackBanner(`داده‌ها همین الان در پوشه «Documents/${NATIVE_STORAGE_FOLDER_BASE}» ذخیره شد.`, 'success');
+                showFeedbackBanner(`داده‌ها همین الان در پوشه «Documents/${NATIVE_STORAGE_FOLDER_BASE}/${currentModeFolderName()}» ذخیره شد.`, 'success');
                 return;
             }
             if (!supportsFileSystemAccess) {
@@ -5725,7 +5822,7 @@
                 await saveAllMonthFilesToDirectory();
                 updateStorageFolderStatusUI();
                 addLog('ذخیره دستی در پوشه دستگاه انجام شد.', 'success');
-                showFeedbackBanner(`داده‌ها همین الان در پوشه «${appDirHandle.name}» ذخیره شد.`, 'success');
+                showFeedbackBanner(`داده‌ها همین الان در پوشه «${appDirHandle.name}/${currentModeFolderName()}» ذخیره شد.`, 'success');
             } catch (err) {
                 console.error('خطا در ذخیره دستی در پوشه:', err);
                 showFeedbackBanner('ذخیره دستی در پوشه ناموفق بود.', 'warn');
@@ -5860,7 +5957,7 @@
             if (!statusEl) return;
             if (isRunningInInstalledApp()) {
                 statusEl.innerText = nativeStorageFolderActive
-                    ? `وضعیت: فعال — ذخیره خودکار در حافظه دستگاه (Documents/${NATIVE_STORAGE_FOLDER_BASE})`
+                    ? `وضعیت: فعال — ذخیره خودکار در حافظه دستگاه (Documents/${NATIVE_STORAGE_FOLDER_BASE}/${currentModeFolderName()})`
                     : 'پلاگین ذخیره‌سازی (Filesystem) در این نسخه از اپ فعال نیست؛ داده فقط داخل برنامه ذخیره می‌شود.';
                 statusEl.className = nativeStorageFolderActive ? 'text-xs font-semibold text-emerald-600 dark:text-emerald-400' : 'text-xs font-semibold text-rose-600 dark:text-rose-400';
                 if (chooseBtn) chooseBtn.classList.add('hidden');
@@ -5880,7 +5977,7 @@
                 statusEl.innerText = 'وضعیت: پوشه‌ای متصل نیست؛ داده‌ها فقط در حافظه مرورگر ذخیره می‌شوند.';
                 statusEl.className = 'text-xs font-semibold text-amber-600 dark:text-amber-400';
             } else if (dirHandlePermissionState === 'granted') {
-                statusEl.innerText = `وضعیت: فعال — پوشه «${appDirHandle.name}» (یک پوشه‌ی جدا برای هر ماه، به‌روزرسانی در همان پوشه)`;
+                statusEl.innerText = `وضعیت: فعال — پوشه «${appDirHandle.name}» ← زیرپوشه‌ی حالت فعلی «${currentModeFolderName()}» (یک پوشه‌ی جدا برای هر ماه، به‌روزرسانی در همان پوشه)`;
                 statusEl.className = 'text-xs font-semibold text-emerald-600 dark:text-emerald-400';
             } else {
                 statusEl.innerHTML = `پوشه «${escapeHTML(appDirHandle.name)}» متصل است ولی دسترسی آن غیرفعال است. <button type="button" onclick="reconnectStorageFolder()" class="underline font-bold">فعال‌سازی دسترسی</button>`;
@@ -10785,8 +10882,8 @@
             try {
                 const M = mgr(), cur = M.workers.map(w => ({ w, name: mgrWorkerFileName(w) }));
                 const curNames = new Set(cur.map(c => c.name)), curIds = new Set(cur.map(c => c.w.id));
-                const dir = FS ? null : await appDirHandle.getDirectoryHandle(MGR_DIR, { create: true });
-                const path = n => `${NATIVE_STORAGE_FOLDER_BASE}/${MGR_DIR}/${n}`;
+                const dir = FS ? null : await (await getModeDirHandle(true)).getDirectoryHandle(MGR_DIR, { create: true });
+                const path = n => `${nativeModeBase()}/${MGR_DIR}/${n}`;
                 const put = async (n, text) => {
                     if (FS) await FS.writeFile({ path: path(n), directory: 'DOCUMENTS', encoding: 'utf8', recursive: true, data: text });
                     else { const fh = await dir.getFileHandle(n, { create: true }); const wr = await fh.createWritable(); await wr.write(text); await wr.close(); }

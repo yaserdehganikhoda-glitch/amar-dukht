@@ -6,7 +6,7 @@
  * عدد VERSION را فقط وقتی زیاد کنید که خودِ sw.js، لیست فایل‌های کش‌شده یا آیکون‌ها را عوض کرده‌اید؛
  * تغییر همین فایل باعث می‌شود بنر «نسخه جدید آماده است» در برنامه ظاهر شود.
  */
-const VERSION = 'v5';
+const VERSION = 'v6';
 const CACHE_PREFIX = 'work-stats-';
 const OLD_CACHE_PREFIXES = ['sewing-stats-']; // برای پاکسازی کش نسخه‌های قبلی، هنگام مهاجرت به نام عمومی
 const CACHE = CACHE_PREFIX + VERSION;
@@ -80,6 +80,11 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+  // صفحه می‌پرسد این نسخه‌ی SW درخواست‌های «بررسی اتصال اینترنت» را دست‌نخورده رد می‌کند یا نه
+  // (نسخه‌های قدیمی‌تر جواب نمی‌دهند و صفحه از بررسی دقیق صرف‌نظر می‌کند تا کش پر نشود)
+  if (event.data && event.data.type === 'GET_SW_FEATURES' && event.ports && event.ports[0]) {
+    event.ports[0].postMessage({ netProbeBypass: true });
+  }
 });
 
 function withTimeout(promise, ms) {
@@ -124,6 +129,8 @@ async function staleWhileRevalidate(event) {
 self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET' || !/^https?:/.test(req.url)) return;
+  // درخواست‌های بررسی اتصال اینترنت (کارت «دستگاه») نباید کش شوند یا از کش جواب بگیرند؛ مستقیم به شبکه می‌روند
+  try { if (new URL(req.url).searchParams.has('_netprobe')) return; } catch (e) { /* ادامه */ }
   if (req.mode === 'navigate') {
     event.respondWith(handleNavigation(event));
   } else {

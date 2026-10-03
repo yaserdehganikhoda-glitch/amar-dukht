@@ -6,7 +6,7 @@
  * عدد VERSION را فقط وقتی زیاد کنید که خودِ sw.js، لیست فایل‌های کش‌شده یا آیکون‌ها را عوض کرده‌اید؛
  * تغییر همین فایل باعث می‌شود بنر «نسخه جدید آماده است» در برنامه ظاهر شود.
  */
-const VERSION = 'v6';
+const VERSION = 'v7';
 const CACHE_PREFIX = 'work-stats-';
 const OLD_CACHE_PREFIXES = ['sewing-stats-']; // برای پاکسازی کش نسخه‌های قبلی، هنگام مهاجرت به نام عمومی
 const CACHE = CACHE_PREFIX + VERSION;
@@ -14,7 +14,7 @@ const SCOPE = self.registration.scope;
 const INDEX_URL = new URL('index.html', SCOPE).href;
 const OFFLINE_URL = new URL('offline.html', SCOPE).href;
 
-const LOCAL_ASSETS = ['index.html', 'manifest.json', 'offline.html', 'motivations-db.js', 'premium.js', 'native-notify.js', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png']
+const LOCAL_ASSETS = ['index.html', 'manifest.json', 'offline.html', 'motivations-db.js', 'ai-assistant.js', 'premium.js', 'native-notify.js', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png']
   .map(p => new URL(p, SCOPE).href);
 
 // منابع ضروریِ ظاهر برنامه: اول نسخه‌ی محلی (پوشه‌ی vendor، ساخته‌شده با fetch-vendor.mjs)؛

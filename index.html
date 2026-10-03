@@ -288,7 +288,7 @@
 
         /* ============ بهینه‌سازی سرعت: حذف backdrop-blur از مودال‌های اسکرول‌شونده ============ */
         /* ترکیب backdrop-filter با overflow روی یک المان باعث بازسازیِ لایه‌ی تارشده در هر فریمِ اسکرول می‌شود. */
-        #settingsModal, #advancedSearchModal, #trashBinModal, #dataHealthModal, #overviewModal, #managerModal {
+        #settingsModal, #advancedSearchModal, #trashBinModal, #dataHealthModal, #overviewModal {
             -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
             background-color: rgba(15, 23, 42, 0.62); overscroll-behavior: contain;
         }
@@ -381,6 +381,12 @@
             background: rgba(255,255,255,0.16);
             backdrop-filter: blur(6px);
         }
+        /* هدر جمع‌وجور */
+        #appHeaderBrandBar .exit-btn { padding: 4px 6px; gap: 5px; font-size: 10px; border-radius: 10px; }
+        #appHeaderBrandBar .exit-btn i { width: 18px; height: 18px; font-size: 9px; }
+        #todayDateBar > div { gap: 4px !important; }
+        #todayDateBar span { padding: 2px 8px !important; font-size: 10px; }
+        #streakRefreshBtn { width: 22px; height: 22px; }
 
         /* دکمه‌ی محرکِ منوی ابزار */
 
@@ -391,16 +397,25 @@
             -webkit-backdrop-filter: blur(16px) saturate(170%);
         }
         .dark #bottomNavBar { background-color: rgba(2,6,23,0.82) !important; }
-        #bottomNavBar .bottom-nav-item { position: relative; }
-        /* دکمه‌ای که کادرش پنهان است کمی کم‌رنگ می‌شود */
-        #bottomNavBar [data-box-hidden="1"] { opacity: 0.45; }
-        /* پنهان‌سازیِ کادرها با دکمه‌های نوار پایین (مستقل از کلاس hidden و تب‌ها) */
+        /* نوار تب پایین (مثل پروژه‌ی کافه‌رستوران): هر تب یک صفحه */
+        #bottomNavBar .bottom-nav-item { position: relative; flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; background: none; border: 0; color: #64748b; font-size: 11px; font-weight: 500; transition: color .15s; }
+        .dark #bottomNavBar .bottom-nav-item { color: #94a3b8; }
+        #bottomNavBar .bottom-nav-item i { font-size: 17px; }
+        #bottomNavBar .bottom-nav-item.nav-on { color: #4f46e5; font-weight: 700; }
+        .dark #bottomNavBar .bottom-nav-item.nav-on { color: #818cf8; }
+        #bottomNavBar .bottom-nav-item.nav-on::after { content: ''; position: absolute; top: -7px; left: 28%; right: 28%; height: 3px; border-radius: 0 0 3px 3px; background: currentColor; }
         .box-off { display: none !important; }
-        #bottomNavBar .bottom-nav-item.text-indigo-600::after,
-        #bottomNavBar .bottom-nav-item.dark\:text-indigo-400::after {
-            content: '';
-            position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
-            width: 4px; height: 4px; border-radius: 999px; background: currentColor;
+        @media screen {
+            body[data-apptab="home"]:not([data-wpage="1"]) :is(#mainTabBar, #mainTabPanel-entry, #mainTabPanel-list) { display: none !important; }
+            body[data-apptab="home"] #activeProgressCard { display: none !important; }
+            body[data-apptab]:not([data-apptab="home"]) #aiAssistantCard { display: none !important; }
+            body[data-apptab]:not([data-apptab="progress"]):not([data-wpage="1"]) #mgrMainStats { display: none !important; }
+            body[data-apptab]:not([data-apptab="progress"]) #progressEmptyState { display: none !important; }
+            body[data-apptab="add"] :is(#kpiCardWrap, #activeProgressCard, #mainTabBar, #dailyNotesSection) { display: none !important; }
+            body[data-apptab="notes"] :is(#kpiCardWrap, #activeProgressCard, #mainTabBar, #recordFormCard) { display: none !important; }
+            body[data-apptab="list"] :is(#kpiCardWrap, #activeProgressCard, #mainTabBar) { display: none !important; }
+            body[data-apptab="progress"] :is(#kpiCardWrap, #mainTabBar, #mainTabPanel-entry, #mainTabPanel-list) { display: none !important; }
+            body[data-apptab="mgr"] :is(#kpiCardWrap, #activeProgressCard, #mainTabBar, #mainTabPanel-entry, #mainTabPanel-list) { display: none !important; }
         }
 
         /* مدال‌ها: سایه‌ی عمیق‌تر و حرفه‌ای‌تر به‌جای shadow-2xl خام */
@@ -872,40 +887,24 @@
 
     <!-- نوار ناوبری پایین صفحه: نسخه‌ی شیشه‌ای شناور -->
     <div id="bottomNavBar" class="no-print fixed bottom-0 inset-x-0 z-30 border-t border-slate-200/70 dark:border-slate-700/60">
-        <div class="max-w-5xl mx-auto px-4 flex items-end justify-around pt-2" style="padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));">
-            <button type="button" data-nav="home" onclick="bottomNavToggleBox('home')" class="bottom-nav-item flex flex-col items-center gap-1 text-indigo-600 dark:text-indigo-400 py-1 px-2">
-                <i class="fa-solid fa-house text-base"></i>
-                <span class="text-[10px] font-medium">خانه</span>
-            </button>
-            <button type="button" data-nav="notes" onclick="bottomNavToggleBox('notes')" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
-                <i class="fa-solid fa-note-sticky text-base"></i>
-                <span class="text-[10px] font-medium">یادداشت‌ها</span>
-            </button>
-            <button type="button" data-nav="add" onclick="bottomNavToggleBox('add')" class="flex flex-col items-center -mt-6">
-                <span class="w-13 h-13 rounded-full flex items-center justify-center transition-transform active:scale-95" style="width:3.25rem;height:3.25rem;background:var(--brand-gradient);box-shadow:0 8px 18px -6px rgba(79,70,229,0.55);">
-                    <i class="fa-solid fa-plus text-lg text-white"></i>
-                </span>
-                <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 mt-1">ثبت</span>
-            </button>
-            <button type="button" data-nav="records" onclick="bottomNavToggleBox('records')" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
-                <i class="fa-solid fa-table-list text-base"></i>
-                <span class="text-[10px] font-medium">رکوردها</span>
-            </button>
-            <button type="button" data-nav="more" onclick="bottomNavOpenMore(event)" class="bottom-nav-item flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 px-2 transition-colors">
-                <i class="fa-solid fa-ellipsis text-base"></i>
-                <span class="text-[10px] font-medium">بیشتر</span>
-            </button>
+        <div class="max-w-5xl mx-auto px-2 flex items-stretch justify-around pt-1.5" role="tablist" aria-label="تب‌های اصلی" style="padding-bottom: calc(0.4rem + env(safe-area-inset-bottom));">
+            <button type="button" role="tab" data-nav="home" onclick="setAppTab('home')" class="bottom-nav-item"><i class="fa-solid fa-house"></i><span>خانه</span></button>
+            <button type="button" role="tab" data-nav="add" onclick="setAppTab('add')" class="bottom-nav-item"><i class="fa-solid fa-circle-plus"></i><span>ثبت</span></button>
+            <button type="button" role="tab" data-nav="list" onclick="setAppTab('list')" class="bottom-nav-item"><i class="fa-solid fa-table-list"></i><span>رکوردها</span></button>
+            <button type="button" role="tab" data-nav="notes" onclick="setAppTab('notes')" class="bottom-nav-item"><i class="fa-solid fa-note-sticky"></i><span>یادداشت‌ها</span></button>
+            <button type="button" role="tab" data-nav="progress" onclick="setAppTab('progress')" class="bottom-nav-item"><i class="fa-solid fa-stopwatch"></i><span>پیشرفت کار</span></button>
+            <button type="button" role="tab" data-nav="mgr" id="navMgrBtn" onclick="setAppTab('mgr')" class="bottom-nav-item" style="display:none"><i class="fa-solid fa-user-tie"></i><span>کارفرما</span></button>
         </div>
     </div>
 
     <div class="max-w-5xl mx-auto px-4 pt-6">
 
         <!-- هدر اصلی برنامه: نوار برندِ گرادینتی + بخش اطلاعات روز -->
-        <header id="appHeaderBox" class="pro-card bg-white dark:bg-slate-900 rounded-2xl mb-6 border border-slate-300 dark:border-slate-600 relative transition-all">
-        <div id="appHeaderBrandBar" class="px-6 pt-6 pb-8 text-center relative rounded-t-2xl">
+        <header id="appHeaderBox" class="pro-card bg-white dark:bg-slate-900 rounded-2xl mb-3 border border-slate-300 dark:border-slate-600 relative transition-all">
+        <div id="appHeaderBrandBar" class="px-12 py-2 text-center relative rounded-t-2xl flex flex-wrap items-center justify-center gap-x-2.5">
 
             <!-- دکمه‌ی خروج از برنامه در گوشه بالا سمت راست -->
-            <div class="absolute top-5 right-5 z-25 no-print">
+            <div class="absolute top-1.5 right-1.5 z-25 no-print">
                 <button type="button" id="exitAppBtn" onclick="requestExitApp()" class="exit-btn" title="خروج از برنامه" aria-label="خروج از برنامه">
                     <i class="fa-solid fa-power-off"></i>
                     <span class="hidden sm:inline">خروج</span>
@@ -913,7 +912,7 @@
             </div>
 
             <!-- منوی ابزار و عملیات در گوشه بالا سمت چپ -->
-            <div class="absolute top-5 left-5 z-25">
+            <div class="absolute top-1.5 left-1.5 z-25">
                 <div class="relative inline-block text-right">
                     <button id="toolsMenuTrigger" onclick="toggleToolsDropdown(event)" class="exit-btn" title="منوی ابزار" aria-label="منوی ابزار">
                         <i class="fa-solid fa-bars-staggered"></i>
@@ -1167,18 +1166,18 @@
                 <input type="file" id="importFile" accept=".json,.txt" class="hidden" onchange="importSmartBackup(event)">
             </div>
 
-            <div id="appHeaderLogoRing" class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-3 overflow-hidden relative z-10">
-                <img src="icon-192.png" alt="لوگوی سامانه" class="w-11 h-11 object-contain rounded-lg">
+            <div id="appHeaderLogoRing" class="inline-flex items-center justify-center w-7 h-7 rounded-lg overflow-hidden relative z-10">
+                <img src="icon-192.png" alt="لوگوی سامانه" class="w-5 h-5 object-contain rounded-md">
             </div>
-            <h1 id="mainAppTitle" class="text-2xl md:text-3xl font-bold text-white tracking-tight relative z-10">
+            <h1 id="mainAppTitle" class="text-sm md:text-base font-bold text-white tracking-tight relative z-10">
                 سامانه‌ی کارگاه هوشمند
             </h1>
-            <p id="mainAppSubtitle" class="text-sm text-indigo-100 mt-2 font-normal relative z-10">سیستم هوشمند آمار و مدیریت کار</p>
-            <p id="ownerInfoLine" class="hidden text-xs text-indigo-100/80 mt-1 relative z-10"></p>
+            <p id="mainAppSubtitle" class="basis-full text-[10px] text-indigo-100 font-normal relative z-10 leading-tight">سیستم هوشمند آمار و مدیریت کار</p>
+            <p id="ownerInfoLine" class="hidden basis-full text-[10px] text-indigo-100/80 mt-0.5 relative z-10"></p>
         </div>
-        <div class="px-6 py-5 text-center">
+        <div class="px-3 py-1.5 text-center">
             <div id="todayDateBar"></div>
-            <div class="mt-3 flex justify-center items-center gap-2 flex-wrap">
+            <div class="mt-1 flex justify-center items-center gap-2 flex-wrap">
                 <span id="streakBadgeText" class="hidden"></span>
                 <button type="button" id="streakRefreshBtn" onclick="refreshStreak()" title="به‌روزرسانی شمارنده" class="no-print w-7 h-7 shrink-0 rounded-full text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/40 flex items-center justify-center transition-colors"><i id="streakRefreshIcon" class="fa-solid fa-rotate text-xs"></i></button>
             </div>
@@ -1254,6 +1253,53 @@
         </div>
 
         <!-- کارت پیشرفت کار جاری (حالت پرسنل) با همان جلوه‌های بصری ویجت حالت کارفرما -->
+        <!-- دستیار هوشمند (تب خانه) -->
+        <div id="aiAssistantCard" class="mb-6 bg-white dark:bg-slate-900 pro-card rounded-2xl border border-slate-300 dark:border-slate-600 overflow-hidden no-print">
+            <div class="bg-gradient-to-l from-fuchsia-600 to-indigo-600 px-4 py-3 text-white flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="w-8 h-8 shrink-0 rounded-xl bg-white/20 flex items-center justify-center"><i class="fa-solid fa-wand-magic-sparkles text-sm"></i></span>
+                    <div class="min-w-0">
+                        <h2 class="text-sm font-extrabold">دستیار هوشمند</h2>
+                        <p id="aiSub" class="text-[10px] opacity-80 truncate">تحلیل خودکار کارکرد ماه جاری</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                    <button type="button" onclick="aiRenderInsights(true)" title="به‌روزرسانی تحلیل" class="w-8 h-8 rounded-lg hover:bg-white/15 flex items-center justify-center"><i class="fa-solid fa-rotate text-xs"></i></button>
+                    <button type="button" onclick="aiToggleConfig()" title="اتصال به هوش مصنوعی" class="w-8 h-8 rounded-lg hover:bg-white/15 flex items-center justify-center"><i class="fa-solid fa-gear text-xs"></i></button>
+                </div>
+            </div>
+            <div class="p-4 space-y-3">
+                <div id="aiInsights" class="space-y-2"></div>
+                <div class="flex flex-wrap gap-1.5">
+                    <button type="button" onclick="aiChip('summary')" class="tactile-btn px-3 py-1.5 rounded-full text-[11px] font-medium border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 bg-indigo-50/60 dark:bg-indigo-950/30">خلاصه‌ی این ماه</button>
+                    <button type="button" onclick="aiChip('forecast')" class="tactile-btn px-3 py-1.5 rounded-full text-[11px] font-medium border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 bg-indigo-50/60 dark:bg-indigo-950/30">پیش‌بینی درآمد</button>
+                    <button type="button" onclick="aiChip('late')" class="tactile-btn px-3 py-1.5 rounded-full text-[11px] font-medium border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 bg-indigo-50/60 dark:bg-indigo-950/30">کارهای با تاخیر</button>
+                    <button type="button" onclick="aiChip('advice')" class="tactile-btn px-3 py-1.5 rounded-full text-[11px] font-medium border border-fuchsia-200 dark:border-fuchsia-800 text-fuchsia-700 dark:text-fuchsia-300 bg-fuchsia-50/60 dark:bg-fuchsia-950/30"><i class="fa-solid fa-wand-magic-sparkles ml-1"></i>پیشنهاد بهبود</button>
+                </div>
+                <div id="aiAnswer" class="hidden rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-3 text-[12px] leading-relaxed text-slate-700 dark:text-slate-200"></div>
+                <div class="flex gap-2">
+                    <input id="aiQuestion" maxlength="400" placeholder="از دستیار بپرسید… (مثلاً: کدام روز هفته بیشترین کار را دارم؟)" onkeydown="if(event.key==='Enter'){event.preventDefault();aiAskFromInput();}" class="flex-1 min-w-0 p-2.5 border border-slate-400 dark:border-slate-500 rounded-xl text-xs bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                    <button type="button" id="aiSendBtn" onclick="aiAskFromInput()" class="tactile-btn shrink-0 w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700" title="ارسال"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                </div>
+                <div id="aiConfig" class="hidden rounded-xl border border-slate-200 dark:border-slate-700 p-3 space-y-2">
+                    <p class="text-[11px] font-bold text-slate-700 dark:text-slate-200"><i class="fa-solid fa-plug ml-1 text-indigo-500"></i>اتصال به سرویس هوش مصنوعی</p>
+                    <select id="aiCfgType" onchange="aiCfgTypeChanged()" class="w-full p-2 border border-slate-400 dark:border-slate-500 rounded-xl text-xs bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                        <option value="openai">سازگار با OpenAI (OpenAI، OpenRouter، سرویس‌های واسط و...)</option>
+                        <option value="anthropic">Anthropic (Claude)</option>
+                    </select>
+                    <input id="aiCfgBase" dir="ltr" placeholder="آدرس سرویس" class="w-full p-2 border border-slate-400 dark:border-slate-500 rounded-xl text-xs bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                    <input id="aiCfgModel" dir="ltr" placeholder="نام مدل" class="w-full p-2 border border-slate-400 dark:border-slate-500 rounded-xl text-xs bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                    <input id="aiCfgKey" type="password" dir="ltr" autocomplete="off" placeholder="کلید API" class="w-full p-2 border border-slate-400 dark:border-slate-500 rounded-xl text-xs bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">
+                    <div class="flex gap-2">
+                        <button type="button" onclick="aiSaveConfig()" class="tactile-btn flex-1 py-2 rounded-xl bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700">ذخیره</button>
+                        <button type="button" onclick="aiTestConfig()" class="tactile-btn flex-1 py-2 rounded-xl border border-slate-400 dark:border-slate-500 text-xs text-slate-600 dark:text-slate-300">تست اتصال</button>
+                        <button type="button" onclick="aiClearConfig()" class="tactile-btn px-3 py-2 rounded-xl border border-rose-300 text-rose-600 text-xs">حذف</button>
+                    </div>
+                    <p class="text-[10px] leading-relaxed text-slate-500 dark:text-slate-400">تحلیل خودکار و دکمه‌های «خلاصه»، «پیش‌بینی» و «کارهای با تاخیر» بدون اینترنت و فقط روی همین دستگاه کار می‌کنند. «پیشنهاد بهبود» و پرسش آزاد به اتصال نیاز دارند؛ در این حالت خلاصه‌ی کارکرد ماه جاری (بدون عکس و بدون اطلاعات تماس) به سرویس انتخابی ارسال می‌شود. کلید فقط روی همین دستگاه ذخیره می‌شود و در فایل پشتیبان نمی‌آید.</p>
+                </div>
+            </div>
+        </div>
+
         <div id="activeProgressCard" class="hidden mgr-panel bg-white dark:bg-slate-900 mb-6" style="--mgr-c:#10b981">
             <div class="mgr-head">
                 <div class="flex items-center justify-between gap-2 relative z-10">
@@ -1268,6 +1314,12 @@
                 </div>
             </div>
             <div id="activeProgressList" class="mgr-body mgr-page"></div>
+        </div>
+        <div id="progressEmptyState" class="hidden mb-6 bg-white dark:bg-slate-900 pro-card rounded-2xl border border-slate-300 dark:border-slate-600 p-8 text-center">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 mb-3"><i class="fa-solid fa-stopwatch text-xl"></i></div>
+            <p class="text-sm font-bold text-slate-700 dark:text-slate-200">الان کار جاری‌ای در حال انجام نیست</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">با ثبت یک کارکرد جدید، پیشرفت آن اینجا نمایش داده می‌شود.</p>
+            <button type="button" onclick="setAppTab('add')" class="tactile-btn mt-4 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-medium hover:bg-indigo-700"><i class="fa-solid fa-circle-plus ml-1"></i> ثبت کارکرد جدید</button>
         </div>
 
         <!-- تب‌بندیِ اصلیِ صفحه: فرم ثبت / لیست کارکردها، برای کوتاه‌تر شدن درازای صفحه -->
@@ -1647,6 +1699,18 @@
         </div><!-- پایان mainTabPanel-list -->
 
         <!-- فوتر -->
+        <!-- پنل کارفرما (تب اصلی) -->
+        <div id="managerModal" class="hidden mb-4 no-print">
+            <div class="bg-white dark:bg-slate-900 pro-card rounded-2xl w-full border border-slate-300 dark:border-slate-600 overflow-hidden">
+                <div class="bg-gradient-to-l from-indigo-700 to-purple-700 px-4 py-3 text-white relative">
+                    <h2 class="text-sm font-bold flex items-center gap-2"><i class="fa-solid fa-user-tie"></i> پنل کارفرما</h2>
+                    <p id="mgrHeaderSub" class="text-[11px] text-white/75 mt-0.5"></p>
+                </div>
+                <div id="mgrTabs" class="flex items-center gap-1 px-3 pt-2 overflow-x-auto border-b border-slate-200 dark:border-slate-700"></div>
+                <div id="mgrBody" class="p-4 space-y-4"></div>
+            </div>
+        </div>
+
         <footer class="mt-8 mb-4 text-center text-xs text-slate-400 dark:text-slate-500 border-t border-slate-200/60 dark:border-slate-800/60 pt-4 transition-all">
             <p>Designed & Developed by <span class="font-bold text-slate-600 dark:text-slate-300">Phoenix.Yaser</span></p>
         </footer>
@@ -1702,18 +1766,6 @@
     </div>
 
     <!-- مدال پنل کارفرما -->
-    <div id="managerModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto no-print">
-        <div class="bg-white dark:bg-slate-900 pro-modal rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-300 dark:border-slate-600 my-8 overflow-hidden">
-            <div class="bg-gradient-to-l from-indigo-700 to-purple-700 px-6 py-4 text-white relative">
-                <button onclick="closeManagerPanel()" class="absolute top-4 left-4 text-white/80 hover:text-white p-1.5 rounded-xl hover:bg-white/10"><i class="fa-solid fa-xmark text-lg"></i></button>
-                <h2 class="text-base font-bold flex items-center gap-2"><i class="fa-solid fa-user-tie"></i> پنل کارفرما</h2>
-                <p id="mgrHeaderSub" class="text-[11px] text-white/75 mt-1"></p>
-            </div>
-            <div id="mgrTabs" class="flex items-center gap-1 px-4 pt-3 overflow-x-auto border-b border-slate-200 dark:border-slate-700"></div>
-            <div id="mgrBody" class="p-5 max-h-[68vh] overflow-y-auto space-y-4"></div>
-        </div>
-    </div>
-
     <div id="advancedSearchModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white dark:bg-slate-900 pro-modal rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-300 dark:border-slate-600 space-y-5 my-8 transition-all">
             <div class="flex items-center justify-between pb-4 border-b border-slate-300 dark:border-slate-600">
@@ -6388,7 +6440,7 @@
         });
 
         // جابه‌جایی بین دو تبِ اصلیِ صفحه («ثبت رکورد جدید» و «لیست کارکردها») برای کوتاه‌تر شدن درازای صفحه
-        function switchMainTab(tab) {
+        function _switchMainPanel(tab) {
             document.getElementById('mainTabPanel-entry').classList.toggle('hidden', tab !== 'entry');
             document.getElementById('mainTabPanel-list').classList.toggle('hidden', tab !== 'list');
             document.querySelectorAll('.main-tab-btn').forEach(btn => {
@@ -6397,41 +6449,55 @@
             try { localStorage.setItem('sewing_main_tab_v1', tab); } catch (e) { /* بی‌اهمیت */ }
         }
 
-        function bottomNavGoHome() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function bottomNavGoNotes() {
-            switchMainTab('entry');
-            const section = document.getElementById('dailyNotesSection');
-            if (!section) return;
-            navReveal(['dailyNotesSection']);
-            if (section.classList.contains('hidden')) {
-                toggleDailyNotesSection();
-            } else {
-                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // ===== تب‌بندی اصلی (مثل کافه‌رستوران): خانه | ثبت | رکوردها | یادداشت‌ها =====
+        let appTab = 'home';
+        function setAppTab(tab, opts) {
+            if (['home', 'add', 'list', 'notes', 'progress', 'mgr'].indexOf(tab) < 0) tab = 'home';
+            if (tab === 'mgr' && !mgrOn()) tab = 'home';
+            appTab = tab;
+            document.body.dataset.apptab = tab;
+            _switchMainPanel(tab === 'list' ? 'list' : 'entry');
+            const mgrPage = document.getElementById('managerModal');
+            if (mgrPage) { mgrPage.classList.toggle('hidden', tab !== 'mgr'); if (tab === 'mgr') { try { mgrRender(); } catch (e) { /* بی‌اهمیت */ } } }
+            if (!(opts && opts.noScroll)) window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (tab === 'notes') {
+                const sec = document.getElementById('dailyNotesSection');
+                if (sec && sec.classList.contains('hidden')) toggleDailyNotesSection();
             }
+            try { localStorage.setItem('sewing_app_tab_v2', tab); } catch (e) { /* بی‌اهمیت */ }
+            syncProgressEmpty();
+            bottomNavSyncState();
         }
-
+        // سازگاری با کدهای قدیمی (ویرایش رکورد، صفحه‌ی پرسنل و ...)
+        function switchMainTab(tab) {
+            if (document.body.dataset.wpage === '1' && appTab === 'home') { _switchMainPanel(tab); return; }
+            setAppTab(tab === 'list' ? 'list' : 'add', { noScroll: true });
+        }
+        function syncMgrTab() {
+            const on = (typeof mgrOn === 'function') && mgrOn();
+            const b = document.getElementById('navMgrBtn');
+            if (b) b.style.display = on ? '' : 'none';
+            if (!on && appTab === 'mgr') setAppTab('home', { noScroll: true });
+        }
+        function syncProgressEmpty() {
+            syncMgrTab();
+            const e = document.getElementById('progressEmptyState'), c = document.getElementById('activeProgressCard'), m = document.getElementById('mgrMainStats');
+            if (!e) return;
+            const cardOn = !!c && !c.classList.contains('hidden') && document.body.dataset.mode !== 'employer';
+            const statsOn = !!m && m.innerHTML.trim() !== '';
+            e.classList.toggle('hidden', cardOn || statsOn);
+        }
+        (function () {
+            const w = (name) => { const o = window[name]; if (typeof o !== 'function') return; window[name] = function () { const r = o.apply(this, arguments); try { syncProgressEmpty(); } catch (e) { /* بی‌اهمیت */ } return r; }; };
+            window.addEventListener('load', () => { w('renderActiveProgressWidget'); w('mgrApplyMainView'); w('applyManagerToUI'); syncProgressEmpty(); });
+        })();
+        function bottomNavGoHome() { setAppTab('home'); }
+        function bottomNavGoNotes() { setAppTab('notes'); }
         function bottomNavGoAddRecord() {
-            switchMainTab('entry');
-            const card = document.getElementById('recordFormCard');
-            navReveal(['recordFormCard']);
-            bottomNavSyncState();
-            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            setTimeout(() => {
-                const el = document.getElementById('itemCode');
-                if (el) el.focus();
-            }, 400);
+            setAppTab('add');
+            setTimeout(() => { const el = document.getElementById('itemCode'); if (el) el.focus(); }, 400);
         }
-
-        function bottomNavGoRecords() {
-            switchMainTab('list');
-            const card = document.getElementById('recordsTableCard');
-            navReveal(['recordsTableCard']);
-            bottomNavSyncState();
-            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        function bottomNavGoRecords() { setAppTab('list'); }
 
         // اجرای اکشنِ میان‌بر صفحه اصلی گوشی (App Shortcuts در manifest.json)؛ مثلاً وقتی کاربر
         // از منوی لمس‌طولانیِ آیکون برنامه، «ثبت کارکرد جدید» یا «پیشرفت کار جاری» را انتخاب می‌کند.
@@ -6445,8 +6511,7 @@
                 if (action === 'add') {
                     bottomNavGoAddRecord();
                 } else if (action === 'progress') {
-                    const card = document.getElementById('activeProgressCard');
-                    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setAppTab('progress');
                 } else if (action === 'records') {
                     bottomNavGoRecords();
                 } else if (action === 'notes') {
@@ -6459,87 +6524,21 @@
             }, 300);
         }
 
-        // ===== دکمه‌های نوار پایین: هر دکمه کادرهای مربوط به خودش را پنهان/آشکار می‌کند =====
-        // خانه  ← همه‌ی کادرهای صفحه‌ی اصلی به‌جز هدر و منوی ابزار
-        // ثبت   ← فرم ثبت رکورد + نوار انتخاب «لیست کارکردها» + جدول لیست رکوردها
-        // یادداشت‌ها ← کادر یادداشت‌ها | رکوردها ← جدول لیست کارکردها
-        const NAV_HOME_IDS = ['kpiCardWrap', 'activeProgressCard', 'mainTabBar', 'mainTabPanel-entry', 'mainTabPanel-list'];
-        const NAV_ADD_IDS  = ['recordFormCard', 'mainTabBar', 'recordsTableCard'];
-
         function navEl(id) { return document.getElementById(id); }
         function navOff(el) { return !!el && !!el.closest('.box-off'); }
         function navSet(ids, off) {
             ids.forEach(id => { const el = navEl(id); if (el) el.classList.toggle('box-off', off); });
         }
-        // نمایش کادرها (و هر والدی که با این سازوکار پنهان شده باشد)
-        function navReveal(ids) {
-            navSet(ids, false);
-            ids.forEach(id => {
-                let p = navEl(id) && navEl(id).parentElement;
-                while (p && p !== document.body) { p.classList.remove('box-off'); p = p.parentElement; }
-            });
-        }
-        function navTabPanelShown(tab) {
-            const panel = navEl('mainTabPanel-' + tab);
-            return !!panel && !panel.classList.contains('hidden');
-        }
+        function navReveal(ids) { navSet(ids, false); }
 
         function bottomNavSyncState() {
-            const dim = {
-                home:    navOff(navEl('kpiCardWrap')),
-                notes:   (() => { const n = navEl('dailyNotesSection'); return !!n && (n.classList.contains('hidden') || navOff(n)); })(),
-                add:     navOff(navEl('recordFormCard')),
-                records: navOff(navEl('recordsTableCard'))
-            };
             document.querySelectorAll('#bottomNavBar [data-nav]').forEach(btn => {
-                if (dim[btn.dataset.nav]) btn.setAttribute('data-box-hidden', '1');
-                else btn.removeAttribute('data-box-hidden');
+                const on = btn.dataset.nav === appTab;
+                btn.classList.toggle('nav-on', on);
+                if (on) btn.setAttribute('aria-selected', 'true'); else btn.removeAttribute('aria-selected');
             });
         }
-
-        function bottomNavToggleBox(key) {
-            if (key === 'home') {
-                if (!navOff(navEl('kpiCardWrap'))) {
-                    navSet(NAV_HOME_IDS, true);            // همه پنهان (هدر و ابزارها می‌مانند)
-                } else {
-                    navSet(NAV_HOME_IDS.concat(['recordFormCard', 'recordsTableCard']), false);   // همه آشکار
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            } else if (key === 'add') {
-                const form = navEl('recordFormCard');
-                if (!form) return;
-                if (!navOff(form) && navTabPanelShown('entry')) {
-                    navSet(NAV_ADD_IDS, true);
-                } else {
-                    navReveal(NAV_ADD_IDS);
-                    switchMainTab('entry');
-                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            } else if (key === 'records') {
-                const card = navEl('recordsTableCard');
-                if (!card) return;
-                if (!navOff(card) && navTabPanelShown('list')) {
-                    navSet(['recordsTableCard'], true);
-                } else {
-                    navReveal(['recordsTableCard']);
-                    switchMainTab('list');
-                    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            } else if (key === 'notes') {
-                const section = navEl('dailyNotesSection');
-                if (!section) return;
-                const visible = !section.classList.contains('hidden') && !navOff(section) && navTabPanelShown('entry');
-                if (visible) {
-                    toggleDailyNotesSection();             // پنهان (و ذخیره در localStorage)
-                } else {
-                    navReveal(['dailyNotesSection']);
-                    switchMainTab('entry');
-                    if (section.classList.contains('hidden')) toggleDailyNotesSection();
-                    else section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }
-            bottomNavSyncState();
-        }
+        function bottomNavToggleBox(key) { setAppTab(key === 'records' ? 'list' : key); }
 
         function bottomNavOpenMore(event) {
             if (event) event.stopPropagation();
@@ -8626,6 +8625,8 @@
                 btn.classList.toggle('dark:text-amber-300', !isHidden);
             }
             localStorage.setItem('sewing_daily_notes_section_hidden', isHidden ? '1' : '0');
+            if (isHidden && appTab === 'notes') { setAppTab('home'); return; }
+            if (!isHidden && appTab !== 'notes') { setAppTab('notes'); return; }
             if (!isHidden) {
                 section.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
@@ -10377,13 +10378,12 @@
         }
         function mgrA11y(root) { if (root) root.querySelectorAll('button[title]:not([aria-label])').forEach(b => b.setAttribute('aria-label', b.getAttribute('title'))); }
         var mgrLastFocus = null;
-        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { const m = document.getElementById('managerModal'); if (m && !m.classList.contains('hidden')) closeManagerPanel(); } });
         function mgrApplyMainView() {
             const on = mgrOn(), cur = escapeHTML(appSettings.currency || 'تومان');
             document.body.dataset.mode = on ? 'employer' : 'worker';
             ['thSection'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.toggle('hidden', !on); });
             const badge = mgrEnsureEl('mgrModeBadge', document.getElementById('mainAppSubtitle'), 'after');
-            if (badge) { badge.className = 'relative z-10 mt-2 flex flex-wrap items-center gap-2'; badge.innerHTML = `<button type="button" onclick="mgrToggle(!mgrOn())" title="تغییر حالت" class="tactile-btn inline-flex items-center gap-1.5 text-[11px] bg-white hover:bg-slate-100 text-purple-700 font-bold rounded-full px-3 py-1.5"><i class="fa-solid fa-repeat"></i> ${on ? 'حالت کارفرما' : 'حالت پرسنل'} <span class="opacity-60 font-normal">• رفتن به ${on ? 'پرسنل' : 'کارفرما'}</span></button>` + (on ? `<button type="button" onclick="openManagerPanel()" class="tactile-btn inline-flex items-center gap-1.5 text-[11px] bg-white text-purple-700 rounded-full px-3 py-1.5 font-bold"><i class="fa-solid fa-user-tie"></i> پنل کارفرما</button>` : ''); }
+            if (badge) { badge.className = 'relative z-10 mt-1 flex flex-wrap items-center justify-center gap-1.5 basis-full'; badge.innerHTML = `<button type="button" onclick="mgrToggle(!mgrOn())" title="تغییر حالت" class="tactile-btn inline-flex items-center gap-1.5 text-[10px] bg-white hover:bg-slate-100 text-purple-700 font-bold rounded-full px-2 py-0.5"><i class="fa-solid fa-repeat"></i> ${on ? 'حالت کارفرما' : 'حالت پرسنل'} <span class="opacity-60 font-normal">• رفتن به ${on ? 'پرسنل' : 'کارفرما'}</span></button>`; }
             const goal = document.getElementById('incomeGoalSection'); if (goal) goal.style.display = on ? 'none' : '';
             const stats = mgrEnsureEl('mgrMainStats', document.getElementById('activeProgressCard'));
             const bar = mgrEnsureEl('mgrFilterBar', document.getElementById('historyIncompleteBanner'));
@@ -10616,16 +10616,8 @@
             if (saved) showFeedbackBanner(on ? 'حالت کارفرما فعال شد.' : 'حالت پرسنل فعال شد؛ اطلاعات کارفرما حفظ شده است.', 'success');
             else mgrReportLocalFailure();
         }
-        function openManagerPanel() {
-            if (!mgrOn()) return;
-            const md = document.getElementById('managerModal');
-            mgrLastFocus = document.activeElement; md.setAttribute('role', 'dialog'); md.setAttribute('aria-modal', 'true'); md.setAttribute('aria-label', 'پنل کارفرما');
-            md.classList.remove('hidden');
-            mgrRender();
-            const cb = md.querySelector('button'); if (cb) cb.focus();
-        }
-        function closeManagerPanel() { document.getElementById('managerModal').classList.add('hidden'); if (mgrLastFocus && mgrLastFocus.focus) { try { mgrLastFocus.focus(); } catch (e) {} } }
-
+        function openManagerPanel() { if (!mgrOn()) return; setAppTab('mgr'); }
+        function closeManagerPanel() { if (appTab === 'mgr') setAppTab('home'); }
 
         function mgrRender() {
             document.getElementById('mgrHeaderSub').innerText = `دوره‌ی گزارش: ${mgrMonthLabel()}`;
@@ -11463,7 +11455,7 @@
         });
 
         /* ---- دسترس‌پذیری: نقش دیالوگ، اتصال برچسب‌ها، aria-label و بستن با Escape ---- */
-        const MODAL_IDS = ['customConfirmModal', 'advancedSearchModal', 'trashBinModal', 'dataHealthModal', 'settingsModal', 'overviewModal', 'managerModal'];
+        const MODAL_IDS = ['customConfirmModal', 'advancedSearchModal', 'trashBinModal', 'dataHealthModal', 'settingsModal', 'overviewModal'];
         MODAL_IDS.forEach(id => {
             const el = document.getElementById(id);
             if (el) { el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); }
@@ -11489,7 +11481,6 @@
             if (isModalOpen('advancedSearchModal')) { closeAdvancedSearchModal(); return; }
             if (isModalOpen('trashBinModal')) { closeTrashBinModal(); return; }
             if (isModalOpen('dataHealthModal')) { closeDataHealthModal(); return; }
-            if (isModalOpen('managerModal')) { closeManagerPanel(); return; }
             if (isModalOpen('settingsModal')) { closeSettingsModal(); return; }
             if (isModalOpen('overviewModal')) { closeOverviewModal(); return; }
             if (isTableFullScreen) { toggleRecordsTableFullScreen(); }
@@ -11512,7 +11503,7 @@
         // مکرر لایه‌ی تارشده در هر فریم نباشد؛ این باعث می‌شود تایپ داخل فیلدهای هر مودال (به‌خصوص تنظیمات)
         // به‌شکل محسوسی روان‌تر شود. با MutationObserver پیاده شده تا مستقل از تابعِ باز/بسته‌کردنِ هر مودال کار کند.
         (function () {
-            const overlaySelector = '#settingsModal, #trashBinModal, #dataHealthModal, #advancedSearchModal, #overviewModal, #customConfirmModal, #managerModal';
+            const overlaySelector = '#settingsModal, #trashBinModal, #dataHealthModal, #advancedSearchModal, #overviewModal, #customConfirmModal';
             const overlays = Array.from(document.querySelectorAll(overlaySelector));
             function syncModalAnimPause() {
                 const anyOpen = overlays.some(el => !el.classList.contains('hidden'));
@@ -11524,11 +11515,11 @@
             syncModalAnimPause();
         })();
 
-        // بازیابی آخرین تبِ انتخابیِ کاربر (ثبت رکورد جدید / لیست کارکردها)، پیش‌فرض: ثبت رکورد جدید
+        // بازیابی آخرین تبِ انتخابیِ کاربر
         (function () {
-            let savedTab = 'entry';
-            try { savedTab = localStorage.getItem('sewing_main_tab_v1') || 'entry'; } catch (e) { /* بی‌اهمیت */ }
-            switchMainTab(savedTab === 'list' ? 'list' : 'entry');
+            let t = 'home';
+            try { t = localStorage.getItem('sewing_app_tab_v2') || 'home'; } catch (e) { /* بی‌اهمیت */ }
+            setAppTab(t, { noScroll: true });
         })();
         bottomNavSyncState();
 
@@ -11672,5 +11663,210 @@
   document.addEventListener('visibilitychange',()=>{ if(document.hidden)pushWidgetData(); }); window.addEventListener('pagehide',pushWidgetData);
 })();
 </script>
+<script>
+/* ===== دستیار هوشمند تب خانه ===== */
+(function () {
+    'use strict';
+    const CFG_KEY = 'sewing_ai_cfg_v1';
+    const WD = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
+    const $ = (id) => document.getElementById(id);
+    const f = (n) => formatNumber(Math.round(n));
+    const cur = () => appSettings.currency || 'تومان';
+
+    function loadCfg() { try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch (e) { return {}; } }
+    function cfgReady(c) { return !!(c && c.key && c.model && c.base); }
+
+    function stats() {
+        const jc = getCurrentJalaliInfo(), emp = (typeof mgrOn === 'function') && mgrOn();
+        const recs = allRecords.filter(r => emp || recOwnerKey(r) === '');
+        const day = parseInt(toEnglishDigits(jc.fullDateStr).split('/')[2], 10) || 1;
+        const jm = jc.monthNum, jy = parseInt(jc.yearEn, 10);
+        const dim = jm <= 6 ? 31 : (jm <= 11 ? 30 : 29);
+        const prevKey = (jm === 1 ? (jy - 1) : jy) + '-' + (jm === 1 ? 12 : jm - 1);
+        const m = recs.filter(r => r.monthKey === jc.monthKey), p = recs.filter(r => r.monthKey === prevKey);
+        const income = sumTotalPrice(m), prevIncome = sumTotalPrice(p);
+        const late = m.filter(r => r.status === 'تاخیر');
+        const days = new Set(m.map(r => r.date)).size;
+        const wd = [0, 0, 0, 0, 0, 0, 0];
+        recs.forEach(r => { const j = parseJalaliDateToJdn(r.date); if (j) wd[saturdayBasedDayIndex(j)]++; });
+        const best = wd.indexOf(Math.max.apply(null, wd));
+        const act = getCurrentActiveRecord(), prog = act ? computeRecordProgress(act) : null;
+        return {
+            jc, day, dim, m, p, income, prevIncome, late, days, unknown: countUnknownPriceRecords(m),
+            qty: m.reduce((a, r) => a + (Number(r.quantity) || 0), 0),
+            projection: income > 0 ? income / day * dim : 0,
+            goal: appSettings.incomeGoalMonthly || 0, wd, best, total: recs.length,
+            act, prog
+        };
+    }
+
+    function insights(S) {
+        const out = [], c = cur();
+        if (!S.m.length) {
+            out.push({ i: 'fa-circle-info', t: 'info', x: `در ${S.jc.monthName} هنوز کارکردی ثبت نشده است. بعد از ثبت اولین رکورد، تحلیل اینجا ظاهر می‌شود.` });
+            return out;
+        }
+        out.push({ i: 'fa-coins', t: 'info', x: `تا امروز ${f(S.income)} ${c} از ${f(S.m.length)} کارکرد (${f(S.qty)} عدد) ثبت شده است.` });
+        if (S.projection > 0 && S.day >= 3) {
+            let cmp = '';
+            if (S.prevIncome > 0) { const d = Math.round((S.projection - S.prevIncome) / S.prevIncome * 100); cmp = d >= 0 ? `؛ حدود ${f(d)}٪ بیشتر از ماه قبل` : `؛ حدود ${f(-d)}٪ کمتر از ماه قبل`; }
+            out.push({ i: 'fa-chart-line', t: 'info', x: `با روند فعلی، پایان ماه حدود ${f(S.projection)} ${c} می‌شود${cmp}.` });
+        }
+        if (S.goal > 0) {
+            const left = S.goal - S.income, dl = Math.max(1, S.dim - S.day + 1);
+            out.push(left <= 0 ? { i: 'fa-trophy', t: 'good', x: 'هدف درآمد ماهانه محقق شد. آفرین!' }
+                : { i: 'fa-bullseye', t: S.projection >= S.goal ? 'good' : 'warn', x: `برای رسیدن به هدف ماهانه، روزی حدود ${f(left / dl)} ${c} لازم است (${f(left)} ${c} باقی مانده).` });
+        }
+        if (S.m.length >= 3) {
+            out.push(S.late.length ? { i: 'fa-clock', t: 'warn', x: `${f(S.late.length)} از ${f(S.m.length)} کارکرد (${f(S.late.length / S.m.length * 100)}٪) با تاخیر تحویل شده است.` }
+                : { i: 'fa-circle-check', t: 'good', x: 'همه‌ی کارهای این ماه به موقع تحویل شده‌اند.' });
+        }
+        if (S.act && S.prog) {
+            const rm = S.prog.remainingMinutes, name = S.act.itemTitle || S.act.itemCode || 'کار جاری';
+            out.push(rm < 0 ? { i: 'fa-triangle-exclamation', t: 'warn', x: `«${name}» از موعد گذشته و هنوز تمام نشده است.` }
+                : { i: 'fa-stopwatch', t: S.prog.percent >= 85 ? 'warn' : 'info', x: `«${name}» ${f(Math.min(S.prog.percent, 999))}٪ پیش رفته و حدود ${f(rm / 60)} ساعت تا موعد مانده است.` });
+        }
+        if (S.total >= 8 && Math.max.apply(null, S.wd) > 0) out.push({ i: 'fa-calendar-week', t: 'info', x: `پرکارترین روز هفته‌ی شما «${WD[S.best]}» است.` });
+        if (S.unknown) out.push({ i: 'fa-circle-question', t: 'warn', x: `${f(S.unknown)} کارکرد قیمت ندارد؛ درآمد واقعی بیشتر از عدد بالاست.` });
+        return out.slice(0, 6);
+    }
+
+    const TONE = {
+        info: 'bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700',
+        good: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-900',
+        warn: 'bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-900'
+    };
+
+    function render() {
+        const el = $('aiInsights'); if (!el) return;
+        let list = [];
+        try { list = insights(stats()); } catch (e) { list = [{ i: 'fa-circle-info', t: 'info', x: 'تحلیل در دسترس نیست.' }]; }
+        el.innerHTML = list.map(o => `<div class="flex items-start gap-2 rounded-xl border px-3 py-2 text-[12px] leading-relaxed ${TONE[o.t]}"><i class="fa-solid ${o.i} mt-0.5 text-[11px] opacity-80"></i><span>${escapeHTML(o.x)}</span></div>`).join('');
+        const sub = $('aiSub'); if (sub) sub.textContent = cfgReady(loadCfg()) ? 'تحلیل خودکار • متصل به هوش مصنوعی' : 'تحلیل خودکار روی همین دستگاه';
+    }
+
+    function showAnswer(html, busy) {
+        const a = $('aiAnswer'); if (!a) return;
+        a.classList.remove('hidden');
+        a.innerHTML = busy ? '<i class="fa-solid fa-spinner fa-spin ml-1"></i> در حال بررسی…' : html;
+    }
+    const txt = (s) => escapeHTML(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+
+    function localAnswer(kind) {
+        const S = stats(), c = cur();
+        if (kind === 'summary') return insights(S).map(o => '• ' + o.x).join('\n');
+        if (kind === 'forecast') {
+            if (!S.m.length || S.day < 1) return 'هنوز داده‌ی کافی برای پیش‌بینی نیست.';
+            const perDay = S.income / S.day;
+            let t = `میانگین درآمد روزانه تا امروز: ${f(perDay)} ${c}\nپیش‌بینی پایان ماه: ${f(S.projection)} ${c}`;
+            if (S.prevIncome > 0) t += `\nکل ماه قبل: ${f(S.prevIncome)} ${c}`;
+            if (S.goal > 0) t += `\nهدف ماهانه: ${f(S.goal)} ${c} — ` + (S.projection >= S.goal ? 'با این روند محقق می‌شود.' : `کمبود پیش‌بینی‌شده ${f(S.goal - S.projection)} ${c}`);
+            return t + '\n(پیش‌بینی بر پایه‌ی میانگین روزهای گذشته‌ی همین ماه است.)';
+        }
+        if (kind === 'late') {
+            if (!S.late.length) return 'در این ماه کار با تاخیری ثبت نشده است.';
+            return `${f(S.late.length)} کار با تاخیر:\n` + S.late.slice(0, 10).map(r => `• ${r.itemCode || '-'} — ${r.itemTitle || ''} (${r.date})`).join('\n');
+        }
+        return '';
+    }
+
+    function contextJSON() {
+        const S = stats();
+        return JSON.stringify({
+            واحد_پول: cur(), امروز: S.jc.fullDateStr, ماه: S.jc.monthName, روز_گذشته_از_ماه: S.day, روزهای_ماه: S.dim,
+            ماه_جاری: { درآمد: Math.round(S.income), تعداد_کارکرد: S.m.length, تعداد_قطعه: S.qty, تعداد_با_تاخیر: S.late.length, بدون_قیمت: S.unknown, روزهای_فعال: S.days, پیش_بینی_پایان_ماه: Math.round(S.projection) },
+            ماه_قبل: { درآمد: Math.round(S.prevIncome), تعداد_کارکرد: S.p.length },
+            هدف_ماهانه: S.goal, تعداد_رکورد_هر_روز_هفته: WD.reduce((o, d, i) => (o[d] = S.wd[i], o), {}),
+            کار_جاری: S.act ? { عنوان: String(S.act.itemTitle || S.act.itemCode || '').slice(0, 40), درصد_پیشرفت: S.prog ? Math.round(S.prog.percent) : null, دقیقه_مانده: S.prog ? Math.round(S.prog.remainingMinutes) : null } : null,
+            رکوردهای_اخیر: S.m.slice(0, 30).map(r => ({ کد: r.itemCode, عنوان: String(r.itemTitle || '').slice(0, 40), تعداد: r.quantity, مبلغ: r.totalPrice, تاریخ: r.date, وضعیت: r.status }))
+        });
+    }
+
+    async function callAI(question) {
+        const c = loadCfg(), base = String(c.base || '').replace(/\/+$/, '');
+        const system = 'تو دستیار هوشمند یک سامانه‌ی ثبت کارکرد و مدیریت کار هستی. فقط بر پایه‌ی داده‌های JSON زیر پاسخ بده، به فارسی، کوتاه، دقیق و کاربردی (حداکثر ۸ خط). اعداد پولی را با واحد بگو. اگر داده برای پاسخ کافی نیست، صادقانه بگو و حدس نزن.\n\nداده‌ها:\n' + contextJSON();
+        const ctrl = new AbortController(), to = setTimeout(() => ctrl.abort(), 45000);
+        try {
+            let res, data, out;
+            if (c.type === 'anthropic') {
+                res = await fetch(base + '/v1/messages', { method: 'POST', signal: ctrl.signal, headers: { 'content-type': 'application/json', 'x-api-key': c.key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' }, body: JSON.stringify({ model: c.model, max_tokens: 700, system, messages: [{ role: 'user', content: question }] }) });
+                data = await res.json().catch(() => ({}));
+                out = data && data.content && data.content.map(b => b.text || '').join('');
+            } else {
+                res = await fetch(base + '/chat/completions', { method: 'POST', signal: ctrl.signal, headers: { 'content-type': 'application/json', 'authorization': 'Bearer ' + c.key }, body: JSON.stringify({ model: c.model, max_tokens: 700, temperature: 0.4, messages: [{ role: 'system', content: system }, { role: 'user', content: question }] }) });
+                data = await res.json().catch(() => ({}));
+                out = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+            }
+            if (!res.ok) throw new Error((data && data.error && (data.error.message || data.error)) || ('HTTP ' + res.status));
+            if (!out) throw new Error('پاسخ خالی دریافت شد.');
+            return String(out).trim();
+        } finally { clearTimeout(to); }
+    }
+
+    function errText(e) {
+        if (e && e.name === 'AbortError') return 'پاسخی نرسید (زمان انتظار تمام شد).';
+        if (!navigator.onLine) return 'اینترنت قطع است.';
+        const m = String(e && e.message || e);
+        if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return 'اتصال برقرار نشد؛ اینترنت، آدرس سرویس یا مجوز مرورگر (CORS) را بررسی کنید.';
+        return 'خطا: ' + m;
+    }
+
+    async function ask(question, needAI) {
+        const q = String(question || '').trim(); if (!q) return;
+        if (!cfgReady(loadCfg())) {
+            showAnswer(txt('برای این بخش باید اتصال به هوش مصنوعی را تنظیم کنید (دکمه‌ی چرخ‌دنده‌ی بالای کادر).'));
+            $('aiConfig').classList.remove('hidden'); return;
+        }
+        const btn = $('aiSendBtn'); if (btn) btn.disabled = true;
+        showAnswer('', true);
+        try { showAnswer(txt(await callAI(q))); } catch (e) { showAnswer(txt(errText(e))); }
+        if (btn) btn.disabled = false;
+    }
+
+    window.aiRenderInsights = function (manual) { render(); if (manual) showAnswer(''), $('aiAnswer').classList.add('hidden'); };
+    window.aiToggleConfig = function () {
+        const p = $('aiConfig'); if (!p) return;
+        const open = p.classList.toggle('hidden') === false;
+        if (open) {
+            const c = loadCfg(); $('aiCfgType').value = c.type || 'openai';
+            $('aiCfgBase').value = c.base || ''; $('aiCfgModel').value = c.model || ''; $('aiCfgKey').value = c.key || '';
+            aiCfgTypeChanged(true);
+        }
+    };
+    window.aiCfgTypeChanged = function (keep) {
+        const t = $('aiCfgType').value, b = $('aiCfgBase'), m = $('aiCfgModel');
+        b.placeholder = t === 'anthropic' ? 'https://api.anthropic.com' : 'https://api.openai.com/v1';
+        m.placeholder = t === 'anthropic' ? 'claude-haiku-4-5-20251001' : 'gpt-4o-mini';
+        if (keep !== true) { b.value = ''; m.value = ''; }
+    };
+    window.aiSaveConfig = function () {
+        const t = $('aiCfgType').value;
+        const c = { type: t, base: ($('aiCfgBase').value.trim() || $('aiCfgBase').placeholder), model: ($('aiCfgModel').value.trim() || $('aiCfgModel').placeholder), key: $('aiCfgKey').value.trim() };
+        if (!c.key) { showFeedbackBanner('کلید API را وارد کنید.', 'warn'); return; }
+        if (!/^https:\/\//i.test(c.base)) { showFeedbackBanner('آدرس سرویس باید با https شروع شود.', 'warn'); return; }
+        try { localStorage.setItem(CFG_KEY, JSON.stringify(c)); showFeedbackBanner('اتصال هوش مصنوعی ذخیره شد.', 'success'); $('aiConfig').classList.add('hidden'); render(); }
+        catch (e) { showFeedbackBanner('ذخیره‌سازی انجام نشد.', 'warn'); }
+    };
+    window.aiClearConfig = function () { try { localStorage.removeItem(CFG_KEY); } catch (e) { /* بی‌اهمیت */ } ['aiCfgBase', 'aiCfgModel', 'aiCfgKey'].forEach(id => $(id).value = ''); render(); showFeedbackBanner('اتصال هوش مصنوعی حذف شد.', 'success'); };
+    window.aiTestConfig = async function () {
+        aiSaveConfig(); if (!cfgReady(loadCfg())) return;
+        showAnswer('', true);
+        try { await callAI('فقط بنویس: اتصال برقرار است.'); showAnswer(txt('اتصال موفق بود.')); } catch (e) { showAnswer(txt(errText(e))); }
+    };
+    window.aiAskFromInput = function () { const i = $('aiQuestion'); const q = i.value; if (!q.trim()) return; ask(q); i.value = ''; };
+    window.aiChip = function (kind) {
+        if (kind === 'advice') { ask('بر اساس داده‌ها، ۳ پیشنهاد عملی و کوتاه برای افزایش درآمد و کاهش تاخیر بده.'); return; }
+        showAnswer(txt(localAnswer(kind)));
+    };
+
+    let t = null;
+    function later() { clearTimeout(t); t = setTimeout(render, 500); }
+    window.addEventListener('load', function () {
+        ['renderDashboard'].forEach(n => { const o = window[n]; if (typeof o === 'function') window[n] = function () { const r = o.apply(this, arguments); later(); return r; }; });
+        render();
+    });
+})();
+</script>
+
 </body>
 </html>

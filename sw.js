@@ -6,7 +6,7 @@
  * عدد VERSION را فقط وقتی زیاد کنید که خودِ sw.js، لیست فایل‌های کش‌شده یا آیکون‌ها را عوض کرده‌اید؛
  * تغییر همین فایل باعث می‌شود بنر «نسخه جدید آماده است» در برنامه ظاهر شود.
  */
-const VERSION = 'v7';
+const VERSION = 'v8';
 const CACHE_PREFIX = 'work-stats-';
 const OLD_CACHE_PREFIXES = ['sewing-stats-']; // برای پاکسازی کش نسخه‌های قبلی، هنگام مهاجرت به نام عمومی
 const CACHE = CACHE_PREFIX + VERSION;
@@ -14,13 +14,12 @@ const SCOPE = self.registration.scope;
 const INDEX_URL = new URL('index.html', SCOPE).href;
 const OFFLINE_URL = new URL('offline.html', SCOPE).href;
 
-const LOCAL_ASSETS = ['index.html', 'manifest.json', 'offline.html', 'motivations-db.js', 'ai-assistant.js', 'premium.js', 'native-notify.js', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png']
+const LOCAL_ASSETS = ['index.html', 'manifest.json', 'offline.html', 'motivations-db.js', 'ai-assistant.js', 'style.css', 'premium.js', 'native-notify.js', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png']
   .map(p => new URL(p, SCOPE).href);
 
 // منابع ضروریِ ظاهر برنامه: اول نسخه‌ی محلی (پوشه‌ی vendor، ساخته‌شده با fetch-vendor.mjs)؛
 // فقط اگر محلی نبود از CDN گرفته می‌شود. فایل‌های فونتِ داخل CSS هم همراهش کش می‌شوند.
 const VENDOR = [
-  { local: 'vendor/tailwind.js', cdn: 'https://cdn.tailwindcss.com' },
   { local: 'vendor/fontawesome/css/all.min.css', cdn: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' },
   { local: 'vendor/vazirmatn/Vazirmatn-font-face.css', cdn: 'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css' }
 ];

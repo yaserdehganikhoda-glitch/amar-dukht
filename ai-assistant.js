@@ -173,23 +173,44 @@
     function durMin(s) { const m = /^(\d{1,4}):(\d{2})$/.exec(toEnglishDigits(String(s || '')).trim()); return m ? (+m[1]) * 60 + (+m[2]) : null; }
     const pad2 = (n) => String(n).padStart(2, '0');
 
+    /* کش رکوردهای تحلیل‌شده: فقط رکوردِ تازه یا ویرایش‌شده دوباره محاسبه می‌شود (برای هزاران رکورد سریع می‌ماند) */
+    const BC = new WeakMap(), NC = new Map();
+    const nrm = (v) => { const k = String(v == null ? '' : v); let n = NC.get(k); if (n === undefined) { n = norm(k); if (NC.size > 4000) NC.clear(); NC.set(k, n); } return n; };
+    function baseOf(r, wdOf) {
+        const sig = [r.date, r.time, r.quantity, r.unitPrice, r.totalPrice, r.status, r.itemCode, r.itemTitle, r.itemColor, r.durationTime, r.monthKey, r.finishedDate, r.nextCodeStartDate, r.workDuration].join('\u0001');
+        const c = BC.get(r); if (c && c.sig === sig) return c.o;
+        const jdn = parseJalaliDateToJdn(r.date) || 0, tm = /^(\d{1,2})/.exec(toEnglishDigits(String(r.time || ''))), dp = toEnglishDigits(String(r.date || '')).split('/');
+        const o = {
+            r, jdn, wd: jdn ? wdOf(jdn) : -1, dom: jdn ? (parseInt(dp[2], 10) || 0) : 0, hour: tm ? Math.min(23, +tm[1]) : -1, mk: r.monthKey,
+            inc: typeof r.totalPrice === 'number' ? r.totalPrice : null, qty: num(r.quantity), unit: num(r.unitPrice),
+            code: nrm(r.itemCode), codeRaw: String(r.itemCode || ''), title: r.itemTitle || '', color: r.itemColor || '',
+            wn: '', wnn: '', sec: '', secn: '', late: r.status === 'تاخیر', judged: JUDGED.indexOf(r.status) >= 0, early: r.status === 'زودتر از موعد',
+            dur: durMin(r.durationTime), hay: nrm([r.itemCode, r.itemTitle, r.itemColor].join(' ')),
+            open: !r.nextCodeStartDate && !r.finishedDate && !!r.workDuration
+        };
+        BC.set(r, { sig, o }); return o;
+    }
+    let BUILD = null;
+    function buildSig() {
+        let sg = 0, n = allRecords.length; for (let i = 0; i < n; i++) sg += (allRecords[i].updatedAt || 0) % 1e9 + i;
+        let m = ''; try { m = (typeof mgrOn === 'function' && mgrOn()) ? JSON.stringify([mgr().workers.map(w => [w.id, w.name, w.active, w.sectionId]), mgr().sections.map(x => [x.id, x.name])]) : ''; } catch (e) { m = 'x'; }
+        return [n, sg, m, getCurrentJalaliInfo().fullDateStr, appSettings.incomeGoalMonthly, appSettings.incomeGoalWeekly, appSettings.currency, appSettings.numFormat, new Date().getHours()].join('|');
+    }
     function build() {
+        const sg = buildSig(); if (BUILD && BUILD.sg === sg) return BUILD.S;
+        const S = build0(); BUILD = { sg, S }; return S;
+    }
+    function build0() {
         const jc = getCurrentJalaliInfo(), emp = (typeof mgrOn === 'function') && mgrOn();
         const T = parseJalaliDateToJdn(jc.fullDateStr) || 0, jy = parseInt(jc.yearEn, 10), jm = jc.monthNum;
         const mStart = j2d(jy, jm, 1), mEnd = (jm === 12 ? j2d(jy + 1, 1, 1) : j2d(jy, jm + 1, 1)) - 1;
         const wdMemo = {};
         const wdOf = (j) => (wdMemo[j] !== undefined ? wdMemo[j] : (wdMemo[j] = saturdayBasedDayIndex(j)));
         const recs = allRecords.filter(r => emp || recOwnerKey(r) === '').map(r => {
-            const jdn = parseJalaliDateToJdn(r.date) || 0, tm = /^(\d{1,2})/.exec(toEnglishDigits(String(r.time || '')));
-            const wn = emp ? (mgrRecWorker(r) || '') : '', sec = (emp && typeof mgrRecSection === 'function') ? (mgrRecSection(r) || '') : '';
-            return {
-                r, jdn, wd: jdn ? wdOf(jdn) : -1, dom: jdn ? d2j(jdn).jd : 0, hour: tm ? Math.min(23, +tm[1]) : -1, mk: r.monthKey,
-                inc: typeof r.totalPrice === 'number' ? r.totalPrice : null, qty: num(r.quantity), unit: num(r.unitPrice),
-                code: norm(r.itemCode), codeRaw: String(r.itemCode || ''), title: r.itemTitle || '', color: r.itemColor || '',
-                wn, wnn: norm(wn), sec, secn: norm(sec), late: r.status === 'تاخیر', judged: JUDGED.indexOf(r.status) >= 0, early: r.status === 'زودتر از موعد',
-                dur: durMin(r.durationTime), hay: norm([r.itemCode, r.itemTitle, r.itemColor].join(' ')),
-                open: !r.nextCodeStartDate && !r.finishedDate && !!r.workDuration
-            };
+            const o = baseOf(r, wdOf);
+            o.wn = emp ? (mgrRecWorker(r) || '') : ''; o.wnn = norm(o.wn);
+            o.sec = (emp && typeof mgrRecSection === 'function') ? (mgrRecSection(r) || '') : ''; o.secn = norm(o.sec);
+            return o;
         });
         const prevKey = mkAdd(jc.monthKey, -1);
         const S = { jc, emp, T, jy, jm, mStart, mEnd, wdOf, recs, day: d2j(T).jd, curKey: jc.monthKey, prevKey, dim: mEnd - mStart + 1 };
@@ -326,7 +347,8 @@
 
     /* ============================ تحلیل پرسش ============================ */
     function vocab(S) {
-        const V = { codes: {}, tok: {}, workers: [], sections: [] };
+        if (S.__V) return S.__V;
+        const V = S.__V = { codes: {}, tok: {}, workers: [], sections: [] };
         S.recs.forEach(x => {
             if (x.code) V.codes[x.code] = x.codeRaw;
             (x.title + ' ' + x.color).split(/[\s\u200c]+/).forEach(w => { const n = stem(norm(w)); if (n.length >= 3 && !/^\d+$/.test(n)) V.tok[n] = (V.tok[n] || 0) + 1; });
@@ -1251,12 +1273,14 @@
 
     /* پیشنهاد هنگام تایپ */
     function hideSuggest() { const s = $('aiSuggest'); if (s) { s.classList.add('hidden'); s.innerHTML = ''; } }
+    let typeTm = null;
+    function onTypeSoon() { clearTimeout(typeTm); typeTm = setTimeout(onType, 180); }
     function onType() {
         const inp = $('aiInput'), box = $('aiSuggest'); if (!inp || !box) return;
         const t = norm(inp.value); if (t.length < 2) { hideSuggest(); return; }
         let S = null; try { S = build(); } catch (e) { return; }
         const pool = CATALOG.filter(c => !c[2] || S.emp).map(c => c[1]);
-        const codes = uniq(S.recs.map(x => x.codeRaw)).filter(Boolean).slice(0, 400); codes.forEach(c => pool.push('کد ' + c));
+        const codes = (S.__codes || (S.__codes = uniq(S.recs.map(x => x.codeRaw)).filter(Boolean).slice(0, 400))); codes.forEach(c => pool.push('کد ' + c));
         S.workers.forEach(w => { if (w && w.name) { pool.push('عملکرد ' + w.name + ' این ماه'); pool.push('درآمد ' + w.name + ' هفته قبل'); } });
         const tk = t.split(' ').map(stem).filter(Boolean);
         const sc = pool.map(p => { const pn = ' ' + norm(p).split(' ').map(stem).join(' '); let s = 0; tk.forEach(w => { if (pn.indexOf(' ' + w) >= 0) s += 2; else if (pn.indexOf(w) >= 0) s += 1; else s -= 3; }); return { p, s }; }).filter(z => z.s > 0).sort((a, b) => b.s - a.s).slice(0, 4);
@@ -1265,11 +1289,12 @@
         box.classList.remove('hidden');
     }
 
-    let tmr = null; const later = () => { clearTimeout(tmr); tmr = setTimeout(render, 500); };
+    let tmr = null; const idle = (fn) => { try { (window.requestIdleCallback || setTimeout)(fn, window.requestIdleCallback ? { timeout: 2500 } : 300); } catch (e) { setTimeout(fn, 300); } };
+    const later = () => { clearTimeout(tmr); tmr = setTimeout(() => idle(render), 900); };
     window.addEventListener('load', function () {
         ['renderDashboard'].forEach(n => { const o = window[n]; if (typeof o === 'function') window[n] = function () { const r = o.apply(this, arguments); later(); return r; }; });
-        const inp = $('aiInput'); if (inp) { inp.addEventListener('input', onType); inp.addEventListener('blur', () => setTimeout(hideSuggest, 200)); }
-        render(); buildChips();
+        const inp = $('aiInput'); if (inp) { inp.addEventListener('input', onTypeSoon); inp.addEventListener('blur', () => setTimeout(hideSuggest, 200)); }
+        /* تحلیل اولیه بعد از بالا آمدن برنامه و در زمان بیکاری انجام می‌شود تا باز شدن برنامه کند نشود */
+        setTimeout(() => idle(() => { render(); buildChips(); }), 1500);
     });
-    window.__aiEngine = { answer };
 })();

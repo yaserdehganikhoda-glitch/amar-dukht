@@ -1,6 +1,7 @@
 // یک‌بار اجرا شود:  node fetch-vendor.mjs www
-// Tailwind، Font Awesome و فونت‌های فارسی را در www/vendor/ ذخیره می‌کند تا برنامه بدون CDN و آفلاین کار کند.
-// موارد ضروری (Tailwind، Font Awesome، وزیرمتن) اگر دانلود نشوند خطا می‌دهند؛ فونت‌های اختیاری فقط هشدار می‌دهند.
+// Font Awesome و فونت‌های فارسی را در www/vendor/ ذخیره می‌کند تا برنامه بدون CDN و آفلاین کار کند.
+// (Tailwind دیگر دانلود نمی‌شود؛ style.css با «npm run build:css» ساخته می‌شود و باید کنار index.html در www باشد.)
+// موارد ضروری (Font Awesome، وزیرمتن) اگر دانلود نشوند خطا می‌دهند؛ فونت‌های اختیاری فقط هشدار می‌دهند.
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -43,7 +44,6 @@ async function fetchSet(name, root, cssPath) {
   for (const [f, b] of files) await save(f, b);
 }
 
-await save(path.join(OUT, 'tailwind.js'), await get('https://cdn.tailwindcss.com'));
 for (const [name, roots, cssPath, required] of SETS) {
   let done = false, lastErr;
   for (const root of roots) {
@@ -54,4 +54,4 @@ for (const [name, roots, cssPath, required] of SETS) {
     console.warn(`⚠ فونت «${name}» دانلود نشد و رد شد (برنامه برای آن از CDN استفاده می‌کند):`, String(lastErr && lastErr.message || lastErr));
   }
 }
-console.log('\nتمام شد. حالا: npx cap sync android  و ساخت دوباره‌ی APK');
+console.log('\nتمام شد. حالا: npm run build:css ، کپی style.css در www ، سپس npx cap sync android و ساخت دوباره‌ی APK');

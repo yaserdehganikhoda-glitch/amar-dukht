@@ -15,19 +15,6 @@
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="apple-touch-icon" href="icon-192.png">
     
-    <!-- Tailwind CSS -->
-    <!-- اول نسخه‌ی محلی (vendor/)، در صورت نبودنِ آن CDN؛ تا برنامه از همان اولین اجرا هم آفلاین کار کند -->
-    <script src="vendor/tailwind.js"></script>
-    <script>
-        (function () {
-            function applyCfg() { if (window.tailwind) window.tailwind.config = { darkMode: 'class' }; }
-            if (window.tailwind) return applyCfg();
-            // پشتیبان: اگر نسخه‌ی محلی لود نشد، CDN به‌صورت غیرمسدودکننده (async) بارگذاری می‌شود
-            var sc = document.createElement('script');
-            sc.src = 'https://cdn.tailwindcss.com'; sc.async = true; sc.onload = applyCfg;
-            document.head.appendChild(sc);
-        })();
-    </script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css" onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'">
     <!-- فونت‌های فارسی -->
@@ -867,6 +854,9 @@
     </style>
 <style>html.no-anim *,html.no-anim *::before,html.no-anim *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}</style>
 <script>try{if(localStorage.getItem("sewing_no_anim")==="1")document.documentElement.classList.add("no-anim")}catch(e){}</script>
+    <!-- Tailwind CSS: فایل نهایی و کم‌حجم که با Tailwind CLI ساخته می‌شود (npm run build:css).
+         عمداً بعد از استایل‌های بالا آمده تا ترتیب اولویت همان رفتار قبلی را داشته باشد. -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased min-h-screen pb-28 font-normal-size" id="appBody">
 
